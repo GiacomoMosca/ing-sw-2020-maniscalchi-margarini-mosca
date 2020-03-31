@@ -64,4 +64,18 @@ public class Turn {
     public void setActiveWorker(Worker activeWorker) {
         this.activeWorker = activeWorker;
     }
+
+    /**
+     * Indicates whether some other turn is "equal to" this one.
+     *
+     * @param obj the reference object with which to compare
+     * @return true if this turn is the same as the obj argument, false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        Turn t2= (Turn) obj;
+        return(this.getActivePlayer()==t2.getActivePlayer()&&this.getPhase()==t2.getPhase()&&this.getActiveWorker()==t2.getActiveWorker());
+    }
+
+
 }

@@ -75,4 +75,15 @@ public class Deck {
             pickedCards.add(shuffledDeck.get(i));
     }
 
+    /**
+     * Indicates whether some other deck is "equal to" this one.
+     *
+     * @param obj the reference object with which to compare
+     * @return true if this deck is the same as the obj argument, false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        Deck deck= (Deck)obj;
+        return this.getPickedCards().equals(deck.getPickedCards()) && this.getCards().equals(deck.getCards());
+    }
 }

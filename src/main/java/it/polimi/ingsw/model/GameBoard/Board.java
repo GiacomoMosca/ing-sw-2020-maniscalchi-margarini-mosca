@@ -51,4 +51,24 @@ public class Board {
         return res;
     }
 
+    /**
+     * Indicates whether some other board is "equal to" this one.
+     *
+     * @param obj the reference object with which to compare
+     * @return true if this board is the same as the obj argument, false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        Board board = (Board)obj;
+        int NumCell1=0, NumCell2=0;
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                NumCell1++;
+
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                NumCell2++;
+        return NumCell1 == NumCell2;
+    }
 }

@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Cards.Deck;
+import it.polimi.ingsw.model.GameBoard.Board;
 import it.polimi.ingsw.model.Players.Player;
 import it.polimi.ingsw.model.TurnData.OpponentModifier;
+import it.polimi.ingsw.model.TurnData.Turn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,18 +66,21 @@ public class GameTest {
     }
 
     @Test
-    public void getBoard() {
-        //?
+    public void getBoard_NoInoutGiven_ShouldReturnBoard() {
+        Board board=new Board();
+        assertEquals(game.getBoard(),board);
     }
 
     @Test
-    public void getDeck() {
-        //?
+    public void getDeck_NoInoutGiven_ShouldReturnDeck() {
+        Deck deck=new Deck();
+        assertEquals(game.getDeck(),deck);
     }
 
     @Test
-    public void getCurrentTurn() {
-        //?
+    public void getCurrentTurn_NoInoutGiven_ShouldReturnCurrentTurn() {
+        Turn turn=new Turn(player1);
+        assertEquals(game.getCurrentTurn(),turn);
     }
 
     @Test
