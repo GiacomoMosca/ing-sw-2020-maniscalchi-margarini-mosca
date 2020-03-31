@@ -1,2 +1,6 @@
+# IntelliJ local files
 /.idea/
-/ing-sw-2020-maniscalchi-margarini-mosca.iml
+*.iml
+
+# Output files
+/target/
