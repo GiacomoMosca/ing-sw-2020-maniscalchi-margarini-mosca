@@ -56,14 +56,14 @@ public abstract class GodController {
         return findPossibleMoves(worker).size() > 0;
     }
 
-    private String runPhases() {
+    String runPhases() {
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
         return "NEXT";
     }
 
-    private void movePhase() {
+    void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker);
         Cell movePosition = client.selectPosition(possibleMoves);
         try {
@@ -73,7 +73,7 @@ public abstract class GodController {
         }
     }
 
-    private void buildPhase() throws NullPointerException {
+    void buildPhase() throws NullPointerException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker);
         Cell buildPosition = client.selectPosition(possibleBuilds);
         try {
@@ -115,11 +115,11 @@ public abstract class GodController {
         return possibleBuilds;
     }
 
-    public ArrayList<Cell> limitMoves(Worker worker, ArrayList<Cell> possibleMoves) {
+    ArrayList<Cell> limitMoves(Worker worker, ArrayList<Cell> possibleMoves) {
         return possibleMoves;
     }
 
-    public ArrayList<Cell> limitBuilds(Worker worker, ArrayList<Cell> possibleBuilds) {
+    ArrayList<Cell> limitBuilds(Worker worker, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
     }
 
