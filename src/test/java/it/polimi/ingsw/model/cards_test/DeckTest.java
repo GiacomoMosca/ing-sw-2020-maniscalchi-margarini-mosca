@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model.CardsTests;
+package it.polimi.ingsw.model.cards_test;
 
-import it.polimi.ingsw.model.Cards.Card;
-import it.polimi.ingsw.model.Cards.Deck;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

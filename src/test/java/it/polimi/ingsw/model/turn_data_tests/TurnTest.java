@@ -1,8 +1,7 @@
-package it.polimi.ingsw.model.TurnDataTests;
+package it.polimi.ingsw.model.turn_data_tests;
 
-import it.polimi.ingsw.model.Players.Player;
-import it.polimi.ingsw.model.Players.Worker;
-import it.polimi.ingsw.model.TurnData.Turn;
+import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.model.players.Worker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

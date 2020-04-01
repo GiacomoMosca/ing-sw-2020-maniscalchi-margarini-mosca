@@ -1,10 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Cards.Deck;
-import it.polimi.ingsw.model.GameBoard.Board;
-import it.polimi.ingsw.model.Players.Player;
-import it.polimi.ingsw.model.TurnData.OpponentModifier;
-import it.polimi.ingsw.model.TurnData.Turn;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.game_board.Board;
+import it.polimi.ingsw.model.players.Player;
 
 import java.util.ArrayList;
 
@@ -17,7 +15,7 @@ public class Game {
     private final int playerNum;
     private final Board board;
     private final Deck deck;
-    private Turn currentTurn;
+    private Player activePlayer;
     private ArrayList<OpponentModifier> activeModifiers;
     private Player winner;
 
@@ -33,7 +31,7 @@ public class Game {
         playerNum = num;
         board = new Board();
         deck = new Deck();
-        currentTurn = new Turn(p1);
+        activePlayer = p1;
         activeModifiers = new ArrayList<OpponentModifier>();
         winner = null;
     }
@@ -91,20 +89,19 @@ public class Game {
 
     /**
      *
-     * @return the current Turn
+     * @return the active player
      */
-    public Turn getCurrentTurn() {
-        return currentTurn;
+    public Player getActivePlayer() {
+        return activePlayer;
     }
 
     /**
-     * creates a new Turn for the next player
+     * sets the active player
      *
-     * @param currPlayer the player whose turn is now
-     * @throws IllegalArgumentException if the argument is not the current player or it's not a player of the current Game
+     * @param player
      */
-    public void nextTurn(Player currPlayer) throws IllegalArgumentException {
-        currentTurn = new Turn(getNextPlayer(currPlayer));
+    public void setActivePlayer(Player player) {
+        activePlayer = player;
     }
 
     /**

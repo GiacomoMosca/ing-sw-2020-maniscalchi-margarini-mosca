@@ -1,10 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Cards.Deck;
-import it.polimi.ingsw.model.GameBoard.Board;
-import it.polimi.ingsw.model.Players.Player;
-import it.polimi.ingsw.model.TurnData.OpponentModifier;
-import it.polimi.ingsw.model.TurnData.Turn;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.game_board.Board;
+import it.polimi.ingsw.model.players.Player;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

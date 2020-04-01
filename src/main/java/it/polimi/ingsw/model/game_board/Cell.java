@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model.GameBoard;
+package it.polimi.ingsw.model.game_board;
 
-import it.polimi.ingsw.model.Players.Worker;
+import it.polimi.ingsw.model.players.Worker;
 
 public class Cell {
 
@@ -50,13 +50,14 @@ public class Cell {
 
 
     /**
-     * builds a level on the cell
+     * builds a level on the cell, or a dome if the cell has already reached the maximum build level
      *
      * @throws IllegalStateException when it's not possible to build on this cell
      */
     public void build() throws IllegalStateException {
-        if (buildLevel >= 3) throw new IllegalStateException();
-        this.buildLevel++;
+        if (buildLevel > 3 || hasDome) throw new IllegalStateException();
+        if (buildLevel == 3) hasDome = true;
+        else this.buildLevel++;
     }
 
     /**

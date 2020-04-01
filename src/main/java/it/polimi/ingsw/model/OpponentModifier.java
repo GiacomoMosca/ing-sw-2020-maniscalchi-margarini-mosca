@@ -1,7 +1,7 @@
-package it.polimi.ingsw.model.TurnData;
+package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Cards.Card;
-import it.polimi.ingsw.model.Players.Player;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.players.Player;
 
 public class OpponentModifier {
 

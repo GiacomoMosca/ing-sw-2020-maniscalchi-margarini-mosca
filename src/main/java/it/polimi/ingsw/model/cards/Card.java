@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model.Cards;
+package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.controller.GodController;
+import it.polimi.ingsw.controller.turn_controllers.GodController;
 
 public class Card {
 

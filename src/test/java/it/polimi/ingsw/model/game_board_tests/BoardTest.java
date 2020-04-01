@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model.GameBoardTests;
+package it.polimi.ingsw.model.game_board_tests;
 
-import it.polimi.ingsw.model.GameBoard.Board;
+import it.polimi.ingsw.model.game_board.Board;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

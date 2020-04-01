@@ -1,8 +1,8 @@
-package it.polimi.ingsw.model.GameBoardTests;
+package it.polimi.ingsw.model.game_board_tests;
 
-import it.polimi.ingsw.model.GameBoard.Cell;
-import it.polimi.ingsw.model.Players.Player;
-import it.polimi.ingsw.model.Players.Worker;
+import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.model.players.Worker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

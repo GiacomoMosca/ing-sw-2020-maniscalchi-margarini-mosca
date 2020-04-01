@@ -1,8 +1,8 @@
-package it.polimi.ingsw.model.TurnDataTests;
+package it.polimi.ingsw.model.turn_data_tests;
 
-import it.polimi.ingsw.model.Cards.Card;
-import it.polimi.ingsw.model.Players.Player;
-import it.polimi.ingsw.model.TurnData.OpponentModifier;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.model.OpponentModifier;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

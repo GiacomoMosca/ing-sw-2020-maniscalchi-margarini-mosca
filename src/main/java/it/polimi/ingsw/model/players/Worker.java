@@ -1,7 +1,6 @@
-package it.polimi.ingsw.model.Players;
+package it.polimi.ingsw.model.players;
 
-import it.polimi.ingsw.model.GameBoard.Cell;
-import it.polimi.ingsw.model.Players.Player;
+import it.polimi.ingsw.model.game_board.Cell;
 
 public class Worker {
 
