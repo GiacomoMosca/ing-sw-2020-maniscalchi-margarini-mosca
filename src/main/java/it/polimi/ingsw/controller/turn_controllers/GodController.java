@@ -17,6 +17,7 @@ public abstract class GodController {
     private Board board;
     private Player player;
     private PlayerClient client;
+    private Worker activeWorker;
 
     public GodController(GameController gameController) {
         this.gameController = gameController;
@@ -37,16 +38,53 @@ public abstract class GodController {
         this.client = client;
     }
 
-    public boolean playTurn() {
-        Worker worker = client.selectWorker();
-        ArrayList<Cell> possibleMoves = findPossibleMoves(worker);
+    public String playTurn() {
+        ArrayList<Worker> playableWorkers = new ArrayList<Worker>();
+        for (Worker worker : player.getWorkers()) {
+            if (checkWorker(worker)) playableWorkers.add(worker);
+        }
+        if (playableWorkers.size() == 0) return "LOST";
+        if (playableWorkers.size() == 1) {
+            activeWorker = playableWorkers.get(0);
+        } else {
+            activeWorker = client.selectWorker(playableWorkers);
+        }
+        return runPhases();
+    }
+
+    private boolean checkWorker(Worker worker) {
+        return findPossibleMoves(worker).size() > 0;
+    }
+
+    private String runPhases() {
+        movePhase();
+        if (checkWin()) return "WON";
+        buildPhase();
+        return "NEXT";
+    }
+
+    private void movePhase() {
+        ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker);
         Cell movePosition = client.selectPosition(possibleMoves);
-        worker.move(movePosition);
-        if (checkWin(worker)) return true;
-        ArrayList<Cell> possibleBuilds = findPossibleBuilds(worker);
+        try {
+            activeWorker.move(movePosition);
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: illegal move");
+        }
+    }
+
+    private void buildPhase() throws NullPointerException {
+        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker);
         Cell buildPosition = client.selectPosition(possibleBuilds);
-        buildPosition.build();
-        return false;
+        try {
+            buildPosition.build();
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: illegal build");
+        }
+    }
+
+    boolean checkWin() {
+        return activeWorker.getPosition().getBuildLevel() == 3;
     }
 
     ArrayList<Cell> findPossibleMoves(Worker worker) {
@@ -57,7 +95,8 @@ public abstract class GodController {
                 possibleMoves.add(cell);
         }
         for (OpponentModifier modifier : game.getActiveModifiers()) {
-            possibleMoves = modifier.getGodCard().getController().limitMoves(possibleMoves);
+            if (modifier.getPlayer() == player) continue;
+            possibleMoves = modifier.getGodCard().getController().limitMoves(worker, possibleMoves);
         }
         return possibleMoves;
     }
@@ -70,20 +109,17 @@ public abstract class GodController {
                 possibleBuilds.add(cell);
         }
         for (OpponentModifier modifier : game.getActiveModifiers()) {
-            possibleBuilds = modifier.getGodCard().getController().limitBuilds(possibleBuilds);
+            if (modifier.getPlayer() == player) continue;
+            possibleBuilds = modifier.getGodCard().getController().limitBuilds(worker, possibleBuilds);
         }
         return possibleBuilds;
     }
 
-    boolean checkWin(Worker worker) {
-        return worker.getPosition().getBuildLevel() == 3;
-    }
-
-    public ArrayList<Cell> limitMoves(ArrayList<Cell> possibleMoves) {
+    public ArrayList<Cell> limitMoves(Worker worker, ArrayList<Cell> possibleMoves) {
         return possibleMoves;
     }
 
-    public ArrayList<Cell> limitBuilds(ArrayList<Cell> possibleBuilds) {
+    public ArrayList<Cell> limitBuilds(Worker worker, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
     }
 

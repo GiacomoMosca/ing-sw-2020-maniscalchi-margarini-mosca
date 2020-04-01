@@ -8,7 +8,6 @@ public class GameController {
 
     public Game getGame() {
         return game;
-
-
     }
+
 }
