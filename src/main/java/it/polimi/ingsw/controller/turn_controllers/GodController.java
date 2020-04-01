@@ -76,7 +76,7 @@ public abstract class GodController {
     }
 
     boolean checkWin(Worker worker) {
-        if (worker.getPosition().getBuildLevel() == 3) return true;
+        return worker.getPosition().getBuildLevel() == 3;
     }
 
     public ArrayList<Cell> limitMoves(ArrayList<Cell> possibleMoves) {
