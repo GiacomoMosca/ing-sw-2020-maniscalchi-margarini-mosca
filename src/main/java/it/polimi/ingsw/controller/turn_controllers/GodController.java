@@ -7,17 +7,18 @@ import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.model.OpponentModifier;
+import it.polimi.ingsw.view.PlayerInterface;
 
 import java.util.ArrayList;
 
 public abstract class GodController {
 
-    private GameController gameController;
-    private Game game;
-    private Board board;
-    private Player player;
-    private PlayerClient client;
-    private Worker activeWorker;
+    protected GameController gameController;
+    protected Game game;
+    protected Board board;
+    protected Player player;
+    protected PlayerInterface client;
+    protected Worker activeWorker;
 
     public GodController(GameController gameController) {
         this.gameController = gameController;
@@ -29,11 +30,11 @@ public abstract class GodController {
         return player;
     }
 
-    public PlayerClient getClient() {
+    public PlayerInterface getClient() {
         return client;
     }
 
-    public void setPlayer(Player player, PlayerClient client) {
+    public void setPlayer(Player player, PlayerInterface client) {
         this.player = player;
         this.client = client;
     }
@@ -41,31 +42,31 @@ public abstract class GodController {
     public String playTurn() {
         ArrayList<Worker> playableWorkers = new ArrayList<Worker>();
         for (Worker worker : player.getWorkers()) {
-            if (checkWorker(worker)) playableWorkers.add(worker);
+            if (canPlay(worker)) playableWorkers.add(worker);
         }
         if (playableWorkers.size() == 0) return "LOST";
         if (playableWorkers.size() == 1) {
             activeWorker = playableWorkers.get(0);
         } else {
-            activeWorker = client.selectWorker(playableWorkers);
+            activeWorker = client.chooseWorker(playableWorkers);
         }
         return runPhases();
     }
 
-    private boolean checkWorker(Worker worker) {
-        return findPossibleMoves(worker).size() > 0;
+    protected boolean canPlay(Worker worker) {
+        return findPossibleMoves(worker.getPosition()).size() > 0;
     }
 
-    String runPhases() {
+    protected String runPhases() {
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
         return "NEXT";
     }
 
-    void movePhase() {
-        ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker);
-        Cell movePosition = client.selectPosition(possibleMoves);
+    protected void movePhase() {
+        ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
+        Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalArgumentException e) {
@@ -73,9 +74,9 @@ public abstract class GodController {
         }
     }
 
-    void buildPhase() throws NullPointerException {
-        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker);
-        Cell buildPosition = client.selectPosition(possibleBuilds);
+    protected void buildPhase() {
+        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
+        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
             buildPosition.build();
         } catch (IllegalStateException e) {
@@ -83,26 +84,26 @@ public abstract class GodController {
         }
     }
 
-    boolean checkWin() {
+    protected boolean checkWin() {
         return activeWorker.getPosition().getBuildLevel() == 3;
     }
 
-    ArrayList<Cell> findPossibleMoves(Worker worker) {
-        ArrayList<Cell> neighbors = board.getNeighbors(worker.getPosition());
+    protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+        ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
-            if (!cell.hasWorker() && !cell.isDomed() && (cell.getBuildLevel() <= worker.getPosition().getBuildLevel() + 1))
+            if (!cell.hasWorker() && !cell.isDomed() && (cell.getBuildLevel() <= workerPosition.getBuildLevel() + 1))
                 possibleMoves.add(cell);
         }
         for (OpponentModifier modifier : game.getActiveModifiers()) {
             if (modifier.getPlayer() == player) continue;
-            possibleMoves = modifier.getGodCard().getController().limitMoves(worker, possibleMoves);
+            possibleMoves = modifier.getGodCard().getController().limitMoves(workerPosition, possibleMoves);
         }
         return possibleMoves;
     }
 
-    ArrayList<Cell> findPossibleBuilds(Worker worker) {
-        ArrayList<Cell> neighbors = board.getNeighbors(worker.getPosition());
+    protected ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
+        ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
             if (!cell.hasWorker() && !cell.isDomed())
@@ -110,16 +111,16 @@ public abstract class GodController {
         }
         for (OpponentModifier modifier : game.getActiveModifiers()) {
             if (modifier.getPlayer() == player) continue;
-            possibleBuilds = modifier.getGodCard().getController().limitBuilds(worker, possibleBuilds);
+            possibleBuilds = modifier.getGodCard().getController().limitBuilds(workerPosition, possibleBuilds);
         }
         return possibleBuilds;
     }
 
-    ArrayList<Cell> limitMoves(Worker worker, ArrayList<Cell> possibleMoves) {
+    public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         return possibleMoves;
     }
 
-    ArrayList<Cell> limitBuilds(Worker worker, ArrayList<Cell> possibleBuilds) {
+    public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
     }
 
