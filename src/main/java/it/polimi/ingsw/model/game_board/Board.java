@@ -28,6 +28,11 @@ public class Board {
         return cells[i][j];
     }
 
+    public Cell setCell(Cell cell, int i, int j) throws ArrayIndexOutOfBoundsException {
+        if (i < 0 || i >= 5 || j < 0 || j >= 5) throw new ArrayIndexOutOfBoundsException();
+        cells[i][j] = cell;
+    }
+
     /**
      *
      * @param pos the cell indicating the position we want to know the neighbors of
