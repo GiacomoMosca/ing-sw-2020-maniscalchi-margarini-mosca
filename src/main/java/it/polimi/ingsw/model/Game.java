@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.players.Player;
@@ -16,7 +17,7 @@ public class Game {
     private final Board board;
     private final Deck deck;
     private Player activePlayer;
-    private ArrayList<OpponentModifier> activeModifiers;
+    private ArrayList<Card> activeModifiers;
     private Player winner;
 
     /**
@@ -32,7 +33,7 @@ public class Game {
         board = new Board();
         deck = new Deck();
         activePlayer = p1;
-        activeModifiers = new ArrayList<OpponentModifier>();
+        activeModifiers = new ArrayList<Card>();
         winner = null;
     }
 
@@ -108,8 +109,8 @@ public class Game {
      *
      * @return all the active Modifiers
      */
-    public ArrayList<OpponentModifier> getActiveModifiers() {
-        return new ArrayList<OpponentModifier>(activeModifiers);
+    public ArrayList<Card> getActiveModifiers() {
+        return new ArrayList<Card>(activeModifiers);
     }
 
     /**
@@ -117,7 +118,7 @@ public class Game {
      *
      * @param modifier
      */
-    public void addModifier(OpponentModifier modifier) {
+    public void addModifier(Card modifier) {
         activeModifiers.add(modifier);
     }
 
@@ -126,7 +127,7 @@ public class Game {
      *
      * @param modifier
      */
-    public void removeModifier(OpponentModifier modifier) {
+    public void removeModifier(Card modifier) {
         activeModifiers.remove(modifier);
     }
 

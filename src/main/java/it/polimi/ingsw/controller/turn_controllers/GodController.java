@@ -2,20 +2,21 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.model.OpponentModifier;
 import it.polimi.ingsw.view.PlayerInterface;
 
 import java.util.ArrayList;
 
 public abstract class GodController {
 
-    protected GameController gameController;
-    protected Game game;
-    protected Board board;
+    protected final GameController gameController;
+    protected final Game game;
+    protected final Board board;
+    protected Card card;
     protected Player player;
     protected PlayerInterface client;
     protected Worker activeWorker;
@@ -25,6 +26,19 @@ public abstract class GodController {
         this.game = gameController.getGame();
         this.board = this.game.getBoard();
     }
+
+    public abstract Card generateCard(); /* {
+        Card card = new Card(
+                "god",
+                "title",
+                "description",
+                set (1: Simple, 2: Advanced),
+                alwaysActiveModifier,
+                this
+        );
+        this.card = card;
+        return card;
+    } */
 
     public Player getPlayer() {
         return player;
@@ -95,9 +109,13 @@ public abstract class GodController {
             if (!cell.hasWorker() && !cell.isDomed() && (cell.getBuildLevel() <= workerPosition.getBuildLevel() + 1))
                 possibleMoves.add(cell);
         }
-        for (OpponentModifier modifier : game.getActiveModifiers()) {
-            if (modifier.getPlayer() == player) continue;
-            possibleMoves = modifier.getGodCard().getController().limitMoves(workerPosition, possibleMoves);
+        return findLegalMoves(workerPosition, possibleMoves);
+    }
+
+    protected ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+        for (Card modifier : game.getActiveModifiers()) {
+            if (modifier.getController().getPlayer() == player) continue;
+            possibleMoves = modifier.getController().limitMoves(workerPosition, possibleMoves);
         }
         return possibleMoves;
     }
@@ -109,9 +127,13 @@ public abstract class GodController {
             if (!cell.hasWorker() && !cell.isDomed())
                 possibleBuilds.add(cell);
         }
-        for (OpponentModifier modifier : game.getActiveModifiers()) {
-            if (modifier.getPlayer() == player) continue;
-            possibleBuilds = modifier.getGodCard().getController().limitBuilds(workerPosition, possibleBuilds);
+        return findLegalBuilds(workerPosition, possibleBuilds);
+    }
+
+    protected ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+        for (Card modifier : game.getActiveModifiers()) {
+            if (modifier.getController().getPlayer() == player) continue;
+            possibleBuilds = modifier.getController().limitBuilds(workerPosition, possibleBuilds);
         }
         return possibleBuilds;
     }

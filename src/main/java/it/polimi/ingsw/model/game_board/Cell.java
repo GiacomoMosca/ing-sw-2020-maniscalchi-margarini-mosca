@@ -48,6 +48,9 @@ public class Cell {
         return buildLevel;
     }
 
+    public void setBuildLevel(int buildLevel) {
+        this.buildLevel = buildLevel;
+    }
 
     /**
      * builds a level on the cell, or a dome if the cell has already reached the maximum build level
