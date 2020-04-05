@@ -9,10 +9,20 @@ import java.util.ArrayList;
 
 public class MinotaurController extends GodController{
 
+    /**
+     * creates a Minotaur controller for this game
+     *
+     * @param gameController
+     */
     public MinotaurController(GameController gameController) {
         super(gameController);
     }
 
+    /**
+     * sets all the attributes of the God Card Minotaur to their correct values
+     *
+     * @return the complete Card
+     */
     @Override
     public Card generateCard() {
         Card card = new Card(
@@ -27,6 +37,10 @@ public class MinotaurController extends GodController{
         return card;
     }
 
+    /**
+     * handles the moving phase of the turn, allowing pushing away opponent workers
+     *
+     */
     @Override
     protected void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -58,6 +72,13 @@ public class MinotaurController extends GodController{
         }
     }
 
+    /**
+     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
+     * also allows the worker to move to cells occupied by opponents (if they can be pushed away)
+     *
+     * @param workerPosition the position of the worker
+     * @return all the cells where a worker can move
+     */
     @Override
     protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
