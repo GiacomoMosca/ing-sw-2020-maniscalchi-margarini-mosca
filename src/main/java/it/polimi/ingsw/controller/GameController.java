@@ -10,4 +10,8 @@ public class GameController {
         return game;
     }
 
+    public void displayBoard() {
+
+    }
+
 }

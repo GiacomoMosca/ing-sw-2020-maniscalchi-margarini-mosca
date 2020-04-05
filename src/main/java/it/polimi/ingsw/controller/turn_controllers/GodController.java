@@ -20,6 +20,7 @@ public abstract class GodController {
     protected Player player;
     protected PlayerInterface client;
     protected Worker activeWorker;
+    protected Cell startingPosition;
 
     public GodController(GameController gameController) {
         this.gameController = gameController;
@@ -53,25 +54,13 @@ public abstract class GodController {
         this.client = client;
     }
 
-    public String playTurn() {
-        ArrayList<Worker> playableWorkers = new ArrayList<Worker>();
-        for (Worker worker : player.getWorkers()) {
-            if (canPlay(worker)) playableWorkers.add(worker);
-        }
-        if (playableWorkers.size() == 0) return "LOST";
-        if (playableWorkers.size() == 1) {
-            activeWorker = playableWorkers.get(0);
-        } else {
-            activeWorker = client.chooseWorker(playableWorkers);
-        }
-        return runPhases();
-    }
-
-    protected boolean canPlay(Worker worker) {
+    public boolean canPlay(Worker worker) {
         return findPossibleMoves(worker.getPosition()).size() > 0;
     }
 
-    protected String runPhases() {
+    public String runPhases(Worker worker) {
+        activeWorker = worker;
+        startingPosition = worker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
@@ -86,6 +75,7 @@ public abstract class GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
+        gameController.displayBoard();
     }
 
     protected void buildPhase() {
@@ -96,10 +86,12 @@ public abstract class GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
+        gameController.displayBoard();
     }
 
     protected boolean checkWin() {
-        return activeWorker.getPosition().getBuildLevel() == 3;
+        return (activeWorker.getPosition().getBuildLevel() == 3) &&
+                (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1);
     }
 
     protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.players.Worker;
 
 import java.util.ArrayList;
 
-public class MinotaurController extends GodController{
+public class MinotaurController extends GodController {
 
     public MinotaurController(GameController gameController) {
         super(gameController);
