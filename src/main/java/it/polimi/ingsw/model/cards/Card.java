@@ -34,10 +34,18 @@ public class Card {
         return god;
     }
 
+    /**
+     *
+     * @return the description of this card
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     *
+     * @return true if the Modifier associated with this card is always active, false otherwise
+     */
     public boolean hasAlwaysActiveModifier() {
         return alwaysActiveModifier;
     }

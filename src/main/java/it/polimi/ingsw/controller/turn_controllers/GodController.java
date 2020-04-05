@@ -21,12 +21,24 @@ public abstract class GodController {
     protected PlayerInterface client;
     protected Worker activeWorker;
 
+
+    /**
+     * creates a God Controller for this game
+     *
+     * @param gameController
+     */
     public GodController(GameController gameController) {
         this.gameController = gameController;
         this.game = gameController.getGame();
         this.board = this.game.getBoard();
     }
 
+
+    /**
+     * sets all the attributes of the card to their correct values
+     *
+     * @return a complete Card
+     */
     public abstract Card generateCard(); /* {
         Card card = new Card(
                 "god",
@@ -40,19 +52,38 @@ public abstract class GodController {
         return card;
     } */
 
+    /**
+     *
+     * @return the client associated with this GodController
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     *
+     * @return the client associated with the player
+     */
     public PlayerInterface getClient() {
         return client;
     }
 
+    /**
+     * sets the attributes player and client to the values passed as arguments
+     *
+     * @param player the player
+     * @param client the client associated with this player
+     */
     public void setPlayer(Player player, PlayerInterface client) {
         this.player = player;
         this.client = client;
     }
 
+    /**
+     * checks whether at least one worker is allowed to move; then handles the turn
+     *
+     * @return "LOST" if the player lost the game, "WON" if the player won the game, "NEXT" if the game goes on
+     */
     public String playTurn() {
         ArrayList<Worker> playableWorkers = new ArrayList<Worker>();
         for (Worker worker : player.getWorkers()) {
@@ -67,10 +98,22 @@ public abstract class GodController {
         return runPhases();
     }
 
+
+    /**
+     * checks if the worker can move
+     *
+     * @param worker
+     * @return true if the worker can move, false otherwise
+     */
     protected boolean canPlay(Worker worker) {
         return findPossibleMoves(worker.getPosition()).size() > 0;
     }
 
+    /**
+     * handles the basic phases of a turn: moving and building
+     *
+     * @return "WON" if the player won, "NEXT" if the game goes on
+     */
     protected String runPhases() {
         movePhase();
         if (checkWin()) return "WON";
@@ -78,6 +121,10 @@ public abstract class GodController {
         return "NEXT";
     }
 
+    /**
+     * handles the moving phase of the turn
+     *
+     */
     protected void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
@@ -88,6 +135,10 @@ public abstract class GodController {
         }
     }
 
+    /**
+     * handles the building phase of the turn
+     *
+     */
     protected void buildPhase() {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
@@ -102,6 +153,12 @@ public abstract class GodController {
         return activeWorker.getPosition().getBuildLevel() == 3;
     }
 
+    /**
+     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
+     *
+     * @param workerPosition the position of the worker
+     * @return all the cells where a worker can move
+     */
     protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
@@ -112,6 +169,13 @@ public abstract class GodController {
         return findLegalMoves(workerPosition, possibleMoves);
     }
 
+    /**
+     * returns all the legal moves, applying possible restrictions due to active God Power Cards
+     *
+     * @param workerPosition the position of the worker
+     * @param possibleMoves all the cells where the worker can move, with the only restrictions due to the general rules
+     * @return all the cells where a worker can effectively move
+     */
     protected ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
@@ -120,6 +184,12 @@ public abstract class GodController {
         return possibleMoves;
     }
 
+    /**
+     * returns all the cells where a worker can build, with the only restrictions due to the general rules (other workers and domes)
+     *
+     * @param workerPosition the position of the worker
+     * @return all the cells where a worker can build
+     */
     protected ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
@@ -130,6 +200,13 @@ public abstract class GodController {
         return findLegalBuilds(workerPosition, possibleBuilds);
     }
 
+    /**
+     * returns all the legal builds, applying possible restrictions due to active God Power Cards
+     *
+     * @param workerPosition the position of the worker
+     * @param possibleBuilds all the cells where the worker can build, with the only resctrictions due to the general rules
+     * @return all the cells where a worker can effectively build
+     */
     protected ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
@@ -138,10 +215,26 @@ public abstract class GodController {
         return possibleBuilds;
     }
 
+    /**
+     * gets a list containing all the cells where an opponent worker can move and creates another list, removing from
+     * the previous all the cells that are not allowed due to this God Power Card
+     *
+     * @param workerPosition the position of the worker
+     * @param possibleMoves all the cells where the worker can move, considering only the game restrictions
+     * @return all the cells where the worker is actually able to build
+     */
     public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         return possibleMoves;
     }
 
+    /**
+     * gets a list containing all the cells where an opponent worker can build and creates another list, removing from
+     * the previous all the cells that are not allowed due to this God Power Card
+     *
+     * @param workerPosition the position of the worker
+     * @param possibleBuilds all the cells where the worker is able to build, considering only the game restrictions
+     * @return all the cells where the worker is actually able to build
+     */
     public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
     }

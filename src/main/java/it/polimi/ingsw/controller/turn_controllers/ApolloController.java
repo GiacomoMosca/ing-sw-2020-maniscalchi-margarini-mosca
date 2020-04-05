@@ -9,10 +9,21 @@ import java.util.ArrayList;
 
 public class ApolloController extends GodController {
 
+    /**
+     * creates an Apollo controller for this game
+     *
+     * @param gameController
+     */
     public ApolloController(GameController gameController) {
         super(gameController);
     }
 
+
+    /**
+     * sets all the attributes of the God Card Apollo to their correct values
+     *
+     * @return a complete Card
+     */
     @Override
     public Card generateCard() {
         Card card = new Card(
@@ -27,6 +38,10 @@ public class ApolloController extends GodController {
         return card;
     }
 
+    /**
+     * handles the moving phase of the turn, and eventually allows swapping position with opponents
+     *
+     */
     @Override
     protected void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -49,6 +64,13 @@ public class ApolloController extends GodController {
         }
     }
 
+    /**
+     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
+     * and allows the movement to cells occupied by opponents
+     *
+     * @param workerPosition the position of the worker
+     * @return all the cells where a worker can move
+     */
     @Override
     protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
