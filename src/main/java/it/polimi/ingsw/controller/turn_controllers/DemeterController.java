@@ -58,5 +58,6 @@ public class DemeterController extends GodController {
                 System.out.println("ERROR: illegal build");
             }
         }
+        gameController.displayBoard();
     }
 }

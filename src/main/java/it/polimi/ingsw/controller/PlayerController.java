@@ -16,10 +16,15 @@ public class PlayerController {
     public PlayerController(Player player, PlayerInterface client) {
         this.player = player;
         this.client = client;
+        player.setController(this);
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public PlayerInterface getClient() {
+        return client;
     }
 
     public GodController getGodController() {

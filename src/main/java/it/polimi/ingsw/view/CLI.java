@@ -42,8 +42,9 @@ public class CLI implements UI {
             Worker worker = workers.get(i);
             if (i > 0) output.append(", ");
             output.append(i + ": ");
-            output.append("[" + worker.getPosition().getPosX() + ", " + worker.getPosition().getPosY() + "]");
+            output.append("[" + worker.getPosition().getPosY() + ", " + worker.getPosition().getPosX() + "]");
         }
+        output.append("\n");
         output.append("\n");
         System.out.println(output);
         return workers.get(chooseInt(workers.size()));
@@ -57,7 +58,7 @@ public class CLI implements UI {
             Cell cell = possibleMoves.get(i);
             if (i > 0) output.append(", ");
             output.append(i + ": ");
-            output.append("[" + cell.getPosX() + ", " + cell.getPosY() + "]");
+            output.append("[" + cell.getPosY() + ", " + cell.getPosX() + "]");
         }
         output.append("\n");
         System.out.println(output);
@@ -72,7 +73,7 @@ public class CLI implements UI {
             Cell cell = possibleBuilds.get(i);
             if (i > 0) output.append(", ");
             output.append(i + ": ");
-            output.append("[" + cell.getPosX() + ", " + cell.getPosY() + "]");
+            output.append("[" + cell.getPosY() + ", " + cell.getPosX() + "]");
         }
         output.append("\n");
         System.out.println(output);
@@ -94,11 +95,11 @@ public class CLI implements UI {
     private int chooseInt(int arraySize) {
         Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
-        while (input <= 0 || input >= arraySize) {
+        while (input < 0 || input >= arraySize) {
             System.out.println("Invalid input. \n");
             input = scanner.nextInt();
         }
-        return input - 1;
+        return input;
     }
 
 }

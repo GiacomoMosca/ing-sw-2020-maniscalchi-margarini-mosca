@@ -18,7 +18,7 @@ public class PlayerInterface {
         client.displayBoard(board);
     }
 
-    public void printMessage(String message) {
+    public void displayMessage(String message) {
         client.displayMessage(message);
     }
 

@@ -61,5 +61,6 @@ public class HephaestusController extends GodController {
                 }
             }
         }
+        gameController.displayBoard();
     }
 }

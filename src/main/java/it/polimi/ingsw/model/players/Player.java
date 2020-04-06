@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.players;
 
+import it.polimi.ingsw.controller.PlayerController;
 import it.polimi.ingsw.model.cards.Card;
 
 import java.util.ArrayList;
@@ -8,8 +9,9 @@ public class Player {
 
     private final String id;
     private final String color;
+    private PlayerController controller;
     private Card godCard;
-    private final ArrayList<Worker> workers;
+    private ArrayList<Worker> workers;
 
     /**
      * sets all the attributes associated with the player
@@ -38,6 +40,14 @@ public class Player {
      */
     public String getColor() {
         return color;
+    }
+
+    public PlayerController getController() {
+        return controller;
+    }
+
+    public void setController(PlayerController controller) {
+        this.controller = controller;
     }
 
     /**

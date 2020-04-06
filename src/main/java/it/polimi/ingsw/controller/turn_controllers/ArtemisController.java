@@ -4,6 +4,8 @@ package it.polimi.ingsw.controller.turn_controllers;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.model.players.Worker;
+
 import java.util.ArrayList;
 
 public class ArtemisController extends GodController{
@@ -46,7 +48,9 @@ public class ArtemisController extends GodController{
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    protected String runPhases() {
+    public String runPhases(Worker worker) {
+        activeWorker = worker;
+        startingPosition = worker.getPosition();
         secondMove=false;
         beginningCell=activeWorker.getPosition();
         movePhase();

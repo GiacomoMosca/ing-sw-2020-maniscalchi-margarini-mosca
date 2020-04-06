@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.model.players.Worker;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,10 @@ public class HestiaController extends GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    protected String runPhases() {
+    @Override
+    public String runPhases(Worker worker) {
+        activeWorker = worker;
+        startingPosition = worker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();

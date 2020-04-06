@@ -70,6 +70,7 @@ public class MinotaurController extends GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
+        gameController.displayBoard();
     }
 
     /**

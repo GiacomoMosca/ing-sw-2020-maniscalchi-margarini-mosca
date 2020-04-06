@@ -52,5 +52,6 @@ public class AtlasController extends GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
+        gameController.displayBoard();
     }
 }

@@ -55,6 +55,7 @@ public class AthenaController extends GodController {
             game.addModifier(card);
         }
         //
+        gameController.displayBoard();
     }
 
     /**

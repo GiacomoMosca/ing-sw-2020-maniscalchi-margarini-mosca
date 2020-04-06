@@ -62,6 +62,7 @@ public class ApolloController extends GodController {
                 System.out.println("ERROR: illegal move");
             }
         }
+        gameController.displayBoard();
     }
 
     /**

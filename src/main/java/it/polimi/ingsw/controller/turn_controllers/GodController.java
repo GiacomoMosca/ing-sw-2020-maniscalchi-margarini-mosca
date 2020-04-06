@@ -86,7 +86,7 @@ public abstract class GodController {
      * @param worker
      * @return true if the worker can move, false otherwise
      */
-    protected boolean canPlay(Worker worker) {
+    public boolean canPlay(Worker worker) {
         return findPossibleMoves(worker.getPosition()).size() > 0;
     }
 
@@ -95,7 +95,7 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    protected String runPhases() {
+    public String runPhases(Worker worker) {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();

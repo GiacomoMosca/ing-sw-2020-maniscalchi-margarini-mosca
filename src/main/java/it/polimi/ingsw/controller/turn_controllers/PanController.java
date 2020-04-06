@@ -6,8 +6,6 @@ import it.polimi.ingsw.model.game_board.Cell;
 
 public class PanController extends GodController {
 
-    private Cell previousPosition;
-
     /**
      * creates a Pan controller for this game
      *
@@ -37,25 +35,11 @@ public class PanController extends GodController {
     }
 
     /**
-     * handles the phases of a turn: moving and building
-     *
-     * @return "WON" if the player won, "NEXT" if the game goes on
-     */
-    @Override
-    protected String runPhases() {
-        previousPosition=activeWorker.getPosition();
-        movePhase();
-        if (checkWin()) return "WON";
-        buildPhase();
-        return "NEXT";
-    }
-
-    /**
      * @return true if a worker moves up from level two to level three or moves down two or more levels, false otherwise
      */
     @Override
     protected boolean checkWin() {
         //Player also win if his worker moves down two or more levels
-        return ((activeWorker.getPosition().getBuildLevel() == 3) || (previousPosition.getBuildLevel()-activeWorker.getPosition().getBuildLevel()>=2));
+        return ((activeWorker.getPosition().getBuildLevel() == 3) || (startingPosition.getBuildLevel()-activeWorker.getPosition().getBuildLevel()>=2));
     }
 }

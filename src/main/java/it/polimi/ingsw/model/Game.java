@@ -48,7 +48,8 @@ public class Game {
         if (!players.contains(currPlayer)) throw new IllegalArgumentException();
         int i = players.indexOf(currPlayer) + 1;
         if (i >= players.size()) i = 0;
-        return players.get(i);
+        activePlayer = players.get(i);
+        return activePlayer;
     }
 
     /**
