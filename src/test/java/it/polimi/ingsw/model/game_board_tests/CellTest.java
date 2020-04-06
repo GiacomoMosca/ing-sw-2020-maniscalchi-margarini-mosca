@@ -53,6 +53,7 @@ public class CellTest {
         cell.build();
         cell.build();
         cell.build();
+        cell.build();
     }
 
     @Test
@@ -70,7 +71,7 @@ public class CellTest {
     public void getWorker_NoInputGiven_ShouldReturnWorkerInTheCell() {
         assertNull(cell.getWorker());
         cell.setWorker(worker);
-        assertEquals(cell.getWorker(),worker);
+        assertSame(cell.getWorker(),worker);
     }
 
     @Test

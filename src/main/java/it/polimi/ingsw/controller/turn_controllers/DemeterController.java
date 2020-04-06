@@ -8,10 +8,20 @@ import java.util.ArrayList;
 
 public class DemeterController extends GodController {
 
+    /**
+     * creates a Demeter controller for this game
+     *
+     * @param gameController
+     */
     public DemeterController(GameController gameController) {
         super(gameController);
     }
 
+    /**
+     * sets all the attributes of the God Card Demeter to their correct values
+     *
+     * @return a complete Card
+     */
     @Override
     public Card generateCard() {
         Card card = new Card(
@@ -26,6 +36,10 @@ public class DemeterController extends GodController {
         return card;
     }
 
+    /**
+     * handles the building phase of the turn, and eventually allows building one additional time, but not on the same space
+     *
+     */
     @Override
     protected void buildPhase() throws NullPointerException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
