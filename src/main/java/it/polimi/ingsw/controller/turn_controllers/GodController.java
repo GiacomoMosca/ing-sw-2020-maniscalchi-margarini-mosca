@@ -20,6 +20,7 @@ public abstract class GodController {
     protected Player player;
     protected PlayerInterface client;
     protected Worker activeWorker;
+    protected Cell startingPosition;
 
 
     /**
@@ -80,26 +81,6 @@ public abstract class GodController {
     }
 
     /**
-     * checks whether at least one worker is allowed to move; then handles the turn
-     *
-     * @return "LOST" if the player lost the game, "WON" if the player won the game, "NEXT" if the game goes on
-     */
-    public String playTurn() {
-        ArrayList<Worker> playableWorkers = new ArrayList<Worker>();
-        for (Worker worker : player.getWorkers()) {
-            if (canPlay(worker)) playableWorkers.add(worker);
-        }
-        if (playableWorkers.size() == 0) return "LOST";
-        if (playableWorkers.size() == 1) {
-            activeWorker = playableWorkers.get(0);
-        } else {
-            activeWorker = client.chooseWorker(playableWorkers);
-        }
-        return runPhases();
-    }
-
-
-    /**
      * checks if the worker can move
      *
      * @param worker
@@ -115,6 +96,8 @@ public abstract class GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     protected String runPhases() {
+        activeWorker = worker;
+        startingPosition = worker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
@@ -133,6 +116,7 @@ public abstract class GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
+        gameController.displayBoard();
     }
 
     /**
@@ -147,10 +131,12 @@ public abstract class GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
+        gameController.displayBoard();
     }
 
     protected boolean checkWin() {
-        return activeWorker.getPosition().getBuildLevel() == 3;
+        return (activeWorker.getPosition().getBuildLevel() == 3) &&
+                (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1);
     }
 
     /**
