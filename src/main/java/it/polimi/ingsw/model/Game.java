@@ -107,6 +107,12 @@ public class Game {
 
     /**
      *
+     * @return all the players
+     */
+    public ArrayList<Player> getPlayers(){ return new ArrayList<Player>(players);}
+
+    /**
+     *
      * @return all the active Modifiers
      */
     public ArrayList<Card> getActiveModifiers() {
