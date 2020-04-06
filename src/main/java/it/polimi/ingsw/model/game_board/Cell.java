@@ -48,6 +48,10 @@ public class Cell {
         return buildLevel;
     }
 
+    /**
+     *
+     * @param buildLevel the building-level to set this cell to
+     */
     public void setBuildLevel(int buildLevel) {
         this.buildLevel = buildLevel;
     }

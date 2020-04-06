@@ -28,9 +28,17 @@ public class Board {
         return cells[i][j];
     }
 
-    public void setCell(Cell cell, int i, int j) throws ArrayIndexOutOfBoundsException {
+    /**
+     *
+     * @param cell the Cell we want to set
+     * @param i the x-coordinate of the cell
+     * @param j the y-coordinate of the cell
+     * @return the cell we set
+     * @throws ArrayIndexOutOfBoundsException
+     */
+    public Cell setCell(Cell cell, int i, int j) throws ArrayIndexOutOfBoundsException {
         if (i < 0 || i >= 5 || j < 0 || j >= 5) throw new ArrayIndexOutOfBoundsException();
-        cells[i][j] = cell;
+        return cells[i][j] = cell;
     }
 
     /**
