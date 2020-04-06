@@ -32,8 +32,8 @@ public class GameTest {
     @Test
     public void getNextPlayer_CurrentActivePlayerGiven_ShouldReturnNextActivePlayer() {
         game.addPlayer(player2);
-        assertEquals(game.getNextPlayer(player1),player2);
-        assertEquals(game.getNextPlayer(player2),player1);
+        assertSame(game.getNextPlayer(player1),player2);
+        assertSame(game.getNextPlayer(player2),player1);
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -44,7 +44,7 @@ public class GameTest {
     @Test
     public void addPlayer_PlayerToAddGiven_ShouldAddANewPlayer() {
         game.addPlayer(player2);
-        assertEquals(game.getNextPlayer(player1),player2);
+        assertSame(game.getNextPlayer(player1),player2);
     }
 
     @Test (expected = IndexOutOfBoundsException.class)
@@ -76,16 +76,14 @@ public class GameTest {
     }
 
     @Test
-    public void getCurrentTurn_NoInoutGiven_ShouldReturnCurrentTurn() {
-        Turn turn=new Turn(player1);
-        assertEquals(game.getCurrentTurn(),turn);
+    public void getActivePlayer_NoInputGiven_ShouldReturnActivePlayer() {
+        assertSame(game.getActivePlayer(),player1);
     }
 
     @Test
-    public void nextTurn_CurrentPlayerGiven_ShouldCreateNewTurnForNextPlayer() {
-        game.addPlayer(player2);
-        game.nextTurn(player1);
-        assertEquals(game.getCurrentTurn().getActivePlayer(),player2);
+    public void setActivePlayer_NextActivePlayerGiven_ShouldSetNewActivePlayer() {
+        game.setActivePlayer(player2);
+        assertSame(game.getActivePlayer(),player2);
     }
 
     @Test
@@ -118,7 +116,7 @@ public class GameTest {
     public void getWinner_NoInputGiven_ShouldReturnWinner() {
         assertNull(game.getWinner());
         game.setWinner(player1);
-        assertEquals(game.getWinner(),player1);
+        assertSame(game.getWinner(),player1);
     }
 
     @Test
@@ -131,7 +129,8 @@ public class GameTest {
     @Test
     public void setWinner_WinnerGiven_ShouldSetTheWinner() {
         game.setWinner(player1);
-        assertEquals(game.getWinner(),player1);
+        assertSame(game.getWinner(),player1);
         assertTrue(game.hasWinner());
     }
+
 }

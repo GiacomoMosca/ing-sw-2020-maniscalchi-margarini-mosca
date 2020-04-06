@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model.players_tests;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.turn_controllers.ApolloController;
+import it.polimi.ingsw.controller.turn_controllers.GodController;
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
@@ -14,11 +18,16 @@ public class PlayerTest {
     Player player=null;
     Card card=null;
     Worker worker1,worker2=null;
+    Game game=null;
+    GodController apolloController=null;
+    GameController gameController=null;
 
     @Before
     public void setUp() {
+        game = new Game(player,1);
+        apolloController = new ApolloController(gameController);
         player=new Player("Eni","Red");
-        card=new Card("Zeus",null);
+        card=new Card("Zeus", "God of the Sky", "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.", 1, false, apolloController);
         worker1=new Worker(player);
         worker2=new Worker(player);
     }
@@ -41,13 +50,13 @@ public class PlayerTest {
     public void getGodCard_NoInputGiven_ShouldReturnPlayerGodCard() {
         assertNull(player.getGodCard());
         player.setGodCard(card);
-        assertEquals(player.getGodCard(),card);
+        assertSame(player.getGodCard(),card);
     }
 
     @Test
     public void setGodCard_PlayerGodCardGiven_ShouldLinkPlayerWithHisGodCard() {
         player.setGodCard(card);
-        assertEquals(player.getGodCard(),card);
+        assertSame(player.getGodCard(),card);
     }
 
     @Test
