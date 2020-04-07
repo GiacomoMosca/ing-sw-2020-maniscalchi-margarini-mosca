@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.view.CLI;
+import it.polimi.ingsw.view.PlayerInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,9 +27,7 @@ public class DeckTest {
 
     @Before
     public void setUp() {
-        p1=new Player("Luca", "Giallo");
-        game=new Game(p1, 2);
-        gamecontroller=new GameController(game);
+        gamecontroller=new GameController(new PlayerInterface(new CLI()),2);
         gc1=new GodControllerConcrete(gamecontroller);
         deck=new Deck();
         card1=new Card("Rebecca", "a", "b", 1, true, gc1);

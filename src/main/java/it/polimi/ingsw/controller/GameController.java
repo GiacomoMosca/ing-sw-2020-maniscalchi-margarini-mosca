@@ -16,7 +16,7 @@ public class GameController {
     private ArrayList<Player> players;
     private ArrayList<String> colors;
 
-    public GameController(PlayerInterface client) {
+    public GameController(PlayerInterface client, int num) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
         colors.add("RED");
@@ -24,7 +24,7 @@ public class GameController {
         colors.add("GREEN");
         Player p1 = new Player(client.getId(), colors.get(0));
         PlayerController p1Controller = new PlayerController(p1, client);
-        game = new Game(p1, 2);
+        game = new Game(p1, num);
         playerControllers.add(p1Controller);
     }
 
