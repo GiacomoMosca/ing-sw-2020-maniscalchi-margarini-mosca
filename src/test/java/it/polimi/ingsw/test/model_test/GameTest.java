@@ -1,5 +1,10 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.test.model_test;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.turn_controllers.GodController;
+import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.players.Player;
@@ -11,18 +16,23 @@ import static org.junit.Assert.*;
 
 public class GameTest {
 
+    GameController gamecontroller;
     Game game=null;
     Player player1,player2,player3=null;
-    OpponentModifier modifier1,modifier2=null;
+    Card modifier1,modifier2=null;
+    GodController godcontroller1,godcontroller2;
 
     @Before
     public void setUp() {
         player1=new Player("Arianna","Giallo");
         player2=new Player("Luigi","Verde");
         player3=new Player("Gian","Cachi");
-        modifier1=new OpponentModifier(player1,false);
-        modifier2=new OpponentModifier(player2,true);
         game=new Game(player1,2);
+        gamecontroller=new GameController(game);
+        godcontroller1=new GodControllerConcrete(gamecontroller);
+        godcontroller2=new GodControllerConcrete(gamecontroller);
+        modifier1=new Card("dio1", "a", "b",1, false, godcontroller1);
+        modifier1=new Card("dio2", "d", "e",1, true, godcontroller2);
     }
 
     @After
@@ -132,5 +142,4 @@ public class GameTest {
         assertSame(game.getWinner(),player1);
         assertTrue(game.hasWinner());
     }
-
 }

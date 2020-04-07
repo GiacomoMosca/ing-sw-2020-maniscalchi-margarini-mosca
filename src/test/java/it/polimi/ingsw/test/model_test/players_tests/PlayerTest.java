@@ -1,8 +1,9 @@
-package it.polimi.ingsw.model.players_tests;
+package it.polimi.ingsw.test.model_test.players_tests;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.turn_controllers.ApolloController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
+import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.players.Player;
@@ -19,15 +20,16 @@ public class PlayerTest {
     Card card=null;
     Worker worker1,worker2=null;
     Game game=null;
-    GodController apolloController=null;
+    GodController godcontroller;
     GameController gameController=null;
 
     @Before
     public void setUp() {
         game = new Game(player,1);
-        apolloController = new ApolloController(gameController);
+        gameController=new GameController(game);
+        godcontroller=new GodControllerConcrete(gameController);
         player=new Player("Eni","Red");
-        card=new Card("Zeus", "God of the Sky", "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.", 1, false, apolloController);
+        card=new Card("a", "b", "c", 1, false, godcontroller);
         worker1=new Worker(player);
         worker2=new Worker(player);
     }

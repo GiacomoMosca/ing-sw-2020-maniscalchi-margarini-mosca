@@ -1,7 +1,12 @@
-package it.polimi.ingsw.model.cards_test;
+package it.polimi.ingsw.test.model_test.cards_test;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.turn_controllers.GodController;
+import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.players.Player;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,13 +17,21 @@ public class DeckTest {
 
     Deck deck = null;
     Card card1 = null;
-    Card card2 = null;
+    Card card2;
+    Player p1;
+    Game game;
+    GameController gamecontroller;
+    GodController gc1, gc2;
 
     @Before
     public void setUp() {
+        p1=new Player("Luca", "Giallo");
+        game=new Game(p1, 2);
+        gamecontroller=new GameController(game);
+        gc1=new GodControllerConcrete(gamecontroller);
         deck=new Deck();
-        card1=new Card("Rebecca",null);
-        card2=new Card("Giacomo",null);
+        card1=new Card("Rebecca", "a", "b", 1, true, gc1);
+        card2=new Card("Giacomo", "v", "x", 1, false, gc2);
     }
 
     @After
@@ -87,4 +100,5 @@ public class DeckTest {
     public void pickRandom_NoInput_ShouldThrowException() {
         deck.pickRandom(1);
     }
+
 }
