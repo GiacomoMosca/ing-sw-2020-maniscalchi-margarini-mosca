@@ -10,17 +10,14 @@ import it.polimi.ingsw.view.PlayerInterface;
 public class TestApp {
 
     public static void main(String[] args) {
-        Player p1 = new Player("a","yellow");
-        Player p2 = new Player("b","blue");
         CLI cli = new CLI();
-        PlayerInterface client = new PlayerInterface(cli);
-        client.displayMessage("SANTORINI - TEST \n\n\n\n");
-        PlayerController p1c = new PlayerController(p1, client);
-        PlayerController p2c = new PlayerController(p2, client);
-        Game game = new Game(p1, 2);
-        game.addPlayer(p2);
-        GameController gameController = new GameController(game);
-        gameController.gameSetUp();
+        PlayerInterface p1 = new PlayerInterface(cli);
+        p1.setId("a");
+        PlayerInterface p2 = new PlayerInterface(cli);
+        p2.setId("b");
+        p1.displayMessage("\n\nSANTORINI - TEST \n\n");
+        GameController gameController = new GameController(p1);
+        gameController.addPlayer(p2);
     }
 
 }

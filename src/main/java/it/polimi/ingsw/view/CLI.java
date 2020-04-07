@@ -11,21 +11,24 @@ public class CLI implements UI {
 
     public void displayBoard(Board board) {
         StringBuilder output = new StringBuilder();
+        output.append("    0  1  2  3  4 ");
+        output.append("\n");
         for (int i = 0; i < 5; i++) {
-            output.append("----------------");
+            output.append("  ----------------");
             output.append("\n");
+            output.append(i + " ");
             for (int j = 0; j < 5; j++) {
                 Cell cell = board.getCell(i, j);
                 output.append("|");
                 if (cell.isDomed()) output.append("X");
-                else output.append(cell.getBuildLevel());
+                else output.append(cell.getBuildLevel() == 0 ? " " : cell.getBuildLevel());
                 if (cell.hasWorker()) output.append(cell.getWorker().getOwner().getId());
                 else output.append(" ");
             }
             output.append("|");
             output.append("\n");
         }
-        output.append("----------------");
+        output.append("  ----------------");
         output.append("\n");
         System.out.println(output);
     }
@@ -47,7 +50,7 @@ public class CLI implements UI {
         output.append("\n");
         output.append("\n");
         System.out.println(output);
-        return workers.get(chooseInt(workers.size()));
+        return workers.get(chooseInt(workers.size(), null));
     }
 
     public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) {
@@ -62,7 +65,7 @@ public class CLI implements UI {
         }
         output.append("\n");
         System.out.println(output);
-        return possibleMoves.get(chooseInt(possibleMoves.size()));
+        return possibleMoves.get(chooseInt(possibleMoves.size(), null));
     }
 
     public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) {
@@ -77,7 +80,7 @@ public class CLI implements UI {
         }
         output.append("\n");
         System.out.println(output);
-        return possibleBuilds.get(chooseInt(possibleBuilds.size()));
+        return possibleBuilds.get(chooseInt(possibleBuilds.size(), null));
     }
 
     public boolean chooseYesNo(String query) {
@@ -92,7 +95,8 @@ public class CLI implements UI {
         return false;
     }
 
-    private int chooseInt(int arraySize) {
+    public int chooseInt(int arraySize, String message) {
+        if (message != null) System.out.println(message + "\n");
         Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
         while (input < 0 || input >= arraySize) {

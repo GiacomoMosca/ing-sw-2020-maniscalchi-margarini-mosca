@@ -5,122 +5,124 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.PlayerInterface;
 
 import java.util.ArrayList;
 
 public class GameController {
 
     private Game game;
+    private ArrayList<PlayerController> playerControllers;
     private ArrayList<Player> players;
+    private ArrayList<String> colors;
 
-    public GameController(Game game) {
-        this.game = game;
+    public GameController(PlayerInterface client) {
+        playerControllers = new ArrayList<PlayerController>();
+        colors = new ArrayList<String>();
+        colors.add("RED");
+        colors.add("BLUE");
+        colors.add("GREEN");
+        Player p1 = new Player(client.getId(), colors.get(0));
+        PlayerController p1Controller = new PlayerController(p1, client);
+        game = new Game(p1, 2);
+        playerControllers.add(p1Controller);
     }
 
     public Game getGame() {
         return game;
     }
 
+    public void addPlayer(PlayerInterface client) {
+        if (playerControllers.size() >= game.getPlayerNum()) {
+            System.out.println("ERROR: too many players");
+            return;
+        }
+        Player player = new Player(client.getId(), colors.get(playerControllers.size()));
+        PlayerController playerController = new PlayerController(player, client);
+        game.addPlayer(player);
+        playerControllers.add(playerController);
+        if (playerControllers.size() == game.getPlayerNum()) gameSetUp();
+    }
+
     public void gameSetUp() {
-        Deck deck = game.getDeck();
-        String result;
-        int i;
-
-        GodController
-                apolloController,
-                artemisController,
-                athenaController,
-                atlasController,
-                demeterController,
-                hephaestusController,
-                limusController,
-                minotaurController,
-                panController,
-                prometheusController,
-                zeusController;
-
-        apolloController = new ApolloController(this);
-        artemisController = new ArtemisController(this);
-        athenaController = new AthenaController(this);
-        atlasController = new AtlasController(this);
-        demeterController = new DemeterController(this);
-        hephaestusController = new HephaestusController(this);
-        limusController = new LimusController(this);
-        minotaurController = new MinotaurController(this);
-        panController = new PanController(this);
-        prometheusController = new PrometheusController(this);
-        zeusController = new ZeusController(this);
         ArrayList<GodController> controllers = new ArrayList<GodController>();
+        controllers.add(new ApolloController(this));
+        controllers.add(new ArtemisController(this));
+        controllers.add(new AthenaController(this));
+        controllers.add(new AtlasController(this));
+        controllers.add(new DemeterController(this));
+        controllers.add(new HephaestusController(this));
+        controllers.add(new HestiaController(this));
+        controllers.add(new LimusController(this));
+        controllers.add(new MinotaurController(this));
+        controllers.add(new PanController(this));
+        controllers.add(new PrometheusController(this));
+        controllers.add(new ZeusController(this));
 
-        controllers.add(apolloController);
-        controllers.add(artemisController);
-        controllers.add(athenaController);
-        controllers.add(atlasController);
-        controllers.add(demeterController);
-        controllers.add(hephaestusController);
-        controllers.add(limusController);
-        controllers.add(minotaurController);
-        controllers.add(panController);
-        controllers.add(prometheusController);
-        controllers.add(zeusController);
-
-        for (GodController godController : controllers){
+        Deck deck = game.getDeck();
+        for (GodController godController : controllers) {
             deck.addCard(godController.generateCard());
         }
 
-        deck.pickRandom(game.getPlayerNum());
-        i=0;
-
         players = game.getPlayers();
-        for(Player player : players)
-        {
-            player.setGodCard(deck.getPickedCards().get(i));
-            player.getController().setGodController(deck.getPickedCards().get(i).getController());
-            player.getController().getClient().displayMessage("You are " + deck.getPickedCards().get(i).getGod() + "\n");
-            i++;
+        deck.pickRandom(game.getPlayerNum());
+        for (int i = 0; i < game.getPlayerNum(); i++) {
+            players.get(i).setGodCard(deck.getPickedCards().get(i));
+            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
+            playerControllers.get(i).getClient().displayMessage(players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + "\n");
         }
 
+        displayBoard();
         placeWorkers();
 
         displayBoard();
-
-        // Gestisco i turni
-        while(!game.hasWinner()){
-            result = game.getActivePlayer().getController().playTurn();
-            if(result.equals("NEXT"))
-                game.getNextPlayer(game.getActivePlayer());
-            else
-                if (result.equals("LOST"))
-                    game.setWinner(game.getNextPlayer(game.getActivePlayer()));
-                else
-                    if(result.equals("WON"))
-                        game.setWinner(game.getActivePlayer());
-        }
-
+        playGame();
     }
 
     private void placeWorkers() {
-        Worker wA1 = new Worker(players.get(0));
-        wA1.setPosition(game.getBoard().getCell(0,0));
-        game.getBoard().getCell(0,0).setWorker(wA1);
-        players.get(0).addWorker(wA1);
-        Worker wA2 = new Worker(players.get(0));
-        wA2.setPosition(game.getBoard().getCell(0,4));
-        game.getBoard().getCell(0,4).setWorker(wA2);
-        players.get(0).addWorker(wA2);
-        Worker wB1 = new Worker(players.get(1));
-        wB1.setPosition(game.getBoard().getCell(4,0));
-        game.getBoard().getCell(4,0).setWorker(wB1);
-        players.get(1).addWorker(wB1);
-        Worker wB2 = new Worker(players.get(1));
-        wB2.setPosition(game.getBoard().getCell(4,4));
-        game.getBoard().getCell(4,4).setWorker(wB2);
-        players.get(1).addWorker(wB2);
+        for (int p = 0; p < game.getPlayerNum(); p++) {
+            PlayerController controller = playerControllers.get(p);
+            for (int i = 0; i < 2; ) {
+                int j = i + 1;
+                int posY = controller.getClient().chooseInt(5, players.get(p).getId() + ": Choose worker " + j + "'s starting position (X, then Y):");
+                int posX = controller.getClient().chooseInt(5, null);
+                if (game.getBoard().getCell(posX, posY).hasWorker()) {
+                    controller.getClient().displayMessage("Cell is full. \n");
+                }
+                else {
+                    Worker worker = new Worker(players.get(p));
+                    worker.setPosition(game.getBoard().getCell(posX, posY));
+                    players.get(p).addWorker(worker);
+                    displayBoard();
+                    i++;
+                }
+            }
+        }
+    }
+
+    private void playGame() {
+        while(!game.hasWinner()){
+            displayMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            String result = playerControllers.get(game.getActivePlayer()).playTurn();
+            if (result.equals("NEXT"))
+                game.getNextPlayer();
+            else if (result.equals("LOST"))
+                game.setWinner(players.get(game.getNextPlayer()));
+            else if(result.equals("WON"))
+                game.setWinner(players.get(game.getActivePlayer()));
+            else System.out.println("ERROR: invalid turn");
+        }
+        displayMessage(game.getWinner().getId() + " has won! \n\n");
     }
 
     public void displayBoard() {
-        for (Player p : players)
-            p.getController().getClient().displayBoard(game.getBoard());
+        for (PlayerController p : playerControllers)
+            p.getClient().displayBoard(game.getBoard());
+    }
+
+    public void displayMessage(String message) {
+        for (PlayerController p : playerControllers)
+            p.getClient().displayMessage(message);
     }
   
 }

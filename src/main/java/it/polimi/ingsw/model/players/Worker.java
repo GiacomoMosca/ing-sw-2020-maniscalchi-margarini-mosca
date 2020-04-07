@@ -39,6 +39,7 @@ public class Worker {
      * @param position
      */
     public void setPosition(Cell position) {
+        position.setWorker(this);
         this.position = position;
     }
 

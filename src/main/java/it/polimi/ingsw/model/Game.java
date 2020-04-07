@@ -16,7 +16,7 @@ public class Game {
     private final int playerNum;
     private final Board board;
     private final Deck deck;
-    private Player activePlayer;
+    private int activePlayer;
     private ArrayList<Card> activeModifiers;
     private Player winner;
 
@@ -32,24 +32,17 @@ public class Game {
         playerNum = num;
         board = new Board();
         deck = new Deck();
-        activePlayer = p1;
+        activePlayer = 0;
         activeModifiers = new ArrayList<Card>();
         winner = null;
     }
 
     /**
-     * returns the next player
      *
-     * @param currPlayer the player currently playing
-     * @return the player who will play next
-     * @throws IllegalArgumentException when the argument is not a player of the current Game
+     * @return all the players
      */
-    public Player getNextPlayer(Player currPlayer) throws IllegalArgumentException {
-        if (!players.contains(currPlayer)) throw new IllegalArgumentException();
-        int i = players.indexOf(currPlayer) + 1;
-        if (i >= players.size()) i = 0;
-        activePlayer = players.get(i);
-        return activePlayer;
+    public ArrayList<Player> getPlayers() {
+        return new ArrayList<Player>(players);
     }
 
     /**
@@ -93,24 +86,19 @@ public class Game {
      *
      * @return the active player
      */
-    public Player getActivePlayer() {
+    public int getActivePlayer() {
         return activePlayer;
     }
 
     /**
-     * sets the active player
+     * returns the next player
      *
-     * @param player
+     * @return the player who will play next
      */
-    public void setActivePlayer(Player player) {
-        activePlayer = player;
+    public int getNextPlayer() {
+        activePlayer = (activePlayer >= playerNum - 1) ? 0 : activePlayer + 1;
+        return activePlayer;
     }
-
-    /**
-     *
-     * @return all the players
-     */
-    public ArrayList<Player> getPlayers(){ return new ArrayList<Player>(players);}
 
     /**
      *
