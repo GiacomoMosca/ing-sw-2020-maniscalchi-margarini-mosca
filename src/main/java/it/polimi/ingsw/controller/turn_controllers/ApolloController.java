@@ -43,7 +43,7 @@ public class ApolloController extends GodController {
      *
      */
     @Override
-    protected void movePhase() {
+    public void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         // + allow swapping position with opponents
         Cell oldPosition = activeWorker.getPosition();
@@ -73,7 +73,7 @@ public class ApolloController extends GodController {
      * @return all the cells where a worker can move
      */
     @Override
-    protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+    public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

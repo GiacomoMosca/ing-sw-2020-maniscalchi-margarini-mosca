@@ -41,7 +41,7 @@ public class AtlasController extends GodController {
      *
      */
     @Override
-    protected void buildPhase() {
+    public void buildPhase() {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

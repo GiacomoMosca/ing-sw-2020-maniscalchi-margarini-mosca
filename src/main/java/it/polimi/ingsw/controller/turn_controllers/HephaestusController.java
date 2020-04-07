@@ -42,7 +42,7 @@ public class HephaestusController extends GodController {
      * handles the building phase of the turn, which can be duplicated if the player wants
      */
     @Override
-    protected void buildPhase() {
+    public void buildPhase() {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

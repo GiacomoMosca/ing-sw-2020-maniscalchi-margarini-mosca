@@ -41,7 +41,7 @@ public class AthenaController extends GodController {
      *
      */
     @Override
-    protected void movePhase() {
+    public void movePhase() {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);

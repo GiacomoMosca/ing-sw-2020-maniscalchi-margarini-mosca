@@ -93,7 +93,7 @@ public class PrometheusController extends GodController {
      *
      */
     @Override
-    protected void movePhase() {
+    public void movePhase() {
         ArrayList<Cell> possibleMoves;
         if (!wantBuildBefore)
             possibleMoves = findPossibleMoves(activeWorker.getPosition());

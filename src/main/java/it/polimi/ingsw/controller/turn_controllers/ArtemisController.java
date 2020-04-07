@@ -73,7 +73,7 @@ public class ArtemisController extends GodController{
      * @return all the cells where a worker can move
      */
     @Override
-    protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+    public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

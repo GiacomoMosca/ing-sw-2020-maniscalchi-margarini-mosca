@@ -43,7 +43,7 @@ public class ZeusController extends GodController {
      * @return all the cells where a worker can build
      */
     @Override
-    protected ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
+    public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

@@ -41,7 +41,7 @@ public class DemeterController extends GodController {
      *
      */
     @Override
-    protected void buildPhase() throws NullPointerException {
+    public void buildPhase() throws NullPointerException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
