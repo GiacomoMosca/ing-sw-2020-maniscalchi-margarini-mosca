@@ -20,4 +20,6 @@ public interface UI {
 
     public boolean chooseYesNo(String query);
 
+    public int chooseInt(int arraySize, String message);
+
 }

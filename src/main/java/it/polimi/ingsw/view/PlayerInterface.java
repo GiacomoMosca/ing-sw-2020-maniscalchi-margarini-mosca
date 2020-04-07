@@ -8,10 +8,19 @@ import java.util.ArrayList;
 
 public class PlayerInterface {
 
-    private UI client;
+    private final UI client;
+    private String id;
 
     public PlayerInterface(UI client) {
         this.client = client;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void displayBoard(Board board) {
@@ -36,6 +45,10 @@ public class PlayerInterface {
 
     public boolean chooseYesNo(String query) {
         return client.chooseYesNo(query);
+    }
+
+    public int chooseInt(int arraySize, String message) {
+        return client.chooseInt(arraySize, message);
     }
 
 }
