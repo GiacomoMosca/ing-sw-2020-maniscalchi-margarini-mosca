@@ -31,7 +31,7 @@ public class HestiaController extends GodController {
                 "Hestia",
                 "Goddess of Hearth and Home",
                 "Your Build: Your Worker may build one additional time. The additional build cannot be on a perimeter space.",
-                1,
+                2,
                 false,
                 this
         );

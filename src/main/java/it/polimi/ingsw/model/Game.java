@@ -91,9 +91,8 @@ public class Game {
     }
 
     /**
-     * returns the next player
      *
-     * @return the player who will play next
+     * @return the number associated with the player who will play next
      */
     public int getNextPlayer() {
         activePlayer = (activePlayer >= playerNum - 1) ? 0 : activePlayer + 1;
@@ -111,7 +110,7 @@ public class Game {
     /**
      * adds the argument to the list of the active Modifiers
      *
-     * @param modifier
+     * @param modifier the God Card we want to add to the list of the modifiers
      */
     public void addModifier(Card modifier) {
         activeModifiers.add(modifier);
@@ -120,7 +119,7 @@ public class Game {
     /**
      * removes the argument from the list of the active Modifiers
      *
-     * @param modifier
+     * @param modifier the God Card we want to remove from the list of the modifiers
      */
     public void removeModifier(Card modifier) {
         activeModifiers.remove(modifier);

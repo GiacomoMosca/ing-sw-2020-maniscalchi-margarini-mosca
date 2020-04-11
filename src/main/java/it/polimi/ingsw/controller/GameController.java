@@ -16,6 +16,17 @@ public class GameController {
     private ArrayList<Player> players;
     private ArrayList<String> colors;
 
+    /**
+     * creates a GameController.
+     * creates the first player (associated with the PlayerInterface received as an argument),
+     * associating his id and the color "RED".
+     * creates a PlayerController for the first player, associating the Player and his PlayerInterface.
+     * adds the PlayerController.
+     *
+     *
+     * @param client the PlayerInterface associated with the first player
+     * @param num the number of players for the current game
+     */
     public GameController(PlayerInterface client, int num) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
@@ -28,10 +39,25 @@ public class GameController {
         playerControllers.add(p1Controller);
     }
 
+    /**
+     *
+     * @return the current Game
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * adds a second or a third player to the game.
+     * creates the new player, associating his id (given by the PlayerInterface) and a color.
+     * creates a PlayerController for the player and associates the player and his PlayerInterface.
+     *
+     * if the player is the last one to be added, prepares the game.
+     *
+     * and the game controller asso
+     *
+     * @param client
+     */
     public void addPlayer(PlayerInterface client) {
         if (playerControllers.size() >= game.getPlayerNum()) {
             System.out.println("ERROR: too many players");
@@ -44,6 +70,14 @@ public class GameController {
         if (playerControllers.size() == game.getPlayerNum()) gameSetUp();
     }
 
+    /**
+     *
+     * ///// PROBABLY DA CAMBIARE
+     *
+     * creates a GodController for every God Card, and adds all the cards to the deck.
+     * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
+     *
+     */
     public void gameSetUp() {
         ArrayList<GodController> controllers = new ArrayList<GodController>();
         controllers.add(new ApolloController(this));
@@ -79,6 +113,10 @@ public class GameController {
         playGame();
     }
 
+    /**
+     * place the workers of all the players, asking them the localizations and then moving the workers there.
+     *
+     */
     private void placeWorkers() {
         for (int p = 0; p < game.getPlayerNum(); p++) {
             PlayerController controller = playerControllers.get(p);
@@ -100,6 +138,11 @@ public class GameController {
         }
     }
 
+
+    /**
+     * handles the game, going on until there is no winner
+     *
+     */
     private void playGame() {
         while(!game.hasWinner()){
             displayMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
@@ -115,11 +158,20 @@ public class GameController {
         displayMessage(game.getWinner().getId() + " has won! \n\n");
     }
 
+    /**
+     * shows the Board associated with the current Game
+     *
+     */
     public void displayBoard() {
         for (PlayerController p : playerControllers)
             p.getClient().displayBoard(game.getBoard());
     }
 
+    /**
+     * shows the message received as an argument
+     *
+     * @param message the message to show
+     */
     public void displayMessage(String message) {
         for (PlayerController p : playerControllers)
             p.getClient().displayMessage(message);
