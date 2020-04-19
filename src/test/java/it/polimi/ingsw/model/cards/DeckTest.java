@@ -1,4 +1,4 @@
-package it.polimi.ingsw.test.model_test.cards_test;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
@@ -20,8 +20,6 @@ public class DeckTest {
     Deck deck = null;
     Card card1 = null;
     Card card2;
-    Player p1;
-    Game game;
     GameController gamecontroller;
     GodController gc1, gc2;
 

@@ -28,6 +28,11 @@ public class GameController {
         playerControllers.add(p1Controller);
     }
 
+    // Perchè devo crearlo?
+    public GameController() {
+    }
+    ///////////////////////
+
     public Game getGame() {
         return game;
     }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.test.model_test;
+package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
@@ -41,23 +41,22 @@ public class GameTest {
     public void tearDown() {
     }
 
-    /*@Test
+    @Test
     public void getNextPlayer_CurrentActivePlayerGiven_ShouldReturnNextActivePlayer() {
         game.addPlayer(player2);
-        assertSame(game.getNextPlayer(player1),player2);
-        assertSame(game.getNextPlayer(player2),player1);
-    }
-
-    @Test (expected = IllegalArgumentException.class)
-    public void getNextPlayer_NotExistingCurrentActivePlayerGiven_ShouldThrowException() {
-        game.getNextPlayer(player2);
+        assertEquals(game.getNextPlayer(),1);
+        assertSame(game.getPlayers().get(game.getActivePlayer()),player2);
+        assertEquals(game.getNextPlayer(),0);
+        assertSame(game.getPlayers().get(game.getActivePlayer()),player1);
     }
 
     @Test
     public void addPlayer_PlayerToAddGiven_ShouldAddANewPlayer() {
         game.addPlayer(player2);
-        assertSame(game.getNextPlayer(player1),player2);
-    }*/
+        assertEquals(game.getNextPlayer(),1);
+        assertSame(game.getPlayers().get(game.getActivePlayer()),player2);
+        assertTrue(game.getPlayers().contains(player1));
+    }
 
     @Test (expected = IndexOutOfBoundsException.class)
     public void addPlayer_PlayerGiven_ShouldThrowException() {
@@ -87,16 +86,11 @@ public class GameTest {
         assertEquals(game.getDeck(),deck);
     }
 
-    /*@Test
-    public void getActivePlayer_NoInputGiven_ShouldReturnActivePlayer() {
-        assertSame(game.getActivePlayer(),player1);
-    }
-
     @Test
-    public void setActivePlayer_NextActivePlayerGiven_ShouldSetNewActivePlayer() {
-        game.setActivePlayer(player2);
-        assertSame(game.getActivePlayer(),player2);
-    }*/
+    public void getActivePlayer_NoInputGiven_ShouldReturnActivePlayer() {
+        assertEquals(game.getActivePlayer(),0);
+        assertSame(game.getPlayers().get(game.getActivePlayer()),player1);
+    }
 
     @Test
     public void getActiveModifiers_NoInputGiven_ShouldReturnActiveModifiers() {
