@@ -14,8 +14,8 @@ public class Player {
     /**
      * sets all the attributes associated with the player
      *
-     * @param id
-     * @param color
+     * @param id the string that identifies the player
+     * @param color the color associated with the player
      */
     public Player(String id, String color) {
         this.id = id;
@@ -66,7 +66,7 @@ public class Player {
     }
 
     /**
-     * adds the worker received as an argument in the list of the workers associated with the player
+     * adds the worker received as an argument to the list of the workers associated with the player
      *
      * @param worker
      */

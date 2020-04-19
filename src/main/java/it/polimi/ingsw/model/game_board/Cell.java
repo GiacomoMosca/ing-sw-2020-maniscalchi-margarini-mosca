@@ -13,8 +13,8 @@ public class Cell {
     /**
      * creates and initializes a new cell
      *
-     * @param posX x-coordinate of the cell
-     * @param posY y-coordinate of the cell
+     * @param posX the x-coordinate of the cell
+     * @param posY the y-coordinate of the cell
      */
     public Cell(int posX, int posY) {
         this.posX = posX;

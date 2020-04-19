@@ -33,8 +33,7 @@ public class Board {
      * @param cell the Cell we want to set
      * @param i the x-coordinate of the cell
      * @param j the y-coordinate of the cell
-     * @return the cell we set
-     * @throws ArrayIndexOutOfBoundsException
+     * @throws ArrayIndexOutOfBoundsException when trying to set a cell with coordinates that don't identify a cell of the Board
      */
     public void setCell(Cell cell, int i, int j) throws ArrayIndexOutOfBoundsException {
         if (i < 0 || i >= 5 || j < 0 || j >= 5) throw new ArrayIndexOutOfBoundsException();

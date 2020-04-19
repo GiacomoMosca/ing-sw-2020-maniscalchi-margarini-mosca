@@ -28,7 +28,7 @@ public class ZeusController extends GodController {
                 "Zeus",
                 "God of the Sky",
                 "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.",
-                1,
+                2,
                 false,
                 this
         );
