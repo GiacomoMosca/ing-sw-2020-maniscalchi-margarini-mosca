@@ -58,4 +58,20 @@ public class Card {
         return controller;
     }
 
+    ////For testing only////
+    public String getTitle() {
+        return title;
+    }
+
+    public int getSet() {
+        return set;
+    }
+    ////////////////////////
+
+    @Override
+    public boolean equals(Object obj) {
+        Card card = (Card) obj;
+        return this.god.equals(card.getGod()) || this.title.equals(card.getTitle()) || this.description.equals(card.getDescription()) || this.set==getSet() || this.alwaysActiveModifier==card.hasAlwaysActiveModifier() || this.controller==card.getController();
+
+    }
 }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.test.model_test.players_tests;
+package it.polimi.ingsw.model.players;
 
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;

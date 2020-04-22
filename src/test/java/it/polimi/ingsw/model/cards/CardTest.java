@@ -1,4 +1,4 @@
-package it.polimi.ingsw.test.model_test.cards_test;
+package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;

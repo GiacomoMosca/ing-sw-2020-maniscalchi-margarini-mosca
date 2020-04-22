@@ -1,4 +1,4 @@
-package it.polimi.ingsw.test.model_test.game_board_tests;
+package it.polimi.ingsw.model.game_board;
 
 import it.polimi.ingsw.model.game_board.Board;
 import org.junit.After;

@@ -10,11 +10,11 @@ import it.polimi.ingsw.view.PlayerInterface;
 import java.util.ArrayList;
 
 public class GameController {
-
-    private Game game;
-    private ArrayList<PlayerController> playerControllers;
-    private ArrayList<Player> players;
-    private ArrayList<String> colors;
+  
+    protected Game game;
+    protected ArrayList<PlayerController> playerControllers;
+    protected ArrayList<Player> players;
+    protected ArrayList<String> colors;
 
     /**
      * creates a GameController.
