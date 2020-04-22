@@ -10,7 +10,7 @@ import it.polimi.ingsw.view.PlayerInterface;
 import java.util.ArrayList;
 
 public class GameController {
-
+  
     protected Game game;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
