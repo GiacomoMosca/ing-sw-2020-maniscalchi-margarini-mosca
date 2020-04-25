@@ -3,11 +3,59 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.network.message.Message;
+import it.polimi.ingsw.network.server.Server;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CLI implements UI {
+
+    private Scanner scanner;
+    private Socket server;
+
+    public void parseMessage(Message message)
+    {
+
+    }
+
+    public void start(){
+        scanner = new Scanner(System.in);
+        String ip = getServerIp();
+        try {
+            server = new Socket(ip,7777);
+        } catch (IOException e) {
+            System.out.println("server unreachable");
+            return;
+        }
+        System.out.println("Connected");
+
+        try {
+            ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
+            ObjectInputStream input = new ObjectInputStream(server.getInputStream());
+        } catch (IOException e) {
+            System.out.println("server has died");
+        } catch (ClassCastException e) {
+            System.out.println("protocol violation");
+        }
+    }
+
+    public String getServerIp() {
+        System.out.println("IP address of server?");
+        String ip = scanner.nextLine();
+        return ip;
+    }
+
+    public void stop(){
+        try {
+            server.close();
+        } catch (IOException e) { }
+    }
 
     /**
      * shows the board of the current game, at his actual state:

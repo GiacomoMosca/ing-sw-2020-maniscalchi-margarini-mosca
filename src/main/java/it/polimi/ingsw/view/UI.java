@@ -3,10 +3,19 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.network.message.Message;
 
 import java.util.ArrayList;
 
 public interface UI {
+
+    public void start();
+
+    public void stop();
+
+    public void parseMessage(Message message);
+
+    public String getServerIp();
 
     /**
      * shows the game board

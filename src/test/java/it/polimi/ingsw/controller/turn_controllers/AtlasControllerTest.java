@@ -107,5 +107,13 @@ public class AtlasControllerTest {
         fakeGameController.gameSetUp();
         assertTrue(fakeGameController.getGame().getBoard().getCell(0,0).isDomed());
     }
+
+    @Test
+    public void test(){
+        playerInterface.setId("AtlasTest");
+        fakeGameController.gameSetUp();
+        assertEquals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition().getPosX(),0);
+        assertEquals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition().getPosY(),1);
+    }
     
 }

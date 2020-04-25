@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
+import it.polimi.ingsw.model.cards.Card;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
