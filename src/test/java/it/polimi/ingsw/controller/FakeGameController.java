@@ -18,16 +18,7 @@ public class FakeGameController extends GameController {
     private GodController controller;
 
     public FakeGameController(PlayerInterface client, int num,GodController controller) {
-        this.controller=controller;
-        playerControllers = new ArrayList<PlayerController>();
-        colors = new ArrayList<String>();
-        colors.add("RED");
-        colors.add("BLUE");
-        colors.add("GREEN");
-        Player p1 = new Player(client.getId(), colors.get(0));
-        PlayerController p1Controller = new PlayerController(p1, client);
-        game = new Game(p1, num);
-        playerControllers.add(p1Controller);
+        super(client, num);
     }
 
     public Game getGame() {
@@ -58,7 +49,7 @@ public class FakeGameController extends GameController {
         playGame();
     }
 
-    private void placeWorkers() {
+    public void placeWorkers() {
         Worker worker = new Worker(players.get(0));
         worker.setPosition(game.getBoard().getCell(1, 2));
         players.get(0).addWorker(worker);
@@ -68,7 +59,7 @@ public class FakeGameController extends GameController {
         game.getBoard().getCell(0,0).setBuildLevel(1);
     }
 
-    private void playGame() {
+    public void playGame() {
         String result = playerControllers.get(game.getActivePlayer()).playTurn();
         if(result.equals("WON"))
             game.setWinner(players.get(game.getActivePlayer()));

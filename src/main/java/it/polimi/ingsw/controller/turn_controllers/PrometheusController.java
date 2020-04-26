@@ -74,7 +74,7 @@ public class PrometheusController extends GodController {
     /**
      * @return true if any move from a level to the same level or less is allowed, false otherwise
      */
-    private boolean checkMoves() {
+    protected boolean checkMoves() {
         ArrayList<Cell> neighbors = board.getNeighbors(activeWorker.getPosition());
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

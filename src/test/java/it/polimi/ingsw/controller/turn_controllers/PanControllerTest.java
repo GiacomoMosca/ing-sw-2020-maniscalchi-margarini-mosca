@@ -1,5 +1,13 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.PlayerController;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.FakeCLI;
+import it.polimi.ingsw.view.PlayerInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,8 +16,76 @@ import static org.junit.Assert.*;
 
 public class PanControllerTest {
 
+    PanController panController;
+    FakeGameController fakeGameController;
+    PlayerInterface playerInterface1;
+    FakeCLI cli1;
+
+    public class FakeGameController extends GameController {
+
+        public FakeGameController(PlayerInterface client, int num) {
+            super(client, num);
+        }
+
+        @Override
+        public void addPlayer(PlayerInterface client) {
+            Player player = new Player(client.getId(), colors.get(playerControllers.size()));
+            PlayerController playerController = new PlayerController(player, client);
+            game.addPlayer(player);
+            playerControllers.add(playerController);
+            gameSetUp();
+        }
+
+        @Override
+        public void gameSetUp() {
+
+            Deck deck = game.getDeck();
+            deck.addCard(panController.generateCard());
+
+            players = game.getPlayers();
+            players.get(0).setGodCard(deck.getCards().get(0));
+            playerControllers.get(0).setGodController(panController);
+
+            placeWorkers();
+            placeBuildings();
+            playGame();
+        }
+
+        private void placeWorkers() {
+            Worker worker = new Worker(players.get(0));
+            worker.setPosition(game.getBoard().getCell(1, 2));
+            game.getBoard().getCell(1, 2).setBuildLevel(2);
+
+            players.get(0).addWorker(worker);
+        }
+
+        private void placeBuildings() {
+            game.getBoard().getCell(0, 1).setBuildLevel(0);
+        }
+
+        public void playGame() {
+            String result = playerControllers.get(game.getActivePlayer()).playTurn();
+            if (result.equals("WON"))
+                game.setWinner(players.get(game.getActivePlayer()));
+        }
+
+        @Override
+        public void displayBoard() {
+        }
+
+        @Override
+        public void displayMessage(String message) {
+        }
+
+    }
+
     @Before
     public void setUp() throws Exception {
+        cli1=new FakeCLI();
+        playerInterface1=new PlayerInterface(cli1);
+        playerInterface1.setId("PanTest");
+        fakeGameController=new FakeGameController(playerInterface1, 1);
+        panController=new PanController(fakeGameController);
     }
 
     @After
@@ -17,10 +93,19 @@ public class PanControllerTest {
     }
 
     @Test
-    public void generateCard() {
+    public void generateCard_noInputGiven_shouldReturnTheGodCard() {
+        Card testCard=new Card("Pan", "God of the Wild", "Win Condition: You also win if your Worker moves down two or more levels.", 1, false, panController);
+        assertEquals(panController.generateCard().getGod(), testCard.getGod());
+        assertEquals(panController.generateCard().getTitle(), testCard.getTitle());
+        assertEquals(panController.generateCard().getDescription(), testCard.getDescription());
+        assertEquals(panController.generateCard().getSet(), testCard.getSet());
+        assertEquals(panController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
+        assertEquals(panController.generateCard().getController(), testCard.getController());
     }
 
     @Test
-    public void checkWin() {
+    public void checkWin_noInputGiven_shouldReturnTrue() {
+        fakeGameController.gameSetUp();
+        assertTrue(panController.checkWin());
     }
 }

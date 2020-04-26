@@ -64,7 +64,6 @@ public class ArtemisController extends GodController{
         return "NEXT";
     }
 
-
     /**
      * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
      * and ensures that, if the player uses a second move, his worker won't move back to the cell it started from

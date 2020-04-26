@@ -59,9 +59,7 @@ public class ApolloController extends GodController {
             try {
                 activeWorker.move(movePosition);
             } catch (IllegalArgumentException e) {
-                System.out.println("ERROR: illegal move");
-            }
-        }
+                System.out.println("ERROR: illegal move"); }}
         gameController.displayBoard();
     }
 

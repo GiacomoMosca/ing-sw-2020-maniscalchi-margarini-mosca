@@ -49,9 +49,9 @@ public class LimusController extends GodController {
     public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         // + opponents can only build Complete Towers next to your workers
         ArrayList<Cell> limitedBuilds = new ArrayList<Cell>();
-        for (Cell cell : possibleBuilds) {
-            for (Cell neighborCell : board.getNeighbors(cell)) {
-                if (neighborCell.hasWorker() && neighborCell.getWorker().getOwner() == player && cell.getBuildLevel() < 3) continue;
+        LABEL: for (Cell cell : possibleBuilds) {
+             for (Cell neighborCell : board.getNeighbors(cell)) {
+                if (neighborCell.hasWorker() && neighborCell.getWorker().getOwner() == player && cell.getBuildLevel() < 3) continue LABEL;
             }
             limitedBuilds.add(cell);
         }

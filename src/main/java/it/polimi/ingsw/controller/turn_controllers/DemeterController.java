@@ -26,7 +26,7 @@ public class DemeterController extends GodController {
     public Card generateCard() {
         Card card = new Card(
                 "Demeter",
-                "Goddes of the Harvest",
+                "Goddess of the Harvest",
                 "Your Build: Your Worker may build one additional time, but not on the same space.",
                 1,
                 false,
