@@ -74,7 +74,7 @@ public class AtlasControllerTest {
         public void displayBoard() {}
 
         @Override
-        public void displayMessage(String message) {}
+        public void broadcastMessage(String message) {}
     }
 
     @Before

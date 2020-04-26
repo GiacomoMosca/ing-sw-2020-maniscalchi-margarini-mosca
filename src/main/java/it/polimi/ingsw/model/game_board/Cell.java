@@ -13,10 +13,10 @@ public class Cell {
     /**
      * creates and initializes a new cell
      *
-     * @param posX the x-coordinate of the cell
      * @param posY the y-coordinate of the cell
+     * @param posX the x-coordinate of the cell
      */
-    public Cell(int posX, int posY) {
+    public Cell(int posY, int posX) {
         this.posX = posX;
         this.posY = posY;
         this.buildLevel = 0;

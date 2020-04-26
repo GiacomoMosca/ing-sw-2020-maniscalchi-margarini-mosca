@@ -30,9 +30,9 @@ public class GameController {
     public GameController(PlayerInterface client, int num) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
-        colors.add("RED");
-        colors.add("BLUE");
-        colors.add("GREEN");
+        colors.add("r");
+        colors.add("g");
+        colors.add("b");
         Player p1 = new Player(client.getId(), colors.get(0));
         PlayerController p1Controller = new PlayerController(p1, client);
         game = new Game(p1, num);
@@ -52,8 +52,6 @@ public class GameController {
      * creates the new player, associating his id (given by the PlayerInterface) and a color.
      * creates a PlayerController for the player and associates the player and his PlayerInterface.
      *
-     * if the player is the last one to be added, prepares the game.
-     *
      * and the game controller asso
      *
      * @param client
@@ -67,7 +65,6 @@ public class GameController {
         PlayerController playerController = new PlayerController(player, client);
         game.addPlayer(player);
         playerControllers.add(playerController);
-        if (playerControllers.size() == game.getPlayerNum()) gameSetUp();
     }
 
     /**
@@ -99,18 +96,24 @@ public class GameController {
         }
 
         players = game.getPlayers();
-        deck.pickRandom(game.getPlayerNum());
-        for (int i = 0; i < game.getPlayerNum(); i++) {
-            players.get(i).setGodCard(deck.getPickedCards().get(i));
-            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
-            playerControllers.get(i).getClient().displayMessage(players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + "\n");
-        }
+
+        pickCards();
 
         displayBoard();
         placeWorkers();
 
         displayBoard();
         playGame();
+    }
+
+    private void pickCards() {
+        Deck deck = game.getDeck();
+        deck.pickRandom(game.getPlayerNum());
+        for (int i = 0; i < game.getPlayerNum(); i++) {
+            players.get(i).setGodCard(deck.getPickedCards().get(i));
+            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
+            broadcastMessage((players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + " (" + players.get(i).getColor() + ")\n"));
+        }
     }
 
     /**
@@ -122,8 +125,8 @@ public class GameController {
             PlayerController controller = playerControllers.get(p);
             for (int i = 0; i < 2; ) {
                 int j = i + 1;
-                int posY = controller.getClient().chooseInt(5, players.get(p).getId() + ": Choose worker " + j + "'s starting position (X, then Y):");
-                int posX = controller.getClient().chooseInt(5, null);
+                int posX = controller.getClient().chooseInt(5, players.get(p).getId() + ": Choose worker " + j + "'s starting position (X, then Y):");
+                int posY = controller.getClient().chooseInt(5, null);
                 if (game.getBoard().getCell(posX, posY).hasWorker()) {
                     controller.getClient().displayMessage("Cell is full. \n");
                 }
@@ -145,7 +148,7 @@ public class GameController {
      */
     private void playGame() {
         while(!game.hasWinner()){
-            displayMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
             String result = playerControllers.get(game.getActivePlayer()).playTurn();
             if (result.equals("NEXT"))
                 game.getNextPlayer();
@@ -155,7 +158,7 @@ public class GameController {
                 game.setWinner(players.get(game.getActivePlayer()));
             else System.out.println("ERROR: invalid turn");
         }
-        displayMessage(game.getWinner().getId() + " has won! \n\n");
+        broadcastMessage(game.getWinner().getId() + " has won! \n\n");
     }
 
     /**
@@ -164,7 +167,7 @@ public class GameController {
      */
     public void displayBoard() {
         for (PlayerController p : playerControllers)
-            p.getClient().displayBoard(game.getBoard());
+            p.getClient().displayBoard(game.getPlayers(), game.getBoard());
     }
 
     /**
@@ -172,7 +175,7 @@ public class GameController {
      *
      * @param message the message to show
      */
-    public void displayMessage(String message) {
+    public void broadcastMessage(String message) {
         for (PlayerController p : playerControllers)
             p.getClient().displayMessage(message);
     }

@@ -1,14 +1,11 @@
 package it.polimi.ingsw.model.players;
 
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.turn_controllers.ApolloController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.players.Player;
-import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.CLI;
+import it.polimi.ingsw.view.client.CLI;
 import it.polimi.ingsw.view.PlayerInterface;
 import org.junit.After;
 import org.junit.Before;
