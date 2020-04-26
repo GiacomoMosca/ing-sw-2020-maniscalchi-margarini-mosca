@@ -81,7 +81,6 @@ public class Board {
     //////////////////////////////////////////////
     // EQUALS DA MODIFICARE !!! (RENDERE GENERICA)
     //////////////////////////////////////////////
-
     @Override
     public boolean equals(Object obj) {
 
@@ -90,10 +89,8 @@ public class Board {
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
                 NumCell1++;
-
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
                 NumCell2++;
-        return NumCell1 == NumCell2;
-    }
+        return NumCell1 == NumCell2; }
 }

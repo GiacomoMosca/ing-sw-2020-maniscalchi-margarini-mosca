@@ -1,30 +1,167 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
+import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.controller.PlayerController;
+import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.FakeCLI;
+import it.polimi.ingsw.view.PlayerInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
 public class ArtemisControllerTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
+    ArtemisController artemisController = null;
+    ArtemisControllerTest.FakeGameController fakeGameController = null;
+    PlayerInterface playerInterface = null;
+    FakeCLI cli = null;
 
-    @After
-    public void tearDown() throws Exception {
-    }
+    public class FakeGameController extends GameController {
 
-    @Test
-    public void generateCard() {
-    }
+        public FakeGameController(PlayerInterface client, int num) {
+            super(client, num);
+        }
 
-    @Test
-    public void runPhases() {
-    }
+        @Override
+        public void addPlayer(PlayerInterface client) {
+            Player player = new Player(client.getId(), colors.get(playerControllers.size()));
+            PlayerController playerController = new PlayerController(player, client);
+            game.addPlayer(player);
+            playerControllers.add(playerController);
+            gameSetUp();
+        }
 
-    @Test
-    public void findPossibleMoves() {
+        @Override
+        public void gameSetUp() {
+
+            Deck deck = game.getDeck();
+            deck.addCard(artemisController.generateCard());
+
+            players = game.getPlayers();
+            players.get(0).setGodCard(deck.getCards().get(0));
+            playerControllers.get(0).setGodController(artemisController);
+
+            placeWorkers();
+            placeBuildings();
+            playGame();
+        }
+
+        private void placeWorkers() {
+            Worker worker = new Worker(players.get(0));
+            worker.setPosition(game.getBoard().getCell(1, 2));
+            players.get(0).addWorker(worker);
+        }
+
+        private void placeBuildings() {
+            game.getBoard().getCell(3, 3).setBuildLevel(1);
+        }
+
+        public void playGame() {
+            String result = playerControllers.get(game.getActivePlayer()).playTurn();
+            if (result.equals("WON"))
+                game.setWinner(players.get(game.getActivePlayer()));
+        }
+
+        @Override
+        public void displayBoard() {
+        }
+
+        @Override
+        public void displayMessage(String message) {
+        }
+
     }
-}
+        @Before
+        public void setUp() throws Exception {
+            //it's not okay to call fakeGamwController.gameSetUp() because
+            cli=new FakeCLI();
+            playerInterface=new PlayerInterface(cli);
+            playerInterface.setId("ArtemisTest");
+            fakeGameController=new FakeGameController(playerInterface, 1);
+            artemisController=new ArtemisController(fakeGameController);
+        }
+
+        @After
+        public void tearDown() throws Exception {
+        }
+
+        @Test
+        public void generateCard_noInputGiven_shouldReturnTheGodCard() {
+            Card testCard=new Card("Artemis", "Goddes of the Hunt", "Your Move: Your Worker may move one additional time, but not back to the space it started on.", 1, false, artemisController);
+            assertEquals(artemisController.generateCard().getGod(), testCard.getGod());
+            assertEquals(artemisController.generateCard().getTitle(), testCard.getTitle());
+            assertEquals(artemisController.generateCard().getDescription(), testCard.getDescription());
+            assertEquals(artemisController.generateCard().getSet(), testCard.getSet());
+            assertEquals(artemisController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
+            assertEquals(artemisController.generateCard().getController(), testCard.getController());
+        }
+
+        @Test
+        public void runPhases_workerGiven_shouldReturnWONAfterTheFirstMove() {
+            Deck deck = fakeGameController.getGame().getDeck();
+            Card card = artemisController.generateCard();
+            deck.addCard(card);
+            fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
+            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface);
+
+            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
+            worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
+            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+
+            fakeGameController.getGame().getBoard().getCell(1,2).setBuildLevel(2);
+            fakeGameController.getGame().getBoard().getCell(0,1).setBuildLevel(3);
+
+            assertEquals(artemisController.runPhases(worker), "WON");
+
+        }
+
+        @Test
+        public void runPhasesAndfindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWONAfterTheSecondMoveAndAnArrayListContainingAllNeighbors(){
+            Deck deck = fakeGameController.getGame().getDeck();
+            Card card = artemisController.generateCard();
+            deck.addCard(card);
+            fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
+            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface);
+            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
+            worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
+            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+            fakeGameController.getGame().getBoard().getCell(1,2).setBuildLevel(2);
+            fakeGameController.getGame().getBoard().getCell(0,1).setBuildLevel(2);
+            fakeGameController.getGame().getBoard().getCell(0,0).setBuildLevel(3);
+
+            assertEquals(artemisController.runPhases(worker), "WON");
+            ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
+            assertEquals(artemisController.findLegalMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
+        }
+
+        @Test
+        public void runPhases_workerGiven_shouldNotAcceptToMoveTheSecondTime(){
+            //a client who chooses not to move the second time
+            class FakeCLItoAnswerNo extends FakeCLI{
+                @Override
+                public boolean chooseYesNo(String query){
+                    return false;
+                }
+            }
+
+            FakeCLItoAnswerNo cli=new FakeCLItoAnswerNo();
+            PlayerInterface playerInterface1=new PlayerInterface(cli);
+            playerInterface1.setId("ArtemisTestToAnswerNo");
+            fakeGameController=new FakeGameController(playerInterface1, 1);
+            artemisController=new ArtemisController(fakeGameController);
+            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
+            worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
+            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+
+            artemisController.runPhases(worker);
+        }
+    }

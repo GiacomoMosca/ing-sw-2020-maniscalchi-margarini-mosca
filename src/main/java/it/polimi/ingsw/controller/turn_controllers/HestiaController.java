@@ -71,8 +71,7 @@ public class HestiaController extends GodController {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
-            if (buildAgain && (cell.getPosX() == 0 || cell.getPosY() == 0 || cell.getPosX() == 4 || cell.getPosY() == 4))
-                continue;
+            if (buildAgain && (cell.getPosX() == 0 || cell.getPosY() == 0 || cell.getPosX() == 4 || cell.getPosY() == 4)) continue;
             if (!cell.hasWorker() && !cell.isDomed())
                 possibleBuilds.add(cell);
         }

@@ -14,6 +14,7 @@ public class BoardTest {
     @Before
     public void setUp() {
         board = new Board();
+        Cell cell = new Cell(0,0);
     }
 
     @After
@@ -48,5 +49,17 @@ public class BoardTest {
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(0,1)));
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(1,1)));
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(1,0)));
+    }
+
+    @Test
+    public void setCell_CellIntIntGiven_shouldSetCell(){
+        Cell cell1=new Cell(1,1);
+        board.setCell(cell1, 1, 1);
+        assertSame(board.getCell(1,1), cell1);
+    }
+
+    @Test (expected = ArrayIndexOutOfBoundsException.class)
+    public void setCell_CellIntIntGiven_shouldThrowArrayIndexOutOfBoundsException(){
+        board.setCell(new Cell(10,10), 10, 10);
     }
 }

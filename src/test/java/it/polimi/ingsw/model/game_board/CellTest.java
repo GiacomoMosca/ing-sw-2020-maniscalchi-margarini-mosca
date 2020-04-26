@@ -86,4 +86,10 @@ public class CellTest {
         cell.setWorker(worker);
         assertTrue(cell.hasWorker());
     }
+
+    @Test
+    public void setBuildLevel_buildingLevelGiven_shouldSetTheBuildingLevelOfThisCell(){
+        cell.setBuildLevel(2);
+        assertEquals(cell.getBuildLevel(), 2);
+    }
 }

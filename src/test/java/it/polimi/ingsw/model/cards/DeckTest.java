@@ -13,8 +13,8 @@ import static org.junit.Assert.*;
 
 public class DeckTest {
 
-    Deck deck = null;
-    Card card1 = null;
+    Deck deck;
+    Card card1;
     Card card2;
     GameController gamecontroller;
     GodController gc1, gc2;
@@ -24,8 +24,8 @@ public class DeckTest {
         gamecontroller=new GameController(new VirtualView(new CLI()),2);
         gc1=new GodControllerConcrete(gamecontroller);
         deck=new Deck();
-        card1=new Card("Rebecca", "a", "b", 1, true, gc1);
-        card2=new Card("Giacomo", "v", "x", 1, false, gc2);
+        card1=new Card("god1", "title1", "description1", 1, true, gc1);
+        card2=new Card("god2", "title2", "description2", 2, false, gc2);
     }
 
     @After
