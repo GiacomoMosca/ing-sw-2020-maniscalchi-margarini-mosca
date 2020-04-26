@@ -76,14 +76,14 @@ public class VirtualView {
      * @param workers the workers the player can choose for his turn
      * @return the worker the player chose
      */
-    public Worker chooseWorker(ArrayList<Worker> workers) throws IOException {
+    public Worker chooseWorker(ArrayList<Worker> workers) throws IOException, ClassNotFoundException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Worker worker : workers) {
             positions.add(new CellView(worker.getPosition()));
         }
         ChoosePosition msg = new ChoosePosition(positions, "worker");
         output.writeObject(msg);
-        return (workers.get(input.readInt()));
+        return (workers.get((int) input.readObject()));
     }
 
     /**
@@ -92,14 +92,14 @@ public class VirtualView {
      * @param possibleMoves an ArrayList containing all the possible moves a player can do with a worker
      * @return the cell the player decided to move his worker to
      */
-    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) throws IOException {
+    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) throws IOException, ClassNotFoundException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possibleMoves) {
             positions.add(new CellView(cell));
         }
         ChoosePosition msg = new ChoosePosition(positions, "move");
         output.writeObject(msg);
-        return (possibleMoves.get(input.readInt()));
+        return (possibleMoves.get((int) input.readObject()));
     }
 
     /**
@@ -108,24 +108,24 @@ public class VirtualView {
      * @param possibleBuilds an ArrayList containing all the possible builds a player can do with a worker
      * @return the cell the player decided to build on
      */
-    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) throws IOException {
+    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) throws IOException, ClassNotFoundException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possibleBuilds) {
             positions.add(new CellView(cell));
         }
         ChoosePosition msg = new ChoosePosition(positions, "build");
         output.writeObject(msg);
-        return (possibleBuilds.get(input.readInt()));
+        return (possibleBuilds.get((int) input.readObject()));
     }
 
-    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException {
+    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException, ClassNotFoundException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possiblePositions) {
             positions.add(new CellView(cell));
         }
         ChoosePosition msg = new ChoosePosition(positions, "start");
         output.writeObject(msg);
-        return (possiblePositions.get(input.readInt()));
+        return (possiblePositions.get((int) input.readObject()));
     }
 
     /**
@@ -133,10 +133,10 @@ public class VirtualView {
      * @param query the question the player should answer to
      * @return true if the player answered "yes", false if the player answered "no"
      */
-    public boolean chooseYesNo(String query) throws IOException {
+    public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
         ChooseYesNo msg = new ChooseYesNo(query);
         output.writeObject(msg);
-        return (input.readBoolean());
+        return ((Boolean) input.readObject());
     }
 
 }

@@ -154,8 +154,7 @@ public class CLI implements UI {
             choice = scanner.nextInt();
         }
         try {
-            output.flush();
-            output.writeInt(choice);
+            output.writeObject(choice);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -178,7 +177,7 @@ public class CLI implements UI {
         boolean res = false;
         if (choice.equals("y")) res = true;
         try {
-            output.writeBoolean(res);
+            output.writeObject(res);
         } catch (IOException e) {
             e.printStackTrace();
         }

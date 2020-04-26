@@ -96,7 +96,7 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    public String runPhases(Worker worker) throws IOException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
@@ -109,7 +109,7 @@ public abstract class GodController {
      * handles the moving phase of the turn
      *
      */
-    public void movePhase() throws IOException {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
@@ -124,7 +124,7 @@ public abstract class GodController {
      * handles the building phase of the turn
      *
      */
-    public void buildPhase() throws IOException {
+    public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

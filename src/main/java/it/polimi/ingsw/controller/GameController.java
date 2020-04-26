@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.*;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
@@ -9,6 +10,7 @@ import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class GameController {
@@ -123,9 +125,9 @@ public class GameController {
      *
      */
     private void placeWorkers() {
+        ArrayList<Cell> freePositions = game.getBoard().getAllCells();
         for (int p = 0; p < game.getPlayerNum(); p++) {
             PlayerController controller = playerControllers.get(p);
-            ArrayList<Cell> freePositions = game.getBoard().getAllCells();
             for (int i = 0; i < 2; i++) {
                 Cell position = null;
                 int j = i + 1;
@@ -136,7 +138,7 @@ public class GameController {
                 }
                 try {
                     position = controller.getClient().chooseStartPosition(freePositions);
-                } catch (IOException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                     continue;
                 }
@@ -155,8 +157,15 @@ public class GameController {
      *
      */
     private void playGame() {
+        for (Player player : game.getPlayers()) {
+            if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
+        }
         while(!game.hasWinner()){
             broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            for (Card modifier : game.getActiveModifiers()) {
+                if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(game.getPlayers().get(game.getActivePlayer())))
+                    game.getActiveModifiers().remove(modifier);
+            }
             String result = playerControllers.get(game.getActivePlayer()).playTurn();
             if (result.equals("NEXT"))
                 game.getNextPlayer();

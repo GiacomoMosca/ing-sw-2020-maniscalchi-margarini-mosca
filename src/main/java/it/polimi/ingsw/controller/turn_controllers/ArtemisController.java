@@ -49,7 +49,7 @@ public class ArtemisController extends GodController{
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         secondMove=false;

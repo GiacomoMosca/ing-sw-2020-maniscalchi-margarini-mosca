@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class PlayerController {
@@ -79,13 +80,13 @@ public class PlayerController {
         } else {
             try {
                 activeWorker = client.chooseWorker(playableWorkers);
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
         try {
             return godController.runPhases(activeWorker);
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return "NEXT";
         }

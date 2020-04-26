@@ -44,7 +44,7 @@ public class ApolloController extends GodController {
      *
      */
     @Override
-    public void movePhase() throws IOException {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         // + allow swapping position with opponents
         Cell oldPosition = activeWorker.getPosition();

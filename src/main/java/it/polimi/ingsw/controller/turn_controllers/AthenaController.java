@@ -42,7 +42,7 @@ public class AthenaController extends GodController {
      *
      */
     @Override
-    public void movePhase() throws IOException {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);

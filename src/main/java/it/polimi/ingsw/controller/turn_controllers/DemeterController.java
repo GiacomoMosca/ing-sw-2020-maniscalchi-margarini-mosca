@@ -27,7 +27,7 @@ public class DemeterController extends GodController {
     public Card generateCard() {
         Card card = new Card(
                 "Demeter",
-                "Goddes of the Harvest",
+                "Goddess of the Harvest",
                 "Your Build: Your Worker may build one additional time, but not on the same space.",
                 1,
                 false,
@@ -42,7 +42,7 @@ public class DemeterController extends GodController {
      *
      */
     @Override
-    public void buildPhase() throws NullPointerException, IOException {
+    public void buildPhase() throws NullPointerException, IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
