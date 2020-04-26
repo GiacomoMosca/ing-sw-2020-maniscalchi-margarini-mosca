@@ -8,7 +8,7 @@ import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.virtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,19 +21,19 @@ public class AtlasControllerTest {
 
     AtlasController atlasController=null;
     FakeGameController fakeGameController=null;
-    PlayerInterface playerInterface=null;
+    VirtualView virtualView=null;
     FakeCLI cli = null;
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
             super(client,num);
         }
 
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
-            PlayerController playerController = new PlayerController(player, client);
+            PlayerController playerController = new VirtualView(player, client);
             game.addPlayer(player);
             playerControllers.add(playerController);
             gameSetUp();
@@ -82,9 +82,9 @@ public class AtlasControllerTest {
     @Before
     public void setUp(){
         cli = new FakeCLI();
-        playerInterface = new PlayerInterface(cli);
-        playerInterface.setId("AtlasTest");
-        fakeGameController = new FakeGameController(playerInterface,1);
+        virtualView = new VirtualView(cli);
+        virtualView.setId("AtlasTest");
+        fakeGameController = new FakeGameController(virtualView,1);
         atlasController = new AtlasController(fakeGameController);
     }
 
@@ -136,11 +136,11 @@ public class AtlasControllerTest {
         }
 
         FakeCLItoGenerateException cli=new FakeCLItoGenerateException();
-        PlayerInterface playerInterface1=new PlayerInterface(cli);
-        playerInterface1.setId("AtlasTestToGenerateException");
-        fakeGameController=new FakeGameController(playerInterface1, 1);
+        VirtualView virtualView=new VirtualView(cli);
+        virtualView1.setId("AtlasTestToGenerateException");
+        fakeGameController=new FakeGameController(virtualView1, 1);
         atlasController=new AtlasController(fakeGameController);
-        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), virtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
