@@ -6,8 +6,8 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.VirtualView;
 import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.PlayerInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +18,17 @@ public class AtlasControllerTest {
 
     AtlasController atlas=null;
     FakeGameController fakeGameController=null;
-    PlayerInterface playerInterface=null;
+    VirtualView virtualView =null;
     FakeCLI cli = null;
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
             super(client,num);
         }
 
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
             PlayerController playerController = new PlayerController(player, client);
             game.addPlayer(player);
@@ -74,14 +74,14 @@ public class AtlasControllerTest {
         public void displayBoard() {}
 
         @Override
-        public void displayMessage(String message) {}
+        public void broadcastMessage(String message) {}
     }
 
     @Before
     public void setUp(){
         cli = new FakeCLI();
-        playerInterface = new PlayerInterface(cli);
-        fakeGameController = new FakeGameController(playerInterface,1);
+        virtualView = new VirtualView(cli);
+        fakeGameController = new FakeGameController(virtualView,1);
         atlas = new AtlasController(fakeGameController);
     }
 
@@ -103,7 +103,7 @@ public class AtlasControllerTest {
 
     @Test
     public void buildPhase() {
-        playerInterface.setId("AtlasTest");
+        virtualView.setId("AtlasTest");
         fakeGameController.gameSetUp();
         assertTrue(fakeGameController.getGame().getBoard().getCell(0,0).isDomed());
     }

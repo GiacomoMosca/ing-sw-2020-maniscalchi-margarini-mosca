@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AthenaController extends GodController {
@@ -41,7 +42,7 @@ public class AthenaController extends GodController {
      *
      */
     @Override
-    public void movePhase() {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);

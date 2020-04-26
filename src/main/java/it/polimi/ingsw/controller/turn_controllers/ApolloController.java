@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ApolloController extends GodController {
@@ -43,7 +44,7 @@ public class ApolloController extends GodController {
      *
      */
     @Override
-    public void movePhase() {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         // + allow swapping position with opponents
         Cell oldPosition = activeWorker.getPosition();
