@@ -77,13 +77,14 @@ public class GameTest {
     @Test
     public void getBoard_NoInoutGiven_ShouldReturnBoard() {
         Board board=new Board();
-        assertEquals(game.getBoard(),board);
+        assertTrue(board.equals(game.getBoard()));
     }
 
     @Test
     public void getDeck_NoInoutGiven_ShouldReturnDeck() {
         Deck deck=new Deck();
-        assertEquals(game.getDeck(),deck);
+        assertTrue(deck.equals(game.getDeck()));
+
     }
 
     @Test

@@ -14,8 +14,8 @@ public class GodControllerConcrete  extends GodController{
         super(gameController);
     }
 
-    @Override
-    public Card generateCard() {
+   @Override
+   public Card generateCard() {
         return null;
     }
 
