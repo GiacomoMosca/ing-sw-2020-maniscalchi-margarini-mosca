@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DemeterController extends GodController {
@@ -41,7 +42,7 @@ public class DemeterController extends GodController {
      *
      */
     @Override
-    public void buildPhase() throws NullPointerException {
+    public void buildPhase() throws NullPointerException, IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -49,6 +50,7 @@ public class DemeterController extends GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
+        gameController.displayBoard();
         possibleBuilds.remove(buildPosition);
         if((possibleBuilds.size()!=0)&&(client.chooseYesNo("Do you want to build again?"))) {
             buildPosition = client.chooseBuildPosition(possibleBuilds);
@@ -57,7 +59,7 @@ public class DemeterController extends GodController {
             } catch (IllegalStateException e) {
                 System.out.println("ERROR: illegal build");
             }
+            gameController.displayBoard();
         }
-        gameController.displayBoard();
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MinotaurController extends GodController {
@@ -42,7 +43,7 @@ public class MinotaurController extends GodController {
      *
      */
     @Override
-    public void movePhase() {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         // + allow pushing away opponents

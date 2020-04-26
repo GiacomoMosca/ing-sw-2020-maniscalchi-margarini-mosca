@@ -7,8 +7,9 @@ import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class GodController {
@@ -17,10 +18,11 @@ public abstract class GodController {
     protected final Game game;
     protected final Board board;
     protected Card card;
-    protected Player player;
-    protected PlayerInterface client;
-    protected Worker activeWorker;
+    public Player player;
+    protected VirtualView client;
+    public Worker activeWorker;
     protected Cell startingPosition;
+
 
     /**
      * creates a God Controller for this game
@@ -64,7 +66,7 @@ public abstract class GodController {
      *
      * @return the client associated with the player
      */
-    public PlayerInterface getClient() {
+    public VirtualView getClient() {
         return client;
     }
 
@@ -74,7 +76,7 @@ public abstract class GodController {
      * @param player the player
      * @param client the client associated with this player
      */
-    public void setPlayer(Player player, PlayerInterface client) {
+    public void setPlayer(Player player, VirtualView client) {
         this.player = player;
         this.client = client;
     }
@@ -94,7 +96,7 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    public String runPhases(Worker worker) {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
@@ -107,7 +109,7 @@ public abstract class GodController {
      * handles the moving phase of the turn
      *
      */
-    protected void movePhase() {
+    public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
@@ -122,7 +124,7 @@ public abstract class GodController {
      * handles the building phase of the turn
      *
      */
-    protected void buildPhase() {
+    public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -133,7 +135,7 @@ public abstract class GodController {
         gameController.displayBoard();
     }
 
-    protected boolean checkWin() {
+    public boolean checkWin() {
         return (activeWorker.getPosition().getBuildLevel() == 3) &&
                 (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1);
     }
@@ -144,7 +146,7 @@ public abstract class GodController {
      * @param workerPosition the position of the worker
      * @return all the cells where a worker can move
      */
-    protected ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+    public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -161,10 +163,11 @@ public abstract class GodController {
      * @param possibleMoves all the cells where the worker can move, with the only restrictions due to the general rules
      * @return all the cells where a worker can effectively move
      */
-    protected ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+    public ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
-            possibleMoves = modifier.getController().limitMoves(workerPosition, possibleMoves); }
+            possibleMoves = modifier.getController().limitMoves(workerPosition, possibleMoves);
+        }
         return possibleMoves;
     }
 
@@ -174,7 +177,7 @@ public abstract class GodController {
      * @param workerPosition the position of the worker
      * @return all the cells where a worker can build
      */
-    protected ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
+    public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -191,11 +194,13 @@ public abstract class GodController {
      * @param possibleBuilds all the cells where the worker can build, with the only resctrictions due to the general rules
      * @return all the cells where a worker can effectively build
      */
-    protected ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+    public ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
-            possibleBuilds = modifier.getController().limitBuilds(workerPosition, possibleBuilds); }
-        return possibleBuilds; }
+            possibleBuilds = modifier.getController().limitBuilds(workerPosition, possibleBuilds);
+        }
+        return possibleBuilds;
+    }
 
     /**
      * gets a list containing all the cells where an opponent worker can move and creates another list, removing from
@@ -205,9 +210,9 @@ public abstract class GodController {
      * @param possibleMoves all the cells where the worker can move, considering only the game restrictions
      * @return all the cells where the worker is actually able to build
      */
-    protected ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
-
-        return possibleMoves; }
+    public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+        return possibleMoves;
+    }
 
     /**
      * gets a list containing all the cells where an opponent worker can build and creates another list, removing from
@@ -217,7 +222,8 @@ public abstract class GodController {
      * @param possibleBuilds all the cells where the worker is able to build, considering only the game restrictions
      * @return all the cells where the worker is actually able to build
      */
-    protected ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
-        return possibleBuilds; }
+    public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+        return possibleBuilds;
+    }
 
 }

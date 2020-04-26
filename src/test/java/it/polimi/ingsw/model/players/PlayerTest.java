@@ -1,15 +1,12 @@
 package it.polimi.ingsw.model.players;
 
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.turn_controllers.ApolloController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.players.Player;
-import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.CLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.cli.CLI;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +25,7 @@ public class PlayerTest {
     @Before
     public void setUp() {
         game = new Game(player,1);
-        gameController=new GameController(new PlayerInterface(new CLI()),2);
+        gameController=new GameController(new VirtualView(new CLI()),2);
         godcontroller=new GodControllerConcrete(gameController);
         player=new Player("Eni","Red");
         card=new Card("a", "b", "c", 1, false, godcontroller);

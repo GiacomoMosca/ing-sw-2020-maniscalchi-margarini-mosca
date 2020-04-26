@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AtlasController extends GodController {
@@ -41,7 +42,7 @@ public class AtlasController extends GodController {
      *
      */
     @Override
-    public void buildPhase() {
+    public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -49,7 +50,7 @@ public class AtlasController extends GodController {
                 buildPosition.buildDome();
             else
                 buildPosition.build();
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | ClassNotFoundException e) {
             System.out.println("ERROR: illegal build");
         }
         gameController.displayBoard();

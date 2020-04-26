@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class HephaestusController extends GodController {
@@ -42,7 +43,7 @@ public class HephaestusController extends GodController {
      * handles the building phase of the turn, which can be duplicated if the player wants
      */
     @Override
-    public void buildPhase() {
+    public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

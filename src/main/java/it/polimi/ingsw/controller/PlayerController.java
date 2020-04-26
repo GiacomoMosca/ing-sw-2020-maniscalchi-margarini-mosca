@@ -3,23 +3,25 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class PlayerController {
 
     private final Player player;
-    private final PlayerInterface client;
+    private final VirtualView client;
     private GodController godController;
 
     /**
-     * creates a PlayerController associating the player and his PlayerInterface
+     * creates a PlayerController associating the player and his VirtualView
      *
      * @param player
      * @param client
      */
-    public PlayerController(Player player, PlayerInterface client) {
+    public PlayerController(Player player, VirtualView client) {
         this.player = player;
         this.client = client;
     }
@@ -34,9 +36,9 @@ public class PlayerController {
 
     /**
      *
-     * @return the PlayerInterface associated with this PlayerController
+     * @return the VirtualView associated with this PlayerController
      */
-    public PlayerInterface getClient() {
+    public VirtualView getClient() {
         return client;
     }
 
@@ -76,9 +78,18 @@ public class PlayerController {
         if (playableWorkers.size() == 1) {
             activeWorker = playableWorkers.get(0);
         } else {
-            activeWorker = client.chooseWorker(playableWorkers);
+            try {
+                activeWorker = client.chooseWorker(playableWorkers);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
-        return godController.runPhases(activeWorker);
+        try {
+            return godController.runPhases(activeWorker);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return "NEXT";
+        }
     }
 
 }

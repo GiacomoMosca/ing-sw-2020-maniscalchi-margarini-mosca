@@ -18,26 +18,34 @@ public class Board {
 
     /**
      *
-     * @param i the x-coordinate of the requested cell
-     * @param j the y-coordinate of the requested cell
+     * @param x the x-coordinate of the requested cell
+     * @param y the y-coordinate of the requested cell
      * @return the requested cell
      * @throws ArrayIndexOutOfBoundsException when the requested coordinates don't identify a cell of the Board
      */
-    public Cell getCell(int i, int j) throws ArrayIndexOutOfBoundsException {
-        if (i < 0 || i >= 5 || j < 0 || j >= 5) throw new ArrayIndexOutOfBoundsException();
-        return cells[i][j];
+    public Cell getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
+        if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
+        return cells[y][x];
+    }
+
+    public ArrayList<Cell> getAllCells() {
+        ArrayList<Cell> allCells = new ArrayList<Cell>();
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                allCells.add(cells[j][i]);
+        return allCells;
     }
 
     /**
      *
      * @param cell the Cell we want to set
-     * @param i the x-coordinate of the cell
-     * @param j the y-coordinate of the cell
+     * @param x the x-coordinate of the cell
+     * @param y the y-coordinate of the cell
      * @throws ArrayIndexOutOfBoundsException when trying to set a cell with coordinates that don't identify a cell of the Board
      */
-    public void setCell(Cell cell, int i, int j) throws ArrayIndexOutOfBoundsException {
-        if (i < 0 || i >= 5 || j < 0 || j >= 5) throw new ArrayIndexOutOfBoundsException();
-        cells[i][j] = cell;
+    public void setCell(Cell cell, int x, int y) throws ArrayIndexOutOfBoundsException {
+        if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
+        cells[y][x] = cell;
     }
 
     /**

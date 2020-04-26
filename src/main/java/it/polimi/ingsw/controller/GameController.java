@@ -2,11 +2,15 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.*;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 
+import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class GameController {
@@ -18,21 +22,21 @@ public class GameController {
 
     /**
      * creates a GameController.
-     * creates the first player (associated with the PlayerInterface received as an argument),
+     * creates the first player (associated with the VirtualView received as an argument),
      * associating his id and the color "RED".
-     * creates a PlayerController for the first player, associating the Player and his PlayerInterface.
+     * creates a PlayerController for the first player, associating the Player and his VirtualView.
      * adds the PlayerController.
      *
      *
-     * @param client the PlayerInterface associated with the first player
+     * @param client the VirtualView associated with the first player
      * @param num the number of players for the current game
      */
-    public GameController(PlayerInterface client, int num) {
+    public GameController(VirtualView client, int num) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
-        colors.add("RED");
-        colors.add("BLUE");
-        colors.add("GREEN");
+        colors.add("r");
+        colors.add("g");
+        colors.add("b");
         Player p1 = new Player(client.getId(), colors.get(0));
         PlayerController p1Controller = new PlayerController(p1, client);
         game = new Game(p1, num);
@@ -49,16 +53,14 @@ public class GameController {
 
     /**
      * adds a second or a third player to the game.
-     * creates the new player, associating his id (given by the PlayerInterface) and a color.
-     * creates a PlayerController for the player and associates the player and his PlayerInterface.
-     *
-     * if the player is the last one to be added, prepares the game.
+     * creates the new player, associating his id (given by the VirtualView) and a color.
+     * creates a PlayerController for the player and associates the player and his VirtualView.
      *
      * and the game controller asso
      *
      * @param client
      */
-    public void addPlayer(PlayerInterface client) {
+    public void addPlayer(VirtualView client) {
         if (playerControllers.size() >= game.getPlayerNum()) {
             System.out.println("ERROR: too many players");
             return;
@@ -67,7 +69,6 @@ public class GameController {
         PlayerController playerController = new PlayerController(player, client);
         game.addPlayer(player);
         playerControllers.add(playerController);
-        if (playerControllers.size() == game.getPlayerNum()) gameSetUp();
     }
 
     /**
@@ -99,12 +100,8 @@ public class GameController {
         }
 
         players = game.getPlayers();
-        deck.pickRandom(game.getPlayerNum());
-        for (int i = 0; i < game.getPlayerNum(); i++) {
-            players.get(i).setGodCard(deck.getPickedCards().get(i));
-            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
-            playerControllers.get(i).getClient().displayMessage(players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + "\n");
-        }
+
+        pickCards();
 
         displayBoard();
         placeWorkers();
@@ -113,27 +110,43 @@ public class GameController {
         playGame();
     }
 
+    private void pickCards() {
+        Deck deck = game.getDeck();
+        deck.pickRandom(game.getPlayerNum());
+        for (int i = 0; i < game.getPlayerNum(); i++) {
+            players.get(i).setGodCard(deck.getPickedCards().get(i));
+            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
+            broadcastMessage((players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + " (" + players.get(i).getColor() + ")\n"));
+        }
+    }
+
     /**
      * place the workers of all the players, asking them the localizations and then moving the workers there.
      *
      */
     private void placeWorkers() {
+        ArrayList<Cell> freePositions = game.getBoard().getAllCells();
         for (int p = 0; p < game.getPlayerNum(); p++) {
             PlayerController controller = playerControllers.get(p);
-            for (int i = 0; i < 2; ) {
+            for (int i = 0; i < 2; i++) {
+                Cell position = null;
                 int j = i + 1;
-                int posY = controller.getClient().chooseInt(5, players.get(p).getId() + ": Choose worker " + j + "'s starting position (X, then Y):");
-                int posX = controller.getClient().chooseInt(5, null);
-                if (game.getBoard().getCell(posX, posY).hasWorker()) {
-                    controller.getClient().displayMessage("Cell is full. \n");
+                try {
+                    controller.getClient().displayMessage("(Worker " + j + ") ");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    Worker worker = new Worker(players.get(p));
-                    worker.setPosition(game.getBoard().getCell(posX, posY));
-                    players.get(p).addWorker(worker);
-                    displayBoard();
-                    i++;
+                try {
+                    position = controller.getClient().chooseStartPosition(freePositions);
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    continue;
                 }
+                freePositions.remove(position);
+                Worker worker = new Worker(players.get(p));
+                worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
+                players.get(p).addWorker(worker);
+                displayBoard();
             }
         }
     }
@@ -144,8 +157,15 @@ public class GameController {
      *
      */
     private void playGame() {
+        for (Player player : game.getPlayers()) {
+            if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
+        }
         while(!game.hasWinner()){
-            displayMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            for (Card modifier : game.getActiveModifiers()) {
+                if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(game.getPlayers().get(game.getActivePlayer())))
+                    game.getActiveModifiers().remove(modifier);
+            }
             String result = playerControllers.get(game.getActivePlayer()).playTurn();
             if (result.equals("NEXT"))
                 game.getNextPlayer();
@@ -155,7 +175,7 @@ public class GameController {
                 game.setWinner(players.get(game.getActivePlayer()));
             else System.out.println("ERROR: invalid turn");
         }
-        displayMessage(game.getWinner().getId() + " has won! \n\n");
+        broadcastMessage(game.getWinner().getId() + " has won! \n\n");
     }
 
     /**
@@ -163,8 +183,13 @@ public class GameController {
      *
      */
     public void displayBoard() {
-        for (PlayerController p : playerControllers)
-            p.getClient().displayBoard(game.getBoard());
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().displayBoard(game.getPlayers(), game.getBoard());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -172,9 +197,18 @@ public class GameController {
      *
      * @param message the message to show
      */
-    public void displayMessage(String message) {
-        for (PlayerController p : playerControllers)
-            p.getClient().displayMessage(message);
+    public void broadcastMessage(String message) {
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().displayMessage(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean checkPlayers() {
+        return game.getPlayers().size() == game.getPlayerNum();
     }
   
 }
