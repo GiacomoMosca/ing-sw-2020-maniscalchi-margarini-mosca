@@ -2,7 +2,9 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.game_board.Cell;
 
-public class CellView {
+import java.io.Serializable;
+
+public class CellView implements Serializable {
 
     private final int posX;
     private final int posY;
@@ -39,8 +41,12 @@ public class CellView {
         return buildLevel;
     }
 
-    public boolean isHasDome() {
+    public boolean isDomed() {
         return hasDome;
+    }
+
+    public boolean hasWorker() {
+        return workerColor != null;
     }
 
     public String getWorkerColor() {

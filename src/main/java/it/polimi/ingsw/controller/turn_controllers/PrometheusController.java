@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PrometheusController extends GodController {
@@ -47,7 +48,7 @@ public class PrometheusController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) {
+    public String runPhases(Worker worker) throws IOException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         canBuildBefore = false;
@@ -93,7 +94,7 @@ public class PrometheusController extends GodController {
      *
      */
     @Override
-    public void movePhase() {
+    public void movePhase() throws IOException {
         ArrayList<Cell> possibleMoves;
         if (!wantBuildBefore)
             possibleMoves = findPossibleMoves(activeWorker.getPosition());

@@ -3,14 +3,16 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.controller.turn_controllers.*;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameController {
-  
+
     protected Game game;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
@@ -18,16 +20,16 @@ public class GameController {
 
     /**
      * creates a GameController.
-     * creates the first player (associated with the PlayerInterface received as an argument),
+     * creates the first player (associated with the VirtualView received as an argument),
      * associating his id and the color "RED".
-     * creates a PlayerController for the first player, associating the Player and his PlayerInterface.
+     * creates a PlayerController for the first player, associating the Player and his VirtualView.
      * adds the PlayerController.
      *
      *
-     * @param client the PlayerInterface associated with the first player
+     * @param client the VirtualView associated with the first player
      * @param num the number of players for the current game
      */
-    public GameController(PlayerInterface client, int num) {
+    public GameController(VirtualView client, int num) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
         colors.add("r");
@@ -49,14 +51,14 @@ public class GameController {
 
     /**
      * adds a second or a third player to the game.
-     * creates the new player, associating his id (given by the PlayerInterface) and a color.
-     * creates a PlayerController for the player and associates the player and his PlayerInterface.
+     * creates the new player, associating his id (given by the VirtualView) and a color.
+     * creates a PlayerController for the player and associates the player and his VirtualView.
      *
      * and the game controller asso
      *
      * @param client
      */
-    public void addPlayer(PlayerInterface client) {
+    public void addPlayer(VirtualView client) {
         if (playerControllers.size() >= game.getPlayerNum()) {
             System.out.println("ERROR: too many players");
             return;
@@ -123,20 +125,26 @@ public class GameController {
     private void placeWorkers() {
         for (int p = 0; p < game.getPlayerNum(); p++) {
             PlayerController controller = playerControllers.get(p);
-            for (int i = 0; i < 2; ) {
+            ArrayList<Cell> freePositions = game.getBoard().getAllCells();
+            for (int i = 0; i < 2; i++) {
+                Cell position = null;
                 int j = i + 1;
-                int posX = controller.getClient().chooseInt(5, players.get(p).getId() + ": Choose worker " + j + "'s starting position (X, then Y):");
-                int posY = controller.getClient().chooseInt(5, null);
-                if (game.getBoard().getCell(posX, posY).hasWorker()) {
-                    controller.getClient().displayMessage("Cell is full. \n");
+                try {
+                    controller.getClient().displayMessage("(Worker " + j + ") ");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    Worker worker = new Worker(players.get(p));
-                    worker.setPosition(game.getBoard().getCell(posX, posY));
-                    players.get(p).addWorker(worker);
-                    displayBoard();
-                    i++;
+                try {
+                    position = controller.getClient().chooseStartPosition(freePositions);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
                 }
+                freePositions.remove(position);
+                Worker worker = new Worker(players.get(p));
+                worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
+                players.get(p).addWorker(worker);
+                displayBoard();
             }
         }
     }
@@ -166,8 +174,13 @@ public class GameController {
      *
      */
     public void displayBoard() {
-        for (PlayerController p : playerControllers)
-            p.getClient().displayBoard(game.getPlayers(), game.getBoard());
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().displayBoard(game.getPlayers(), game.getBoard());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -176,8 +189,17 @@ public class GameController {
      * @param message the message to show
      */
     public void broadcastMessage(String message) {
-        for (PlayerController p : playerControllers)
-            p.getClient().displayMessage(message);
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().displayMessage(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean checkPlayers() {
+        return game.getPlayers().size() == game.getPlayerNum();
     }
   
 }

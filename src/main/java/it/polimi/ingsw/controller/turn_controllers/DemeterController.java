@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DemeterController extends GodController {
@@ -41,7 +42,7 @@ public class DemeterController extends GodController {
      *
      */
     @Override
-    public void buildPhase() throws NullPointerException {
+    public void buildPhase() throws NullPointerException, IOException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

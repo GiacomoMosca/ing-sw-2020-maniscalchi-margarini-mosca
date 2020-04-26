@@ -2,7 +2,9 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.players.Player;
 
-public class PlayerView {
+import java.io.Serializable;
+
+public class PlayerView implements Serializable {
 
     private final String id;
     private final String color;

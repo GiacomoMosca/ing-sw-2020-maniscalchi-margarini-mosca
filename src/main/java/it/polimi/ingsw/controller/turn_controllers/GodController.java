@@ -7,8 +7,9 @@ import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class GodController {
@@ -18,7 +19,7 @@ public abstract class GodController {
     protected final Board board;
     protected Card card;
     public Player player;
-    protected PlayerInterface client;
+    protected VirtualView client;
     public Worker activeWorker;
     protected Cell startingPosition;
 
@@ -65,7 +66,7 @@ public abstract class GodController {
      *
      * @return the client associated with the player
      */
-    public PlayerInterface getClient() {
+    public VirtualView getClient() {
         return client;
     }
 
@@ -75,7 +76,7 @@ public abstract class GodController {
      * @param player the player
      * @param client the client associated with this player
      */
-    public void setPlayer(Player player, PlayerInterface client) {
+    public void setPlayer(Player player, VirtualView client) {
         this.player = player;
         this.client = client;
     }
@@ -95,7 +96,7 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    public String runPhases(Worker worker) {
+    public String runPhases(Worker worker) throws IOException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
@@ -108,7 +109,7 @@ public abstract class GodController {
      * handles the moving phase of the turn
      *
      */
-    public void movePhase() {
+    public void movePhase() throws IOException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
@@ -123,7 +124,7 @@ public abstract class GodController {
      * handles the building phase of the turn
      *
      */
-    public void buildPhase() {
+    public void buildPhase() throws IOException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

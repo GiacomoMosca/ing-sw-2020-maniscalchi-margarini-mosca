@@ -3,9 +3,10 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.players.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BoardView {
+public class BoardView implements Serializable {
 
     private final ArrayList<PlayerView> players;
     private final CellView[][] cells;

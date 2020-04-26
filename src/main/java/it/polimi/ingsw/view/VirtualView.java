@@ -4,35 +4,38 @@ import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.network.message.ChoosePosition;
-import it.polimi.ingsw.network.message.ChooseYesNo;
-import it.polimi.ingsw.network.message.DisplayBoard;
-import it.polimi.ingsw.network.message.DisplayMessage;
+import it.polimi.ingsw.network.message.to_client.ChoosePosition;
+import it.polimi.ingsw.network.message.to_client.ChooseYesNo;
+import it.polimi.ingsw.network.message.to_client.DisplayBoard;
+import it.polimi.ingsw.network.message.to_client.DisplayMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
-public class PlayerInterface {
+public class VirtualView {
 
     private String id;
+    private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
 
     /**
-     * creates a PlayerInterface associated with the Interface received as an argument
+     * creates a VirtualView associated with the Interface received as an argument
      *
-     * @param output the interface to associate this PlayerInterface to
+     * @param output the interface to associate this VirtualView to
      */
-    public PlayerInterface(ObjectInputStream input, ObjectOutputStream output) {
+    public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
+        this.socket = socket;
         this.input = input;
         this.output = output;
     }
 
     /**
      *
-     * @return the id associated with this PlayerInterface (ie the id of the Player associated with it)
+     * @return the id associated with this VirtualView (ie the id of the Player associated with it)
      */
     public String getId() {
         return id;
@@ -40,7 +43,7 @@ public class PlayerInterface {
 
     /**
      *
-     * @param id the id to associate this PlayerInterface to
+     * @param id the id to associate this VirtualView to
      */
     public void setId(String id) {
         this.id = id;
@@ -80,7 +83,7 @@ public class PlayerInterface {
         }
         ChoosePosition msg = new ChoosePosition(positions, "worker");
         output.writeObject(msg);
-        return (workers.get(input.readInt());
+        return (workers.get(input.readInt()));
     }
 
     /**
@@ -96,7 +99,7 @@ public class PlayerInterface {
         }
         ChoosePosition msg = new ChoosePosition(positions, "move");
         output.writeObject(msg);
-        return (possibleMoves.get(input.readInt());
+        return (possibleMoves.get(input.readInt()));
     }
 
     /**
@@ -112,7 +115,17 @@ public class PlayerInterface {
         }
         ChoosePosition msg = new ChoosePosition(positions, "build");
         output.writeObject(msg);
-        return (possibleBuilds.get(input.readInt());
+        return (possibleBuilds.get(input.readInt()));
+    }
+
+    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException {
+        ArrayList<CellView> positions = new ArrayList<CellView>();
+        for (Cell cell : possiblePositions) {
+            positions.add(new CellView(cell));
+        }
+        ChoosePosition msg = new ChoosePosition(positions, "start");
+        output.writeObject(msg);
+        return (possiblePositions.get(input.readInt()));
     }
 
     /**
@@ -123,18 +136,7 @@ public class PlayerInterface {
     public boolean chooseYesNo(String query) throws IOException {
         ChooseYesNo msg = new ChooseYesNo(query);
         output.writeObject(msg);
-        return (input.readChar() == 'y');
-    }
-
-    /**
-     * allows the player to choose among many possibilities
-     *
-     * @param arraySize the size of the array
-     * @param message the message describing the choice to make
-     * @return the number indicating the choice of the player
-     */
-    public int chooseInt(int arraySize, String message) {
-        return client.chooseInt(arraySize, message);
+        return (input.readBoolean());
     }
 
 }

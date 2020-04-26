@@ -5,8 +5,8 @@ import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.players.Player;
-import it.polimi.ingsw.view.client.CLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.view.cli.CLI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class CardTest {
 
     @Before
     public void setUp() {
-        gamecontroller=new GameController(new PlayerInterface(new CLI()),2);
+        gamecontroller=new GameController(new VirtualView(new CLI()),2);
         gc=new GodControllerConcrete(gamecontroller);
         card=new Card("a", "b", "c", 1, false, gc);
     }

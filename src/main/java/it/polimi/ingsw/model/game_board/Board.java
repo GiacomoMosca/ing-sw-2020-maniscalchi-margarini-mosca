@@ -28,6 +28,14 @@ public class Board {
         return cells[y][x];
     }
 
+    public ArrayList<Cell> getAllCells() {
+        ArrayList<Cell> allCells = new ArrayList<Cell>();
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                allCells.add(cells[j][i]);
+        return allCells;
+    }
+
     /**
      *
      * @param cell the Cell we want to set
