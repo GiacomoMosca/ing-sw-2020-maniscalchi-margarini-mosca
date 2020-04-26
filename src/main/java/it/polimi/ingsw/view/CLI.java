@@ -18,10 +18,12 @@ public class CLI implements UI {
 
     private Scanner scanner;
     private Socket server;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
 
     public void parseMessage(Message message)
     {
-
+        message.performAction(this);
     }
 
     public void start(){
@@ -36,13 +38,24 @@ public class CLI implements UI {
         System.out.println("Connected");
 
         try {
-            ObjectOutputStream output = new ObjectOutputStream(server.getOutputStream());
-            ObjectInputStream input = new ObjectInputStream(server.getInputStream());
+            output = new ObjectOutputStream(server.getOutputStream());
+            input = new ObjectInputStream(server.getInputStream());
         } catch (IOException e) {
             System.out.println("server has died");
         } catch (ClassCastException e) {
             System.out.println("protocol violation");
         }
+
+        new Thread(() -> {
+            while (true) {
+                Message message;
+                message = (Message) input.readObject();
+                if (message != null)
+                    parseMessage(message);
+            }
+        }).start();
+
+        stop();
     }
 
     public String getServerIp() {
@@ -54,7 +67,9 @@ public class CLI implements UI {
     public void stop(){
         try {
             server.close();
-        } catch (IOException e) { }
+            input.close();
+            output.close();
+        } catch (IOException e) {}
     }
 
     /**
