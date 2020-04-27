@@ -22,12 +22,14 @@ public class CLI implements UI {
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private String id;
+    private boolean running;
 
     public CLI() {
         this.id = null;
     }
 
     public void start() {
+        running = true;
         scanner = new Scanner(System.in);
         String ip = getServerIp();
         try {
@@ -48,7 +50,7 @@ public class CLI implements UI {
         }
 
         ToClientMessage message = null;
-        while (true) {
+        while (running) {
             try {
                 message = (ToClientMessage) input.readObject();
             } catch (IOException | ClassNotFoundException e) {
@@ -65,6 +67,7 @@ public class CLI implements UI {
             server.close();
             input.close();
             output.close();
+            running = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,7 +222,7 @@ public class CLI implements UI {
      */
     public void chooseYesNo(String query) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(query + "(y/n) \n");
+        System.out.println(query + " (y/n) \n");
         String choice = scanner.nextLine();
         while (!choice.equals("y") && !choice.equals("n")) {
             System.out.println("Invalid input. \n");
@@ -262,6 +265,7 @@ public class CLI implements UI {
         else {
             System.out.println("Game over! " + player.getId() + " won!\n");
         }
+        stop();
     }
 
 }

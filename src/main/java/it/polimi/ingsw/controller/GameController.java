@@ -184,7 +184,7 @@ public class GameController {
      * checks if the game has reached the maximum number of players
      */
     public boolean checkPlayersNumber() {
-        return players.size() == game.getPlayerNum();
+        return game.getPlayers().size() == game.getPlayerNum();
     }
 
     public void checkWorkers() {
