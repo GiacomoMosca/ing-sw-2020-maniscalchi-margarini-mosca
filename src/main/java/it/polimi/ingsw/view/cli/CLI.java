@@ -1,8 +1,10 @@
 package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
+import it.polimi.ingsw.network.message.to_server.ToServerMessage;
 import it.polimi.ingsw.view.BoardView;
 import it.polimi.ingsw.view.CellView;
+import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLI implements UI {
@@ -18,12 +21,17 @@ public class CLI implements UI {
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private String id;
 
-    public void start(){
+    public CLI() {
+        this.id = null;
+    }
+
+    public void start() {
         scanner = new Scanner(System.in);
-        String ip = /*getServerIp()*/ "127.0.0.1";
+        String ip = getServerIp();
         try {
-            server = new Socket(ip,8000);
+            server = new Socket(ip, 8000);
         } catch (IOException e) {
             System.out.println("server unreachable");
             return;
@@ -50,35 +58,70 @@ public class CLI implements UI {
                 parseMessage(message);
             }
         }
-
-        //stop();
     }
 
-    public void stop(){
+    public void stop() {
         try {
             server.close();
             input.close();
             output.close();
-        } catch (IOException e) {}
-    }
-
-    public void parseMessage(ToClientMessage message)
-    {
-        message.performAction(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getServerIp() {
-        System.out.println("IP address of server?");
+        System.out.println("Server IP address:");
         String ip = scanner.nextLine();
         return ip;
     }
 
+    public void parseMessage(ToClientMessage message) {
+        message.performAction(this);
+    }
+
+    public void chooseNickname(ArrayList<String> playerList) {
+        System.out.println("\nChoose your nickname:");
+        String nickname = scanner.nextLine();
+        while (playerList.contains(nickname)) {
+            System.out.println("Nickname already taken. \n");
+            nickname = scanner.nextLine();
+        }
+        id = nickname;
+        try {
+            output.writeObject(new ToServerMessage(null, id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void choosePlayersNumber() {
+        System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
+        int num = -1;
+        while (true) {
+            try {
+                num = scanner.nextInt();
+                while (num < 2 || num > 3) {
+                    System.out.println("Invalid input. \n");
+                    num = scanner.nextInt();
+                }
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. \n");
+                scanner.nextLine();
+            }
+        }
+        try {
+            output.writeObject(new ToServerMessage(num, id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * shows the board of the current game, at his actual state:
+     * shows the board of the current game, at its actual state:
      * " " if a cell is unoccupied
-     * "a" if the cell is occupied by a worker of the first player
-     * "b" if the cell is occupied by a worker of the second player
-     * "c" if there is a third player and a cell is occupied by a worker of his
+     * "(color)" if the cell is occupied by a worker of the specified color
      * "X" if the cell has a Dome
      * "1" if the building level of the cell is 1
      * "2" if the building level of the cell is 2
@@ -121,7 +164,7 @@ public class CLI implements UI {
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
         StringBuilder string = new StringBuilder();
-        switch(desc) {
+        switch (desc) {
             case "start":
                 string.append("Choose the starting position for your worker:");
                 break;
@@ -147,14 +190,22 @@ public class CLI implements UI {
         }
         string.append("\n");
         System.out.println(string);
-        Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-        while (choice < 0 || choice >= positions.size()) {
-            System.out.println("Invalid input. \n");
-            choice = scanner.nextInt();
+        int choice = -1;
+        while (true) {
+            try {
+                choice = scanner.nextInt();
+                while (choice < 0 || choice >= positions.size()) {
+                    System.out.println("Invalid input. \n");
+                    choice = scanner.nextInt();
+                }
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. \n");
+                scanner.nextLine();
+            }
         }
         try {
-            output.writeObject(choice);
+            output.writeObject(new ToServerMessage(choice, id));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -177,9 +228,39 @@ public class CLI implements UI {
         boolean res = false;
         if (choice.equals("y")) res = true;
         try {
-            output.writeObject(res);
+            output.writeObject(new ToServerMessage(res, id));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void notifyLoss(PlayerView player, String reason) {
+        StringBuilder string = new StringBuilder();
+        if (player.getId().equals(id)) {
+            string.append("You lost! (");
+        }
+        else {
+            string.append(player.getId() + " lost! (");
+        }
+        switch (reason) {
+            case "outOfMoves":
+                string.append("No legal moves available)\n");
+                break;
+            case "outOfWorkers":
+                string.append("All workers have been removed from the game)\n");
+                break;
+            default:
+                break;
+        }
+        System.out.println(string);
+    }
+
+    public void notifyWin(PlayerView player) {
+        if (player.getId().equals(id)) {
+            System.out.println("\nCongratulations! You won!\n");
+        }
+        else {
+            System.out.println("Game over! " + player.getId() + " won!\n");
         }
     }
 

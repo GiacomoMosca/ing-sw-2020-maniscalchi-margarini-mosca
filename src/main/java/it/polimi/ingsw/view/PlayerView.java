@@ -10,13 +10,13 @@ public class PlayerView implements Serializable {
     private final String color;
     private final String godCard;
 
-    public PlayerView (Player player) {
+    public PlayerView(Player player) {
         this.id = player.getId();
         this.color = player.getColor();
         this.godCard = player.getGodCard().getGod();
     }
 
-    public PlayerView (String id, String color, String godCard) {
+    public PlayerView(String id, String color, String godCard) {
         this.id = id;
         this.color = color;
         this.godCard = godCard;

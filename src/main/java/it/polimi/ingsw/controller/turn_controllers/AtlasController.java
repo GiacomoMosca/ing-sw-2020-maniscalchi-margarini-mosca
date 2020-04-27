@@ -39,20 +39,19 @@ public class AtlasController extends GodController {
 
     /**
      * handles the building phase of the turn, and allows building domes at any level
-     *
      */
     @Override
     public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
-            if(client.chooseYesNo("Do you want to build a dome?"))
+            if (client.chooseYesNo("Do you want to build a dome?"))
                 buildPosition.buildDome();
             else
                 buildPosition.build();
         } catch (IllegalStateException | ClassNotFoundException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 }

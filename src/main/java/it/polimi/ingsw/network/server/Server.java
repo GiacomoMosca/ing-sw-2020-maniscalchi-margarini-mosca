@@ -1,8 +1,6 @@
 package it.polimi.ingsw.network.server;
 
-
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.network.message.to_client.DisplayMessage;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
@@ -10,67 +8,56 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
 
 public class Server {
-  private int port;
-  private ServerSocket socket;
-  private GameController gameController;
-  int i;
 
-  public Server(int port) {
-	this.port = port;
-	gameController = null;
-  }
+    private int port;
+    private ServerSocket socket;
+    private GameController gameController;
+    private ArrayList<String> playerList;
 
-  public void start() {
+    public Server(int port) {
+        this.port = port;
+        this.gameController = null;
+        this.playerList = new ArrayList<String>();
+    }
 
-	i = 1;
+    public void start() {
+        try {
+            socket = new ServerSocket(port);
+        } catch (IOException e) {
+            System.out.println("cannot open server socket");
+            System.exit(1);
+            return;
+        }
+        while (gameController == null || !gameController.checkPlayersNumber()) {
+            try {
+                addPlayer();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        gameController.gameSetUp();
+    }
 
-	try {
-	  socket = new ServerSocket(port);
-	} catch (IOException e) {
-	  System.out.println("cannot open server socket");
-	  System.exit(1);
-	  return;
-	}
-	while(gameController == null || !gameController.checkPlayers()) {
-	  addPlayer();
-	}
-	gameController.gameSetUp();
-  }
+    public synchronized void addPlayer() throws IOException, ClassNotFoundException {
+        Socket cSocket = null;
+        cSocket = socket.accept();
+        ObjectOutputStream outputStream = null;
+        ObjectInputStream inputStream = null;
+        outputStream = new ObjectOutputStream(cSocket.getOutputStream());
+        inputStream = new ObjectInputStream(cSocket.getInputStream());
 
-  public synchronized void addPlayer(){
-	Socket csocket = null;
-	  try {
-	  csocket = socket.accept();
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-	ObjectOutputStream output = null;
-	try {
-	  output = new ObjectOutputStream(csocket.getOutputStream());
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-	ObjectInputStream input = null;
-	try {
-	  input = new ObjectInputStream(csocket.getInputStream());
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-	VirtualView player = new VirtualView(csocket, input, output);
-	player.setId("Player " + i);
-	System.out.println("Player " + i + " connected\n\n");
-	i++;
-	if (gameController == null) {
-	  gameController = new GameController(player, /*p1.getNum()*/ 2);
-	}
-	else {
-	  gameController.addPlayer(player);
-	}
+        VirtualView player = new VirtualView(cSocket, inputStream, outputStream);
+        playerList.add(player.chooseNickname(playerList));
+        if (gameController == null) {
+            gameController = new GameController(player, player.choosePlayersNumber());
+            player.displayMessage("Waiting for players...");
+        } else {
+            player.displayMessage("Joining " + playerList.get(0) + "'s game...");
+            gameController.addPlayer(player);
+        }
+    }
 
-  }
 }

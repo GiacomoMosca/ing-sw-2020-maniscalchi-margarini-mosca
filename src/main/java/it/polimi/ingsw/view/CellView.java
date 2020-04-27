@@ -12,7 +12,7 @@ public class CellView implements Serializable {
     private final boolean hasDome;
     private final String workerColor;
 
-    public CellView (Cell cell) {
+    public CellView(Cell cell) {
         this.posX = cell.getPosX();
         this.posY = cell.getPosY();
         this.buildLevel = cell.getBuildLevel();
@@ -21,7 +21,7 @@ public class CellView implements Serializable {
         else this.workerColor = null;
     }
 
-    public CellView (int posX, int posY, int buildLevel, boolean hasDome, String workerColor) {
+    public CellView(int posX, int posY, int buildLevel, boolean hasDome, String workerColor) {
         this.posX = posX;
         this.posY = posY;
         this.buildLevel = buildLevel;

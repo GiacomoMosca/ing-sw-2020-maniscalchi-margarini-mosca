@@ -25,7 +25,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return the x-coordinate of the cell
      */
     public int getPosX() {
@@ -33,7 +32,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return the y-coordinate of the cell
      */
     public int getPosY() {
@@ -41,7 +39,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return the building-level of the cell
      */
     public int getBuildLevel() {
@@ -49,7 +46,6 @@ public class Cell {
     }
 
     /**
-     *
      * @param buildLevel the building-level to set this cell to
      */
     public void setBuildLevel(int buildLevel) {
@@ -68,7 +64,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return true if the cell has a Dome, false otherwise
      */
     public boolean isDomed() {
@@ -83,7 +78,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return the Worker standing on the cell
      */
     public Worker getWorker() {
@@ -91,7 +85,6 @@ public class Cell {
     }
 
     /**
-     *
      * @return true if the cell is occupied by a worker, false otherwise
      */
     public boolean hasWorker() {

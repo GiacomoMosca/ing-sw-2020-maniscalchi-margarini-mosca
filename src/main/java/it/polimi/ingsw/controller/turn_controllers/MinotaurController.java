@@ -40,7 +40,6 @@ public class MinotaurController extends GodController {
 
     /**
      * handles the moving phase of the turn, allowing pushing away opponent workers
-     *
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
@@ -71,7 +70,7 @@ public class MinotaurController extends GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 
     /**

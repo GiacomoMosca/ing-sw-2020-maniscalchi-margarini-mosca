@@ -23,7 +23,7 @@ public class Game {
     /**
      * prepares a new Game
      *
-     * @param p1 the player who first sign up for the game
+     * @param p1  the player who first sign up for the game
      * @param num the number of players
      */
     public Game(Player p1, int num) {
@@ -38,7 +38,6 @@ public class Game {
     }
 
     /**
-     *
      * @return all the players
      */
     public ArrayList<Player> getPlayers() {
@@ -50,7 +49,7 @@ public class Game {
      *
      * @param player the new player
      * @throws IndexOutOfBoundsException when trying to add more players than allowed for the current Game
-     * @throws IllegalArgumentException when trying to add a player who already joined the current Game
+     * @throws IllegalArgumentException  when trying to add a player who already joined the current Game
      */
     public void addPlayer(Player player) throws IndexOutOfBoundsException, IllegalArgumentException {
         if (players.size() >= playerNum) throw new IndexOutOfBoundsException();
@@ -59,7 +58,6 @@ public class Game {
     }
 
     /**
-     *
      * @return the number of players in the current Game
      */
     public int getPlayerNum() {
@@ -67,7 +65,6 @@ public class Game {
     }
 
     /**
-     *
      * @return the Board of the current Game
      */
     public Board getBoard() {
@@ -75,7 +72,6 @@ public class Game {
     }
 
     /**
-     *
      * @return the Deck containing all the God Power Cards
      */
     public Deck getDeck() {
@@ -83,7 +79,6 @@ public class Game {
     }
 
     /**
-     *
      * @return the active player
      */
     public int getActivePlayer() {
@@ -91,16 +86,14 @@ public class Game {
     }
 
     /**
-     *
-     * @return the number associated with the player who will play next
+     * correctly updates the activePlayer counter
      */
-    public int getNextPlayer() {
+    public void nextPlayer() {
         activePlayer = (activePlayer >= playerNum - 1) ? 0 : activePlayer + 1;
-        return activePlayer;
+        if (players.get(activePlayer).hasLost()) nextPlayer();
     }
 
     /**
-     *
      * @return all the active Modifiers
      */
     public ArrayList<Card> getActiveModifiers() {
@@ -126,7 +119,6 @@ public class Game {
     }
 
     /**
-     *
      * @return the player of the current Game
      */
     public Player getWinner() {
@@ -134,7 +126,6 @@ public class Game {
     }
 
     /**
-     *
      * @return true if the current Game has a winner, false otherwise
      */
     public boolean hasWinner() {

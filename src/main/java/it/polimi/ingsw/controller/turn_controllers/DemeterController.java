@@ -39,7 +39,6 @@ public class DemeterController extends GodController {
 
     /**
      * handles the building phase of the turn, and eventually allows building one additional time, but not on the same space
-     *
      */
     @Override
     public void buildPhase() throws NullPointerException, IOException, ClassNotFoundException {
@@ -50,16 +49,16 @@ public class DemeterController extends GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
         possibleBuilds.remove(buildPosition);
-        if((possibleBuilds.size()!=0)&&(client.chooseYesNo("Do you want to build again?"))) {
+        if ((possibleBuilds.size() != 0) && (client.chooseYesNo("Do you want to build again?"))) {
             buildPosition = client.chooseBuildPosition(possibleBuilds);
             try {
                 buildPosition.build();
             } catch (IllegalStateException e) {
                 System.out.println("ERROR: illegal build");
             }
-            gameController.displayBoard();
+            gameController.broadcastBoard();
         }
     }
 }

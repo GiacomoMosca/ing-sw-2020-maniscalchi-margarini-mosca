@@ -69,7 +69,7 @@ public class MinotaurControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
 
         @Override

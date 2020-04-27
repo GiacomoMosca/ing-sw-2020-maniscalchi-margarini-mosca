@@ -11,7 +11,7 @@ public class BoardView implements Serializable {
     private final ArrayList<PlayerView> players;
     private final CellView[][] cells;
 
-    public BoardView (ArrayList<Player> players, Board board) {
+    public BoardView(ArrayList<Player> players, Board board) {
         this.players = new ArrayList<PlayerView>();
         for (Player player : players) {
             this.players.add(new PlayerView(player));
@@ -22,7 +22,7 @@ public class BoardView implements Serializable {
                 this.cells[i][j] = new CellView(board.getCell(i, j));
     }
 
-    public BoardView (ArrayList<PlayerView> players, CellView[][] cells) {
+    public BoardView(ArrayList<PlayerView> players, CellView[][] cells) {
         this.players = players;
         this.cells = cells;
     }
@@ -32,7 +32,6 @@ public class BoardView implements Serializable {
     }
 
     /**
-     *
      * @param x the x-coordinate of the requested cell
      * @param y the y-coordinate of the requested cell
      * @return the requested cell

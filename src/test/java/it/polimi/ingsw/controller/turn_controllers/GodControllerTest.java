@@ -86,7 +86,7 @@ public class GodControllerTest {
         }
 
         @Override
-        public void displayBoard() { }
+        public void broadcastBoard() { }
 
         @Override
         public void displayMessage(String message) { }

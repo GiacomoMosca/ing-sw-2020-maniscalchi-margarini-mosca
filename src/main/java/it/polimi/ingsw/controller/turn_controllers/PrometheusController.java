@@ -91,7 +91,6 @@ public class PrometheusController extends GodController {
     /**
      * handles the moving phase of the turn: normally handles the phase if the player didn't build before moving;
      * otherwise doesn't allow him to move up
-     *
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {

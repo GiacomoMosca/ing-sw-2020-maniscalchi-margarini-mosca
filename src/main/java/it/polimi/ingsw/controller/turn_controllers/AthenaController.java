@@ -39,7 +39,6 @@ public class AthenaController extends GodController {
 
     /**
      * handles the moving phase of the turn, and adds a Modifier if the worker moved up on this turn
-     *
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
@@ -56,7 +55,7 @@ public class AthenaController extends GodController {
             game.addModifier(card);
         }
         //
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 
     /**
@@ -64,7 +63,7 @@ public class AthenaController extends GodController {
      * the previous all the cells that requires to move up
      *
      * @param workerPosition the position of the worker
-     * @param possibleMoves all the cells where the worker can move, considering only the game restrictions
+     * @param possibleMoves  all the cells where the worker can move, considering only the game restrictions
      * @return all the cells where the worker is actually able to build
      */
     @Override

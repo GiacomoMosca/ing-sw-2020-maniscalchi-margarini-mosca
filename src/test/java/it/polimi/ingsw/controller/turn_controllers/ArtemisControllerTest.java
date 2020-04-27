@@ -71,7 +71,7 @@ public class ArtemisControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
 
         @Override

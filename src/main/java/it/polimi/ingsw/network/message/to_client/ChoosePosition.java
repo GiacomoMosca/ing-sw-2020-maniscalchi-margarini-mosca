@@ -14,10 +14,6 @@ public class ChoosePosition extends ToClientMessage {
         this.desc = desc;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
     @Override
     public void performAction(UI client) {
         client.choosePosition((ArrayList<CellView>) body, desc);

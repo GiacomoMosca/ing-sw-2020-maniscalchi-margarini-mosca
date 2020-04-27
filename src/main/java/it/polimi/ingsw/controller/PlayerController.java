@@ -27,7 +27,6 @@ public class PlayerController {
     }
 
     /**
-     *
      * @return the player associated with this PlayerController
      */
     public Player getPlayer() {
@@ -35,7 +34,6 @@ public class PlayerController {
     }
 
     /**
-     *
      * @return the VirtualView associated with this PlayerController
      */
     public VirtualView getClient() {
@@ -43,7 +41,6 @@ public class PlayerController {
     }
 
     /**
-     *
      * @return the GodController associated with this PlayerController
      */
     public GodController getGodController() {

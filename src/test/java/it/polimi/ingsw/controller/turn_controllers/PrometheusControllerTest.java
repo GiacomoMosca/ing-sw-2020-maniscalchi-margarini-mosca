@@ -69,7 +69,7 @@ public class PrometheusControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
 
         @Override

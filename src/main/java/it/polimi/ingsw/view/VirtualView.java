@@ -4,10 +4,8 @@ import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.network.message.to_client.ChoosePosition;
-import it.polimi.ingsw.network.message.to_client.ChooseYesNo;
-import it.polimi.ingsw.network.message.to_client.DisplayBoard;
-import it.polimi.ingsw.network.message.to_client.DisplayMessage;
+import it.polimi.ingsw.network.message.to_client.*;
+import it.polimi.ingsw.network.message.to_server.ToServerMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,9 +16,9 @@ import java.util.ArrayList;
 public class VirtualView {
 
     private String id;
-    private Socket socket;
-    private ObjectInputStream input;
-    private ObjectOutputStream output;
+    private final Socket socket;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
 
     /**
      * creates a VirtualView associated with the Interface received as an argument
@@ -34,19 +32,21 @@ public class VirtualView {
     }
 
     /**
-     *
      * @return the id associated with this VirtualView (ie the id of the Player associated with it)
      */
     public String getId() {
         return id;
     }
 
-    /**
-     *
-     * @param id the id to associate this VirtualView to
-     */
-    public void setId(String id) {
-        this.id = id;
+    public String chooseNickname(ArrayList<String> playerList) throws IOException, ClassNotFoundException {
+        output.writeObject(new ChooseNickname(playerList));
+        id = ((ToServerMessage) input.readObject()).getSender();
+        return id;
+    }
+
+    public int choosePlayersNumber() throws IOException, ClassNotFoundException {
+        output.writeObject(new ChoosePlayersNumber(null));
+        return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 
     /**
@@ -83,7 +83,7 @@ public class VirtualView {
         }
         ChoosePosition msg = new ChoosePosition(positions, "worker");
         output.writeObject(msg);
-        return (workers.get((int) input.readObject()));
+        return workers.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
     /**
@@ -99,7 +99,7 @@ public class VirtualView {
         }
         ChoosePosition msg = new ChoosePosition(positions, "move");
         output.writeObject(msg);
-        return (possibleMoves.get((int) input.readObject()));
+        return possibleMoves.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
     /**
@@ -115,7 +115,7 @@ public class VirtualView {
         }
         ChoosePosition msg = new ChoosePosition(positions, "build");
         output.writeObject(msg);
-        return (possibleBuilds.get((int) input.readObject()));
+        return possibleBuilds.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
     public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException, ClassNotFoundException {
@@ -125,18 +125,29 @@ public class VirtualView {
         }
         ChoosePosition msg = new ChoosePosition(positions, "start");
         output.writeObject(msg);
-        return (possiblePositions.get((int) input.readObject()));
+        return possiblePositions.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
     /**
-     *
      * @param query the question the player should answer to
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
         ChooseYesNo msg = new ChooseYesNo(query);
         output.writeObject(msg);
-        return ((Boolean) input.readObject());
+        return (boolean) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public void notifyLoss(Player player, String reason) throws IOException {
+        PlayerView playerView = new PlayerView(player);
+        NotifyLoss msg = new NotifyLoss(playerView, reason);
+        output.writeObject(msg);
+    }
+
+    public void notifyWin(Player player) throws IOException {
+        PlayerView playerView = new PlayerView(player);
+        NotifyWin msg = new NotifyWin(playerView);
+        output.writeObject(msg);
     }
 
 }

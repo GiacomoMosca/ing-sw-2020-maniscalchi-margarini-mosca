@@ -18,7 +18,6 @@ public class Worker {
     }
 
     /**
-     *
      * @return the player who owns the worker
      */
     public Player getOwner() {
@@ -26,7 +25,6 @@ public class Worker {
     }
 
     /**
-     *
      * @return the cell where the worker is located
      */
     public Cell getPosition() {

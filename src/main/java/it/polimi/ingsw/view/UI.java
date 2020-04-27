@@ -14,6 +14,10 @@ public interface UI {
 
     public String getServerIp();
 
+    public void chooseNickname(ArrayList<String> playerList);
+
+    public void choosePlayersNumber();
+
     /**
      * shows the game board
      *
@@ -31,10 +35,13 @@ public interface UI {
     public void choosePosition(ArrayList<CellView> positions, String desc);
 
     /**
-     *
      * @param query the question the player should answer to
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public void chooseYesNo(String query);
+
+    public void notifyLoss(PlayerView player, String reason);
+
+    public void notifyWin(PlayerView player);
 
 }
