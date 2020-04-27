@@ -7,12 +7,16 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.FakeVirtualView;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -20,17 +24,19 @@ import static org.junit.Assert.*;
 public class MinotaurControllerTest {
     MinotaurController minotaurController;
     FakeGameController fakeGameController;
-    PlayerInterface playerInterface1;
-    FakeCLI cli1;
+    FakeVirtualView fakeVirtualView1, fakeVirtualView2;
+    Socket socket1, socket2;
+    ObjectInputStream ois1, ois2;
+    ObjectOutputStream ous1, ous2;
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
             super(client, num);
         }
 
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
             PlayerController playerController = new PlayerController(player, client);
             game.addPlayer(player);
@@ -71,28 +77,23 @@ public class MinotaurControllerTest {
         @Override
         public void displayBoard() {
         }
-
-        @Override
-        public void displayMessage(String message) {
-        }
-
     }
 
     @Before
     public void setUp() throws Exception {
-        cli1=new FakeCLI();
-        playerInterface1=new PlayerInterface(cli1);
-        playerInterface1.setId("MinotaurTest");
-        fakeGameController=new FakeGameController(playerInterface1, 2);
+        socket1=new Socket();
+        fakeVirtualView1=new FakeVirtualView(socket1, ois1, ous1);
+        fakeVirtualView1.setId("MinotaurTest");
+        fakeGameController=new FakeGameController(fakeVirtualView1, 2);
         minotaurController=new MinotaurController(fakeGameController);
 
         GodControllerConcrete genericController=new GodControllerConcrete(fakeGameController);
-        FakeCLI cli2=new FakeCLI();
-        PlayerInterface playerInterface2=new PlayerInterface(cli2);
-        playerInterface2.setId("AdditionalPlayer");
+        socket2=new Socket();
+        fakeVirtualView2=new FakeVirtualView(socket2, ois2, ous2);
+        fakeVirtualView2.setId("AdditionalPlayer");
 
-        Player player2 = new Player(playerInterface2.getId(), "color");
-        PlayerController playerController = new PlayerController(player2, playerInterface2);
+        Player player2 = new Player(fakeVirtualView2.getId(), "color");
+        PlayerController playerController = new PlayerController(player2, fakeVirtualView2);
         fakeGameController.getGame().addPlayer(player2);
 
         Deck deck = fakeGameController.getGame().getDeck();
@@ -101,9 +102,9 @@ public class MinotaurControllerTest {
         deck.addCard(new Card("god", "title", "description", 1, false, genericController));
 
         fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         fakeGameController.getGame().getPlayers().get(1).setGodCard(deck.getCards().get(1));
-        genericController.setPlayer(fakeGameController.getGame().getPlayers().get(1), playerInterface2);
+        genericController.setPlayer(fakeGameController.getGame().getPlayers().get(1), fakeVirtualView2);
 
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
@@ -132,7 +133,7 @@ public class MinotaurControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkersPushingAwayTheOpponent() {
+    public void movePhase_noInputGiven_shouldMoveTheWorkersPushingAwayTheOpponent() throws IOException, ClassNotFoundException {
         minotaurController.movePhase();
         assertTrue(fakeGameController.getGame().getBoard().getCell(0,1).getWorker().equals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)));
         assertTrue(fakeGameController.getGame().getBoard().getCell(0,2).getWorker().equals(fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0)));
@@ -144,9 +145,12 @@ public class MinotaurControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateTwoMovingExceptions() {
+    public void movePhase_noInputGiven_shouldGenerateTwoMovingExceptions() throws IOException, ClassNotFoundException {
         //a client who chooses to move in an illegal cell
-        class FakeCLItoGenerateException extends FakeCLI{
+        class FakeVirtualViewToGenerateException extends FakeVirtualView {
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
+                super(socket, objectInputStream, objectOutputStream);
+            }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
                 return(fakeGameController.getGame().getBoard().getCell(2,2));
@@ -157,12 +161,12 @@ public class MinotaurControllerTest {
             }
         }
 
-        FakeCLItoGenerateException cli=new FakeCLItoGenerateException();
-        PlayerInterface playerInterface1=new PlayerInterface(cli);
-        playerInterface1.setId("MinotaurTestToGenerateException");
-        fakeGameController=new FakeGameController(playerInterface1, 1);
+        socket1=new Socket();
+        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket1, ois1, ous1);
+        fakeVirtualView1.setId("MinotaurTestToGenerateException");
+        fakeGameController=new FakeGameController(fakeVirtualView1, 1);
         minotaurController=new MinotaurController(fakeGameController);
-        minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
