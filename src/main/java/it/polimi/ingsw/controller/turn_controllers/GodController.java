@@ -23,7 +23,6 @@ public abstract class GodController {
     public Worker activeWorker;
     protected Cell startingPosition;
 
-
     /**
      * creates a God Controller for this game
      *
