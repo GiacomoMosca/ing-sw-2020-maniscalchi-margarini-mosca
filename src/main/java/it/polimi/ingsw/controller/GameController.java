@@ -159,7 +159,7 @@ public class GameController {
                     modifier -> !modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(players.get(game.getActivePlayer()))
             );
 
-            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s turn === \n");
             switch (playerControllers.get(game.getActivePlayer()).playTurn()) {
                 case "NEXT":
                     checkWorkers();
@@ -170,14 +170,14 @@ public class GameController {
                     game.nextPlayer();
                     break;
                 case "WON":
-                    game.setWinner(players.get(game.getActivePlayer()));
+                    setWinner(players.get(game.getActivePlayer()), "winConditionAchieved");
                     break;
                 default:
                     System.out.println("ERROR: invalid turn");
                     break;
             }
         }
-        notifyWin(game.getWinner());
+        gameOver();
     }
 
     /**
@@ -187,12 +187,21 @@ public class GameController {
         return game.getPlayers().size() == game.getPlayerNum();
     }
 
+    /**
+     * checks if any player has no workers left and, if so, removes them from the game
+     */
     public void checkWorkers() {
         for (Player player : players) {
             if (player.getWorkers().size() == 0) eliminatePlayer(player, "outOfWorkers");
         }
     }
 
+    /**
+     * removes a player from the game, then sets the winner if only one player is left
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
     private void eliminatePlayer(Player player, String reason) {
         player.setLost();
         notifyLoss(player, reason);
@@ -201,12 +210,23 @@ public class GameController {
             if (!activePlayer.hasLost()) activePlayers.add(activePlayer);
         }
         if (activePlayers.size() == 1) {
-            game.setWinner(activePlayers.get(0));
+            setWinner(activePlayers.get(0), "lastPlayerStanding");
             return;
         }
         game.getActiveModifiers().removeIf(
                 modifier -> modifier.getController().getPlayer().equals(player)
         );
+    }
+
+    /**
+     * sets a player as the winner
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
+    private void setWinner(Player player, String reason) {
+        game.setWinner(player);
+        notifyWin(player, reason);
     }
 
     /**
@@ -237,6 +257,12 @@ public class GameController {
         }
     }
 
+    /**
+     * notifies all players that a player has lost
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
     public void notifyLoss(Player player, String reason) {
         for (PlayerController p : playerControllers) {
             try {
@@ -247,10 +273,29 @@ public class GameController {
         }
     }
 
-    public void notifyWin(Player player) {
+    /**
+     * notifies all players that a player has won
+     *
+     * @param player the winning player
+     * @param reason the reason why the player won
+     */
+    public void notifyWin(Player player, String reason) {
         for (PlayerController p : playerControllers) {
             try {
-                p.getClient().notifyWin(player);
+                p.getClient().notifyWin(player, reason);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * notifies all players that the game is over
+     */
+    public void gameOver() {
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().gameOver();
             } catch (IOException e) {
                 e.printStackTrace();
             }

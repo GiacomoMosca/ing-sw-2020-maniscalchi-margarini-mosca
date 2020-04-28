@@ -6,25 +6,25 @@ import it.polimi.ingsw.model.players.Player;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BoardView implements Serializable {
+public class GameView implements Serializable {
 
     private final ArrayList<PlayerView> players;
-    private final CellView[][] cells;
+    private final CellView[][] board;
 
-    public BoardView(ArrayList<Player> players, Board board) {
+    public GameView(ArrayList<Player> players, Board board) {
         this.players = new ArrayList<PlayerView>();
         for (Player player : players) {
             this.players.add(new PlayerView(player));
         }
-        this.cells = new CellView[5][5];
+        this.board = new CellView[5][5];
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
-                this.cells[i][j] = new CellView(board.getCell(i, j));
+                this.board[i][j] = new CellView(board.getCell(i, j));
     }
 
-    public BoardView(ArrayList<PlayerView> players, CellView[][] cells) {
+    public GameView(ArrayList<PlayerView> players, CellView[][] board) {
         this.players = players;
-        this.cells = cells;
+        this.board = board;
     }
 
     public ArrayList<PlayerView> getPlayers() {
@@ -39,7 +39,7 @@ public class BoardView implements Serializable {
      */
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
-        return cells[y][x];
+        return board[y][x];
     }
 
 }

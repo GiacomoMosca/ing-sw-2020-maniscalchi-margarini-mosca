@@ -2,7 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.ToServerMessage;
-import it.polimi.ingsw.view.BoardView;
+import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
@@ -28,7 +28,7 @@ public class CLI implements UI {
         this.id = null;
     }
 
-    public void start() {
+    public void run() {
         running = true;
         scanner = new Scanner(System.in);
         String ip = getServerIp();
@@ -64,10 +64,10 @@ public class CLI implements UI {
 
     public void stop() {
         try {
+            running = false;
             server.close();
             input.close();
             output.close();
-            running = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -132,7 +132,7 @@ public class CLI implements UI {
      *
      * @param board the board associated with the current game
      */
-    public void displayBoard(BoardView board) {
+    public void displayBoard(GameView board) {
         StringBuilder string = new StringBuilder();
         string.append("    0  1  2  3  4 ");
         string.append("\n");
@@ -240,17 +240,17 @@ public class CLI implements UI {
     public void notifyLoss(PlayerView player, String reason) {
         StringBuilder string = new StringBuilder();
         if (player.getId().equals(id)) {
-            string.append("You lost! (");
+            string.append("You lost! ");
         }
         else {
-            string.append(player.getId() + " lost! (");
+            string.append(player.getId() + " lost! ");
         }
         switch (reason) {
             case "outOfMoves":
-                string.append("No legal moves available)\n");
+                string.append("(No legal moves available)\n");
                 break;
             case "outOfWorkers":
-                string.append("All workers have been removed from the game)\n");
+                string.append("(All workers have been removed from the game)\n");
                 break;
             default:
                 break;
@@ -258,13 +258,29 @@ public class CLI implements UI {
         System.out.println(string);
     }
 
-    public void notifyWin(PlayerView player) {
+    public void notifyWin(PlayerView player, String reason) {
+        StringBuilder string = new StringBuilder();
         if (player.getId().equals(id)) {
-            System.out.println("\nCongratulations! You won!\n");
+            string.append("Congratulations! You won! ");
         }
         else {
-            System.out.println("Game over! " + player.getId() + " won!\n");
+            string.append(player.getId() + " won! ");
         }
+        switch (reason) {
+            case "winConditionAchieved":
+                string.append("(Win condition achieved)\n");
+                break;
+            case "outOfWorkers":
+                string.append("(All other players were eliminated)\n");
+                break;
+            default:
+                break;
+        }
+        System.out.println(string);
+    }
+
+    public void gameOver() {
+        System.out.println("\n\nGame over! Thanks for playing!\n\n");
         stop();
     }
 

@@ -22,8 +22,6 @@ public class VirtualView {
 
     /**
      * creates a VirtualView associated with the Interface received as an argument
-     *
-     * @param output the interface to associate this VirtualView to
      */
     public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
         this.socket = socket;
@@ -55,8 +53,8 @@ public class VirtualView {
      * @param board the Board associated with the current Game
      */
     public void displayBoard(ArrayList<Player> players, Board board) throws IOException {
-        BoardView boardView = new BoardView(players, board);
-        DisplayBoard msg = new DisplayBoard(boardView);
+        GameView gameView = new GameView(players, board);
+        DisplayBoard msg = new DisplayBoard(gameView);
         output.writeObject(msg);
     }
 
@@ -144,9 +142,14 @@ public class VirtualView {
         output.writeObject(msg);
     }
 
-    public void notifyWin(Player player) throws IOException {
+    public void notifyWin(Player player, String reason) throws IOException {
         PlayerView playerView = new PlayerView(player);
-        NotifyWin msg = new NotifyWin(playerView);
+        NotifyWin msg = new NotifyWin(playerView, reason);
+        output.writeObject(msg);
+    }
+
+    public void gameOver() throws IOException {
+        GameOver msg = new GameOver(null);
         output.writeObject(msg);
     }
 

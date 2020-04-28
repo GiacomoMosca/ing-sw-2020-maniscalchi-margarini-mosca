@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface UI {
 
-    public void start();
+    public void run();
 
     public void stop();
 
@@ -23,7 +23,7 @@ public interface UI {
      *
      * @param board the Board of the current game
      */
-    public void displayBoard(BoardView board);
+    public void displayBoard(GameView board);
 
     /**
      * shows a message
@@ -42,6 +42,8 @@ public interface UI {
 
     public void notifyLoss(PlayerView player, String reason);
 
-    public void notifyWin(PlayerView player);
+    public void notifyWin(PlayerView player, String reason);
+
+    public void gameOver();
 
 }
