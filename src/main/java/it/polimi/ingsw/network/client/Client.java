@@ -34,7 +34,7 @@ public class Client {
             System.out.println("Coming soon :) \n");
             userInterface = new CLI();
         }
-        userInterface.start();
+        userInterface.run();
     }
 
 }
