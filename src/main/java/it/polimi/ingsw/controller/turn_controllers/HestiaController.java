@@ -47,14 +47,18 @@ public class HestiaController extends GodController {
      */
     @Override
     public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+        buildAgain=false;
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
-        buildAgain = client.chooseYesNo("Do you want to build again?");
-        if (buildAgain)
-            buildPhase();
+        buildAgain=true;
+        if(findPossibleBuilds(activeWorker.getPosition()).size()>0) {
+            buildAgain = client.chooseYesNo("Do you want to build again?");
+            if (buildAgain)
+                buildPhase();
+        }
         return "NEXT";
     }
 

@@ -55,6 +55,7 @@ public class TritonController extends GodController{
 
         while (movePosition.getPosX()==0 || movePosition.getPosY()==0 || movePosition.getPosY()==4 || movePosition.getPosX()==4){
             if (client.chooseYesNo("Do you want to move again?")){
+                possibleMoves = findPossibleMoves(activeWorker.getPosition());
                 movePosition = client.chooseMovePosition(possibleMoves);
                 try {
                     activeWorker.move(movePosition);
