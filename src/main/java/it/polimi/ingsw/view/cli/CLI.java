@@ -7,20 +7,19 @@ import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.concurrent.SynchronousQueue;
 
 public class CLI implements UI {
 
-    private Scanner scanner;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private SynchronousQueue messageQueue;
     private String id;
     private boolean running;
 
@@ -30,65 +29,90 @@ public class CLI implements UI {
 
     public void run() {
         running = true;
-        scanner = new Scanner(System.in);
+        messageQueue = new SynchronousQueue();
+        new Thread(this::inputListener).start();
+
         String ip = getServerIp();
+        server = new Socket();
         try {
-            server = new Socket(ip, 8000);
+            server.connect(new InetSocketAddress(ip, 8000), 5*1000);
         } catch (IOException e) {
-            System.out.println("server unreachable");
+            System.out.println("Server unreachable. \nPress ENTER to quit. ");
+            stop();
             return;
         }
-        System.out.println("Connected");
+        System.out.println("Connected! ");
 
         try {
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream(server.getInputStream());
         } catch (IOException e) {
-            System.out.println("server has died");
+            System.out.println("Server is down. \nPress ENTER to quit. ");
+            stop();
+            return;
         } catch (ClassCastException e) {
-            System.out.println("protocol violation");
+            System.out.println("Protocol violation. \nPress ENTER to quit. ");
+            stop();
+            return;
         }
 
         ToClientMessage message = null;
         while (running) {
             try {
                 message = (ToClientMessage) input.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
+                System.out.println("Disconnected. ");
+                break;
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             if (message != null) {
                 parseMessage(message);
             }
         }
+        stop();
+    }
+
+    private void inputListener() {
+        Scanner scanner = new Scanner(System.in);
+        while(running) {
+            String input = scanner.nextLine();
+            switch (input) {
+                case "/quit":
+                    quit();
+                    break;
+            }
+            messageQueue.offer(input);
+        }
     }
 
     public void stop() {
         try {
             running = false;
-            server.close();
-            input.close();
-            output.close();
+            if (server != null) server.close();
+            if (input != null) input.close();
+            if (output != null) output.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getServerIp() {
-        System.out.println("Server IP address:");
-        String ip = scanner.nextLine();
-        return ip;
     }
 
     public void parseMessage(ToClientMessage message) {
         message.performAction(this);
     }
 
+    public String getServerIp() {
+        System.out.println("Server IP address: ");
+        String ip = getString();
+        return ip;
+    }
+
     public void chooseNickname(ArrayList<String> playerList) {
-        System.out.println("\nChoose your nickname:");
-        String nickname = scanner.nextLine();
+        System.out.println("\nChoose your nickname: ");
+        String nickname = getString();
         while (playerList.contains(nickname)) {
             System.out.println("Nickname already taken. \n");
-            nickname = scanner.nextLine();
+            nickname = getString();
         }
         id = nickname;
         try {
@@ -100,19 +124,10 @@ public class CLI implements UI {
 
     public void choosePlayersNumber() {
         System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
-        int num = -1;
-        while (true) {
-            try {
-                num = scanner.nextInt();
-                while (num < 2 || num > 3) {
-                    System.out.println("Invalid input. \n");
-                    num = scanner.nextInt();
-                }
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. \n");
-                scanner.nextLine();
-            }
+        int num = getInt();
+        while (num < 2 || num > 3) {
+            System.out.println("Invalid input. \n");
+            num = getInt();
         }
         try {
             output.writeObject(new ToServerMessage(num, id));
@@ -193,19 +208,10 @@ public class CLI implements UI {
         }
         string.append("\n");
         System.out.println(string);
-        int choice = -1;
-        while (true) {
-            try {
-                choice = scanner.nextInt();
-                while (choice < 0 || choice >= positions.size()) {
-                    System.out.println("Invalid input. \n");
-                    choice = scanner.nextInt();
-                }
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. \n");
-                scanner.nextLine();
-            }
+        int choice = getInt();
+        while (choice < 0 || choice >= positions.size()) {
+            System.out.println("Invalid input. \n");
+            choice = getInt();
         }
         try {
             output.writeObject(new ToServerMessage(choice, id));
@@ -221,12 +227,11 @@ public class CLI implements UI {
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public void chooseYesNo(String query) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println(query + " (y/n) \n");
-        String choice = scanner.nextLine();
+        String choice = getString();
         while (!choice.equals("y") && !choice.equals("n")) {
             System.out.println("Invalid input. \n");
-            choice = scanner.nextLine();
+            choice = getString();
         }
         boolean res = false;
         if (choice.equals("y")) res = true;
@@ -280,8 +285,34 @@ public class CLI implements UI {
     }
 
     public void gameOver() {
-        System.out.println("\n\nGame over! Thanks for playing!\n\n");
+        System.out.println("\n\nGame over! Thanks for playing! \nPress ENTER to quit. ");
         stop();
+    }
+
+    private void quit() {
+        gameOver();
+    }
+
+    private int getInt() {
+        while (true) {
+            try {
+                return Integer.parseInt((String) messageQueue.take());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. \n");
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
+    }
+
+    private String getString() {
+        while (true) {
+            try {
+                return (String) messageQueue.take();
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
     }
 
 }
