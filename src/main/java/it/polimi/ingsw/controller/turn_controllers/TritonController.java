@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.game_board.Cell;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TritonController extends GodController{
+public class TritonController extends GodController {
 
     /**
      * creates a Triton controller for this game
@@ -40,7 +40,6 @@ public class TritonController extends GodController{
     /**
      * handles the moving phase of the turn, allowing moving a second time
      * whether the first one was onto a perimeter space
-     *
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
@@ -51,10 +50,10 @@ public class TritonController extends GodController{
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
 
-        while (movePosition.getPosX()==0 || movePosition.getPosY()==0 || movePosition.getPosY()==4 || movePosition.getPosX()==4){
-            if (client.chooseYesNo("Do you want to move again?")){
+        while (movePosition.getPosX() == 0 || movePosition.getPosY() == 0 || movePosition.getPosY() == 4 || movePosition.getPosX() == 4) {
+            if (client.chooseYesNo("Do you want to move again?")) {
                 possibleMoves = findPossibleMoves(activeWorker.getPosition());
                 movePosition = client.chooseMovePosition(possibleMoves);
                 try {
@@ -63,9 +62,8 @@ public class TritonController extends GodController{
                     System.out.println("ERROR: illegal move");
                     return;
                 }
-            }
-            else return;
-            gameController.displayBoard();
+            } else return;
+            gameController.broadcastBoard();
         }
     }
 }

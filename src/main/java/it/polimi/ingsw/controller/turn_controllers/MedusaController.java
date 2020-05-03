@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.players.Worker;
 
 import java.io.IOException;
 
-public class MedusaController extends GodController{
+public class MedusaController extends GodController {
 
     /**
      * creates a Medusa controller for this game
@@ -52,17 +52,13 @@ public class MedusaController extends GodController{
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
-        for(Cell cell : board.getNeighbors(activeWorker.getPosition()))
-        {
-            if(cell.hasWorker())
-            {
-                if(!player.getWorkers().contains(cell.getWorker()))
-                {
-                    if(cell.getBuildLevel()<activeWorker.getPosition().getBuildLevel())
-                    {
+        for (Cell cell : board.getNeighbors(activeWorker.getPosition())) {
+            if (cell.hasWorker()) {
+                if (!player.getWorkers().contains(cell.getWorker())) {
+                    if (cell.getBuildLevel() < activeWorker.getPosition().getBuildLevel()) {
                         cell.getWorker().getOwner().removeWorker(cell.getWorker());
                         cell.build();
-                        gameController.displayBoard();
+                        gameController.broadcastBoard();
                     }
                 }
             }

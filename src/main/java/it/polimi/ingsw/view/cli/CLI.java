@@ -35,7 +35,7 @@ public class CLI implements UI {
         String ip = getServerIp();
         server = new Socket();
         try {
-            server.connect(new InetSocketAddress(ip, 8000), 5*1000);
+            server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
         } catch (IOException e) {
             System.out.println("Server unreachable. \nPress ENTER to quit. ");
             stop();
@@ -75,7 +75,7 @@ public class CLI implements UI {
 
     private void inputListener() {
         Scanner scanner = new Scanner(System.in);
-        while(running) {
+        while (running) {
             String input = scanner.nextLine();
             switch (input) {
                 case "/quit":
@@ -246,8 +246,7 @@ public class CLI implements UI {
         StringBuilder string = new StringBuilder();
         if (player.getId().equals(id)) {
             string.append("You lost! ");
-        }
-        else {
+        } else {
             string.append(player.getId() + " lost! ");
         }
         switch (reason) {
@@ -267,8 +266,7 @@ public class CLI implements UI {
         StringBuilder string = new StringBuilder();
         if (player.getId().equals(id)) {
             string.append("Congratulations! You won! ");
-        }
-        else {
+        } else {
             string.append(player.getId() + " won! ");
         }
         switch (reason) {
