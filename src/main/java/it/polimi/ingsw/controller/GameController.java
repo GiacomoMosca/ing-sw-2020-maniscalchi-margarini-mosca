@@ -155,22 +155,24 @@ public class GameController {
             if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
         }
         while (!game.hasWinner()) {
-            game.getActiveModifiers().removeIf(
-                    modifier -> !modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(players.get(game.getActivePlayer()))
-            );
+            Player currentPlayer = players.get(game.getActivePlayer());
+            for (Card modifier : game.getActiveModifiers()) {
+                if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(currentPlayer))
+                    game.removeModifier(modifier);
+            }
 
-            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s turn === \n");
+            broadcastMessage("=== " + currentPlayer.getId() + "'s turn === \n");
             switch (playerControllers.get(game.getActivePlayer()).playTurn()) {
                 case "NEXT":
                     checkWorkers();
                     game.nextPlayer();
                     break;
                 case "LOST":
-                    eliminatePlayer(players.get(game.getActivePlayer()), "outOfMoves");
+                    eliminatePlayer(currentPlayer, "outOfMoves");
                     game.nextPlayer();
                     break;
                 case "WON":
-                    setWinner(players.get(game.getActivePlayer()), "winConditionAchieved");
+                    setWinner(currentPlayer, "winConditionAchieved");
                     break;
                 default:
                     System.out.println("ERROR: invalid turn");
