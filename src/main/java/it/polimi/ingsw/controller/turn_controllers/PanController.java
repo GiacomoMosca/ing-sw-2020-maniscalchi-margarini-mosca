@@ -40,6 +40,7 @@ public class PanController extends GodController {
     @Override
     public boolean checkWin() {
         //Player also win if his worker moves down two or more levels
-        return (((activeWorker.getPosition().getBuildLevel() == 3)&&(activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1)) || (startingPosition.getBuildLevel()-activeWorker.getPosition().getBuildLevel()>=2));
+        return (((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1)) || 
+                (startingPosition.getBuildLevel() - activeWorker.getPosition().getBuildLevel() >= 2));
     }
 }

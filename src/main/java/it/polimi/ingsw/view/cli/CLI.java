@@ -1,84 +1,145 @@
 package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
-import it.polimi.ingsw.view.BoardView;
+import it.polimi.ingsw.network.message.to_server.ToServerMessage;
+import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.CellView;
+import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.SynchronousQueue;
 
 public class CLI implements UI {
 
-    private Scanner scanner;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private SynchronousQueue messageQueue;
+    private String id;
+    private boolean running;
 
-    public void start(){
-        scanner = new Scanner(System.in);
-        String ip = /*getServerIp()*/ "127.0.0.1";
+    public CLI() {
+        this.id = null;
+    }
+
+    public void run() {
+        running = true;
+        messageQueue = new SynchronousQueue();
+        new Thread(this::inputListener).start();
+
+        String ip = getServerIp();
+        server = new Socket();
         try {
-            server = new Socket(ip,8000);
+            server.connect(new InetSocketAddress(ip, 8000), 5*1000);
         } catch (IOException e) {
-            System.out.println("server unreachable");
+            System.out.println("Server unreachable. \nPress ENTER to quit. ");
+            stop();
             return;
         }
-        System.out.println("Connected");
+        System.out.println("Connected! ");
 
         try {
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream(server.getInputStream());
         } catch (IOException e) {
-            System.out.println("server has died");
+            System.out.println("Server is down. \nPress ENTER to quit. ");
+            stop();
+            return;
         } catch (ClassCastException e) {
-            System.out.println("protocol violation");
+            System.out.println("Protocol violation. \nPress ENTER to quit. ");
+            stop();
+            return;
         }
 
         ToClientMessage message = null;
-        while (true) {
+        while (running) {
             try {
                 message = (ToClientMessage) input.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
+                System.out.println("Disconnected. ");
+                break;
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
             if (message != null) {
                 parseMessage(message);
             }
         }
-
-        //stop();
+        stop();
     }
 
-    public void stop(){
+    private void inputListener() {
+        Scanner scanner = new Scanner(System.in);
+        while(running) {
+            String input = scanner.nextLine();
+            switch (input) {
+                case "/quit":
+                    quit();
+                    break;
+            }
+            messageQueue.offer(input);
+        }
+    }
+
+    public void stop() {
         try {
-            server.close();
-            input.close();
-            output.close();
-        } catch (IOException e) {}
+            running = false;
+            if (server != null) server.close();
+            if (input != null) input.close();
+            if (output != null) output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void parseMessage(ToClientMessage message)
-    {
+    public void parseMessage(ToClientMessage message) {
         message.performAction(this);
     }
 
     public String getServerIp() {
-        System.out.println("IP address of server?");
-        String ip = scanner.nextLine();
+        System.out.println("Server IP address: ");
+        String ip = getString();
         return ip;
     }
 
+    public void chooseNickname(ArrayList<String> playerList) {
+        System.out.println("\nChoose your nickname: ");
+        String nickname = getString();
+        while (playerList.contains(nickname)) {
+            System.out.println("Nickname already taken. \n");
+            nickname = getString();
+        }
+        id = nickname;
+        try {
+            output.writeObject(new ToServerMessage(null, id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void choosePlayersNumber() {
+        System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
+        int num = getInt();
+        while (num < 2 || num > 3) {
+            System.out.println("Invalid input. \n");
+            num = getInt();
+        }
+        try {
+            output.writeObject(new ToServerMessage(num, id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * shows the board of the current game, at his actual state:
+     * shows the board of the current game, at its actual state:
      * " " if a cell is unoccupied
-     * "a" if the cell is occupied by a worker of the first player
-     * "b" if the cell is occupied by a worker of the second player
-     * "c" if there is a third player and a cell is occupied by a worker of his
+     * "(color)" if the cell is occupied by a worker of the specified color
      * "X" if the cell has a Dome
      * "1" if the building level of the cell is 1
      * "2" if the building level of the cell is 2
@@ -86,7 +147,7 @@ public class CLI implements UI {
      *
      * @param board the board associated with the current game
      */
-    public void displayBoard(BoardView board) {
+    public void displayBoard(GameView board) {
         StringBuilder string = new StringBuilder();
         string.append("    0  1  2  3  4 ");
         string.append("\n");
@@ -121,7 +182,7 @@ public class CLI implements UI {
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
         StringBuilder string = new StringBuilder();
-        switch(desc) {
+        switch (desc) {
             case "start":
                 string.append("Choose the starting position for your worker:");
                 break;
@@ -147,14 +208,13 @@ public class CLI implements UI {
         }
         string.append("\n");
         System.out.println(string);
-        Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        int choice = getInt();
         while (choice < 0 || choice >= positions.size()) {
             System.out.println("Invalid input. \n");
-            choice = scanner.nextInt();
+            choice = getInt();
         }
         try {
-            output.writeObject(choice);
+            output.writeObject(new ToServerMessage(choice, id));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,19 +227,91 @@ public class CLI implements UI {
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public void chooseYesNo(String query) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(query + "(y/n) \n");
-        String choice = scanner.nextLine();
+        System.out.println(query + " (y/n) \n");
+        String choice = getString();
         while (!choice.equals("y") && !choice.equals("n")) {
             System.out.println("Invalid input. \n");
-            choice = scanner.nextLine();
+            choice = getString();
         }
         boolean res = false;
         if (choice.equals("y")) res = true;
         try {
-            output.writeObject(res);
+            output.writeObject(new ToServerMessage(res, id));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void notifyLoss(PlayerView player, String reason) {
+        StringBuilder string = new StringBuilder();
+        if (player.getId().equals(id)) {
+            string.append("You lost! ");
+        }
+        else {
+            string.append(player.getId() + " lost! ");
+        }
+        switch (reason) {
+            case "outOfMoves":
+                string.append("(No legal moves available)\n");
+                break;
+            case "outOfWorkers":
+                string.append("(All workers have been removed from the game)\n");
+                break;
+            default:
+                break;
+        }
+        System.out.println(string);
+    }
+
+    public void notifyWin(PlayerView player, String reason) {
+        StringBuilder string = new StringBuilder();
+        if (player.getId().equals(id)) {
+            string.append("Congratulations! You won! ");
+        }
+        else {
+            string.append(player.getId() + " won! ");
+        }
+        switch (reason) {
+            case "winConditionAchieved":
+                string.append("(Win condition achieved)\n");
+                break;
+            case "outOfWorkers":
+                string.append("(All other players were eliminated)\n");
+                break;
+            default:
+                break;
+        }
+        System.out.println(string);
+    }
+
+    public void gameOver() {
+        System.out.println("\n\nGame over! Thanks for playing! \nPress ENTER to quit. ");
+        stop();
+    }
+
+    private void quit() {
+        gameOver();
+    }
+
+    private int getInt() {
+        while (true) {
+            try {
+                return Integer.parseInt((String) messageQueue.take());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. \n");
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
+    }
+
+    private String getString() {
+        while (true) {
+            try {
+                return (String) messageQueue.take();
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
         }
     }
 

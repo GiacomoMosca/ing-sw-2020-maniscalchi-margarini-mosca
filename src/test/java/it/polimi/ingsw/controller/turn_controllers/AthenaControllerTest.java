@@ -77,7 +77,7 @@ public class AthenaControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
 
     }

@@ -62,6 +62,6 @@ public class HephaestusController extends GodController {
                 }
             }
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 }

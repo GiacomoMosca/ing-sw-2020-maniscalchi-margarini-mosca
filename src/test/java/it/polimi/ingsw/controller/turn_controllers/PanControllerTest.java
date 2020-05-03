@@ -76,7 +76,7 @@ public class PanControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
     }
 

@@ -10,11 +10,12 @@ public class Player {
     private final String color;
     private Card godCard;
     private ArrayList<Worker> workers;
+    private boolean hasLost;
 
     /**
      * sets all the attributes associated with the player
      *
-     * @param id the string that identifies the player
+     * @param id    the string that identifies the player
      * @param color the color associated with the player
      */
     public Player(String id, String color) {
@@ -22,10 +23,10 @@ public class Player {
         this.color = color;
         this.godCard = null;
         this.workers = new ArrayList<Worker>();
+        this.hasLost = false;
     }
 
     /**
-     *
      * @return the ID of the player
      */
     public String getId() {
@@ -33,7 +34,6 @@ public class Player {
     }
 
     /**
-     *
      * @return the color associated with the player
      */
     public String getColor() {
@@ -41,7 +41,6 @@ public class Player {
     }
 
     /**
-     *
      * @return the God Card assigned to the player
      */
     public Card getGodCard() {
@@ -58,7 +57,6 @@ public class Player {
     }
 
     /**
-     *
      * @return the list of the workers associated with this player
      */
     public ArrayList<Worker> getWorkers() {
@@ -82,6 +80,14 @@ public class Player {
     public void removeWorker(Worker worker) {
         worker.getPosition().setWorker(null);
         workers.remove(worker);
+    }
+
+    public boolean hasLost() {
+        return hasLost;
+    }
+
+    public void setLost() {
+        hasLost = true;
     }
 
 }

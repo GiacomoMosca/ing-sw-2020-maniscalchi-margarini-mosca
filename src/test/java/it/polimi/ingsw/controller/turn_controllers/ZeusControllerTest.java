@@ -77,7 +77,7 @@ public class ZeusControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
     }
 

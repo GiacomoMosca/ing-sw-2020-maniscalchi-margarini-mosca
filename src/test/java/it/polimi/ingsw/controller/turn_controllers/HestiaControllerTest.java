@@ -76,7 +76,7 @@ public class HestiaControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
     }
 

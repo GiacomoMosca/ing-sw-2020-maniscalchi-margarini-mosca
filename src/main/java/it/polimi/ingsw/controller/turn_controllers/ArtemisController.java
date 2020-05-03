@@ -9,7 +9,7 @@ import it.polimi.ingsw.model.players.Worker;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ArtemisController extends GodController{
+public class ArtemisController extends GodController {
 
     private Cell beginningCell;
     private boolean secondMove;
@@ -52,12 +52,12 @@ public class ArtemisController extends GodController{
     public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
-        secondMove=false;
-        beginningCell=activeWorker.getPosition();
+        secondMove = false;
+        beginningCell = activeWorker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
-        secondMove=client.chooseYesNo("Do you want to move again?");
-        if (secondMove){
+        secondMove = client.chooseYesNo("Do you want to move again?");
+        if (secondMove) {
             movePhase();
             if (checkWin()) return "WON";
         }

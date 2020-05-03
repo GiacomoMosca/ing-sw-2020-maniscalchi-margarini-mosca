@@ -54,7 +54,6 @@ public abstract class GodController {
     } */
 
     /**
-     *
      * @return the client associated with this GodController
      */
     public Player getPlayer() {
@@ -62,7 +61,6 @@ public abstract class GodController {
     }
 
     /**
-     *
      * @return the client associated with the player
      */
     public VirtualView getClient() {
@@ -106,7 +104,6 @@ public abstract class GodController {
 
     /**
      * handles the moving phase of the turn
-     *
      */
     public void movePhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -116,12 +113,11 @@ public abstract class GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 
     /**
      * handles the building phase of the turn
-     *
      */
     public void buildPhase() throws IOException, ClassNotFoundException {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
@@ -131,7 +127,7 @@ public abstract class GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.displayBoard();
+        gameController.broadcastBoard();
     }
 
     public boolean checkWin() {
@@ -159,7 +155,7 @@ public abstract class GodController {
      * returns all the legal moves, applying possible restrictions due to active God Power Cards
      *
      * @param workerPosition the position of the worker
-     * @param possibleMoves all the cells where the worker can move, with the only restrictions due to the general rules
+     * @param possibleMoves  all the cells where the worker can move, with the only restrictions due to the general rules
      * @return all the cells where a worker can effectively move
      */
     public ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
@@ -206,7 +202,7 @@ public abstract class GodController {
      * the previous all the cells that are not allowed due to this God Power Card
      *
      * @param workerPosition the position of the worker
-     * @param possibleMoves all the cells where the worker can move, considering only the game restrictions
+     * @param possibleMoves  all the cells where the worker can move, considering only the game restrictions
      * @return all the cells where the worker is actually able to build
      */
     public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {

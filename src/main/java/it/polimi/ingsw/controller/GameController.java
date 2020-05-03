@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class GameController {
@@ -27,9 +26,8 @@ public class GameController {
      * creates a PlayerController for the first player, associating the Player and his VirtualView.
      * adds the PlayerController.
      *
-     *
      * @param client the VirtualView associated with the first player
-     * @param num the number of players for the current game
+     * @param num    the number of players for the current game
      */
     public GameController(VirtualView client, int num) {
         playerControllers = new ArrayList<PlayerController>();
@@ -44,7 +42,6 @@ public class GameController {
     }
 
     /**
-     *
      * @return the current Game
      */
     public Game getGame() {
@@ -52,10 +49,10 @@ public class GameController {
     }
 
     /**
-     * adds a second or a third player to the game.
+     * adds a new player to the game.
      * creates the new player, associating his id (given by the VirtualView) and a color.
      * creates a PlayerController for the player and associates the player and his VirtualView.
-     *
+     * <p>
      * and the game controller asso
      *
      * @param client
@@ -72,12 +69,10 @@ public class GameController {
     }
 
     /**
-     *
      * ///// PROBABLY DA CAMBIARE
-     *
+     * <p>
      * creates a GodController for every God Card, and adds all the cards to the deck.
      * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
-     *
      */
     public void gameSetUp() {
         ArrayList<GodController> controllers = new ArrayList<GodController>();
@@ -109,12 +104,13 @@ public class GameController {
 
         players = game.getPlayers();
 
+        broadcastMessage("Game started!");
         pickCards();
 
-        displayBoard();
+        broadcastBoard();
         placeWorkers();
 
-        displayBoard();
+        broadcastBoard();
         playGame();
     }
 
@@ -130,7 +126,6 @@ public class GameController {
 
     /**
      * place the workers of all the players, asking them the localizations and then moving the workers there.
-     *
      */
     private void placeWorkers() {
         ArrayList<Cell> freePositions = game.getBoard().getAllCells();
@@ -154,43 +149,100 @@ public class GameController {
                 Worker worker = new Worker(players.get(p));
                 worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
                 players.get(p).addWorker(worker);
-                displayBoard();
+                broadcastBoard();
             }
         }
     }
 
 
     /**
-     * handles the game, going on until there is no winner
-     *
+     * plays out the game and handles wins/losses
      */
     private void playGame() {
-        for (Player player : game.getPlayers()) {
+        for (Player player : players) {
             if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
         }
-        while(!game.hasWinner()){
-            broadcastMessage("=== " + players.get(game.getActivePlayer()).getId() + "'s TURN === \n");
+        while (!game.hasWinner()) {
+            Player currentPlayer = players.get(game.getActivePlayer());
             for (Card modifier : game.getActiveModifiers()) {
-                if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(game.getPlayers().get(game.getActivePlayer())))
+                if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(currentPlayer))
                     game.removeModifier(modifier);
             }
-            String result = playerControllers.get(game.getActivePlayer()).playTurn();
-            if (result.equals("NEXT"))
-                game.getNextPlayer();
-            else if (result.equals("LOST"))
-                game.setWinner(players.get(game.getNextPlayer()));
-            else if(result.equals("WON"))
-                game.setWinner(players.get(game.getActivePlayer()));
-            else System.out.println("ERROR: invalid turn");
+
+            broadcastMessage("=== " + currentPlayer.getId() + "'s turn === \n");
+            switch (playerControllers.get(game.getActivePlayer()).playTurn()) {
+                case "NEXT":
+                    checkWorkers();
+                    game.nextPlayer();
+                    break;
+                case "LOST":
+                    eliminatePlayer(currentPlayer, "outOfMoves");
+                    game.nextPlayer();
+                    break;
+                case "WON":
+                    setWinner(currentPlayer, "winConditionAchieved");
+                    break;
+                default:
+                    System.out.println("ERROR: invalid turn");
+                    break;
+            }
         }
-        broadcastMessage(game.getWinner().getId() + " has won! \n\n");
+        gameOver();
+    }
+
+    /**
+     * checks if the game has reached the maximum number of players
+     */
+    public boolean checkPlayersNumber() {
+        return game.getPlayers().size() == game.getPlayerNum();
+    }
+
+    /**
+     * checks if any player has no workers left and, if so, removes them from the game
+     */
+    public void checkWorkers() {
+        for (Player player : players) {
+            if (player.getWorkers().size() == 0) eliminatePlayer(player, "outOfWorkers");
+        }
+    }
+
+    /**
+     * removes a player from the game, then sets the winner if only one player is left
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
+    private void eliminatePlayer(Player player, String reason) {
+        player.setLost();
+        notifyLoss(player, reason);
+        ArrayList<Player> activePlayers = new ArrayList<Player>();
+        for (Player activePlayer : players) {
+            if (!activePlayer.hasLost()) activePlayers.add(activePlayer);
+        }
+        if (activePlayers.size() == 1) {
+            setWinner(activePlayers.get(0), "lastPlayerStanding");
+            return;
+        }
+        game.getActiveModifiers().removeIf(
+                modifier -> modifier.getController().getPlayer().equals(player)
+        );
+    }
+
+    /**
+     * sets a player as the winner
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
+    private void setWinner(Player player, String reason) {
+        game.setWinner(player);
+        notifyWin(player, reason);
     }
 
     /**
      * shows the Board associated with the current Game
-     *
      */
-    public void displayBoard() {
+    public void broadcastBoard() {
         for (PlayerController p : playerControllers) {
             try {
                 p.getClient().displayBoard(game.getPlayers(), game.getBoard());
@@ -215,8 +267,49 @@ public class GameController {
         }
     }
 
-    public boolean checkPlayers() {
-        return game.getPlayers().size() == game.getPlayerNum();
+    /**
+     * notifies all players that a player has lost
+     *
+     * @param player the losing player
+     * @param reason the reason why the player lost
+     */
+    public void notifyLoss(Player player, String reason) {
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().notifyLoss(player, reason);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
-  
+
+    /**
+     * notifies all players that a player has won
+     *
+     * @param player the winning player
+     * @param reason the reason why the player won
+     */
+    public void notifyWin(Player player, String reason) {
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().notifyWin(player, reason);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * notifies all players that the game is over
+     */
+    public void gameOver() {
+        for (PlayerController p : playerControllers) {
+            try {
+                p.getClient().gameOver();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -91,7 +91,7 @@ public class GodControllerTest {
         }
 
         @Override
-        public void displayBoard() { }
+        public void broadcastBoard() { }
     }
 
     @Before

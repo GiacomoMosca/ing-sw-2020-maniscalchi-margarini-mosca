@@ -14,7 +14,7 @@ public class Card {
     /**
      * creates a card, setting its attributes to the values passed as arguments
      *
-     * @param god the name of the God represented by the card
+     * @param god        the name of the God represented by the card
      * @param controller the God Controller associated with the card
      */
     public Card(String god, String title, String description, int set, boolean alwaysActiveModifier, GodController controller) {
@@ -27,7 +27,6 @@ public class Card {
     }
 
     /**
-     *
      * @return the god associated with this card
      */
     public String getGod() {
@@ -35,7 +34,6 @@ public class Card {
     }
 
     /**
-     *
      * @return the description of this card
      */
     public String getDescription() {
@@ -43,7 +41,6 @@ public class Card {
     }
 
     /**
-     *
      * @return true if the Modifier associated with this card is always active, false otherwise
      */
     public boolean hasAlwaysActiveModifier() {
@@ -51,7 +48,6 @@ public class Card {
     }
 
     /**
-     *
      * @return the God Controller associated with this card
      */
     public GodController getController() {
@@ -71,7 +67,13 @@ public class Card {
     @Override
     public boolean equals(Object obj) {
         Card card = (Card) obj;
-        return this.god.equals(card.getGod()) && this.title.equals(card.getTitle()) && this.description.equals(card.getDescription()) && this.set==getSet() && this.alwaysActiveModifier==card.hasAlwaysActiveModifier() && this.controller==card.getController();
+        return 
+   this.god.equals(card.getGod()) && 
+          this.title.equals(card.getTitle()) && 
+          this.description.equals(card.getDescription()) && 
+          this.set == getSet() && 
+          this.alwaysActiveModifier == card.hasAlwaysActiveModifier() && 
+          this.controller == card.getController();
 
     }
 }

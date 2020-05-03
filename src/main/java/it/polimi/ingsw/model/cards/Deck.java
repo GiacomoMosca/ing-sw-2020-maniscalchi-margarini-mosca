@@ -17,7 +17,6 @@ public class Deck {
     }
 
     /**
-     *
      * @return a list of all the God Power Cards
      */
     public ArrayList<Card> getCards() {
@@ -25,7 +24,6 @@ public class Deck {
     }
 
     /**
-     *
      * @param card adds a God Power Card to the deck
      */
     public void addCard(Card card) {
@@ -33,7 +31,6 @@ public class Deck {
     }
 
     /**
-     *
      * @return a list of all the God Power Cards picked up for this game
      */
     public ArrayList<Card> getPickedCards() {
@@ -83,7 +80,7 @@ public class Deck {
      */
     @Override
     public boolean equals(Object obj) {
-        Deck deck= (Deck)obj;
+        Deck deck = (Deck) obj;
         return this.getPickedCards().equals(deck.getPickedCards()) && this.getCards().equals(deck.getCards());
     }
 }

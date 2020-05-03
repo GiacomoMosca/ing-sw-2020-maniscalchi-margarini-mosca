@@ -76,7 +76,7 @@ public class HephaestusControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
     }
 

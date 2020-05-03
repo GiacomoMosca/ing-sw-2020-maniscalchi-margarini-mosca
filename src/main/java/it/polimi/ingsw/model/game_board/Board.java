@@ -17,7 +17,6 @@ public class Board {
     }
 
     /**
-     *
      * @param x the x-coordinate of the requested cell
      * @param y the y-coordinate of the requested cell
      * @return the requested cell
@@ -37,10 +36,9 @@ public class Board {
     }
 
     /**
-     *
      * @param cell the Cell we want to set
-     * @param x the x-coordinate of the cell
-     * @param y the y-coordinate of the cell
+     * @param x    the x-coordinate of the cell
+     * @param y    the y-coordinate of the cell
      * @throws ArrayIndexOutOfBoundsException when trying to set a cell with coordinates that don't identify a cell of the Board
      */
     public void setCell(Cell cell, int x, int y) throws ArrayIndexOutOfBoundsException {
@@ -49,7 +47,6 @@ public class Board {
     }
 
     /**
-     *
      * @param pos the cell indicating the position we want to know the neighbors of
      * @return a list of all the cells surrounding the requested one
      */
@@ -84,13 +81,14 @@ public class Board {
     @Override
     public boolean equals(Object obj) {
 
-        Board board = (Board)obj;
-        int NumCell1=0, NumCell2=0;
+        Board board = (Board) obj;
+        int NumCell1 = 0, NumCell2 = 0;
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
                 NumCell1++;
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
                 NumCell2++;
-        return NumCell1 == NumCell2; }
+        return NumCell1 == NumCell2;
+    }
 }

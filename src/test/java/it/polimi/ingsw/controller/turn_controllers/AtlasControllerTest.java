@@ -79,7 +79,7 @@ public class AtlasControllerTest {
         }
 
         @Override
-        public void displayBoard() {}
+        public void broadcastBoard() {}
     }
 
     @Before

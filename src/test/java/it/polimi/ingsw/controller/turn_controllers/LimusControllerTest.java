@@ -76,7 +76,7 @@ public class LimusControllerTest {
         }
 
         @Override
-        public void displayBoard() {
+        public void broadcastBoard() {
         }
     }
 
