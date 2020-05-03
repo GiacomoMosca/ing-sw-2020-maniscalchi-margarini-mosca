@@ -7,12 +7,16 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.FakeCLI;
+import it.polimi.ingsw.view.FakeVirtualView;
 import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -20,17 +24,19 @@ import static org.junit.Assert.*;
 public class AthenaControllerTest {
     AthenaController athenaController;
     FakeGameController fakeGameController;
-    PlayerInterface playerInterface;
-    FakeCLI cli;
+    FakeVirtualView fakeVirtualView;
+    Socket socket;
+    ObjectInputStream ois;
+    ObjectOutputStream ous;
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
             super(client, num);
         }
 
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
             PlayerController playerController = new PlayerController(player, client);
             game.addPlayer(player);
@@ -74,18 +80,15 @@ public class AthenaControllerTest {
         public void broadcastBoard() {
         }
 
-        @Override
-        public void displayMessage(String message) {
-        }
-
     }
 
 
     @Before
     public void setUp() throws Exception {
-        cli=new FakeCLI();
-        playerInterface=new PlayerInterface(cli);
-        fakeGameController=new FakeGameController(playerInterface, 1);
+        socket=new Socket();
+        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
+        fakeVirtualView.setId("AthenaTest");
+        fakeGameController=new FakeGameController(fakeVirtualView, 1);
         athenaController=new AthenaController(fakeGameController);
     }
 
@@ -112,22 +115,26 @@ public class AthenaControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() {
+    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException {
         //a client who chooses to move in a domed cell
-        class FakeCLItoGenerateException extends FakeCLI{
+        class FakeVirtualViewToGenerateException extends FakeVirtualView{
+
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
+                super(socket, objectInputStream, objectOutputStream);
+            }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
                 return(fakeGameController.getGame().getBoard().getCell(1,1));
             }
         }
 
-        //need new inizialization to use FakeCLItoGenerateException
-        FakeCLItoGenerateException cli=new FakeCLItoGenerateException();
-        PlayerInterface playerInterface1=new PlayerInterface(cli);
-        playerInterface1.setId("AthenaTestToGenerateException");
-        fakeGameController=new FakeGameController(playerInterface1, 1);
+        //need new inizialization to use FakeVirtualViewToGenerateException
+        socket=new Socket();
+        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, ois, ous);
+        fakeVirtualView.setId("AthenaTestToGenerateException");
+        fakeGameController=new FakeGameController(fakeVirtualView, 1);
         athenaController=new AthenaController(fakeGameController);
-        athenaController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        athenaController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);

@@ -78,6 +78,7 @@ public class Player {
      * @param worker
      */
     public void removeWorker(Worker worker) {
+        worker.getPosition().setWorker(null);
         workers.remove(worker);
     }
 

@@ -8,14 +8,17 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.CLI;
-import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.FakeVirtualView;
 import it.polimi.ingsw.view.UI;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -23,18 +26,20 @@ import static org.junit.Assert.*;
 public class GodControllerTest {
 
     FakeGameController fakeGameController;
-    PlayerInterface playerInterface1, playerInterface2;
-    FakeCLI cli1, cli2;
     GodControllerConcrete genericController1, genericController2;
+    FakeVirtualView fakeVirtualView1, fakeVirtualView2;
+    Socket socket;
+    ObjectInputStream ois;
+    ObjectOutputStream ous;
 
     private class FakeGameController extends GameController{
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
           super(client, num);
         }
         
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
 
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
             PlayerController playerController = new PlayerController(player, client);
@@ -87,21 +92,17 @@ public class GodControllerTest {
 
         @Override
         public void broadcastBoard() { }
-
-        @Override
-        public void displayMessage(String message) { }
     }
 
     @Before
     public void setUp() {
-        cli1= new FakeCLI();
-        playerInterface1=new PlayerInterface(cli1);
-        playerInterface1.setId("GenericTest");
-        fakeGameController=new FakeGameController(playerInterface1,2 );
+        socket=new Socket();
+        fakeVirtualView1=new FakeVirtualView(socket, ois, ous);
+        fakeVirtualView1.setId("GenericGodControllerTest");
+        fakeGameController=new FakeGameController(fakeVirtualView1,2 );
         genericController1=new GodControllerConcrete(fakeGameController);
 
-        cli2=new FakeCLI();
-        playerInterface2=new PlayerInterface(cli2);
+        fakeVirtualView2=new FakeVirtualView(socket, ois, ous);
         genericController2=new GodControllerConcrete(fakeGameController);
     }
 
@@ -111,31 +112,31 @@ public class GodControllerTest {
     @Test
     public void getPlayer_noInputGiven_shouldReturnPlayer() {
         //using addPlayer to add the second player to the game and call then GameSetUp()
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView1);
         assertSame(genericController1.getPlayer(), fakeGameController.getGame().getPlayers().get(0));
     }
 
     @Test
     public void getClient_noInputGiven_shouldReturnClient() {
-        fakeGameController.addPlayer(playerInterface2);
-        assertSame(genericController1.getClient(), playerInterface1);
+        fakeGameController.addPlayer(fakeVirtualView2);
+        assertSame(genericController1.getClient(), fakeVirtualView1);
     }
 
     @Test
     public void setPlayer_playerAndClientGiven_shouldLinkPlayerAndClientToGodController() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         assertSame(genericController1.getPlayer(), fakeGameController.getGame().getPlayers().get(0));
-        assertSame(genericController1.getClient(), playerInterface1);
+        assertSame(genericController1.getClient(), fakeVirtualView1);
     }
 
     @Test
     public void canPlay_workerGiven_shouldReturnTrue() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         assertTrue(genericController1.canPlay(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)));
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWON() {
+    public void runPhases_workerGiven_shouldReturnWON() throws IOException, ClassNotFoundException {
         //it's not okay to call fakeGameController.gameSetUp(): it would later call runPhases(), changing the expected result
         //so recreating here the game situation: worker will move from (1,2) to (0,1)
         //setting their building levels respectively to 2 and 3 so that the worker wins
@@ -143,7 +144,7 @@ public class GodControllerTest {
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);
         fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -154,12 +155,12 @@ public class GodControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnNEXT() {
+    public void runPhases_workerGiven_shouldReturnNEXT() throws IOException, ClassNotFoundException {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);
         fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -170,12 +171,12 @@ public class GodControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkerInTheExpectedCell() {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerInTheExpectedCell() throws IOException, ClassNotFoundException {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);
         fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1, 2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -186,9 +187,12 @@ public class GodControllerTest {
     }
 
     @Test
-    public void runPhases_noInputGiven_shouldGenerateMovingAndBuildingExceptions() {
+    public void runPhases_noInputGiven_shouldGenerateMovingAndBuildingExceptions() throws IOException, ClassNotFoundException {
         //a client who chooses to move and to build in a domed cell
-        class FakeCLItoGenerateException extends FakeCLI{
+        class FakeVirtualViewToGenerateException extends FakeVirtualView{
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
+                super(socket, objectInputStream, objectOutputStream);
+            }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
                 return(fakeGameController.getGame().getBoard().getCell(3,3));
@@ -199,12 +203,14 @@ public class GodControllerTest {
             }
         }
 
-        FakeCLItoGenerateException cli=new FakeCLItoGenerateException();
-        PlayerInterface playerInterface1=new PlayerInterface(cli);
-        playerInterface1.setId("GenericTestToGenerateException");
-        fakeGameController=new FakeGameController(playerInterface1, 1);
+
+        socket=new Socket();
+        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket, ois, ous);
+        fakeVirtualView1.setId("GodControllerTestToGenerateException");
+        fakeVirtualView1.setId("GenericTestToGenerateException");
+        fakeGameController=new FakeGameController(fakeVirtualView1, 1);
         genericController1=new GodControllerConcrete(fakeGameController);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -215,12 +221,12 @@ public class GodControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldBuildOnTheExpectedCell() {
+    public void buildPhase_noInputGiven_shouldBuildOnTheExpectedCell() throws IOException, ClassNotFoundException {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);
         fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface1);
+        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1, 2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -232,7 +238,7 @@ public class GodControllerTest {
 
     @Test
     public void checkWin_noInputGiven_shouldReturnTrue() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         fakeGameController.getGame().getBoard().getCell(2,2).setBuildLevel(2);
         genericController1.startingPosition=fakeGameController.getGame().getBoard().getCell(2,2);
         fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).setPosition(fakeGameController.getGame().getBoard().getCell(2,3));
@@ -244,42 +250,42 @@ public class GodControllerTest {
 
     @Test
     public void findPossibleMoves_workerPositionGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertEquals(genericController1.findPossibleMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition()), expectedArrayList);
     }
 
     @Test
     public void findLegalMoves_workerPositionAndArrayListOfCellsGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertEquals(genericController1.findLegalMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
     }
 
     @Test
     public void findPossibleBuilds_workerPositionGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertEquals(genericController1.findPossibleBuilds(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition()), expectedArrayList);
     }
 
     @Test
     public void findLegalBuilds_workerPositionAndArrayListOfCellsGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertEquals(genericController1.findLegalMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
     }
 
     @Test
     public void limitMoves_workerPositionAndArrayListOfCellsGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertSame(genericController1.limitMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
     }
 
     @Test
     public void limitBuilds_workerPositionAndArrayListOfCellsGiven_shouldReturnTheSameArrayListOfCells() {
-        fakeGameController.addPlayer(playerInterface2);
+        fakeGameController.addPlayer(fakeVirtualView2);
         ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
         assertEquals(genericController1.limitBuilds(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
     }

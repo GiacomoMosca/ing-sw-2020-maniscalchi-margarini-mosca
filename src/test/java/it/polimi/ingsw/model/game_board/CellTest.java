@@ -28,12 +28,12 @@ public class CellTest {
 
     @Test
     public void getPosX_NoInputGiven_ShouldReturnXCoordOfPosition() {
-        assertEquals(cell.getPosX(),1);
+        assertEquals(cell.getPosX(),3);
     }
 
     @Test
     public void getPosY_NoInputGiven_ShouldReturnYCoordOfPosition() {
-        assertEquals(cell.getPosY(),3);
+        assertEquals(cell.getPosY(),1);
     }
 
     @Test

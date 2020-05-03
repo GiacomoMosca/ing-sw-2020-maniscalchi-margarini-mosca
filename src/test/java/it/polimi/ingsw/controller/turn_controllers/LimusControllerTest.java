@@ -7,12 +7,15 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.FakeVirtualView;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -21,17 +24,19 @@ public class LimusControllerTest {
 
     LimusController limusController;
     FakeGameController fakeGameController;
-    PlayerInterface playerInterface;
-    FakeCLI cli;
+    FakeVirtualView fakeVirtualView;
+    Socket socket;
+    ObjectInputStream ois;
+    ObjectOutputStream ous;
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(PlayerInterface client, int num) {
+        public FakeGameController(VirtualView client, int num) {
             super(client, num);
         }
 
         @Override
-        public void addPlayer(PlayerInterface client) {
+        public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
             PlayerController playerController = new PlayerController(player, client);
             game.addPlayer(player);
@@ -73,19 +78,14 @@ public class LimusControllerTest {
         @Override
         public void broadcastBoard() {
         }
-
-        @Override
-        public void displayMessage(String message) {
-        }
-
     }
 
     @Before
     public void setUp() throws Exception {
-        cli=new FakeCLI();
-        playerInterface=new PlayerInterface(cli);
-        playerInterface.setId("LimusTest");
-        fakeGameController=new FakeGameController(playerInterface, 1);
+        socket=new Socket();
+        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
+        fakeVirtualView.setId("LimusTest");
+        fakeGameController=new FakeGameController(fakeVirtualView, 1);
         limusController=new LimusController(fakeGameController);
     }
 
@@ -111,7 +111,7 @@ public class LimusControllerTest {
         Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0, 2));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
-        limusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), playerInterface);
+        limusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
 
         ArrayList<Cell> possibleBuildsAfterLimusPower = new ArrayList<Cell>();
         possibleBuildsAfterLimusPower.add(fakeGameController.getGame().getBoard().getCell(1,0));

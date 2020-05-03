@@ -7,12 +7,16 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
-import it.polimi.ingsw.view.FakeCLI;
-import it.polimi.ingsw.view.virtualView;
+import it.polimi.ingsw.view.FakeVirtualView;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -21,8 +25,10 @@ public class AtlasControllerTest {
 
     AtlasController atlasController=null;
     FakeGameController fakeGameController=null;
-    VirtualView virtualView=null;
-    FakeCLI cli = null;
+    FakeVirtualView fakeVirtualView;
+    Socket socket;
+    ObjectOutputStream objectOutputStream;
+    ObjectInputStream objectInputStream;
 
     public class FakeGameController extends GameController {
 
@@ -33,7 +39,7 @@ public class AtlasControllerTest {
         @Override
         public void addPlayer(VirtualView client) {
             Player player = new Player(client.getId(), colors.get(playerControllers.size()));
-            PlayerController playerController = new VirtualView(player, client);
+            PlayerController playerController = new PlayerController(player, client);
             game.addPlayer(player);
             playerControllers.add(playerController);
             gameSetUp();
@@ -74,17 +80,14 @@ public class AtlasControllerTest {
 
         @Override
         public void broadcastBoard() {}
-
-        @Override
-        public void displayMessage(String message) {}
     }
 
     @Before
     public void setUp(){
-        cli = new FakeCLI();
-        virtualView = new VirtualView(cli);
-        virtualView.setId("AtlasTest");
-        fakeGameController = new FakeGameController(virtualView,1);
+        socket=new Socket();
+        fakeVirtualView = new FakeVirtualView(socket, objectInputStream, objectOutputStream);
+        fakeVirtualView.setId("AtlasTest");
+        fakeGameController = new FakeGameController(fakeVirtualView,1);
         atlasController = new AtlasController(fakeGameController);
     }
 
@@ -118,9 +121,13 @@ public class AtlasControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldGenerateExceptionIllegalBuild() {
+    public void buildPhase_noInputGiven_shouldGenerateExceptionIllegalBuild() throws IOException, ClassNotFoundException {
         //a client who chooses to build in a domed cell
-        class FakeCLItoGenerateException extends FakeCLI{
+        class FakeVirtualViewToGenerateException extends FakeVirtualView{
+
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
+                super(socket, objectInputStream, objectOutputStream);
+            }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
                 return(fakeGameController.getGame().getBoard().getCell(1,1));
@@ -135,12 +142,12 @@ public class AtlasControllerTest {
             }
         }
 
-        FakeCLItoGenerateException cli=new FakeCLItoGenerateException();
-        VirtualView virtualView=new VirtualView(cli);
-        virtualView1.setId("AtlasTestToGenerateException");
-        fakeGameController=new FakeGameController(virtualView1, 1);
+        Socket socket=new Socket();
+        VirtualView virtualViewtoGenerateException=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
+        virtualViewtoGenerateException.setId("AtlasTestToGenerateException");
+        fakeGameController=new FakeGameController(virtualViewtoGenerateException, 1);
         atlasController=new AtlasController(fakeGameController);
-        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), virtualView1);
+        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), virtualViewtoGenerateException);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);

@@ -6,11 +6,14 @@ import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.players.Player;
-import it.polimi.ingsw.view.CLI;
-import it.polimi.ingsw.view.PlayerInterface;
+import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 import static org.junit.Assert.*;
 
@@ -18,11 +21,14 @@ public class CardTest {
     Card card;
     GameController gamecontroller;
     GodController godController;
+    Socket socket;
+    ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
 
 
     @Before
     public void setUp() {
-        gamecontroller=new GameController(new PlayerInterface(new CLI()),2);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
         godController=new GodControllerConcrete(gamecontroller);
         card=new Card("god", "title", "description", 1, true, godController);
     }
@@ -58,4 +64,11 @@ public class CardTest {
         assertTrue(card.hasAlwaysActiveModifier());
     }
 
+    @Test
+    public void equals_twoCardsGiven_shouldReturnTrue(){
+        Card card1=new Card("god", "title", "description", 1, false, godController);
+        Card card2=new Card("god", "title", "description", 1, false, godController);
+
+        assertTrue(card1.equals(card2));
+    }
 }

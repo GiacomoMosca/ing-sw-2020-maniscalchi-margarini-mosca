@@ -11,6 +11,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import static org.junit.Assert.*;
 
 public class PlayerTest {
@@ -21,11 +25,14 @@ public class PlayerTest {
     Game game=null;
     GodController godcontroller;
     GameController gameController=null;
+    Socket socket;
+    ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
 
     @Before
     public void setUp() {
         game = new Game(player,1);
-        gameController=new GameController(new VirtualView(new CLI()),2);
+        gameController=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
         godcontroller=new GodControllerConcrete(gameController);
         player=new Player("Eni","Red");
         card=new Card("a", "b", "c", 1, false, godcontroller);

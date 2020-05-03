@@ -32,7 +32,7 @@ public class ArtemisController extends GodController {
     public Card generateCard() {
         Card card = new Card(
                 "Artemis",
-                "Goddes of the Hunt",
+                "Goddess of the Hunt",
                 "Your Move: Your Worker may move one additional time, but not back to the space it started on.",
                 1,
                 false,

@@ -84,12 +84,20 @@ public class GameController {
         controllers.add(new HephaestusController(this));
         controllers.add(new HestiaController(this));
         controllers.add(new LimusController(this));
+        controllers.add(new MedusaController(this));
         controllers.add(new MinotaurController(this));
         controllers.add(new PanController(this));
         controllers.add(new PrometheusController(this));
+        controllers.add(new TritonController(this));
         controllers.add(new ZeusController(this));
 
         Deck deck = game.getDeck();
+
+        /* Testing
+        deck.addCard(controllers.get(12).generateCard());
+        deck.addCard(controllers.get(13).generateCard());
+        */
+
         for (GodController godController : controllers) {
             deck.addCard(godController.generateCard());
         }

@@ -13,6 +13,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import static org.junit.Assert.*;
 
 public class GameTest {
@@ -22,6 +26,9 @@ public class GameTest {
     Player player1,player2,player3=null;
     Card modifier1,modifier2=null;
     GodController godcontroller1,godcontroller2;
+    Socket socket;
+    ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
 
     @Before
     public void setUp() {
@@ -29,11 +36,11 @@ public class GameTest {
         player2=new Player("Luigi","Verde");
         player3=new Player("Gian","Cachi");
         game=new Game(player1,2);
-        gamecontroller=new GameController(new VirtualView(new CLI()),2);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
         godcontroller1=new GodControllerConcrete(gamecontroller);
         godcontroller2=new GodControllerConcrete(gamecontroller);
         modifier1=new Card("dio1", "a", "b",1, false, godcontroller1);
-        modifier1=new Card("dio2", "d", "e",1, true, godcontroller2);
+        modifier2=new Card("dio2", "d", "e",1, true, godcontroller2);
     }
 
     @After
@@ -114,7 +121,6 @@ public class GameTest {
         game.addModifier(modifier1);
         game.addModifier(modifier2);
         game.removeModifier(modifier1);
-        assertFalse(game.getActiveModifiers().contains(modifier1));
         assertTrue(game.getActiveModifiers().contains(modifier2));
     }
 
