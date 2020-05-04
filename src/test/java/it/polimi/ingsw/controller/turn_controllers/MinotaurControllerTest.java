@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class MinotaurControllerTest {
-    MinotaurController minotaurController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView1, fakeVirtualView2;
-    Socket socket1, socket2;
-    ObjectInputStream ois1, ois2;
-    ObjectOutputStream ous1, ous2;
+    private MinotaurController minotaurController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView1, fakeVirtualView2;
+    private Socket socket1, socket2;
+    private ObjectInputStream objectInputStream1, objectInputStream2;
+    private ObjectOutputStream objectOutputStream1, objectOutputStream2;
 
     public class FakeGameController extends GameController {
 
@@ -75,22 +75,19 @@ public class MinotaurControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket1=new Socket();
-        fakeVirtualView1=new FakeVirtualView(socket1, ois1, ous1);
-        fakeVirtualView1.setId("MinotaurTest");
+        fakeVirtualView1=new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
         fakeGameController=new FakeGameController(fakeVirtualView1, 2);
         minotaurController=new MinotaurController(fakeGameController);
 
         GodControllerConcrete genericController=new GodControllerConcrete(fakeGameController);
         socket2=new Socket();
-        fakeVirtualView2=new FakeVirtualView(socket2, ois2, ous2);
-        fakeVirtualView2.setId("AdditionalPlayer");
+        fakeVirtualView2=new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
 
         Player player2 = new Player(fakeVirtualView2.getId(), "color");
         PlayerController playerController = new PlayerController(player2, fakeVirtualView2);
@@ -123,20 +120,20 @@ public class MinotaurControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Minotaur", "Bull-headed Monster", "Your Move: Your Worker may move into an opponent Worker’s space (using normal movement rules), if the next space in the same direction is unoccupied. Their Worker is forced into that space (regardless of its level).", 1, false, minotaurController);
-        assertEquals(minotaurController.generateCard().getGod(), testCard.getGod());
-        assertEquals(minotaurController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(minotaurController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(minotaurController.generateCard().getSet(), testCard.getSet());
-        assertEquals(minotaurController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(minotaurController.generateCard().getController(), testCard.getController());
+        Card testCard=new Card("Minotaur",
+                "Bull-headed Monster",
+                "Your Move: Your Worker may move into an opponent Worker’s space (using normal movement rules), if the next space in the same direction is unoccupied. Their Worker is forced into that space (regardless of its level).",
+                1,
+                false,
+                minotaurController);
+        assertEquals(minotaurController.generateCard(), testCard);
     }
 
     @Test
     public void movePhase_noInputGiven_shouldMoveTheWorkersPushingAwayTheOpponent() throws IOException, ClassNotFoundException {
         minotaurController.movePhase();
-        assertTrue(fakeGameController.getGame().getBoard().getCell(0,1).getWorker().equals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)));
-        assertTrue(fakeGameController.getGame().getBoard().getCell(0,2).getWorker().equals(fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0)));
+        assertEquals(fakeGameController.getGame().getBoard().getCell(0, 1).getWorker(), fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0));
+        assertEquals(fakeGameController.getGame().getBoard().getCell(0, 2).getWorker(), fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0));
     }
 
     @Test
@@ -162,8 +159,7 @@ public class MinotaurControllerTest {
         }
 
         socket1=new Socket();
-        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket1, ois1, ous1);
-        fakeVirtualView1.setId("MinotaurTestToGenerateException");
+        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket1, objectInputStream1, objectOutputStream1);
         fakeGameController=new FakeGameController(fakeVirtualView1, 1);
         minotaurController=new MinotaurController(fakeGameController);
         minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);

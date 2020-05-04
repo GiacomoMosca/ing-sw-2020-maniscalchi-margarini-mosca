@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
 
 public class DemeterControllerTest {
 
-    DemeterController demeterController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private DemeterController demeterController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -47,7 +47,6 @@ public class DemeterControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(demeterController.generateCard());
 
@@ -56,9 +55,7 @@ public class DemeterControllerTest {
             playerControllers.get(0).setGodController(demeterController);
 
             placeWorkers();
-
             placeBuildings();
-
             playGame();
         }
 
@@ -79,22 +76,20 @@ public class DemeterControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("DemeterTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController = new FakeGameController(fakeVirtualView,1);
         demeterController = new DemeterController(fakeGameController);
     }
 
-    @After
+    /*@After
     public void tearDown() throws Exception {
-    }
+    }*/
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
@@ -105,17 +100,12 @@ public class DemeterControllerTest {
                 1,
                 false,
                 demeterController);
-        assertEquals(demeterController.generateCard().getGod(), testCard.getGod());
-        assertEquals(demeterController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(demeterController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(demeterController.generateCard().getSet(), testCard.getSet());
-        assertEquals(demeterController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(demeterController.generateCard().getController(), testCard.getController());
+        assertEquals(demeterController.generateCard(), testCard);
     }
 
     @Test
     public void buildPhase_noInputGiven_shouldBuildTwoTimesInTwoDifferentCells() {
-        //after GameSetUp, the worker will be in (0,1), building one time in (0,0) and one time in (0,2),
+        //after GameSetUp, the worker will be in (0,1). He built one time in (0,0) and one time in (0,2),
         //since the cell (0,0) has been removed from the possibleBuilds.
         // 0,0 - (0,1) - 0,2
         // 1,0 -  1,1  - 1,2
@@ -126,7 +116,7 @@ public class DemeterControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldNotBuildDomeAndGenerateTwoIllegalBuildsExceptions() throws IOException, ClassNotFoundException {
+    public void buildPhase_noInputGiven_shouldGenerateTwoIllegalBuildExceptions() throws IOException, ClassNotFoundException {
         //a client who chooses to build two times in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView{
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
@@ -137,10 +127,9 @@ public class DemeterControllerTest {
                 return(fakeGameController.getGame().getBoard().getCell(2,2));
             }
         }
-
+        //need new initialization to use FakeVirtualViewToGenerateException instead of FakeVirtualView
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, ois, ous);
-        fakeVirtualView.setId("DemeterTestToGenerateException");
+        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         demeterController=new DemeterController(fakeGameController);
         demeterController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
@@ -153,4 +142,3 @@ public class DemeterControllerTest {
         demeterController.buildPhase();
     }
 }
-

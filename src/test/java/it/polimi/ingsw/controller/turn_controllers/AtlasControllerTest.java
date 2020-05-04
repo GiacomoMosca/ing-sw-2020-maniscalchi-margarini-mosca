@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
 
 public class AtlasControllerTest {
 
-    AtlasController atlasController=null;
-    FakeGameController fakeGameController=null;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectOutputStream objectOutputStream;
-    ObjectInputStream objectInputStream;
+    private AtlasController atlasController=null;
+    private FakeGameController fakeGameController=null;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public class FakeGameController extends GameController {
 
@@ -47,7 +47,6 @@ public class AtlasControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(atlasController.generateCard());
 
@@ -56,9 +55,7 @@ public class AtlasControllerTest {
             playerControllers.get(0).setGodController(atlasController);
 
             placeWorkers();
-
             placeBuildings();
-
             playGame();
         }
 
@@ -86,31 +83,23 @@ public class AtlasControllerTest {
     public void setUp(){
         socket=new Socket();
         fakeVirtualView = new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeVirtualView.setId("AtlasTest");
         fakeGameController = new FakeGameController(fakeVirtualView,1);
         atlasController = new AtlasController(fakeGameController);
     }
 
-    @After
+    /*@After
     public void tearDown(){
-    }
+    }*/
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard = new Card(
-                "Atlas",
+        Card testCard = new Card("Atlas",
                 "Titan Shouldering the Heavens",
                 "Your Build: Your Worker may build a dome at any level including the ground.",
                 1,
                 false,
                 atlasController);
-        assertEquals(atlasController.generateCard().getGod(), testCard.getGod());
-        assertEquals(atlasController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(atlasController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(atlasController.generateCard().getSet(), testCard.getSet());
-        assertEquals(atlasController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(atlasController.generateCard().getController(), testCard.getController());
-
+        assertEquals(atlasController.generateCard(), testCard);
     }
 
     @Test
@@ -124,7 +113,6 @@ public class AtlasControllerTest {
     public void buildPhase_noInputGiven_shouldGenerateExceptionIllegalBuild() throws IOException, ClassNotFoundException {
         //a client who chooses to build in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView{
-
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
                 super(socket, objectInputStream, objectOutputStream);
             }
@@ -143,11 +131,10 @@ public class AtlasControllerTest {
         }
 
         Socket socket=new Socket();
-        VirtualView virtualViewtoGenerateException=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        virtualViewtoGenerateException.setId("AtlasTestToGenerateException");
-        fakeGameController=new FakeGameController(virtualViewtoGenerateException, 1);
+        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
+        fakeGameController=new FakeGameController(fakeVirtualView, 1);
         atlasController=new AtlasController(fakeGameController);
-        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), virtualViewtoGenerateException);
+        atlasController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(0,0));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
@@ -155,5 +142,4 @@ public class AtlasControllerTest {
         fakeGameController.getGame().getBoard().getCell(2,2).buildDome();
         atlasController.buildPhase();
     }
-
 }

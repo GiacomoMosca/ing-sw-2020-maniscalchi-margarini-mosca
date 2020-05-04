@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class PrometheusControllerTest {
-    PrometheusController prometheusController = null;
-    FakeGameController fakeGameController = null;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private PrometheusController prometheusController = null;
+    private FakeGameController fakeGameController = null;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -75,15 +75,13 @@ public class PrometheusControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("PrometheusTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         prometheusController=new PrometheusController(fakeGameController);
     }
@@ -94,14 +92,13 @@ public class PrometheusControllerTest {
 
     @Test
     public void generateCard() {
-        Card testCard=new Card("Prometheus", "Titan Benefactor of Mankind", "Your Turn: If your Worker does not move up, it may build both before and after moving.", 1, false, prometheusController);
-        assertEquals(prometheusController.generateCard().getGod(), testCard.getGod());
-        assertEquals(prometheusController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(prometheusController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(prometheusController.generateCard().getSet(), testCard.getSet());
-        assertEquals(prometheusController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(prometheusController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard=new Card("Prometheus",
+                "Titan Benefactor of Mankind",
+                "Your Turn: If your Worker does not move up, it may build both before and after moving.",
+                1,
+                false,
+                prometheusController);
+        assertEquals(prometheusController.generateCard(), testCard); }
 
     @Test
     public void runPhases_workerGiven_shouldReturnNEXT() throws IOException, ClassNotFoundException {
@@ -180,8 +177,7 @@ public class PrometheusControllerTest {
         }
 
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, ois, ous);
-        fakeVirtualView.setId("PrometheusTestToGenerateException");
+        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         prometheusController=new PrometheusController(fakeGameController);
         prometheusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
@@ -197,7 +193,7 @@ public class PrometheusControllerTest {
     }
 
     @Test
-    public void findPossibleMovesNoUp() {
+    public void findPossibleMovesNoUp_positionGiven_shouldReturnArrayListWithAllNeighborsExceptOneAtHigherLevel() {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = prometheusController.generateCard();
         deck.addCard(card);

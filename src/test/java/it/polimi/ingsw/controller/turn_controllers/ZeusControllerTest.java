@@ -22,13 +22,12 @@ import static org.junit.Assert.*;
 
 public class ZeusControllerTest {
 
-    ZeusController zeusController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
-
+    private ZeusController zeusController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -77,15 +76,13 @@ public class ZeusControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("ZeusTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController = new FakeGameController(fakeVirtualView, 1);
         zeusController = new ZeusController(fakeGameController);
     }
@@ -96,14 +93,13 @@ public class ZeusControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard = new Card("Zeus", "God of the Sky", "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.", 2, false, zeusController);
-        assertEquals(zeusController.generateCard().getGod(), testCard.getGod());
-        assertEquals(zeusController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(zeusController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(zeusController.generateCard().getSet(), testCard.getSet());
-        assertEquals(zeusController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(zeusController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard = new Card("Zeus",
+                "God of the Sky",
+                "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.",
+                2,
+                false,
+                zeusController);
+        assertEquals(zeusController.generateCard(), testCard); }
 
     @Test
     public void findPossibleBuilds_workerPositionGiven_shouldReturnArrayListContainingAlsoThePositionOfTheWorker() {

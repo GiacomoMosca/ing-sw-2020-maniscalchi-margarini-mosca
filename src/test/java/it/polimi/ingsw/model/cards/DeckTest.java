@@ -17,9 +17,7 @@ import static org.junit.Assert.*;
 
 public class DeckTest {
 
-    Deck deck;
-    Card card1;
-    Card card2;
+    Card card1, card2;
     GameController gamecontroller;
     GodController gc1, gc2;
     Socket socket;
@@ -30,7 +28,7 @@ public class DeckTest {
     public void setUp() {
         gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
         gc1=new GodControllerConcrete(gamecontroller);
-        deck=new Deck();
+        gc2=new GodControllerConcrete(gamecontroller);
         card1=new Card("god1", "title1", "description1", 1, true, gc1);
         card2=new Card("god2", "title2", "description2", 2, false, gc2);
     }
@@ -41,9 +39,11 @@ public class DeckTest {
 
     @Test
     public void getCards_NoInputGiven_ShouldReturnAllTheGodCards() {
-        assertEquals(deck.getCards().size(),0);
-        deck.addCard(card1);
-        assertTrue(deck.getCards().contains(card1));
+        assertEquals(gamecontroller.getGame().getDeck().getCards().size(),0);
+        gamecontroller.getGame().getDeck().addCard(card1);
+        gamecontroller.getGame().getDeck().addCard(card2);
+        assertTrue(gamecontroller.getGame().getDeck().getCards().contains(card1));
+        assertTrue(gamecontroller.getGame().getDeck().getCards().contains(card2));
     }
 
     @Test
@@ -58,57 +58,53 @@ public class DeckTest {
 
     @Test
     public void getPickedCards_NoInputGiven_ShouldReturnPickedCard() {
-        assertEquals(deck.getPickedCards().size(),0);
-        deck.pickCard(card1);
-        assertTrue(deck.getPickedCards().contains(card1));
+        assertEquals(gamecontroller.getGame().getDeck().getPickedCards().size(),0);
+        gamecontroller.getGame().getDeck().pickCard(card1);
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card1));
     }
-/*
+
     @Test
     public void pickCard_CardToPickGiven_ShouldAddToPickedCardDeckTheCard() {
-        Deck deck2=new Deck();
-        deck2.pickCard(card1);
-        assertTrue(deck2.getPickedCards().contains(card1));
-        deck2.pickCard(card2);
-        assertTrue(deck2.getPickedCards().contains(card2));
-        assertTrue(deck2.getPickedCards().contains(card1));
-    }*/
+        gamecontroller.getGame().getDeck().pickCard(card1);
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card1));
+        gamecontroller.getGame().getDeck().pickCard(card2);
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card2));
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card1));
+    }
 
     @Test (expected = IllegalArgumentException.class)
     public void pickCard_AlreadyPickedCardGiven_ShouldThrowException() {
-        deck.pickCard(card1);
-        deck.pickCard(card1);
+        gamecontroller.getGame().getDeck().pickCard(card1);
+        gamecontroller.getGame().getDeck().pickCard(card1);
     }
-/*
+
     @Test
     public void removePickedCard_CardToRemoveGiven_ShouldRemoveCardFromPickedCardDeck() {
-        deck.pickCard(card1);
-        deck.pickCard(card2);
-        deck.removePickedCard(card1);
-        assertFalse(deck.getPickedCards().contains(card1));
-        assertTrue(deck.getPickedCards().contains(card2));
-    }*/
+        gamecontroller.getGame().getDeck().pickCard(card1);
+        gamecontroller.getGame().getDeck().pickCard(card2);
+        gamecontroller.getGame().getDeck().removePickedCard(card1);
+        assertFalse(gamecontroller.getGame().getDeck().getPickedCards().contains(card1));
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card2));
+    }
 
     @Test
     public void pickRandom_NoInputGiven_ShouldReturnARandomPickedCard() {
-        deck.addCard(card1);
-        deck.addCard(card2);
-        deck.pickRandom(2);
-        assertTrue(deck.getPickedCards().contains(card1));
-        assertTrue(deck.getPickedCards().contains(card2));
-        assertTrue(deck.getCards().contains(card1));
-        assertTrue(deck.getCards().contains(card2));
+        gamecontroller.getGame().getDeck().addCard(card1);
+        gamecontroller.getGame().getDeck().addCard(card2);
+        gamecontroller.getGame().getDeck().pickRandom(2);
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card1));
+        assertTrue(gamecontroller.getGame().getDeck().getPickedCards().contains(card2));
+        assertTrue(gamecontroller.getGame().getDeck().getCards().contains(card1));
+        assertTrue(gamecontroller.getGame().getDeck().getCards().contains(card2));
     }
 
     @Test (expected = IndexOutOfBoundsException.class)
     public void pickRandom_NoInput_ShouldThrowException() {
-        deck.pickRandom(1);
+        gamecontroller.getGame().getDeck().pickRandom(1);
     }
 
     @Test
     public void equals_twoDecksGiven_shouldReturnTrue(){
-        Card card1=new Card("god", "title", "description", 1, false, gc1);
-        Card card2=new Card("god", "title", "description", 1, false, gc1);
-
         Deck deck1=new Deck();
         Deck deck2=new Deck();
 

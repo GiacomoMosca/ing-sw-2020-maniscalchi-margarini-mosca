@@ -2,14 +2,12 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.PlayerController;
-import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.view.FakeVirtualView;
-import it.polimi.ingsw.view.UI;
 import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
@@ -25,12 +23,12 @@ import static org.junit.Assert.*;
 
 public class GodControllerTest {
 
-    FakeGameController fakeGameController;
-    GodControllerConcrete genericController1, genericController2;
-    FakeVirtualView fakeVirtualView1, fakeVirtualView2;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private FakeGameController fakeGameController;
+    private GodControllerConcrete genericController1, genericController2;
+    private FakeVirtualView fakeVirtualView1, fakeVirtualView2;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     private class FakeGameController extends GameController{
 
@@ -50,7 +48,6 @@ public class GodControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             Card card = new Card("god", "title", "description", 1, true, genericController1);
             Card card2 = new Card("god2", "title2", "description2", 1, true, genericController2);
@@ -97,12 +94,11 @@ public class GodControllerTest {
     @Before
     public void setUp() {
         socket=new Socket();
-        fakeVirtualView1=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView1.setId("GenericGodControllerTest");
+        fakeVirtualView1=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView1,2 );
         genericController1=new GodControllerConcrete(fakeGameController);
 
-        fakeVirtualView2=new FakeVirtualView(socket, ois, ous);
+        fakeVirtualView2=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         genericController2=new GodControllerConcrete(fakeGameController);
     }
 
@@ -172,17 +168,7 @@ public class GodControllerTest {
 
     @Test
     public void movePhase_noInputGiven_shouldMoveTheWorkerInTheExpectedCell() throws IOException, ClassNotFoundException {
-        Deck deck = fakeGameController.getGame().getDeck();
-        Card card = new Card("god", "title", "description", 1, true, genericController1);
-        deck.addCard(card);
-        fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-        genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
-        Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0));
-        worker.setPosition(fakeGameController.getGame().getBoard().getCell(1, 2));
-        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
-        genericController1.activeWorker=worker;
-        genericController1.movePhase();
-
+        fakeGameController.addPlayer(fakeVirtualView2);
         assertSame(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0, 1));
     }
 
@@ -203,11 +189,9 @@ public class GodControllerTest {
             }
         }
 
-
+        //need new initialization to use FakeVirtualViewToGenerateException instead of FakeVirtualView
         socket=new Socket();
-        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket, ois, ous);
-        fakeVirtualView1.setId("GodControllerTestToGenerateException");
-        fakeVirtualView1.setId("GenericTestToGenerateException");
+        fakeVirtualView1=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView1, 1);
         genericController1=new GodControllerConcrete(fakeGameController);
         genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);

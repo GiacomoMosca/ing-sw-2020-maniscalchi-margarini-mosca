@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
 
 public class ArtemisControllerTest {
 
-    ArtemisController artemisController = null;
-    ArtemisControllerTest.FakeGameController fakeGameController = null;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private ArtemisController artemisController = null;
+    private ArtemisControllerTest.FakeGameController fakeGameController = null;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream ois;
+    private ObjectOutputStream ous;
 
     public class FakeGameController extends GameController {
 
@@ -47,7 +47,6 @@ public class ArtemisControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(artemisController.generateCard());
 
@@ -77,68 +76,56 @@ public class ArtemisControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
         @Before
         public void setUp() throws Exception {
-            //it's not okay to call fakeGameController.gameSetUp() because
+            //it's not okay to call fakeGameController.gameSetUp() for these tests because it would play a turn and we couldn't check what we need
             socket=new Socket();
             fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-            fakeVirtualView.setId("ArtemisTest");
             fakeGameController=new FakeGameController(fakeVirtualView, 1);
             artemisController=new ArtemisController(fakeGameController);
+            Deck deck = fakeGameController.getGame().getDeck();
+            Card card = artemisController.generateCard();
+            deck.addCard(card);
+            fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
+            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
+
+            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
+            worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
+            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
         }
 
-        @After
+        /*@After
         public void tearDown() throws Exception {
-        }
+        }*/
 
         @Test
         public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-            Card testCard=new Card("Artemis", "Goddess of the Hunt", "Your Move: Your Worker may move one additional time, but not back to the space it started on.", 1, false, artemisController);
-            assertEquals(artemisController.generateCard().getGod(), testCard.getGod());
-            assertEquals(artemisController.generateCard().getTitle(), testCard.getTitle());
-            assertEquals(artemisController.generateCard().getDescription(), testCard.getDescription());
-            assertEquals(artemisController.generateCard().getSet(), testCard.getSet());
-            assertEquals(artemisController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-            assertEquals(artemisController.generateCard().getController(), testCard.getController());
-        }
+            Card testCard=new Card("Artemis",
+                    "Goddess of the Hunt",
+                    "Your Move: Your Worker may move one additional time, but not back to the space it started on.",
+                    1,
+                    false,
+                    artemisController);
+            assertEquals(artemisController.generateCard(), testCard); }
 
         @Test
         public void runPhases_workerGiven_shouldReturnWONAfterTheFirstMove() throws IOException, ClassNotFoundException {
-            Deck deck = fakeGameController.getGame().getDeck();
-            Card card = artemisController.generateCard();
-            deck.addCard(card);
-            fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
-
-            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
-            worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
-            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
-
             fakeGameController.getGame().getBoard().getCell(1,2).setBuildLevel(2);
             fakeGameController.getGame().getBoard().getCell(0,1).setBuildLevel(3);
 
-            assertEquals(artemisController.runPhases(worker), "WON");
+            assertEquals(artemisController.runPhases(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)), "WON");
 
         }
 
         @Test
-        public void runPhasesAndfindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWONAfterTheSecondMoveAndAnArrayListContainingAllNeighbors() throws IOException, ClassNotFoundException {
-            Deck deck = fakeGameController.getGame().getDeck();
-            Card card = artemisController.generateCard();
-            deck.addCard(card);
-            fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
-            artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
-            Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
-            worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,2));
-            fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        public void runPhasesAndFindPsossibleMoves_workerGivenAndNoInputGiven_shouldReturnWONAfterTheSecondMoveAndArrayListOfAllNeighbors() throws IOException, ClassNotFoundException {
             fakeGameController.getGame().getBoard().getCell(1,2).setBuildLevel(2);
             fakeGameController.getGame().getBoard().getCell(0,1).setBuildLevel(2);
             fakeGameController.getGame().getBoard().getCell(0,0).setBuildLevel(3);
 
-            assertEquals(artemisController.runPhases(worker), "WON");
+            assertEquals(artemisController.runPhases(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)), "WON");
             ArrayList<Cell> expectedArrayList = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
             assertEquals(artemisController.findLegalMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), expectedArrayList), expectedArrayList);
         }
@@ -147,7 +134,6 @@ public class ArtemisControllerTest {
         public void runPhases_workerGiven_shouldNotAcceptToMoveTheSecondTime() throws IOException, ClassNotFoundException {
             //a client who chooses not to move the second time
             class FakeVirtualViewToAnswerNo extends FakeVirtualView{
-
                 public FakeVirtualViewToAnswerNo(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
                     super(socket, objectInputStream, objectOutputStream);
                 }
@@ -157,8 +143,7 @@ public class ArtemisControllerTest {
                 }
             }
             socket=new Socket();
-            FakeVirtualViewToAnswerNo fakeVirtualViewToAnswerNo=new FakeVirtualViewToAnswerNo(socket, ois, ous);
-            fakeVirtualViewToAnswerNo.setId("ArtemisTestToAnswerNo");
+            fakeVirtualView=new FakeVirtualViewToAnswerNo(socket, ois, ous);
             fakeGameController=new FakeGameController(fakeVirtualView, 1);
             artemisController=new ArtemisController(fakeGameController);
             artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
