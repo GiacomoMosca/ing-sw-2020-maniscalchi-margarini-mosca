@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Game</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Game (it.polimi.ingsw.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Game</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/ 31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.cards.Deck;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.game_board.Board;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * represents the current state of the game
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class Game {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private ArrayList&lt;Player&gt; players;
+<i>16</i>&nbsp;    private final int playerNum;
+<i>17</i>&nbsp;    private final Board board;
+<i>18</i>&nbsp;    private final Deck deck;
+<i>19</i>&nbsp;    private int activePlayer;
+<i>20</i>&nbsp;    private ArrayList&lt;Card&gt; activeModifiers;
+<i>21</i>&nbsp;    private Player winner;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * prepares a new Game
+<i>25</i>&nbsp;     *
+<i>26</i>&nbsp;     * @param p1  the player who first sign up for the game
+<i>27</i>&nbsp;     * @param num the number of players
+<i>28</i>&nbsp;     */
+<b class="fc"><i>29</i>&nbsp;    public Game(Player p1, int num) {</b>
+<b class="fc"><i>30</i>&nbsp;        players = new ArrayList&lt;Player&gt;();</b>
+<b class="fc"><i>31</i>&nbsp;        players.add(p1);</b>
+<b class="fc"><i>32</i>&nbsp;        playerNum = num;</b>
+<b class="fc"><i>33</i>&nbsp;        board = new Board();</b>
+<b class="fc"><i>34</i>&nbsp;        deck = new Deck();</b>
+<b class="fc"><i>35</i>&nbsp;        activePlayer = 0;</b>
+<b class="fc"><i>36</i>&nbsp;        activeModifiers = new ArrayList&lt;Card&gt;();</b>
+<b class="fc"><i>37</i>&nbsp;        winner = null;</b>
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * @return all the players
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public ArrayList&lt;Player&gt; getPlayers() {
+<b class="fc"><i>44</i>&nbsp;        return new ArrayList&lt;Player&gt;(players);</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * adds a player to the current Game
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * @param player the new player
+<i>51</i>&nbsp;     * @throws IndexOutOfBoundsException when trying to add more players than allowed for the current Game
+<i>52</i>&nbsp;     * @throws IllegalArgumentException  when trying to add a player who already joined the current Game
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    public void addPlayer(Player player) throws IndexOutOfBoundsException, IllegalArgumentException {
+<b class="fc"><i>55</i>&nbsp;        if (players.size() &gt;= playerNum) throw new IndexOutOfBoundsException();</b>
+<b class="fc"><i>56</i>&nbsp;        if (players.contains(player)) throw new IllegalArgumentException();</b>
+<b class="fc"><i>57</i>&nbsp;        players.add(player);</b>
+<b class="fc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    /**
+<i>61</i>&nbsp;     * @return the number of players in the current Game
+<i>62</i>&nbsp;     */
+<i>63</i>&nbsp;    public int getPlayerNum() {
+<b class="fc"><i>64</i>&nbsp;        return playerNum;</b>
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * @return the Board of the current Game
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    public Board getBoard() {
+<b class="fc"><i>71</i>&nbsp;        return board;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * @return the Deck containing all the God Power Cards
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    public Deck getDeck() {
+<b class="fc"><i>78</i>&nbsp;        return deck;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * @return the active player
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    public int getActivePlayer() {
+<b class="fc"><i>85</i>&nbsp;        return activePlayer;</b>
+<i>86</i>&nbsp;    }
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    /**
+<i>89</i>&nbsp;     * correctly updates the activePlayer counter
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    public void nextPlayer() {
+<b class="fc"><i>92</i>&nbsp;        activePlayer = (activePlayer &gt;= playerNum - 1) ? 0 : activePlayer + 1;</b>
+<b class="fc"><i>93</i>&nbsp;        if (players.get(activePlayer).hasLost()) nextPlayer();</b>
+<b class="fc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    /**
+<i>97</i>&nbsp;     * @return all the active Modifiers
+<i>98</i>&nbsp;     */
+<i>99</i>&nbsp;    public ArrayList&lt;Card&gt; getActiveModifiers() {
+<b class="fc"><i>100</i>&nbsp;        return new ArrayList&lt;Card&gt;(activeModifiers);</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * adds the argument to the list of the active Modifiers
+<i>105</i>&nbsp;     *
+<i>106</i>&nbsp;     * @param modifier the God Card we want to add to the list of the modifiers
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    public void addModifier(Card modifier) {
+<b class="fc"><i>109</i>&nbsp;        activeModifiers.add(modifier);</b>
+<b class="fc"><i>110</i>&nbsp;    }</b>
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    /**
+<i>113</i>&nbsp;     * removes the argument from the list of the active Modifiers
+<i>114</i>&nbsp;     *
+<i>115</i>&nbsp;     * @param modifier the God Card we want to remove from the list of the modifiers
+<i>116</i>&nbsp;     */
+<i>117</i>&nbsp;    public void removeModifier(Card modifier) {
+<b class="fc"><i>118</i>&nbsp;        activeModifiers.remove(modifier);</b>
+<b class="fc"><i>119</i>&nbsp;    }</b>
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    /**
+<i>122</i>&nbsp;     * @return the player of the current Game
+<i>123</i>&nbsp;     */
+<i>124</i>&nbsp;    public Player getWinner() {
+<b class="fc"><i>125</i>&nbsp;        return winner;</b>
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    /**
+<i>129</i>&nbsp;     * @return true if the current Game has a winner, false otherwise
+<i>130</i>&nbsp;     */
+<i>131</i>&nbsp;    public boolean hasWinner() {
+<b class="fc"><i>132</i>&nbsp;        return winner != null;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * sets the winner of the current Game
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * @param winner the player to set as the winner of the current Game
+<i>139</i>&nbsp;     */
+<i>140</i>&nbsp;    public void setWinner(Player winner) {
+<b class="fc"><i>141</i>&nbsp;        this.winner = winner;</b>
+<b class="fc"><i>142</i>&nbsp;    }</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-04 18:37</div>
+</div>
+</body>
+</html>

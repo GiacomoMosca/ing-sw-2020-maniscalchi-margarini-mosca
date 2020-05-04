@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Server</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.network.server</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Server (it.polimi.ingsw.network.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Server</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.network.server;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.view.VirtualView;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.io.ObjectInputStream;
+<i>8</i>&nbsp;import java.io.ObjectOutputStream;
+<i>9</i>&nbsp;import java.net.ServerSocket;
+<i>10</i>&nbsp;import java.net.Socket;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;public class Server {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    private int port;
+<i>16</i>&nbsp;    private ServerSocket socket;
+<i>17</i>&nbsp;    private GameController gameController;
+<i>18</i>&nbsp;    private ArrayList&lt;String&gt; playerList;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;    public Server(int port) {</b>
+<b class="nc"><i>21</i>&nbsp;        this.port = port;</b>
+<b class="nc"><i>22</i>&nbsp;        this.gameController = null;</b>
+<b class="nc"><i>23</i>&nbsp;        this.playerList = new ArrayList&lt;String&gt;();</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public void start() {
+<i>27</i>&nbsp;        try {
+<b class="nc"><i>28</i>&nbsp;            socket = new ServerSocket(port);</b>
+<b class="nc"><i>29</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>30</i>&nbsp;            System.out.println(&quot;cannot open server socket&quot;);</b>
+<b class="nc"><i>31</i>&nbsp;            System.exit(1);</b>
+<i>32</i>&nbsp;            return;
+<b class="nc"><i>33</i>&nbsp;        }</b>
+<b class="nc"><i>34</i>&nbsp;        while (gameController == null || !gameController.checkPlayersNumber()) {</b>
+<i>35</i>&nbsp;            try {
+<b class="nc"><i>36</i>&nbsp;                addPlayer();</b>
+<b class="nc"><i>37</i>&nbsp;            } catch (IOException | ClassNotFoundException e) {</b>
+<b class="nc"><i>38</i>&nbsp;                e.printStackTrace();</b>
+<b class="nc"><i>39</i>&nbsp;            }</b>
+<i>40</i>&nbsp;        }
+<b class="nc"><i>41</i>&nbsp;        gameController.gameSetUp();</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    public synchronized void addPlayer() throws IOException, ClassNotFoundException {
+<b class="nc"><i>45</i>&nbsp;        Socket cSocket = null;</b>
+<b class="nc"><i>46</i>&nbsp;        cSocket = socket.accept();</b>
+<b class="nc"><i>47</i>&nbsp;        ObjectOutputStream outputStream = null;</b>
+<b class="nc"><i>48</i>&nbsp;        ObjectInputStream inputStream = null;</b>
+<b class="nc"><i>49</i>&nbsp;        outputStream = new ObjectOutputStream(cSocket.getOutputStream());</b>
+<b class="nc"><i>50</i>&nbsp;        inputStream = new ObjectInputStream(cSocket.getInputStream());</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        VirtualView player = new VirtualView(cSocket, inputStream, outputStream);</b>
+<b class="nc"><i>53</i>&nbsp;        playerList.add(player.chooseNickname(playerList));</b>
+<b class="nc"><i>54</i>&nbsp;        if (gameController == null) {</b>
+<b class="nc"><i>55</i>&nbsp;            gameController = new GameController(player, player.choosePlayersNumber());</b>
+<b class="nc"><i>56</i>&nbsp;            player.displayMessage(&quot;Waiting for players...&quot;);</b>
+<i>57</i>&nbsp;        } else {
+<b class="nc"><i>58</i>&nbsp;            player.displayMessage(&quot;Joining &quot; + playerList.get(0) + &quot;&#39;s game...&quot;);</b>
+<b class="nc"><i>59</i>&nbsp;            gameController.addPlayer(player);</b>
+<i>60</i>&nbsp;        }
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-04 18:37</div>
+</div>
+</body>
+</html>
