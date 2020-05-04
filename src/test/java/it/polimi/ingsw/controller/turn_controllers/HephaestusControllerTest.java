@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class HephaestusControllerTest {
-    HephaestusController hephaestusController = null;
-    FakeGameController fakeGameController = null;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private HephaestusController hephaestusController = null;
+    private FakeGameController fakeGameController = null;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -46,7 +46,6 @@ public class HephaestusControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(hephaestusController.generateCard());
 
@@ -83,8 +82,7 @@ public class HephaestusControllerTest {
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("HephaestusTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView,1);
         hephaestusController=new HephaestusController(fakeGameController);
     }
@@ -95,17 +93,16 @@ public class HephaestusControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Hephaestus", "God of Blacksmiths", "Your Build: Your Worker may build one additional block (not dome) on top of your first block.", 1, false, hephaestusController);
-        assertEquals(hephaestusController.generateCard().getGod(), testCard.getGod());
-        assertEquals(hephaestusController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(hephaestusController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(hephaestusController.generateCard().getSet(), testCard.getSet());
-        assertEquals(hephaestusController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(hephaestusController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard=new Card("Hephaestus",
+                "God of Blacksmiths",
+                "Your Build: Your Worker may build one additional block (not dome) on top of your first block.",
+                1,
+                false,
+                hephaestusController);
+        assertEquals(hephaestusController.generateCard(), testCard); }
 
     @Test
-    public void buildPhase() {
+    public void buildPhase_noInputGiven_shouldBuildTwoTimes() {
         fakeGameController.gameSetUp();
         assertEquals(fakeGameController.getGame().getBoard().getCell(0,0).getBuildLevel(), 2);
     }
@@ -128,8 +125,7 @@ public class HephaestusControllerTest {
         }
 
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, ois, ous);
-        fakeVirtualView.setId("HephaestusTestToGenerateException");
+        fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         hephaestusController=new HephaestusController(fakeGameController);
         hephaestusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);

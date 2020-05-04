@@ -46,7 +46,6 @@ public class AthenaControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(athenaController.generateCard());
 
@@ -77,40 +76,37 @@ public class AthenaControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
 
     }
-
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
         fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("AthenaTest");
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         athenaController=new AthenaController(fakeGameController);
     }
 
-    @After
+    /*@After
     public void tearDown() throws Exception {
-    }
+    }*/
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Athena", "Goddess of Wisdom", "Opponent’s Turn: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.", 1, false, athenaController);
-        assertEquals(athenaController.generateCard().getGod(), testCard.getGod());
-        assertEquals(athenaController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(athenaController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(athenaController.generateCard().getSet(), testCard.getSet());
-        assertEquals(athenaController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(athenaController.generateCard().getController(), testCard.getController());
+        Card testCard=new Card("Athena",
+                "Goddess of Wisdom",
+                "Opponent’s Turn: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.",
+                1,
+                false,
+                athenaController);
+        assertEquals(athenaController.generateCard(), testCard);
     }
 
     @Test
-    public void movePhase() {
-        //checking if the modifier was added
+    public void movePhase_NoInputGiven_shouldMoveTheWorkerAndAddTheModifier() {
         fakeGameController.gameSetUp();
+        assertEquals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0,1));
         assertSame(fakeGameController.getGame().getActiveModifiers().get(0), athenaController.card);
     }
 
@@ -118,7 +114,6 @@ public class AthenaControllerTest {
     public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException {
         //a client who chooses to move in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView{
-
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
                 super(socket, objectInputStream, objectOutputStream);
             }
@@ -128,10 +123,9 @@ public class AthenaControllerTest {
             }
         }
 
-        //need new inizialization to use FakeVirtualViewToGenerateException
+        //need new initialization to use FakeVirtualViewToGenerateException instead of FakeVirtualView
         socket=new Socket();
         fakeVirtualView=new FakeVirtualViewToGenerateException(socket, ois, ous);
-        fakeVirtualView.setId("AthenaTestToGenerateException");
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         athenaController=new AthenaController(fakeGameController);
         athenaController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
@@ -145,14 +139,15 @@ public class AthenaControllerTest {
     }
 
     @Test
-    public void limitMoves() {
-        //after gameSetUp the worker will be in (0,1). Cell (0,0) will be one level higher than (0,1) so that it will be removed from the possible moves
+    public void limitMoves_positionAndPossibleMovesGiven_shouldReturnPossibleMovesExcludingOneCellAtHigherLevel() {
+        //after gameSetUp the worker is in (0,1). Cell (0,0) is a level higher than (0,1) so that it will be removed from the possible moves
         //checking if this happens
         fakeGameController.gameSetUp();
 
         ArrayList<Cell> n = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getBoard().getCell(0,1));
         ArrayList<Cell> a = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getBoard().getCell(0,1));
         a.remove(fakeGameController.getGame().getBoard().getCell(0,0));
+
         assertEquals(athenaController.limitMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), n), a);
     }
 }

@@ -17,8 +17,7 @@ public class BoardTest {
     }
 
     @After
-    public void tearDown() {
-    }
+    public void tearDown() { }
 
     @Test (expected = ArrayIndexOutOfBoundsException.class)
     public void getCell_NotExistingCellGiven_ShouldThrowException() {
@@ -33,7 +32,7 @@ public class BoardTest {
 
     @Test
     public void getNeighbors_CellGiven_ShouldReturnCellNeighbors() {
-        //Generica cella all'interno
+        //Testing a generic cell inside the board
         assertTrue(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(0,0)));
         assertTrue(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(0,1)));
         assertTrue(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(0,2)));
@@ -44,7 +43,7 @@ public class BoardTest {
         assertTrue(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(2,2)));
         assertFalse(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(3,0)));
         assertFalse(board.getNeighbors(board.getCell(1,1)).contains(board.getCell(1,1)));
-        //Cella sul bordo
+        //Testing a cell on the perimeter
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(0,1)));
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(1,1)));
         assertTrue(board.getNeighbors(board.getCell(0,0)).contains(board.getCell(1,0)));
@@ -60,5 +59,14 @@ public class BoardTest {
     @Test (expected = ArrayIndexOutOfBoundsException.class)
     public void setCell_CellIntIntGiven_shouldThrowArrayIndexOutOfBoundsException(){
         board.setCell(new Cell(10,10), 10, 10);
+    }
+
+    @Test
+    public void equals_twoBoardsGiven_shouldReturnTrue(){
+        Board board1=new Board();
+        Board board2=new Board();
+
+        assertEquals(board1.getAllCells().get(0), board1.getCell(0,0));
+        assertTrue(board1.equals(board2));
     }
 }

@@ -85,10 +85,18 @@ public class PlayerTest {
 
     @Test
     public void removeWorker_PlayerWorkerGiven_ShouldUnlinkPlayerAndWorker() {
+        worker1.setPosition(game.getBoard().getCell(0,0));
         player.addWorker(worker1);
         player.addWorker(worker2);
         player.removeWorker(worker1);
         assertFalse(player.getWorkers().contains(worker1));
         assertTrue(player.getWorkers().contains(worker2));
+    }
+
+    @Test
+    public void setLost_noInputGiven_shouldSetTheParameterToTrue(){
+        //also covers hasLost(), by calling it to check the condition of this test
+        player.setLost();
+        assertTrue(player.hasLost());
     }
 }
