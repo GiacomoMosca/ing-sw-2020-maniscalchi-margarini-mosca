@@ -79,10 +79,20 @@ public class Game {
     }
 
     /**
-     * @return the active player
+     * @return the active player's number
      */
     public int getActivePlayer() {
         return activePlayer;
+    }
+
+    /**
+     * sets the number of the active player
+     *
+     * @param i the number to set
+     */
+    public void setActivePlayer(int i) {
+        if (i >= playerNum) i = playerNum - 1;
+        this.activePlayer = i;
     }
 
     /**

@@ -18,6 +18,10 @@ public interface UI {
 
     public void choosePlayersNumber();
 
+    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards);
+
+    public void chooseStartingPlayer(ArrayList<PlayerView> players);
+
     /**
      * shows the game board
      *

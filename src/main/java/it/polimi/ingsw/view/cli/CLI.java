@@ -2,10 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.ToServerMessage;
-import it.polimi.ingsw.view.GameView;
-import it.polimi.ingsw.view.CellView;
-import it.polimi.ingsw.view.PlayerView;
-import it.polimi.ingsw.view.UI;
+import it.polimi.ingsw.view.*;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -47,11 +44,11 @@ public class CLI implements UI {
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream(server.getInputStream());
         } catch (IOException e) {
-            System.out.println("Server is down. \nPress ENTER to quit. ");
+            System.out.println("Server is down. ");
             stop();
             return;
         } catch (ClassCastException e) {
-            System.out.println("Protocol violation. \nPress ENTER to quit. ");
+            System.out.println("Protocol violation. ");
             stop();
             return;
         }
@@ -87,6 +84,7 @@ public class CLI implements UI {
     }
 
     public void stop() {
+        System.out.println("\nPress ENTER to quit. ");
         try {
             running = false;
             if (server != null) server.close();
@@ -111,14 +109,15 @@ public class CLI implements UI {
         System.out.println("\nChoose your nickname: ");
         String nickname = getString();
         while (playerList.contains(nickname)) {
-            System.out.println("Nickname already taken. \n");
+            System.out.println("Nickname already taken. ");
             nickname = getString();
         }
         id = nickname;
         try {
             output.writeObject(new ToServerMessage(null, id));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected. ");
+            stop();
         }
     }
 
@@ -126,13 +125,66 @@ public class CLI implements UI {
         System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
         int num = getInt();
         while (num < 2 || num > 3) {
-            System.out.println("Invalid input. \n");
+            System.out.println("Invalid input. ");
             num = getInt();
         }
         try {
             output.writeObject(new ToServerMessage(num, id));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
+
+    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
+        StringBuilder string = new StringBuilder();
+        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
+        else string.append("\nPick your God Power: \n");
+        for (int i = 0; i < possibleCards.size(); i++) {
+            string.append(i + ": ");
+            string.append(possibleCards.get(i).getGod() + "\n");
+        }
+        if (pickedCards != null) for (int i = 0; i < pickedCards.size(); i++) {
+            string.append("X: ");
+            string.append(pickedCards.get(i).getGod() + "\n");
+        }
+        System.out.println(string);
+        ArrayList<Integer> choices = new ArrayList<Integer>();
+        for (int i = 0; i < num; i++) {
+            int choice = getInt();
+            while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
+                System.out.println("Invalid input. ");
+                choice = getInt();
+            }
+            System.out.println("Picked " + possibleCards.get(choice).getGod());
+            choices.add(choice);
+        }
+        try {
+            output.writeObject(new ToServerMessage(choices, id));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
+
+    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
+        StringBuilder string = new StringBuilder();
+        string.append("\nChoose the starting player: \n");
+        for (int i = 0; i < players.size(); i++) {
+            string.append(i + ": ");
+            string.append(players.get(i).getId() + "\n");
+        }
+        System.out.println(string);
+        int choice = getInt();
+        while (choice < 0 || choice >= players.size()) {
+            System.out.println("Invalid input. ");
+            choice = getInt();
+        }
+        try {
+            output.writeObject(new ToServerMessage(choice, id));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
         }
     }
 
@@ -149,7 +201,7 @@ public class CLI implements UI {
      */
     public void displayBoard(GameView board) {
         StringBuilder string = new StringBuilder();
-        string.append("    0  1  2  3  4 ");
+        string.append("\n    0  1  2  3  4 ");
         string.append("\n");
         for (int i = 0; i < 5; i++) {
             string.append("  ----------------");
@@ -177,11 +229,12 @@ public class CLI implements UI {
      * @param message the message to show
      */
     public void displayMessage(String message) {
-        System.out.println(message + "\n");
+        System.out.println("\n" + message);
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
         StringBuilder string = new StringBuilder();
+        string.append("\n");
         switch (desc) {
             case "start":
                 string.append("Choose the starting position for your worker:");
@@ -210,13 +263,14 @@ public class CLI implements UI {
         System.out.println(string);
         int choice = getInt();
         while (choice < 0 || choice >= positions.size()) {
-            System.out.println("Invalid input. \n");
+            System.out.println("Invalid input. ");
             choice = getInt();
         }
         try {
             output.writeObject(new ToServerMessage(choice, id));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected. ");
+            stop();
         }
     }
 
@@ -227,18 +281,18 @@ public class CLI implements UI {
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public void chooseYesNo(String query) {
-        System.out.println(query + " (y/n) \n");
+        System.out.println("\n" + query + " (y/n) ");
         String choice = getString();
         while (!choice.equals("y") && !choice.equals("n")) {
-            System.out.println("Invalid input. \n");
+            System.out.println("Invalid input. ");
             choice = getString();
         }
-        boolean res = false;
-        if (choice.equals("y")) res = true;
+        boolean res = choice.equals("y");
         try {
             output.writeObject(new ToServerMessage(res, id));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected. ");
+            stop();
         }
     }
 
@@ -296,7 +350,7 @@ public class CLI implements UI {
             try {
                 return Integer.parseInt((String) messageQueue.take());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. \n");
+                System.out.println("Invalid input. ");
             } catch (InterruptedException e) {
                 System.out.println("Error getting input. \n");
             }
