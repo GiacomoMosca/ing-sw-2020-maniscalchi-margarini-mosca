@@ -37,8 +37,8 @@ public class VirtualView {
         return id;
     }
 
-    public String chooseNickname(ArrayList<String> playerList) throws IOException, ClassNotFoundException {
-        output.writeObject(new ChooseNickname(playerList));
+    public String chooseNickname() throws IOException, ClassNotFoundException {
+        output.writeObject(new ChooseNickname(null));
         id = ((ToServerMessage) input.readObject()).getSender();
         return id;
     }
@@ -182,6 +182,25 @@ public class VirtualView {
     public void gameOver() throws IOException {
         GameOver msg = new GameOver(null);
         output.writeObject(msg);
+    }
+
+    //Multiple Games
+    public int chooseGameRoom(ArrayList<String> gameRooms) throws IOException, ClassNotFoundException {
+        ChooseGameRoom msg = new ChooseGameRoom(gameRooms);
+        output.writeObject(msg);
+        return (int) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public String chooseGameName() throws IOException, ClassNotFoundException {
+        ChooseGameName msg = new ChooseGameName(null);
+        output.writeObject(msg);
+        return (String) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public int chooseInt (String query, int max) throws IOException, ClassNotFoundException {
+        ChooseInt msg = new ChooseInt(query,max);
+        output.writeObject(msg);
+        return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 
 }

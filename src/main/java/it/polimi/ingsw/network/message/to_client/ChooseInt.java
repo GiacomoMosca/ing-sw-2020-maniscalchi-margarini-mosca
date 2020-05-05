@@ -2,14 +2,17 @@ package it.polimi.ingsw.network.message.to_client;
 
 import it.polimi.ingsw.view.UI;
 
-public class ChooseNickname extends ToClientMessage {
+public class ChooseInt extends ToClientMessage {
 
-    public ChooseNickname(Object body) {
+    int max;
+
+    public ChooseInt(Object body,int max) {
         super(body);
+        this.max = max;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseNickname();
+        client.chooseInt((String) body, max);
     }
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class GameController {
 
     protected Game game;
+    protected String gameName;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
     protected ArrayList<String> colors;
@@ -29,7 +30,7 @@ public class GameController {
      * @param client the VirtualView associated with the first player
      * @param num    the number of players for the current game
      */
-    public GameController(VirtualView client, int num) {
+    public GameController(VirtualView client, int num, String gameName) {
         playerControllers = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
         colors.add("r");
@@ -38,6 +39,7 @@ public class GameController {
         Player p1 = new Player(client.getId(), colors.get(0));
         PlayerController p1Controller = new PlayerController(p1, client);
         game = new Game(p1, num);
+        this.gameName = gameName;
         playerControllers.add(p1Controller);
     }
 
@@ -46,6 +48,13 @@ public class GameController {
      */
     public Game getGame() {
         return game;
+    }
+
+    /**
+     * @return the current Game name
+     */
+    public String getGameName() {
+        return gameName;
     }
 
     /**
@@ -96,7 +105,7 @@ public class GameController {
         for (GodController godController : controllers) {
             deck.addCard(godController.generateCard());
         }
-
+        
         players = game.getPlayers();
 
         broadcastMessage("Game started!");
