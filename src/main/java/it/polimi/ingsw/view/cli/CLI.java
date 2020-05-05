@@ -102,18 +102,14 @@ public class CLI implements UI {
     }
 
     public String getServerIp() {
-        System.out.println("Server IP address: ");
+        System.out.println("\nServer IP address: ");
         String ip = getString();
         return ip;
     }
 
-    public void chooseNickname(ArrayList<String> playerList) {
+    public void chooseNickname() {
         System.out.println("\nChoose your nickname: ");
         String nickname = getString();
-        while (playerList.contains(nickname)) {
-            System.out.println("Nickname already taken. \n");
-            nickname = getString();
-        }
         id = nickname;
         try {
             output.writeObject(new ToServerMessage(null, id));
@@ -310,6 +306,62 @@ public class CLI implements UI {
             } catch (InterruptedException e) {
                 System.out.println("Error getting input. \n");
             }
+        }
+    }
+
+    //Multiple Games
+    public void chooseGameRoom(ArrayList<String> gameRooms) {
+        System.out.println("\nRoom List:");
+        for (int i=1; i<=gameRooms.size(); i++)
+            System.out.println(i + ". " + gameRooms.get(i-1) + "\n");
+        System.out.println("0. Refresh , 1. Choose room");
+        int choice = getInt();
+        while((choice!=0)&&(choice!=1)) {
+            System.out.println("Invalid input\n");
+            choice = getInt();
+        }
+        if (choice == 0)
+            try {
+                output.writeObject(new ToServerMessage(0, id));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        else {
+            System.out.println("\nWhich room do you want to join?: ");
+            int gameRoom = getInt();
+            while((gameRoom<1)||(gameRoom>gameRooms.size())) {
+                System.out.println("Invalid input\n");
+                gameRoom = getInt();
+            }
+            try {
+                output.writeObject(new ToServerMessage(gameRoom, id));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void chooseGameName() {
+        System.out.println("\nChoose a Game Room name: ");
+        String gameRoom = getString();
+        try {
+            output.writeObject(new ToServerMessage(gameRoom, id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void chooseInt (String query, int max){
+        System.out.println(query + "\n");
+        int choice = getInt();
+        while((choice<1)||(choice>max)) {
+            System.out.println("Invalid input. \n");
+            choice = getInt();
+        }
+        try {
+            output.writeObject(new ToServerMessage(choice, id));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

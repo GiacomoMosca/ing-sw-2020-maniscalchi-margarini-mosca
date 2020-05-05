@@ -14,7 +14,7 @@ public interface UI {
 
     public String getServerIp();
 
-    public void chooseNickname(ArrayList<String> playerList);
+    public void chooseNickname();
 
     public void choosePlayersNumber();
 
@@ -45,5 +45,12 @@ public interface UI {
     public void notifyWin(PlayerView player, String reason);
 
     public void gameOver();
+
+    //Multiple Games
+    public void chooseGameRoom(ArrayList<String> gameRooms);
+
+    public void chooseGameName();
+
+    public void chooseInt(String query, int max);
 
 }
