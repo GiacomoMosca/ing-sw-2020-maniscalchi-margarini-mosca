@@ -69,8 +69,6 @@ public class GameController {
     }
 
     /**
-     * ///// PROBABLY DA CAMBIARE
-     * <p>
      * creates a GodController for every God Card, and adds all the cards to the deck.
      * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
      */

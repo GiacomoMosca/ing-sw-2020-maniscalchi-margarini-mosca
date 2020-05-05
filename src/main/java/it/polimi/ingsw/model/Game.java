@@ -12,12 +12,12 @@ import java.util.ArrayList;
  */
 public class Game {
 
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
     private final int playerNum;
     private final Board board;
     private final Deck deck;
+    private final ArrayList<Card> activeModifiers;
     private int activePlayer;
-    private ArrayList<Card> activeModifiers;
     private Player winner;
 
     /**

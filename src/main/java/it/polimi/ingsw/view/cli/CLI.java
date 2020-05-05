@@ -34,7 +34,7 @@ public class CLI implements UI {
         try {
             server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
         } catch (IOException e) {
-            System.out.println("Server unreachable. \nPress ENTER to quit. ");
+            System.out.println("Server unreachable. ");
             stop();
             return;
         }
@@ -62,6 +62,7 @@ public class CLI implements UI {
                 break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                break;
             }
             if (message != null) {
                 parseMessage(message);
@@ -83,15 +84,16 @@ public class CLI implements UI {
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
+        if (!running) return;
+        running = false;
         System.out.println("\nPress ENTER to quit. ");
         try {
-            running = false;
             if (server != null) server.close();
             if (input != null) input.close();
             if (output != null) output.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            //
         }
     }
 
@@ -337,7 +339,7 @@ public class CLI implements UI {
     }
 
     public void gameOver() {
-        System.out.println("\n\nGame over! Thanks for playing! \nPress ENTER to quit. ");
+        System.out.println("\n\nGame over! Thanks for playing! ");
         stop();
     }
 
