@@ -50,7 +50,7 @@ public class ZeusController extends GodController {
             if (!cell.hasWorker() && !cell.isDomed())
                 possibleBuilds.add(cell);
         }
-        possibleBuilds.add(workerPosition);
+        if (workerPosition.getBuildLevel() < 3) possibleBuilds.add(workerPosition);
         return findLegalBuilds(workerPosition, possibleBuilds);
     }
 }

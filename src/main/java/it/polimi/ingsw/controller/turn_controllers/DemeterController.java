@@ -49,7 +49,7 @@ public class DemeterController extends GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("build", null);
         possibleBuilds.remove(buildPosition);
         if ((possibleBuilds.size() != 0) && (client.chooseYesNo("Do you want to build again?"))) {
             buildPosition = client.chooseBuildPosition(possibleBuilds);
@@ -58,7 +58,7 @@ public class DemeterController extends GodController {
             } catch (IllegalStateException e) {
                 System.out.println("ERROR: illegal build");
             }
-            gameController.broadcastBoard();
+            gameController.broadcastBoard("build", card);
         }
     }
 }

@@ -58,7 +58,7 @@ public class MedusaController extends GodController {
                     if (cell.getBuildLevel() < activeWorker.getPosition().getBuildLevel()) {
                         cell.getWorker().getOwner().removeWorker(cell.getWorker());
                         cell.build();
-                        gameController.broadcastBoard();
+                        gameController.broadcastBoard("removeWorker", card);
                     }
                 }
             }

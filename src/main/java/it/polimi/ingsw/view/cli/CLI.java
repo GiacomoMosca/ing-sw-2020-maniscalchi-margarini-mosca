@@ -201,7 +201,7 @@ public class CLI implements UI {
      *
      * @param board the board associated with the current game
      */
-    public void displayBoard(GameView board) {
+    public void displayBoard(GameView board, String desc, CardView godPower) {
         StringBuilder string = new StringBuilder();
         string.append("\n    0  1  2  3  4 ");
         string.append("\n");

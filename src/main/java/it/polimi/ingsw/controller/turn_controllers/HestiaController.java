@@ -47,19 +47,30 @@ public class HestiaController extends GodController {
      */
     @Override
     public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
-        buildAgain=false;
+        buildAgain = false;
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
         if (checkWin()) return "WON";
         buildPhase();
-        buildAgain=true;
-        if(findPossibleBuilds(activeWorker.getPosition()).size()>0) {
+        if (findPossibleBuilds(activeWorker.getPosition()).size() > 0) {
             buildAgain = client.chooseYesNo("Do you want to build again?");
             if (buildAgain)
                 buildPhase();
         }
         return "NEXT";
+    }
+
+    public void buildPhase() throws IOException, ClassNotFoundException {
+        Card godPower = (buildAgain) ? card : null;
+        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
+        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
+        try {
+            buildPosition.build();
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: illegal build");
+        }
+        gameController.broadcastBoard("build", godPower);
     }
 
 
@@ -75,7 +86,8 @@ public class HestiaController extends GodController {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
-            if (buildAgain && (cell.getPosX() == 0 || cell.getPosY() == 0 || cell.getPosX() == 4 || cell.getPosY() == 4)) continue;
+            if (buildAgain && (cell.getPosX() == 0 || cell.getPosY() == 0 || cell.getPosX() == 4 || cell.getPosY() == 4))
+                continue;
             if (!cell.hasWorker() && !cell.isDomed())
                 possibleBuilds.add(cell);
         }

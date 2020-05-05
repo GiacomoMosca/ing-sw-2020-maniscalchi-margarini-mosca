@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 public class PrometheusController extends GodController {
 
-    private boolean canBuildBefore;
     private boolean wantBuildBefore;
 
     /**
@@ -51,11 +50,8 @@ public class PrometheusController extends GodController {
     public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
         activeWorker = worker;
         startingPosition = worker.getPosition();
-        canBuildBefore = false;
         wantBuildBefore = false;
-
-        canBuildBefore = checkMoves();
-        if (canBuildBefore) {
+        if (checkMoves()) {
             wantBuildBefore = client.chooseYesNo("Do you want to build before moving?");
             if (wantBuildBefore) {
                 buildPhase();
@@ -83,7 +79,6 @@ public class PrometheusController extends GodController {
                 possibleMoves.add(cell);
         }
         findLegalMoves(activeWorker.getPosition(), possibleMoves); //ok?
-
         if (possibleMoves.size() == 0) return false;
         else return true;
     }
@@ -94,19 +89,17 @@ public class PrometheusController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
+        Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleMoves;
-        if (!wantBuildBefore)
-            possibleMoves = findPossibleMoves(activeWorker.getPosition());
-        else
-            possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
-
+        if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
+        else possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", godPower);
     }
 
     /**

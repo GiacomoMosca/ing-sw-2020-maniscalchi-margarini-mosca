@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
@@ -16,10 +16,10 @@ import java.util.ArrayList;
 
 public class VirtualView {
 
-    private String id;
     private final Socket socket;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
+    private String id;
 
     /**
      * creates a VirtualView associated with the Interface received as an argument
@@ -81,11 +81,15 @@ public class VirtualView {
     /**
      * shows the Board of the current Game
      *
-     * @param board the Board associated with the current Game
+     * @param game
+     * @param desc
+     * @param card
      */
-    public void displayBoard(ArrayList<Player> players, Board board) throws IOException {
-        GameView gameView = new GameView(players, board);
-        DisplayBoard msg = new DisplayBoard(gameView);
+    public void displayBoard(Game game, String desc, Card card) throws IOException {
+        GameView gameView = new GameView(game);
+        CardView cardView = null;
+        if (card != null) cardView = new CardView(card);
+        DisplayBoard msg = new DisplayBoard(gameView, desc, cardView);
         output.writeObject(msg);
     }
 

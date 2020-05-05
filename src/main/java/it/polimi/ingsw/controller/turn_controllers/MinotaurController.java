@@ -43,10 +43,12 @@ public class MinotaurController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
+        Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         // + allow pushing away opponents
         if (movePosition.hasWorker()) {
+            godPower = card;
             Worker pushedWorker = movePosition.getWorker();
             Cell nextCell;
             int nextX = movePosition.getPosX() + (movePosition.getPosX() - activeWorker.getPosition().getPosX());
@@ -70,7 +72,7 @@ public class MinotaurController extends GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", godPower);
     }
 
     /**

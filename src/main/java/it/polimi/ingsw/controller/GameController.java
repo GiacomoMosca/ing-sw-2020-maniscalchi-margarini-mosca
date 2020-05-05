@@ -101,10 +101,10 @@ public class GameController {
         pickCards();
         chooseStartPlayer();
 
-        broadcastBoard();
+        broadcastBoard("gameSetup", null);
         placeWorkers();
 
-        broadcastBoard();
+        broadcastBoard("gameStart", null);
         playGame();
     }
 
@@ -178,7 +178,7 @@ public class GameController {
                 Worker worker = new Worker(players.get(p));
                 worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
                 players.get(p).addWorker(worker);
-                broadcastBoard();
+                broadcastBoard("placeWorker", null);
             }
         }
     }
@@ -252,9 +252,14 @@ public class GameController {
             setWinner(activePlayers.get(0), "lastPlayerStanding");
             return;
         }
-        game.getActiveModifiers().removeIf(
-                modifier -> modifier.getController().getPlayer().equals(player)
-        );
+        for (Card modifier : game.getActiveModifiers()) {
+            if (modifier.getController().getPlayer().equals(player))
+                game.removeModifier(modifier);
+        }
+        for (Worker worker : player.getWorkers()) {
+            player.removeWorker(worker);
+        }
+        broadcastBoard("eliminatePlayer", null);
     }
 
     /**
@@ -271,10 +276,10 @@ public class GameController {
     /**
      * shows the Board associated with the current Game
      */
-    public void broadcastBoard() {
+    public void broadcastBoard(String desc, Card card) {
         for (PlayerController p : playerControllers) {
             try {
-                p.getClient().displayBoard(game.getPlayers(), game.getBoard());
+                p.getClient().displayBoard(game, desc, card);
             } catch (IOException e) {
                 e.printStackTrace();
             }
