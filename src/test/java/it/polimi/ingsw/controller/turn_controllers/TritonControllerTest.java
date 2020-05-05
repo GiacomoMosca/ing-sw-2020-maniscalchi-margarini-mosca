@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class TritonControllerTest {
-    TritonController tritonController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectOutputStream objectOutputStream;
-    ObjectInputStream objectInputStream;
+    private TritonController tritonController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public class FakeGameController extends GameController {
 
@@ -46,7 +46,6 @@ public class TritonControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(tritonController.generateCard());
 
@@ -61,7 +60,7 @@ public class TritonControllerTest {
 
         private void placeWorkers() {
             Worker worker = new Worker(players.get(0));
-            worker.setPosition(game.getBoard().getCell(2, 2)); //1,0 poi 1,1 se 0,0 è occupato
+            worker.setPosition(game.getBoard().getCell(2, 2));
             players.get(0).addWorker(worker);
         }
 
@@ -80,14 +79,13 @@ public class TritonControllerTest {
         }
 
         @Override
-        public void displayBoard() {}
+        public void broadcastBoard() {}
     }
 
     @Before
     public void setUp(){
         socket=new Socket();
         fakeVirtualView = new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeVirtualView.setId("TritonTest");
         fakeGameController = new FakeGameController(fakeVirtualView,1);
         tritonController = new TritonController(fakeGameController);
     }
@@ -105,14 +103,7 @@ public class TritonControllerTest {
                 2,
                 false,
                 tritonController);
-        assertEquals(tritonController.generateCard().getGod(), testCard.getGod());
-        assertEquals(tritonController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(tritonController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(tritonController.generateCard().getSet(), testCard.getSet());
-        assertEquals(tritonController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(tritonController.generateCard().getController(), testCard.getController());
-
-    }
+        assertEquals(tritonController.generateCard(), testCard); }
 
     @Test
     public void movePhase_noInputGiven_shouldMoveTwoTimes() {
@@ -125,19 +116,14 @@ public class TritonControllerTest {
 
     @Test
     public void movePhase_noInputGiven_shouldGenerateFirstExceptionIllegalMove() throws IOException, ClassNotFoundException {
-        //a client who chooses to build in a domed cell
+        //a client who chooses to move in a domed cell and doesn't want to move again
         class FakeVirtualViewToGenerateException extends FakeVirtualView{
-
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
                 super(socket, objectInputStream, objectOutputStream);
             }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
                 return(fakeGameController.getGame().getBoard().getCell(1,1));
-            }
-            @Override
-            public Cell chooseBuildPosition(ArrayList<Cell> possibleMoves){
-                return(fakeGameController.getGame().getBoard().getCell(2,2));
             }
             @Override
             public boolean chooseYesNo(String query){
@@ -147,7 +133,6 @@ public class TritonControllerTest {
 
         socket=new Socket();
         fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        fakeVirtualView.setId("TritonTestToGenerateException");
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         tritonController=new TritonController(fakeGameController);
         tritonController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
@@ -159,22 +144,21 @@ public class TritonControllerTest {
 
         tritonController.movePhase();
     }
-/*
+
     @Test
     public void movePhase_noInputGiven_shouldGenerateSecondExceptionIllegalMove() throws IOException, ClassNotFoundException {
-        //a client who chooses to build in a domed cell
+        //a client who chooses to move twice in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView{
-
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream){
                 super(socket, objectInputStream, objectOutputStream);
             }
             @Override
             public Cell chooseMovePosition(ArrayList<Cell> possibleMoves){
-                return(fakeGameController.getGame().getBoard().getCell(1,1));
+                return(fakeGameController.getGame().getBoard().getCell(0,1));
             }
             @Override
-            public Cell chooseBuildPosition(ArrayList<Cell> possibleMoves){
-                return(fakeGameController.getGame().getBoard().getCell(2,2));
+            public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds){
+                return(fakeGameController.getGame().getBoard().getCell(1,2));
             }
             @Override
             public boolean chooseYesNo(String query){
@@ -184,7 +168,6 @@ public class TritonControllerTest {
 
         socket=new Socket();
         fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        fakeVirtualView.setId("TritonTestToGenerateException");
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         tritonController=new TritonController(fakeGameController);
         tritonController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
@@ -192,9 +175,25 @@ public class TritonControllerTest {
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(1,1));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
         tritonController.activeWorker=worker;
-
-        fakeGameController.getGame().getBoard().getCell(1,1).buildDome();
+        fakeGameController.getGame().getBoard().getCell(0,1).buildDome();
 
         tritonController.movePhase();
-    }*/
+    }
+
+    @Test
+    public void movePhase_noInputGiven_shouldMoveTheSecondTime() throws IOException, ClassNotFoundException {
+        tritonController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
+        Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(4,4));
+        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        tritonController.activeWorker=worker;
+        fakeGameController.getGame().getBoard().getCell(3,4).buildDome();
+        fakeGameController.getGame().getBoard().getCell(3,3).buildDome();
+        fakeGameController.getGame().getBoard().getCell(4,2).buildDome();
+
+        // the worker starts from 4,4. then moves to 4,3 and the second time to 3,2
+
+        tritonController.movePhase();
+        assertEquals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(3,2));
+    }
 }

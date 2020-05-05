@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class HestiaControllerTest {
-    HestiaController hestiaController = null;
-    FakeGameController fakeGameController = null;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private HestiaController hestiaController = null;
+    private FakeGameController fakeGameController = null;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -46,7 +46,6 @@ public class HestiaControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(hestiaController.generateCard());
 
@@ -76,15 +75,13 @@ public class HestiaControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("HestiaTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         hestiaController=new HestiaController(fakeGameController);
     }
@@ -95,14 +92,13 @@ public class HestiaControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Hestia", "Goddess of Hearth and Home", "Your Build: Your Worker may build one additional time. The additional build cannot be on a perimeter space.", 2, false, hestiaController);
-        assertEquals(hestiaController.generateCard().getGod(), testCard.getGod());
-        assertEquals(hestiaController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(hestiaController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(hestiaController.generateCard().getSet(), testCard.getSet());
-        assertEquals(hestiaController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(hestiaController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard=new Card("Hestia",
+                "Goddess of Hearth and Home",
+                "Your Build: Your Worker may build one additional time. The additional build cannot be on a perimeter space.",
+                2,
+                false,
+                hestiaController);
+        assertEquals(hestiaController.generateCard(), testCard); }
 
     @Test
     public void runPhases_workerGiven_shouldReturnWON() throws IOException, ClassNotFoundException {

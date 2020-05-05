@@ -102,11 +102,6 @@ public class GameController {
 
         Deck deck = game.getDeck();
 
-        /* Testing
-        deck.addCard(controllers.get(12).generateCard());
-        deck.addCard(controllers.get(13).generateCard());
-        */
-
         for (GodController godController : controllers) {
             deck.addCard(godController.generateCard());
         }
@@ -115,6 +110,7 @@ public class GameController {
 
         broadcastMessage("Game started!");
         pickCards();
+        chooseStartPlayer();
 
         broadcastBoard();
         placeWorkers();
@@ -125,11 +121,44 @@ public class GameController {
 
     private void pickCards() {
         Deck deck = game.getDeck();
-        deck.pickRandom(game.getPlayerNum());
+        boolean randomize = false;
+        try {
+            randomize = playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Cards pool?");
+            if (randomize) {
+                deck.pickRandom(game.getPlayerNum());
+            } else {
+                ArrayList<Card> choices = null;
+                choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);
+                for (Card card : choices) {
+                    deck.pickCard(card);
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Card> cardPool = deck.getPickedCards();
+        ArrayList<Card> chosenCards = new ArrayList<Card>();
         for (int i = 0; i < game.getPlayerNum(); i++) {
-            players.get(i).setGodCard(deck.getPickedCards().get(i));
-            playerControllers.get(i).setGodController(deck.getPickedCards().get(i).getController());
-            broadcastMessage((players.get(i).getId() + " is " + deck.getPickedCards().get(i).getGod() + " (" + players.get(i).getColor() + ")\n"));
+            int j = (i == game.getPlayerNum() - 1) ? 0 : i + 1;
+            Card chosenCard = null;
+            try {
+                chosenCard = playerControllers.get(j).getClient().chooseCards(cardPool, 1, chosenCards).get(0);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            cardPool.remove(chosenCard);
+            chosenCards.add(chosenCard);
+            players.get(j).setGodCard(chosenCard);
+            playerControllers.get(j).setGodController(chosenCard.getController());
+            broadcastMessage((players.get(j).getId() + " is " + chosenCard.getGod() + " (" + players.get(j).getColor() + ")\n"));
+        }
+    }
+
+    private void chooseStartPlayer() {
+        try {
+            game.setActivePlayer(playerControllers.get(0).getClient().chooseStartingPlayer(players));
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -138,13 +167,15 @@ public class GameController {
      */
     private void placeWorkers() {
         ArrayList<Cell> freePositions = game.getBoard().getAllCells();
-        for (int p = 0; p < game.getPlayerNum(); p++) {
+        for (int i = 0; i < game.getPlayerNum(); i++) {
+            int p = game.getActivePlayer() + i;
+            if (p >= game.getPlayerNum()) p = p - game.getPlayerNum();
             PlayerController controller = playerControllers.get(p);
-            for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
                 Cell position = null;
-                int j = i + 1;
+                int w = j + 1;
                 try {
-                    controller.getClient().displayMessage("(Worker " + j + ") ");
+                    controller.getClient().displayMessage("(Worker " + w + ") ");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

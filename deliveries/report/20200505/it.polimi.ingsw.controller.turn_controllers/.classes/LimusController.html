@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LimusController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.turn_controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LimusController (it.polimi.ingsw.controller.turn_controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LimusController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.turn_controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class LimusController extends GodController {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    /**
+<i>12</i>&nbsp;     * creates a Limus controller for this game
+<i>13</i>&nbsp;     *
+<i>14</i>&nbsp;     * @param gameController
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    public LimusController(GameController gameController) {
+<b class="fc"><i>17</i>&nbsp;        super(gameController);</b>
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * sets all the attributes of the God Card Limus to their correct values
+<i>22</i>&nbsp;     *
+<i>23</i>&nbsp;     * @return the complete Card
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    @Override
+<i>26</i>&nbsp;    public Card generateCard() {
+<b class="fc"><i>27</i>&nbsp;        Card card = new Card(</b>
+<i>28</i>&nbsp;                &quot;Limus&quot;,
+<i>29</i>&nbsp;                &quot;Goddess of Famine&quot;,
+<i>30</i>&nbsp;                &quot;Opponent’s Turn: Opponent Workers cannot build on spaces neighboring your Workers, unless building a dome to create a Complete Tower.&quot;,
+<i>31</i>&nbsp;                2,
+<i>32</i>&nbsp;                true,
+<i>33</i>&nbsp;                this
+<i>34</i>&nbsp;        );
+<b class="fc"><i>35</i>&nbsp;        this.card = card;</b>
+<b class="fc"><i>36</i>&nbsp;        return card;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /**
+<i>40</i>&nbsp;     * gets a list containing all the cells where an opponent worker can build and creates another list, removing from
+<i>41</i>&nbsp;     * the previous all the cells neighboring the associated workers (unless the opponents can build there a dome to
+<i>42</i>&nbsp;     * create a Complete Tower)
+<i>43</i>&nbsp;     *
+<i>44</i>&nbsp;     * @param workerPosition the position of the worker
+<i>45</i>&nbsp;     * @param possibleBuilds all the cells where the worker is able to build, considering only the game restrictions
+<i>46</i>&nbsp;     * @return all the cells where the worker is actually able to build
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public ArrayList&lt;Cell&gt; limitBuilds(Cell workerPosition, ArrayList&lt;Cell&gt; possibleBuilds) {
+<i>50</i>&nbsp;        // + opponents can only build Complete Towers next to your workers
+<b class="fc"><i>51</i>&nbsp;        ArrayList&lt;Cell&gt; limitedBuilds = new ArrayList&lt;Cell&gt;();</b>
+<i>52</i>&nbsp;        LABEL:
+<b class="fc"><i>53</i>&nbsp;        for (Cell cell : possibleBuilds) {</b>
+<b class="fc"><i>54</i>&nbsp;            for (Cell neighborCell : board.getNeighbors(cell)) {</b>
+<b class="fc"><i>55</i>&nbsp;                if (neighborCell.hasWorker() &amp;&amp; neighborCell.getWorker().getOwner() == player &amp;&amp; cell.getBuildLevel() &lt; 3)</b>
+<b class="fc"><i>56</i>&nbsp;                    continue LABEL;</b>
+<b class="fc"><i>57</i>&nbsp;            }</b>
+<b class="fc"><i>58</i>&nbsp;            limitedBuilds.add(cell);</b>
+<b class="fc"><i>59</i>&nbsp;        }</b>
+<b class="fc"><i>60</i>&nbsp;        return limitedBuilds;</b>
+<i>61</i>&nbsp;        //
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-04 18:37</div>
+</div>
+</body>
+</html>

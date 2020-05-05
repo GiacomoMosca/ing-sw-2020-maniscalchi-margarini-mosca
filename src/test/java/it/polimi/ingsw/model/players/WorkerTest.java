@@ -25,8 +25,7 @@ public class WorkerTest {
     }
 
     @After
-    public void tearDown() {
-    }
+    public void tearDown() { }
 
     @Test
     public void getOwner_NoInputGiven_ShouldReturnWorkerOwnerPlayer() {

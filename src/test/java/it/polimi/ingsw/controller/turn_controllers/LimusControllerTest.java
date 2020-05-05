@@ -22,12 +22,12 @@ import static org.junit.Assert.*;
 
 public class LimusControllerTest {
 
-    LimusController limusController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private LimusController limusController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -46,7 +46,6 @@ public class LimusControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(limusController.generateCard());
 
@@ -76,15 +75,13 @@ public class LimusControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("LimusTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         limusController=new LimusController(fakeGameController);
     }
@@ -95,14 +92,13 @@ public class LimusControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Limus", "Goddess of Famine", "Opponent’s Turn: Opponent Workers cannot build on spaces neighboring your Workers, unless building a dome to create a Complete Tower.", 2, true, limusController);
-        assertEquals(limusController.generateCard().getGod(), testCard.getGod());
-        assertEquals(limusController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(limusController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(limusController.generateCard().getSet(), testCard.getSet());
-        assertEquals(limusController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(limusController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard=new Card("Limus",
+                "Goddess of Famine",
+                "Opponent’s Turn: Opponent Workers cannot build on spaces neighboring your Workers, unless building a dome to create a Complete Tower.",
+                2,
+                true,
+                limusController);
+        assertEquals(limusController.generateCard(), testCard); }
 
     @Test
     public void limitBuilds_workerPositionAndArrayListOfCellsGiven_shouldReturnAnArrayListOfCellNotContainingTheCellNeighboringLimus() {

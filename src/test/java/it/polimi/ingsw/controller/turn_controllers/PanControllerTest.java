@@ -20,12 +20,12 @@ import static org.junit.Assert.*;
 
 public class PanControllerTest {
 
-    PanController panController;
-    FakeGameController fakeGameController;
-    FakeVirtualView fakeVirtualView;
-    Socket socket;
-    ObjectInputStream ois;
-    ObjectOutputStream ous;
+    private PanController panController;
+    private FakeGameController fakeGameController;
+    private FakeVirtualView fakeVirtualView;
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public class FakeGameController extends GameController {
 
@@ -44,7 +44,6 @@ public class PanControllerTest {
 
         @Override
         public void gameSetUp() {
-
             Deck deck = game.getDeck();
             deck.addCard(panController.generateCard());
 
@@ -76,15 +75,13 @@ public class PanControllerTest {
         }
 
         @Override
-        public void broadcastBoard() {
-        }
+        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
-        fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-        fakeVirtualView.setId("PanTest");
+        fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
         fakeGameController=new FakeGameController(fakeVirtualView, 1);
         panController=new PanController(fakeGameController);
     }
@@ -95,14 +92,14 @@ public class PanControllerTest {
 
     @Test
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
-        Card testCard=new Card("Pan", "God of the Wild", "Win Condition: You also win if your Worker moves down two or more levels.", 1, false, panController);
-        assertEquals(panController.generateCard().getGod(), testCard.getGod());
-        assertEquals(panController.generateCard().getTitle(), testCard.getTitle());
-        assertEquals(panController.generateCard().getDescription(), testCard.getDescription());
-        assertEquals(panController.generateCard().getSet(), testCard.getSet());
-        assertEquals(panController.generateCard().hasAlwaysActiveModifier(), testCard.hasAlwaysActiveModifier());
-        assertEquals(panController.generateCard().getController(), testCard.getController());
-    }
+        Card testCard=new Card("Pan",
+                "God of the Wild",
+                "Win Condition: You also win if your Worker moves down two or more levels.",
+                1,
+                false,
+                panController);
+        assertEquals(panController.generateCard(), testCard);
+  }
 
     @Test
     public void checkWin_noInputGiven_shouldReturnTrue() {

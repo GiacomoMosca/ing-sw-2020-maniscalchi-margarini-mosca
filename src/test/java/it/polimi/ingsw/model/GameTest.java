@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.view.VirtualView;
-import it.polimi.ingsw.view.cli.CLI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +22,9 @@ public class GameTest {
 
     GameController gamecontroller;
     Game game=null;
-    Player player1,player2,player3=null;
-    Card modifier1,modifier2=null;
-    GodController godcontroller1,godcontroller2;
+    Player player1, player2, player3=null;
+    Card modifier1, modifier2=null;
+    GodController godcontroller1, godcontroller2;
     Socket socket;
     ObjectInputStream objectInputStream;
     ObjectOutputStream objectOutputStream;
@@ -35,8 +34,8 @@ public class GameTest {
         player1=new Player("Arianna","Giallo");
         player2=new Player("Luigi","Verde");
         player3=new Player("Gian","Cachi");
-        game=new Game(player1,2);
-        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
+        game=new Game(player1,3);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),3);
         godcontroller1=new GodControllerConcrete(gamecontroller);
         godcontroller2=new GodControllerConcrete(gamecontroller);
         modifier1=new Card("dio1", "a", "b",1, false, godcontroller1);
@@ -44,30 +43,27 @@ public class GameTest {
     }
 
     @After
-    public void tearDown() {
-    }
+    public void tearDown() { }
 
     @Test
-    public void getNextPlayer_CurrentActivePlayerGiven_ShouldReturnNextActivePlayer() {
+    public void nextPlayer_noInputGiven_shouldSetTheNextPlayer(){
         game.addPlayer(player2);
-        assertEquals(game.getNextPlayer(),1);
-        assertSame(game.getPlayers().get(game.getActivePlayer()),player2);
-        assertEquals(game.getNextPlayer(),0);
-        assertSame(game.getPlayers().get(game.getActivePlayer()),player1);
-    }
+        game.addPlayer(player3);
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player1);
+        game.nextPlayer();
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player2);
+        game.nextPlayer();
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player3);
+        game.nextPlayer();
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player1);
 
-    @Test
-    public void addPlayer_PlayerToAddGiven_ShouldAddANewPlayer() {
-        game.addPlayer(player2);
-        assertEquals(game.getNextPlayer(),1);
-        assertSame(game.getPlayers().get(game.getActivePlayer()),player2);
-        assertTrue(game.getPlayers().contains(player1));
     }
 
     @Test (expected = IndexOutOfBoundsException.class)
     public void addPlayer_PlayerGiven_ShouldThrowException() {
         game.addPlayer(player2);
         game.addPlayer(player3);
+        game.addPlayer(new Player("player4", "viola"));
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -77,19 +73,21 @@ public class GameTest {
 
     @Test
     public void getPlayerNum_NoInputGiven_ShouldReturnNumberOfPlayer() {
-        assertEquals(game.getPlayerNum(),2);
+        game.addPlayer(player2);
+        game.addPlayer(player3);
+        assertEquals(game.getPlayerNum(),3);
     }
 
     @Test
     public void getBoard_NoInoutGiven_ShouldReturnBoard() {
         Board board=new Board();
-        assertTrue(board.equals(game.getBoard()));
+        assertEquals(board, game.getBoard());
     }
 
     @Test
     public void getDeck_NoInoutGiven_ShouldReturnDeck() {
         Deck deck=new Deck();
-        assertTrue(deck.equals(game.getDeck()));
+        assertEquals(deck, game.getDeck());
 
     }
 
@@ -121,6 +119,7 @@ public class GameTest {
         game.addModifier(modifier1);
         game.addModifier(modifier2);
         game.removeModifier(modifier1);
+        assertFalse(game.getActiveModifiers().contains(modifier1));
         assertTrue(game.getActiveModifiers().contains(modifier2));
     }
 

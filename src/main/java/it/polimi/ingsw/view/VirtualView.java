@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
@@ -44,6 +45,36 @@ public class VirtualView {
 
     public int choosePlayersNumber() throws IOException, ClassNotFoundException {
         output.writeObject(new ChoosePlayersNumber(null));
+        return (int) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, ClassNotFoundException {
+        ArrayList<CardView> possibleCardsView = new ArrayList<CardView>();
+        for (Card card : possibleCards) {
+            possibleCardsView.add(new CardView(card));
+        }
+        ArrayList<CardView> pickedCardsView = new ArrayList<CardView>();
+        if (pickedCards == null) pickedCardsView = null;
+        else {
+            for (Card card : pickedCards) {
+                pickedCardsView.add(new CardView(card));
+            }
+        }
+        output.writeObject(new ChooseCards(possibleCardsView, num, pickedCardsView));
+        ArrayList<Integer> choices = (ArrayList<Integer>) ((ToServerMessage) input.readObject()).getBody();
+        ArrayList<Card> chosenCards = new ArrayList<Card>();
+        for (int i : choices) {
+            chosenCards.add(possibleCards.get(i));
+        }
+        return chosenCards;
+    }
+
+    public int chooseStartingPlayer(ArrayList<Player> players) throws IOException, ClassNotFoundException {
+        ArrayList<PlayerView> playerViews = new ArrayList<PlayerView>();
+        for (Player player : players) {
+            playerViews.add(new PlayerView(player));
+        }
+        output.writeObject(new ChooseStartingPlayer(playerViews));
         return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 

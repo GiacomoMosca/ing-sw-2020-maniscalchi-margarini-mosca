@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrometheusController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.turn_controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrometheusController (it.polimi.ingsw.controller.turn_controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrometheusController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (48/ 48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.turn_controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.players.Worker;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class PrometheusController extends GodController {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    private boolean canBuildBefore;
+<i>14</i>&nbsp;    private boolean wantBuildBefore;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * creates a Prometheus controller for this game
+<i>18</i>&nbsp;     *
+<i>19</i>&nbsp;     * @param gameController
+<i>20</i>&nbsp;     */
+<i>21</i>&nbsp;    public PrometheusController(GameController gameController) {
+<b class="fc"><i>22</i>&nbsp;        super(gameController);</b>
+<b class="fc"><i>23</i>&nbsp;    }</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * sets all the attributes of the God Card Prometheus to their correct values
+<i>27</i>&nbsp;     *
+<i>28</i>&nbsp;     * @return the complete Card
+<i>29</i>&nbsp;     */
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public Card generateCard() {
+<b class="fc"><i>32</i>&nbsp;        Card card = new Card(</b>
+<i>33</i>&nbsp;                &quot;Prometheus&quot;,
+<i>34</i>&nbsp;                &quot;Titan Benefactor of Mankind&quot;,
+<i>35</i>&nbsp;                &quot;Your Turn: If your Worker does not move up, it may build both before and after moving.&quot;,
+<i>36</i>&nbsp;                1,
+<i>37</i>&nbsp;                false,
+<i>38</i>&nbsp;                this
+<i>39</i>&nbsp;        );
+<b class="fc"><i>40</i>&nbsp;        this.card = card;</b>
+<b class="fc"><i>41</i>&nbsp;        return card;</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * handles the phases of a turn: moving and building (which may be allowed two times, both before and after moving)
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @return &quot;WON&quot; if the player won, &quot;NEXT&quot; if the game goes on
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    @Override
+<i>51</i>&nbsp;    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+<b class="fc"><i>52</i>&nbsp;        activeWorker = worker;</b>
+<b class="fc"><i>53</i>&nbsp;        startingPosition = worker.getPosition();</b>
+<b class="fc"><i>54</i>&nbsp;        canBuildBefore = false;</b>
+<b class="fc"><i>55</i>&nbsp;        wantBuildBefore = false;</b>
+<i>56</i>&nbsp;
+<b class="fc"><i>57</i>&nbsp;        canBuildBefore = checkMoves();</b>
+<b class="fc"><i>58</i>&nbsp;        if (canBuildBefore) {</b>
+<b class="fc"><i>59</i>&nbsp;            wantBuildBefore = client.chooseYesNo(&quot;Do you want to build before moving?&quot;);</b>
+<b class="fc"><i>60</i>&nbsp;            if (wantBuildBefore) {</b>
+<b class="fc"><i>61</i>&nbsp;                buildPhase();</b>
+<b class="fc"><i>62</i>&nbsp;                movePhase();</b>
+<b class="fc"><i>63</i>&nbsp;                if (checkWin()) return &quot;WON&quot;;</b>
+<b class="fc"><i>64</i>&nbsp;                buildPhase();</b>
+<b class="fc"><i>65</i>&nbsp;                return &quot;NEXT&quot;;</b>
+<i>66</i>&nbsp;            }
+<i>67</i>&nbsp;        }
+<b class="fc"><i>68</i>&nbsp;        movePhase();</b>
+<b class="fc"><i>69</i>&nbsp;        if (checkWin()) return &quot;WON&quot;;</b>
+<b class="fc"><i>70</i>&nbsp;        buildPhase();</b>
+<b class="fc"><i>71</i>&nbsp;        return &quot;NEXT&quot;;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * @return true if any move from a level to the same level or less is allowed, false otherwise
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    protected boolean checkMoves() {
+<b class="fc"><i>79</i>&nbsp;        ArrayList&lt;Cell&gt; neighbors = board.getNeighbors(activeWorker.getPosition());</b>
+<b class="fc"><i>80</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>81</i>&nbsp;        for (Cell cell : neighbors) {</b>
+<b class="fc"><i>82</i>&nbsp;            if (!cell.isDomed() &amp;&amp; !cell.hasWorker() &amp;&amp; (cell.getBuildLevel() &lt;= activeWorker.getPosition().getBuildLevel()))</b>
+<b class="fc"><i>83</i>&nbsp;                possibleMoves.add(cell);</b>
+<b class="fc"><i>84</i>&nbsp;        }</b>
+<b class="fc"><i>85</i>&nbsp;        findLegalMoves(activeWorker.getPosition(), possibleMoves); //ok?</b>
+<i>86</i>&nbsp;
+<b class="fc"><i>87</i>&nbsp;        if (possibleMoves.size() == 0) return false;</b>
+<b class="fc"><i>88</i>&nbsp;        else return true;</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    /**
+<i>92</i>&nbsp;     * handles the moving phase of the turn: normally handles the phase if the player didn&#39;t build before moving;
+<i>93</i>&nbsp;     * otherwise doesn&#39;t allow him to move up
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    @Override
+<i>96</i>&nbsp;    public void movePhase() throws IOException, ClassNotFoundException {
+<i>97</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves;
+<b class="fc"><i>98</i>&nbsp;        if (!wantBuildBefore)</b>
+<b class="fc"><i>99</i>&nbsp;            possibleMoves = findPossibleMoves(activeWorker.getPosition());</b>
+<i>100</i>&nbsp;        else
+<b class="fc"><i>101</i>&nbsp;            possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());</b>
+<i>102</i>&nbsp;
+<b class="fc"><i>103</i>&nbsp;        Cell movePosition = client.chooseMovePosition(possibleMoves);</b>
+<i>104</i>&nbsp;        try {
+<b class="fc"><i>105</i>&nbsp;            activeWorker.move(movePosition);</b>
+<b class="fc"><i>106</i>&nbsp;        } catch (IllegalArgumentException e) {</b>
+<b class="fc"><i>107</i>&nbsp;            System.out.println(&quot;ERROR: illegal move&quot;);</b>
+<b class="fc"><i>108</i>&nbsp;        }</b>
+<b class="fc"><i>109</i>&nbsp;        gameController.broadcastBoard();</b>
+<b class="fc"><i>110</i>&nbsp;    }</b>
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    /**
+<i>113</i>&nbsp;     * finds all the possible moves that don&#39;t move up
+<i>114</i>&nbsp;     *
+<i>115</i>&nbsp;     * @param workerPosition the position of the worker
+<i>116</i>&nbsp;     * @return all the cells where a worker can move
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    protected ArrayList&lt;Cell&gt; findPossibleMovesNoUp(Cell workerPosition) {
+<b class="fc"><i>119</i>&nbsp;        ArrayList&lt;Cell&gt; neighbors = board.getNeighbors(workerPosition);</b>
+<b class="fc"><i>120</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>121</i>&nbsp;        for (Cell cell : neighbors) {</b>
+<b class="fc"><i>122</i>&nbsp;            if (!cell.isDomed() &amp;&amp; !cell.hasWorker() &amp;&amp; (cell.getBuildLevel() &lt;= activeWorker.getPosition().getBuildLevel()))</b>
+<b class="fc"><i>123</i>&nbsp;                possibleMoves.add(cell);</b>
+<b class="fc"><i>124</i>&nbsp;        }</b>
+<b class="fc"><i>125</i>&nbsp;        return findLegalMoves(workerPosition, possibleMoves);</b>
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-04 18:37</div>
+</div>
+</body>
+</html>
