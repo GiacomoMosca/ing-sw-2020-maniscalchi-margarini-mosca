@@ -42,16 +42,19 @@ public class AtlasController extends GodController {
      */
     @Override
     public void buildPhase() throws IOException, ClassNotFoundException {
+        Card godPower = null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
-            if (client.chooseYesNo("Do you want to build a dome?"))
+            if (client.chooseYesNo("Do you want to build a dome?")) {
+                godPower = card;
                 buildPosition.buildDome();
-            else
+            } else {
                 buildPosition.build();
+            }
         } catch (IllegalStateException | ClassNotFoundException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("build", godPower);
     }
 }

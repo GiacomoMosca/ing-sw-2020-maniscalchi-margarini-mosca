@@ -27,7 +27,7 @@ public interface UI {
      *
      * @param board the Board of the current game
      */
-    public void displayBoard(GameView board);
+    public void displayBoard(GameView board, String desc, CardView godPower);
 
     /**
      * shows a message

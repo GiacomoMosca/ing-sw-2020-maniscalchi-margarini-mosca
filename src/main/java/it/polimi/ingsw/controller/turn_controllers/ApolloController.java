@@ -44,11 +44,13 @@ public class ApolloController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
+        Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         // + allow swapping position with opponents
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         if (movePosition.hasWorker()) {
+            godPower = card;
             Worker swappedWorker = movePosition.getWorker();
             oldPosition.setWorker(swappedWorker);
             swappedWorker.setPosition(oldPosition);
@@ -62,7 +64,7 @@ public class ApolloController extends GodController {
                 System.out.println("ERROR: illegal move");
             }
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", godPower);
     }
 
     /**

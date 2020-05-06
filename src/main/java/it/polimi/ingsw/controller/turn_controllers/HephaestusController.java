@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 public class HephaestusController extends GodController {
 
-    private boolean secondBuild;
-
     /**
      * creates an Hephaestus controller for this game
      *
@@ -44,6 +42,7 @@ public class HephaestusController extends GodController {
      */
     @Override
     public void buildPhase() throws IOException, ClassNotFoundException {
+        Card godPower = null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -51,10 +50,9 @@ public class HephaestusController extends GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
-
         if (buildPosition.getBuildLevel() <= 2) {
-            secondBuild = client.chooseYesNo("Do you want to build here again?");
-            if (secondBuild) {
+            if (client.chooseYesNo("Do you want to build here again?")) {
+                godPower = card;
                 try {
                     buildPosition.build();
                 } catch (IllegalStateException e) {
@@ -62,6 +60,6 @@ public class HephaestusController extends GodController {
                 }
             }
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("build", godPower);
     }
 }

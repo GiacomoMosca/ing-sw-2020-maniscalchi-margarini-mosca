@@ -42,6 +42,7 @@ public class AthenaController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException {
+        Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);
@@ -52,10 +53,11 @@ public class AthenaController extends GodController {
         }
         // + limit opponent's movements if worker moved up
         if (movePosition.getBuildLevel() > oldPosition.getBuildLevel()) {
+            godPower = card;
             game.addModifier(card);
         }
         //
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", godPower);
     }
 
     /**

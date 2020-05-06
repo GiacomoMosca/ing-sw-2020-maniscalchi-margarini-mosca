@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.model.game_board.Board;
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.players.Player;
 
 import java.io.Serializable;
@@ -10,21 +11,28 @@ public class GameView implements Serializable {
 
     private final ArrayList<PlayerView> players;
     private final CellView[][] board;
+    private final ArrayList<CardView> activeModifiers;
 
-    public GameView(ArrayList<Player> players, Board board) {
-        this.players = new ArrayList<PlayerView>();
-        for (Player player : players) {
-            this.players.add(new PlayerView(player));
+    public GameView(Game game) {
+        players = new ArrayList<PlayerView>();
+        for (Player player : game.getPlayers()) {
+            players.add(new PlayerView(player));
         }
-        this.board = new CellView[5][5];
+        board = new CellView[5][5];
         for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 5; j++)
-                this.board[i][j] = new CellView(board.getCell(i, j));
+            for (int j = 0; j < 5; j++) {
+                board[i][j] = new CellView(game.getBoard().getCell(i, j));
+            }
+        activeModifiers = new ArrayList<CardView>();
+        for (Card card : game.getActiveModifiers()) {
+            activeModifiers.add(new CardView(card));
+        }
     }
 
-    public GameView(ArrayList<PlayerView> players, CellView[][] board) {
+    public GameView(ArrayList<PlayerView> players, CellView[][] board, ArrayList<CardView> modifiers) {
         this.players = players;
         this.board = board;
+        this.activeModifiers = modifiers;
     }
 
     public ArrayList<PlayerView> getPlayers() {
@@ -40,6 +48,10 @@ public class GameView implements Serializable {
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
         return board[y][x];
+    }
+
+    public ArrayList<CardView> getActiveModifiers() {
+        return new ArrayList<CardView>(activeModifiers);
     }
 
 }

@@ -113,7 +113,7 @@ public abstract class GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", null);
     }
 
     /**
@@ -127,7 +127,7 @@ public abstract class GodController {
         } catch (IllegalStateException e) {
             System.out.println("ERROR: illegal build");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("build", null);
     }
 
     public boolean checkWin() {

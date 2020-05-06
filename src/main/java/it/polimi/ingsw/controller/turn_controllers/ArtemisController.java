@@ -65,6 +65,18 @@ public class ArtemisController extends GodController {
         return "NEXT";
     }
 
+    public void movePhase() throws IOException, ClassNotFoundException {
+        Card godPower = (secondMove) ? card : null;
+        ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
+        Cell movePosition = client.chooseMovePosition(possibleMoves);
+        try {
+            activeWorker.move(movePosition);
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERROR: illegal move");
+        }
+        gameController.broadcastBoard("move", godPower);
+    }
+
     /**
      * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
      * and ensures that, if the player uses a second move, his worker won't move back to the cell it started from

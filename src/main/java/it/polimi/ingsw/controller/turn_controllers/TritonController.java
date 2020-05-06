@@ -50,7 +50,7 @@ public class TritonController extends GodController {
         } catch (IllegalArgumentException e) {
             System.out.println("ERROR: illegal move");
         }
-        gameController.broadcastBoard();
+        gameController.broadcastBoard("move", null);
 
         while (movePosition.getPosX() == 0 || movePosition.getPosY() == 0 || movePosition.getPosY() == 4 || movePosition.getPosX() == 4) {
             if (client.chooseYesNo("Do you want to move again?")) {
@@ -63,7 +63,7 @@ public class TritonController extends GodController {
                     return;
                 }
             } else return;
-            gameController.broadcastBoard();
+            gameController.broadcastBoard("move", card);
         }
     }
 }
