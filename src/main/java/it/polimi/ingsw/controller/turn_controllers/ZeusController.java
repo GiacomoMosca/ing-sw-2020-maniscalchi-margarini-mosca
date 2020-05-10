@@ -1,9 +1,11 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ZeusController extends GodController {
@@ -34,6 +36,19 @@ public class ZeusController extends GodController {
         );
         this.card = card;
         return card;
+    }
+
+    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
+        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
+        try {
+            buildPosition.build();
+        } catch (IllegalStateException e) {
+            System.out.println("ERROR: illegal build");
+        }
+        if (buildPosition.getPosX() == activeWorker.getPosition().getPosX() && buildPosition.getPosY() == activeWorker.getPosition().getPosY())
+            gameController.broadcastBoard("build", card);
+        else gameController.broadcastBoard("build", null);
     }
 
     /**

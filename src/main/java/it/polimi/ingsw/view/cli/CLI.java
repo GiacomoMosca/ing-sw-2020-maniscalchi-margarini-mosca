@@ -4,7 +4,9 @@ import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.ToServerMessage;
 import it.polimi.ingsw.view.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -101,22 +103,65 @@ public class CLI implements UI {
         message.performAction(this);
     }
 
+    public void sendMessage(Object body) {
+        try {
+            output.writeObject(new ToServerMessage(body, id));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
+
     public String getServerIp() {
         System.out.println("\nServer IP address: ");
         String ip = getString();
         return ip;
     }
 
-    public void chooseNickname() {
-        System.out.println("\nChoose your nickname: ");
+    public void chooseNickname(boolean taken) {
+        if (taken) System.out.println("\nNickname already taken. ");
+        else System.out.println("\nChoose your nickname: ");
         String nickname = getString();
         id = nickname;
-        try {
-            output.writeObject(new ToServerMessage(null, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+        sendMessage(null);
+    }
+
+    public void chooseStartJoin() {
+        System.out.println("\n1: Start a new game \n2: Join a game ");
+        int num = getInt();
+        while (num < 1 || num > 2) {
+            System.out.println("Invalid input. ");
+            num = getInt();
         }
+        sendMessage(num == 1);
+    }
+
+    public void chooseGameRoom(ArrayList<GameView> gameRooms) {
+        StringBuilder string = new StringBuilder();
+        string.append("\nGame rooms: ");
+        string.append("\n0: Refresh list ");
+        int i = 0;
+        for (GameView game : gameRooms) {
+            i++;
+            string.append("\n");
+            string.append(i + ": ");
+            string.append(game.getName());
+            string.append(" (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ") ");
+        }
+        System.out.println(string);
+        int choice = getInt();
+        while (choice < 0 || choice > i) {
+            System.out.println("Invalid input. ");
+            choice = getInt();
+        }
+        sendMessage(choice);
+    }
+
+    public void chooseGameName(boolean taken) {
+        if (taken) System.out.println("\nName already taken. ");
+        else System.out.println("\nChoose a name for your game room: ");
+        String gameRoom = getString();
+        sendMessage(gameRoom);
     }
 
     public void choosePlayersNumber() {
@@ -126,12 +171,7 @@ public class CLI implements UI {
             System.out.println("Invalid input. ");
             num = getInt();
         }
-        try {
-            output.writeObject(new ToServerMessage(num, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
+        sendMessage(num);
     }
 
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
@@ -157,12 +197,7 @@ public class CLI implements UI {
             System.out.println("Picked " + possibleCards.get(choice).getGod());
             choices.add(choice);
         }
-        try {
-            output.writeObject(new ToServerMessage(choices, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
+        sendMessage(choices);
     }
 
     public void chooseStartingPlayer(ArrayList<PlayerView> players) {
@@ -178,12 +213,7 @@ public class CLI implements UI {
             System.out.println("Invalid input. ");
             choice = getInt();
         }
-        try {
-            output.writeObject(new ToServerMessage(choice, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
+        sendMessage(choice);
     }
 
     /**
@@ -197,7 +227,7 @@ public class CLI implements UI {
      *
      * @param board the board associated with the current game
      */
-    public void displayBoard(GameView board, String desc, CardView godPower) {
+    public void updateGame(GameView board, String desc, CardView godPower) {
         StringBuilder string = new StringBuilder();
         string.append("\n    0  1  2  3  4 ");
         string.append("\n");
@@ -264,12 +294,7 @@ public class CLI implements UI {
             System.out.println("Invalid input. ");
             choice = getInt();
         }
-        try {
-            output.writeObject(new ToServerMessage(choice, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
+        sendMessage(choice);
     }
 
     /**
@@ -286,12 +311,7 @@ public class CLI implements UI {
             choice = getString();
         }
         boolean res = choice.equals("y");
-        try {
-            output.writeObject(new ToServerMessage(res, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
+        sendMessage(res);
     }
 
     public void notifyLoss(PlayerView player, String reason) {
@@ -334,13 +354,16 @@ public class CLI implements UI {
         System.out.println(string);
     }
 
+    public void notifyDisconnection(PlayerView player) {
+        System.out.println("\n" + player.getId() + " has disconnected. ");
+    }
+
     public void gameOver() {
-        System.out.println("\n\nGame over! Thanks for playing! ");
-        stop();
+        System.out.println("\n\nGame over! Thanks for playing! \n\n\n\n\n");
     }
 
     private void quit() {
-        gameOver();
+        stop();
     }
 
     private int getInt() {
@@ -362,66 +385,6 @@ public class CLI implements UI {
             } catch (InterruptedException e) {
                 System.out.println("Error getting input. \n");
             }
-        }
-    }
-
-    //Multiple Games
-    public void chooseGameRoom(ArrayList<String> gameRooms) {
-        System.out.println("\nRoom List:");
-        for (int i=1; i<=gameRooms.size(); i++)
-            System.out.println(i + ". " + gameRooms.get(i-1) + "\n");
-        System.out.println("0. Refresh , 1. Choose room");
-        int choice = getInt();
-        while((choice!=0)&&(choice!=1)) {
-            System.out.println("Invalid input\n");
-            choice = getInt();
-        }
-        if (choice == 0)
-            try {
-                output.writeObject(new ToServerMessage(0, id));
-            } catch (IOException e) {
-                System.out.println("Disconnected. ");
-                stop();
-            }
-        else {
-            System.out.println("\nWhich room do you want to join?: ");
-            int gameRoom = getInt();
-            while((gameRoom<1)||(gameRoom>gameRooms.size())) {
-                System.out.println("Invalid input\n");
-                gameRoom = getInt();
-            }
-            try {
-                output.writeObject(new ToServerMessage(gameRoom, id));
-            } catch (IOException e) {
-                System.out.println("Disconnected. ");
-                stop();
-            }
-        }
-    }
-
-    public void chooseGameName() {
-        System.out.println("\nChoose a Game Room name: ");
-        String gameRoom = getString();
-        try {
-            output.writeObject(new ToServerMessage(gameRoom, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }
-    }
-
-    public void chooseInt (String query, int max){
-        System.out.println(query + "\n");
-        int choice = getInt();
-        while((choice<1)||(choice>max)) {
-            System.out.println("Invalid input. \n");
-            choice = getInt();
-        }
-        try {
-            output.writeObject(new ToServerMessage(choice, id));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
         }
     }
 

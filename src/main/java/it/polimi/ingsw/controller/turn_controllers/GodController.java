@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Board;
@@ -93,7 +94,7 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
@@ -105,7 +106,7 @@ public abstract class GodController {
     /**
      * handles the moving phase of the turn
      */
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
@@ -119,7 +120,7 @@ public abstract class GodController {
     /**
      * handles the building phase of the turn
      */
-    public void buildPhase() throws IOException, ClassNotFoundException {
+    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

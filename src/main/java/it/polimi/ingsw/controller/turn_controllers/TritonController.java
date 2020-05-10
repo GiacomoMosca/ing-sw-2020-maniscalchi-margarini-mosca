@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -42,7 +43,7 @@ public class TritonController extends GodController {
      * whether the first one was onto a perimeter space
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {

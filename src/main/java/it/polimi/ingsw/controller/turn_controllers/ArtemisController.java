@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -49,7 +50,7 @@ public class ArtemisController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         secondMove = false;
@@ -65,7 +66,7 @@ public class ArtemisController extends GodController {
         return "NEXT";
     }
 
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Card godPower = (secondMove) ? card : null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);

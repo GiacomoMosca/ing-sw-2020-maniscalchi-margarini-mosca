@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class Game {
 
+    private final String name;
     private final ArrayList<Player> players;
     private final int playerNum;
     private final Board board;
@@ -26,7 +27,8 @@ public class Game {
      * @param p1  the player who first sign up for the game
      * @param num the number of players
      */
-    public Game(Player p1, int num) {
+    public Game(String name, Player p1, int num) {
+        this.name = name;
         players = new ArrayList<Player>();
         players.add(p1);
         playerNum = num;
@@ -35,6 +37,10 @@ public class Game {
         activePlayer = 0;
         activeModifiers = new ArrayList<Card>();
         winner = null;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**

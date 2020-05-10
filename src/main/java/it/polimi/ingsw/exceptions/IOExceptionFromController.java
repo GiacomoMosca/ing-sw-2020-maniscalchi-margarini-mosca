@@ -11,4 +11,7 @@ public class IOExceptionFromController extends Exception {
         this.controller = controller;
     }
 
+    public PlayerController getController() {
+        return controller;
+    }
 }

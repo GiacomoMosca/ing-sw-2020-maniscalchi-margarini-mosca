@@ -9,5 +9,7 @@ public class ChooseGameName extends ToClientMessage {
     }
 
     @Override
-    public void performAction(UI client) {client.chooseGameName();}
+    public void performAction(UI client) {
+        client.chooseGameName((boolean) body);
+    }
 }

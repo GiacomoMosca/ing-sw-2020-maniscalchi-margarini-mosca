@@ -14,7 +14,8 @@ public class PlayerView implements Serializable {
     public PlayerView(Player player) {
         this.id = player.getId();
         this.color = player.getColor();
-        this.godCard = player.getGodCard().getGod();
+        if (player.getGodCard() == null) this.godCard = null;
+        else this.godCard = player.getGodCard().getGod();
         this.hasLost = player.hasLost();
     }
 

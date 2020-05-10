@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.message.to_client;
 
+import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.UI;
 
 import java.util.ArrayList;
@@ -13,6 +14,6 @@ public class ChooseGameRoom extends ToClientMessage {
 
     @Override
     public void performAction(UI client) {
-        client.chooseGameRoom((ArrayList<String>) body);
+        client.chooseGameRoom((ArrayList<GameView>) body);
     }
 }

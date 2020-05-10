@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -47,7 +48,7 @@ public class PrometheusController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         wantBuildBefore = false;
@@ -88,7 +89,7 @@ public class PrometheusController extends GodController {
      * otherwise doesn't allow him to move up
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleMoves;
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
