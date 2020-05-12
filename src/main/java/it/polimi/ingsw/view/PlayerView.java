@@ -41,4 +41,5 @@ public class PlayerView implements Serializable {
     public boolean hasLost() {
         return hasLost;
     }
+
 }

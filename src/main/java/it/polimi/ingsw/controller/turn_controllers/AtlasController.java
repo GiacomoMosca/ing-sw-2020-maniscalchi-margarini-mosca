@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -53,9 +54,10 @@ public class AtlasController extends GodController {
             } else {
                 buildPosition.build();
             }
-        } catch (IllegalStateException | ClassNotFoundException e) {
-            System.out.println("ERROR: illegal build");
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("build", godPower);
     }
+
 }

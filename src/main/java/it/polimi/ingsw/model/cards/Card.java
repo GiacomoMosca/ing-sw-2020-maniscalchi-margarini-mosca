@@ -71,13 +71,13 @@ public class Card {
     @Override
     public boolean equals(Object obj) {
         Card card = (Card) obj;
-        return 
-   this.god.equals(card.getGod()) && 
-          this.title.equals(card.getTitle()) && 
-          this.description.equals(card.getDescription()) && 
-          this.set == getSet() && 
-          this.alwaysActiveModifier == card.hasAlwaysActiveModifier() && 
-          this.controller == card.getController();
+        return this.god.equals(card.getGod()) &&
+                this.title.equals(card.getTitle()) &&
+                this.description.equals(card.getDescription()) &&
+                this.set == getSet() &&
+                this.alwaysActiveModifier == card.hasAlwaysActiveModifier() &&
+                this.controller == card.getController();
 
     }
+
 }

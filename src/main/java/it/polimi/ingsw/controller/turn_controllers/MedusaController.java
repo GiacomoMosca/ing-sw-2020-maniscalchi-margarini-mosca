@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -51,19 +52,21 @@ public class MedusaController extends GodController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
         for (Cell cell : board.getNeighbors(activeWorker.getPosition())) {
-            if (cell.hasWorker()) {
-                if (!player.getWorkers().contains(cell.getWorker())) {
-                    if (cell.getBuildLevel() < activeWorker.getPosition().getBuildLevel()) {
-                        cell.getWorker().getOwner().removeWorker(cell.getWorker());
-                        cell.build();
-                        gameController.broadcastBoard("removeWorker", card);
-                    }
+            if (cell.hasWorker() && !player.getWorkers().contains(cell.getWorker()) && cell.getBuildLevel() < activeWorker.getPosition().getBuildLevel()) {
+                cell.getWorker().getOwner().removeWorker(cell.getWorker());
+                try {
+                    cell.build();
+                } catch (IllegalBuildException e) {
+                    System.out.println(e.getMessage());
                 }
+                gameController.broadcastBoard("removeWorker", card);
             }
         }
-        return "NEXT";
+        return "next";
     }
+
 }

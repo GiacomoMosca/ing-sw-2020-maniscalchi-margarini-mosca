@@ -229,8 +229,7 @@ public class GameController {
                 Cell position;
                 int w = j + 1;
                 try {
-                    controller.getClient().displayMessage("(Worker " + w + ") ");
-                    position = controller.getClient().chooseStartPosition(freePositions);
+                    position = controller.getClient().chooseStartPosition(freePositions, w);
                 } catch (IOException e) {
                     throw new IOExceptionFromController(e, controller);
                 } catch (ClassNotFoundException e) {
@@ -238,7 +237,7 @@ public class GameController {
                     return;
                 }
                 freePositions.remove(position);
-                Worker worker = new Worker(players.get(p));
+                Worker worker = new Worker(players.get(p), w);
                 worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
                 players.get(p).addWorker(worker);
                 broadcastBoard("placeWorker", null);
@@ -263,17 +262,18 @@ public class GameController {
             }
 
             broadcastMessage("=== " + currentPlayer.getId() + "'s turn === \n");
-            switch (playerControllers.get(game.getActivePlayer()).playTurn()) {
-                case "NEXT":
+            String result = playerControllers.get(game.getActivePlayer()).playTurn();
+            switch (result) {
+                case "next":
                     checkWorkers();
                     game.nextPlayer();
                     break;
-                case "LOST":
-                    eliminatePlayer(currentPlayer, "outOfMoves");
+                case "outOfMoves": case "outOfBuilds":
+                    eliminatePlayer(currentPlayer, result);
                     game.nextPlayer();
                     break;
-                case "WON":
-                    setWinner(currentPlayer, "winConditionAchieved");
+                case "winConditionAchieved": case "godConditionAchieved":
+                    setWinner(currentPlayer, result);
                     break;
                 default:
                     System.out.println("ERROR: invalid turn");

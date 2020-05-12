@@ -12,4 +12,5 @@ public class Ping extends ToClientMessage {
     public void performAction(UI client) {
         //
     }
+
 }

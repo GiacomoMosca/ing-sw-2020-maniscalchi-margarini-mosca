@@ -78,14 +78,14 @@ public class PlayerController {
             if (godController.canPlay(worker)) playableWorkers.add(worker);
         }
         try {
-            if (playableWorkers.size() == 0) return "LOST";
+            if (playableWorkers.size() == 0) return "outOfMoves";
             else activeWorker = client.chooseWorker(playableWorkers);
             return godController.runPhases(activeWorker);
         } catch (IOException e) {
             throw new IOExceptionFromController(e, this);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            return "NEXT";
+            return "next";
         }
     }
 

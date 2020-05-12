@@ -12,4 +12,5 @@ public class DisplayMessage extends ToClientMessage {
     public void performAction(UI client) {
         client.displayMessage((String) body);
     }
+
 }

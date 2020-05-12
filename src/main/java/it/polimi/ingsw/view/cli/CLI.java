@@ -252,7 +252,7 @@ public class CLI implements UI {
                 string.append("|");
                 if (cell.isDomed()) string.append("X");
                 else string.append(cell.getBuildLevel() == 0 ? " " : cell.getBuildLevel());
-                if (cell.hasWorker()) string.append(cell.getWorkerColor());
+                if (cell.hasWorker()) string.append(cell.getWorker().getColor());
                 else string.append(" ");
             }
             string.append("|");
@@ -276,8 +276,11 @@ public class CLI implements UI {
         StringBuilder string = new StringBuilder();
         string.append("\n");
         switch (desc) {
-            case "start":
-                string.append("Choose the starting position for your worker:");
+            case "start1":
+                string.append("(Worker 1) Choose the starting position for your worker:");
+                break;
+            case "start2":
+                string.append("(Worker 2) Choose the starting position for your worker:");
                 break;
             case "worker":
                 string.append("Choose a worker:");

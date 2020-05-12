@@ -12,4 +12,5 @@ public class ChooseGameName extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseGameName((boolean) body);
     }
+
 }

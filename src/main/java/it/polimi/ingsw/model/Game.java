@@ -142,19 +142,19 @@ public class Game {
     }
 
     /**
-     * @return true if the current Game has a winner, false otherwise
-     */
-    public boolean hasWinner() {
-        return winner != null;
-    }
-
-    /**
      * sets the winner of the current Game
      *
      * @param winner the player to set as the winner of the current Game
      */
     public void setWinner(Player winner) {
         this.winner = winner;
+    }
+
+    /**
+     * @return true if the current Game has a winner, false otherwise
+     */
+    public boolean hasWinner() {
+        return winner != null;
     }
 
 }

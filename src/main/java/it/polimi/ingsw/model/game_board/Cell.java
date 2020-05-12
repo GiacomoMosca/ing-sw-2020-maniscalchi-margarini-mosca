@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.game_board;
 
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.players.Worker;
 
 public class Cell {
@@ -57,8 +58,10 @@ public class Cell {
      *
      * @throws IllegalStateException when it's not possible to build on this cell
      */
-    public void build() throws IllegalStateException {
-        if (buildLevel > 3 || hasDome) throw new IllegalStateException();
+    public void build() throws IllegalBuildException {
+        if (buildLevel > 3)
+            throw new IllegalBuildException("cell [" + posX + "," + posY + "] is at build level" + buildLevel);
+        if (hasDome) throw new IllegalBuildException("cell [" + posX + "," + posY + "] already has a dome");
         if (buildLevel == 3) hasDome = true;
         else this.buildLevel++;
     }
@@ -85,19 +88,19 @@ public class Cell {
     }
 
     /**
-     * @return true if the cell is occupied by a worker, false otherwise
-     */
-    public boolean hasWorker() {
-        return worker != null;
-    }
-
-    /**
      * sets the cell as an occupied space (by the worker received as an argument)
      *
      * @param worker
      */
     public void setWorker(Worker worker) {
         this.worker = worker;
+    }
+
+    /**
+     * @return true if the cell is occupied by a worker, false otherwise
+     */
+    public boolean hasWorker() {
+        return worker != null;
     }
 
 }

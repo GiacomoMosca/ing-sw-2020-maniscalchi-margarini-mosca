@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -56,16 +57,13 @@ public class PrometheusController extends GodController {
             wantBuildBefore = client.chooseYesNo("Do you want to build before moving?");
             if (wantBuildBefore) {
                 buildPhase();
-                movePhase();
-                if (checkWin()) return "WON";
-                buildPhase();
-                return "NEXT";
             }
         }
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
-        return "NEXT";
+        return "next";
     }
 
 
@@ -97,8 +95,8 @@ public class PrometheusController extends GodController {
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", godPower);
     }
@@ -118,4 +116,5 @@ public class PrometheusController extends GodController {
         }
         return findLegalMoves(workerPosition, possibleMoves);
     }
+
 }

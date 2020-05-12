@@ -16,4 +16,5 @@ public class NotifyLoss extends ToClientMessage {
     public void performAction(UI client) {
         client.notifyLoss((PlayerView) body, reason);
     }
+
 }

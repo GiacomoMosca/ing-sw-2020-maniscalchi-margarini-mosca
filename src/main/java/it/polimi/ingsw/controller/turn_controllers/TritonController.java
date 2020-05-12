@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -48,8 +49,8 @@ public class TritonController extends GodController {
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", null);
 
@@ -59,12 +60,13 @@ public class TritonController extends GodController {
                 movePosition = client.chooseMovePosition(possibleMoves);
                 try {
                     activeWorker.move(movePosition);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("ERROR: illegal move");
+                } catch (IllegalMoveException e) {
+                    System.out.println(e.getMessage());
                     return;
                 }
             } else return;
             gameController.broadcastBoard("move", card);
         }
     }
+
 }

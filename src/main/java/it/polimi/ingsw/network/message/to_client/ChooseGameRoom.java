@@ -16,4 +16,5 @@ public class ChooseGameRoom extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseGameRoom((ArrayList<GameView>) body);
     }
+
 }

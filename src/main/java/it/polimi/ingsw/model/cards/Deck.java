@@ -83,4 +83,5 @@ public class Deck {
         Deck deck = (Deck) obj;
         return this.getPickedCards().equals(deck.getPickedCards()) && this.getCards().equals(deck.getCards());
     }
+
 }

@@ -91,4 +91,5 @@ public class Board {
                 NumCell2++;
         return NumCell1 == NumCell2;
     }
+
 }

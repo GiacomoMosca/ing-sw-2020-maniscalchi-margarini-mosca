@@ -19,4 +19,5 @@ public class UpdateGame extends ToClientMessage {
     public void performAction(UI client) {
         client.updateGame((GameView) body, desc, godPower);
     }
+
 }

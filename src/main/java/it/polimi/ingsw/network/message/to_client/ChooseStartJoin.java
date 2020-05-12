@@ -12,4 +12,5 @@ public class ChooseStartJoin extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseStartJoin();
     }
+
 }

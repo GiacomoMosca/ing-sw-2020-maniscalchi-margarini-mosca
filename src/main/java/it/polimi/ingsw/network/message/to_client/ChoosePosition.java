@@ -18,4 +18,5 @@ public class ChoosePosition extends ToClientMessage {
     public void performAction(UI client) {
         client.choosePosition((ArrayList<CellView>) body, desc);
     }
+
 }

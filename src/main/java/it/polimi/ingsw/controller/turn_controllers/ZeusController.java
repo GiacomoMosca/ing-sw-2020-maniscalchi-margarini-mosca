@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -43,8 +44,8 @@ public class ZeusController extends GodController {
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
             buildPosition.build();
-        } catch (IllegalStateException e) {
-            System.out.println("ERROR: illegal build");
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
         }
         if (buildPosition.getPosX() == activeWorker.getPosition().getPosX() && buildPosition.getPosY() == activeWorker.getPosition().getPosY())
             gameController.broadcastBoard("build", card);
@@ -68,4 +69,5 @@ public class ZeusController extends GodController {
         if (workerPosition.getBuildLevel() < 3) possibleBuilds.add(workerPosition);
         return findLegalBuilds(workerPosition, possibleBuilds);
     }
+
 }

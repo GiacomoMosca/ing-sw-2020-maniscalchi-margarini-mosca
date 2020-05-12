@@ -13,4 +13,5 @@ public class NotifyDisconnection extends ToClientMessage {
     public void performAction(UI client) {
         client.notifyDisconnection((PlayerView) body);
     }
+
 }

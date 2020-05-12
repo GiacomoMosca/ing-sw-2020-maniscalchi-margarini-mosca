@@ -20,4 +20,5 @@ public class ChooseCards extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseCards((ArrayList<CardView>) body, num, pickedCards);
     }
+
 }

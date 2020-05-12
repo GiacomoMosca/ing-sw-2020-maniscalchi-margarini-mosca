@@ -12,4 +12,5 @@ public class ChooseYesNo extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseYesNo((String) body);
     }
+
 }

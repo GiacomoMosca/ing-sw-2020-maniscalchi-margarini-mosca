@@ -15,4 +15,5 @@ public class ChooseStartingPlayer extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseStartingPlayer((ArrayList<PlayerView>) body);
     }
+
 }

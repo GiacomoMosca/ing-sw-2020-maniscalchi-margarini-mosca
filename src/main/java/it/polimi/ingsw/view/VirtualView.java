@@ -119,6 +119,17 @@ public class VirtualView {
         return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 
+    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions, int num) throws IOException, ClassNotFoundException {
+        ArrayList<CellView> positions = new ArrayList<CellView>();
+        for (Cell cell : possiblePositions) {
+            positions.add(new CellView(cell));
+        }
+        String desc = "start" + num;
+        ChoosePosition msg = new ChoosePosition(positions, desc);
+        output.writeObject(msg);
+        return possiblePositions.get((int) ((ToServerMessage) input.readObject()).getBody());
+    }
+
     /**
      * shows the Board of the current Game
      *
@@ -190,16 +201,6 @@ public class VirtualView {
         ChoosePosition msg = new ChoosePosition(positions, "build");
         output.writeObject(msg);
         return possibleBuilds.get((int) ((ToServerMessage) input.readObject()).getBody());
-    }
-
-    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException, ClassNotFoundException {
-        ArrayList<CellView> positions = new ArrayList<CellView>();
-        for (Cell cell : possiblePositions) {
-            positions.add(new CellView(cell));
-        }
-        ChoosePosition msg = new ChoosePosition(positions, "start");
-        output.writeObject(msg);
-        return possiblePositions.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
     /**

@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -62,16 +63,16 @@ public class MinotaurController extends GodController {
             }
             try {
                 pushedWorker.move(nextCell);
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERROR: illegal move");
+            } catch (IllegalMoveException e) {
+                System.out.println(e.getMessage());
                 return;
             }
             //
         }
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", godPower);
     }

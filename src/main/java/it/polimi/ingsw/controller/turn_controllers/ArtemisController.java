@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -56,14 +57,15 @@ public class ArtemisController extends GodController {
         secondMove = false;
         beginningCell = activeWorker.getPosition();
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
         secondMove = client.chooseYesNo("Do you want to move again?");
         if (secondMove) {
             movePhase();
-            if (checkWin()) return "WON";
+            if (!checkWin().equals("nope")) return checkWin();
         }
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
-        return "NEXT";
+        return "next";
     }
 
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
@@ -72,8 +74,8 @@ public class ArtemisController extends GodController {
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", godPower);
     }

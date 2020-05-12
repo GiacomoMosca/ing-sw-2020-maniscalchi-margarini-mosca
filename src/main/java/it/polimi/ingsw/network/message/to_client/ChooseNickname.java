@@ -12,4 +12,5 @@ public class ChooseNickname extends ToClientMessage {
     public void performAction(UI client) {
         client.chooseNickname((boolean) body);
     }
+
 }

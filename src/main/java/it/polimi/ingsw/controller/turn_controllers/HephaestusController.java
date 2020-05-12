@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -48,19 +49,20 @@ public class HephaestusController extends GodController {
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
             buildPosition.build();
-        } catch (IllegalStateException e) {
-            System.out.println("ERROR: illegal build");
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
         }
         if (buildPosition.getBuildLevel() <= 2) {
             if (client.chooseYesNo("Do you want to build here again?")) {
                 godPower = card;
                 try {
                     buildPosition.build();
-                } catch (IllegalStateException e) {
-                    System.out.println("ERROR: illegal build");
+                } catch (IllegalBuildException e) {
+                    System.out.println(e.getMessage());
                 }
             }
         }
         gameController.broadcastBoard("build", godPower);
     }
+
 }

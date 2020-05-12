@@ -12,4 +12,5 @@ public class ChoosePlayersNumber extends ToClientMessage {
     public void performAction(UI client) {
         client.choosePlayersNumber();
     }
+
 }
