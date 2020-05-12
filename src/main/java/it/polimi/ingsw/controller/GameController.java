@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.*;
+import it.polimi.ingsw.exceptions.GameEndedException;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
@@ -12,9 +13,12 @@ import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameController {
 
+    protected final AtomicBoolean running;
+    protected final AtomicBoolean setup;
     protected Game game;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
@@ -32,6 +36,8 @@ public class GameController {
      * @param num    the number of players for the current game
      */
     public GameController(VirtualView client, int num, String gameName) {
+        running = new AtomicBoolean(true);
+        setup = new AtomicBoolean(true);
         playerControllers = new ArrayList<PlayerController>();
         spectators = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
@@ -45,6 +51,14 @@ public class GameController {
         client.setPlayerController(p1Controller);
     }
 
+    public boolean isRunning() {
+        return running.get();
+    }
+
+    public boolean isSetup() {
+        return setup.get();
+    }
+
     /**
      * @return the current Game
      */
@@ -54,12 +68,8 @@ public class GameController {
 
     public ArrayList<PlayerController> getAllControllers() {
         ArrayList<PlayerController> allControllers = new ArrayList<PlayerController>();
-        for (PlayerController controller : playerControllers) {
-            allControllers.add(controller);
-        }
-        for (PlayerController controller : spectators) {
-            allControllers.add(controller);
-        }
+        allControllers.addAll(playerControllers);
+        allControllers.addAll(spectators);
         return allControllers;
     }
 
@@ -72,7 +82,8 @@ public class GameController {
      *
      * @param client
      */
-    public void addPlayer(VirtualView client) {
+    public void addPlayer(VirtualView client) throws GameEndedException {
+        if (!running.get() || !setup.get()) throw new GameEndedException("game ended");
         if (playerControllers.size() >= game.getPlayerNum()) {
             System.out.println("ERROR: too many players");
             return;
@@ -85,11 +96,12 @@ public class GameController {
         try {
             broadcastMessage(client.getId() + " joined the game (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ")");
         } catch (IOExceptionFromController e) {
-            e.printStackTrace();
+            handleDisconnection(e.getController());
         }
     }
 
-    public void addSpectator(VirtualView client) {
+    public void addSpectator(VirtualView client) throws GameEndedException {
+        if (!running.get()) throw new GameEndedException("game ended");
         Player spectator = new Player(client.getId(), null);
         PlayerController spectatorController = new PlayerController(spectator, client, this);
         spectators.add(spectatorController);
@@ -116,6 +128,7 @@ public class GameController {
      * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
      */
     public void gameSetUp() {
+        if (!setup.compareAndSet(true, false)) return;
         ArrayList<GodController> controllers = new ArrayList<GodController>();
         controllers.add(new ApolloController(this));
         controllers.add(new ArtemisController(this));
@@ -170,18 +183,20 @@ public class GameController {
             throw new IOExceptionFromController(e, playerControllers.get(0));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return;
         }
         ArrayList<Card> cardPool = deck.getPickedCards();
         ArrayList<Card> chosenCards = new ArrayList<Card>();
         for (int i = 0; i < game.getPlayerNum(); i++) {
             int j = (i == game.getPlayerNum() - 1) ? 0 : i + 1;
-            Card chosenCard = null;
+            Card chosenCard;
             try {
                 chosenCard = playerControllers.get(j).getClient().chooseCards(cardPool, 1, chosenCards).get(0);
             } catch (IOException e) {
                 throw new IOExceptionFromController(e, playerControllers.get(j));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                return;
             }
             cardPool.remove(chosenCard);
             chosenCards.add(chosenCard);
@@ -211,7 +226,7 @@ public class GameController {
             if (p >= game.getPlayerNum()) p = p - game.getPlayerNum();
             PlayerController controller = playerControllers.get(p);
             for (int j = 0; j < 2; j++) {
-                Cell position = null;
+                Cell position;
                 int w = j + 1;
                 try {
                     controller.getClient().displayMessage("(Worker " + w + ") ");
@@ -220,6 +235,7 @@ public class GameController {
                     throw new IOExceptionFromController(e, controller);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
+                    return;
                 }
                 freePositions.remove(position);
                 Worker worker = new Worker(players.get(p));
@@ -239,6 +255,7 @@ public class GameController {
             if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
         }
         while (!game.hasWinner()) {
+            if (!running.get()) return;
             Player currentPlayer = players.get(game.getActivePlayer());
             for (Card modifier : game.getActiveModifiers()) {
                 if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(currentPlayer))
@@ -263,6 +280,7 @@ public class GameController {
                     break;
             }
         }
+        if (!running.compareAndSet(true, false)) return;
         gameOver();
     }
 
@@ -418,10 +436,16 @@ public class GameController {
         }
     }
 
-    private void handleDisconnection(PlayerController controller) {
-        playerControllers.remove(controller);
-        notifyDisconnection(controller.getPlayer());
-        gameOver();
+    public void handleDisconnection(PlayerController controller) {
+        if (!running.get()) return;
+        if (playerControllers.contains(controller)) {
+            if (!running.compareAndSet(true, false)) return;
+            playerControllers.remove(controller);
+            notifyDisconnection(controller.getPlayer());
+            gameOver();
+        } else {
+            removeSpectators(controller);
+        }
     }
 
     public void notifyDisconnection(Player player) {
@@ -438,6 +462,7 @@ public class GameController {
      * notifies all players and spectators that the game is over
      */
     public void gameOver() {
+        if (running.get()) return;
         for (PlayerController controller : getAllControllers()) {
             controller.getClient().setPlayerController(null);
             try {

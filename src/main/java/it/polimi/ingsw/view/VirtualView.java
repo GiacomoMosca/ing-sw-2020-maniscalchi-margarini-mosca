@@ -18,19 +18,22 @@ import java.util.ArrayList;
 public class VirtualView {
 
     private final Socket socket;
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
     private String id;
     private PlayerController playerController;
 
     /**
      * creates a VirtualView associated with the Interface received as an argument
      */
-    public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
+    public VirtualView(Socket socket) {
         this.socket = socket;
-        this.input = input;
-        this.output = output;
         this.playerController = null;
+    }
+
+    public void resetStreams() throws IOException {
+        input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
     }
 
     /**
@@ -50,6 +53,10 @@ public class VirtualView {
 
     public boolean isInGame() {
         return (playerController != null);
+    }
+
+    public void checkAlive() throws IOException {
+        output.writeObject(new Ping(null));
     }
 
     public String chooseNickname(boolean taken) throws IOException, ClassNotFoundException {
@@ -73,13 +80,13 @@ public class VirtualView {
         return (String) ((ToServerMessage) input.readObject()).getBody();
     }
 
-    public int chooseGameRoom(ArrayList<Game> gameRooms) throws IOException, ClassNotFoundException {
+    public String chooseGameRoom(ArrayList<Game> gameRooms) throws IOException, ClassNotFoundException {
         ArrayList<GameView> gameRoomsView = new ArrayList<GameView>();
         for (Game game : gameRooms) {
             gameRoomsView.add(new GameView(game));
         }
         output.writeObject(new ChooseGameRoom(gameRoomsView));
-        return (int) ((ToServerMessage) input.readObject()).getBody();
+        return (String) ((ToServerMessage) input.readObject()).getBody();
     }
 
     public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, ClassNotFoundException {

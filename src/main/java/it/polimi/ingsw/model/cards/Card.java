@@ -34,6 +34,20 @@ public class Card {
     }
 
     /**
+     * @return the title of the card's god
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @return the card's set number (1 for Simple Gods, 2 for Advanced Gods)
+     */
+    public int getSet() {
+        return set;
+    }
+
+    /**
      * @return the description of this card
      */
     public String getDescription() {
@@ -53,16 +67,6 @@ public class Card {
     public GodController getController() {
         return controller;
     }
-
-    ////For testing only////
-    public String getTitle() {
-        return title;
-    }
-
-    public int getSet() {
-        return set;
-    }
-    ////////////////////////
 
     @Override
     public boolean equals(Object obj) {

@@ -2,29 +2,29 @@ package it.polimi.ingsw.network.server;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.PlayerController;
+import it.polimi.ingsw.exceptions.GameEndedException;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
 
+    private final AtomicBoolean running;
     private final int port;
     private final ArrayList<GameController> gameControllers;
     private final ArrayList<VirtualView> players;
-    private boolean running;
 
 
     public Server(int port) {
+        this.running = new AtomicBoolean(true);
         this.port = port;
         this.gameControllers = new ArrayList<GameController>();
         this.players = new ArrayList<VirtualView>();
-        this.running = true;
     }
 
     public void start() {
@@ -37,7 +37,7 @@ public class Server {
             return;
         }
 
-        while (running) {
+        while (running.get()) {
             try {
                 Socket client = socket.accept();
                 new Thread(() -> newPlayerWorker(client)).start();
@@ -48,35 +48,52 @@ public class Server {
     }
 
     private void newPlayerWorker(Socket client) {
-        ObjectOutputStream outputStream = null;
-        ObjectInputStream inputStream = null;
         VirtualView player = null;
         try {
-            outputStream = new ObjectOutputStream(client.getOutputStream());
-            inputStream = new ObjectInputStream(client.getInputStream());
-            player = new VirtualView(client, inputStream, outputStream);
+            player = new VirtualView(client);
+            player.resetStreams();
 
             boolean taken = false;
-            String nickname = null;
+            String nickname;
             while (true) {
                 nickname = player.chooseNickname(taken);
+                taken = false;
                 synchronized (players) {
-                    for (VirtualView p : players) {
-                        if (nickname == p.getId()) {
+                    if (nickname.startsWith("/")) taken = true;
+                    else for (VirtualView p : players) {
+                        if (nickname.equals(p.getId())) {
                             taken = true;
                             break;
                         }
                     }
                     if (!taken) {
                         players.add(player);
+                        System.out.println(player.getId() + " joined"); // temp
                         break;
                     }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            players.remove(player);
+            removePlayer(player);
         }
-        playerLobby(player);
+        VirtualView finalPlayer = player;
+        new Thread(() -> checkAlive(finalPlayer)).start();
+        playerLobby(finalPlayer);
+    }
+
+    private void checkAlive(VirtualView player) {
+        while (true) {
+            try {
+                Thread.sleep(5 * 1000);
+                player.checkAlive();
+            } catch (InterruptedException e) {
+                //
+            } catch (IOException e) {
+                System.out.println(player.getId() + " rip"); // temp
+                removePlayer(player);
+                return;
+            }
+        }
     }
 
     private void playerLobby(VirtualView player) {
@@ -85,51 +102,58 @@ public class Server {
             if (newGame) newRoom(player);
             else joinRoom(player);
         } catch (IOException | ClassNotFoundException e) {
-            players.remove(player);
+            removePlayer(player);
         }
     }
 
-    private void newRoom(VirtualView player) {
-        try {
-            int playerNum = player.choosePlayersNumber();
-            String gameName = null;
-            boolean taken = false;
-            while (true) {
-                gameName = player.chooseGameName(taken);
-                synchronized (gameControllers) {
-                    taken = false;
-                    for (GameController gameController : gameControllers) {
-                        if (gameName.equals(gameController.getGame().getName())) {
-                            taken = true;
-                            break;
-                        }
-                    }
-                    if (!taken) {
-                        GameController gameController = new GameController(player, playerNum, gameName);
-                        gameControllers.add(gameController);
-                        player.displayMessage("Waiting for players...");
+    private void newRoom(VirtualView player) throws IOException, ClassNotFoundException {
+        int playerNum = player.choosePlayersNumber();
+        String gameName;
+        boolean taken = false;
+        while (true) {
+            gameName = player.chooseGameName(taken);
+            synchronized (gameControllers) {
+                taken = false;
+                if (gameName.startsWith("/")) taken = true;
+                else for (GameController gameController : gameControllers) {
+                    if (gameName.equals(gameController.getGame().getName())) {
+                        taken = true;
                         break;
                     }
                 }
+                if (!taken) {
+                    GameController gameController = new GameController(player, playerNum, gameName);
+                    gameControllers.add(gameController);
+                    player.displayMessage("Waiting for players...");
+                    break;
+                }
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
-    private void joinRoom(VirtualView player) {
+    private void joinRoom(VirtualView player) throws IOException, ClassNotFoundException {
+        GameController gameController = null;
+        boolean spectator = false;
+        String gameRoom;
         try {
-            GameController gameController = null;
-            boolean spectator = false;
-            int gameRoom = -1;
             while (true) {
                 ArrayList<Game> gameRooms = new ArrayList<Game>();
                 for (GameController game : gameControllers) {
                     gameRooms.add(game.getGame());
                 }
                 gameRoom = player.chooseGameRoom(gameRooms);
-                if (gameRoom != 0) {
-                    gameController = gameControllers.get(gameRoom - 1);
+                if (gameRoom.equals("/back")) {
+                    new Thread(() -> playerLobby(player)).start();
+                    return;
+                }
+                if (!gameRoom.equals("/refresh")) {
+                    for (GameController game : gameControllers) {
+                        if (game.getGame().getName().equals(gameRoom)) {
+                            gameController = game;
+                            break;
+                        }
+                    }
+                    if (gameController == null) throw new GameEndedException("game ended");
                     if (gameController.checkPlayersNumber()) {
                         if (player.chooseYesNo("The game room is full. Do you want to join as a spectator?"))
                             spectator = true;
@@ -148,17 +172,33 @@ public class Server {
                     new Thread(() -> gameWorker(finalGameController)).start();
                 } else player.displayMessage("Waiting for players...");
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (GameEndedException e) {
+            player.displayMessage("The room doesn't exist anymore. ");
+            if (gameController != null) removeGame(gameController);
+            new Thread(() -> playerLobby(player)).start();
         }
     }
 
     private void gameWorker(GameController gameController) {
         gameController.gameSetUp();
+        removeGame(gameController);
+    }
+
+    private void removeGame(GameController gameController) {
+        if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
         gameControllers.remove(gameController);
         for (PlayerController controller : gameController.getAllControllers()) {
             new Thread(() -> playerLobby(controller.getClient())).start();
         }
+    }
+
+    private void removePlayer(VirtualView player) {
+        if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {
+            GameController gameController = player.getPlayerController().getGame();
+            gameController.handleDisconnection(player.getPlayerController());
+            if (!gameController.isRunning()) removeGame(gameController);
+        }
+        players.remove(player);
     }
 
 }
