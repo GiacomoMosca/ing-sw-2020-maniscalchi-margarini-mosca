@@ -33,8 +33,8 @@ public class ApolloControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -77,8 +77,6 @@ public class ApolloControllerTest {
                 game.setWinner(players.get(game.getActivePlayer()));
         }
 
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
@@ -87,7 +85,7 @@ public class ApolloControllerTest {
         //it's not okay to call fakeGameController.gameSetUp(): it would play an entire round with the second player playing too
         socket1=new Socket();
         fakeVirtualView1=new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 2);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 2, "game");
         apolloController=new ApolloController(fakeGameController);
 
         socket2=new Socket();
@@ -155,7 +153,7 @@ public class ApolloControllerTest {
         //new inizialization needed to use FakeVirtualViewToGenerateException instead of FakeVirtualView
         socket1=new Socket();
         fakeVirtualView1=new FakeVirtualViewToGenerateException(socket1, objectInputStream1, objectOutputStream1);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 1, "game" );
         apolloController=new ApolloController(fakeGameController);
         apolloController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));

@@ -32,7 +32,7 @@ public class PlayerTest {
     @Before
     public void setUp() {
         game = new Game(player,1);
-        gameController=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
+        gameController=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2, "game");
         godcontroller=new GodControllerConcrete(gameController);
         player=new Player("Eni","Red");
         card=new Card("a", "b", "c", 1, false, godcontroller);

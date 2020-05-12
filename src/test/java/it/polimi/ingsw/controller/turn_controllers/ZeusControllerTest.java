@@ -31,8 +31,8 @@ public class ZeusControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -75,15 +75,13 @@ public class ZeusControllerTest {
                 game.setWinner(players.get(game.getActivePlayer()));
         }
 
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
         fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeGameController = new FakeGameController(fakeVirtualView, 1);
+        fakeGameController = new FakeGameController(fakeVirtualView, 1, "game");
         zeusController = new ZeusController(fakeGameController);
     }
 

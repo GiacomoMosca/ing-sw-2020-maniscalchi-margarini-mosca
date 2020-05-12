@@ -31,8 +31,8 @@ public class HephaestusControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -73,17 +73,13 @@ public class HephaestusControllerTest {
             if (result.equals("WON"))
                 game.setWinner(players.get(game.getActivePlayer()));
         }
-
-        @Override
-        public void broadcastBoard() {
-        }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
         fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView,1);
+        fakeGameController=new FakeGameController(fakeVirtualView,1, "game");
         hephaestusController=new HephaestusController(fakeGameController);
     }
 
@@ -126,7 +122,7 @@ public class HephaestusControllerTest {
 
         socket=new Socket();
         fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView, 1, "game");
         hephaestusController=new HephaestusController(fakeGameController);
         hephaestusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));

@@ -335,7 +335,7 @@ public class CLI implements UI {
     }
 
     public void gameOver() {
-        System.out.println("\n\nGame over! Thanks for playing! ");
+        System.out.println("\n\nGame over! Thanks for playing :) ");
         stop();
     }
 

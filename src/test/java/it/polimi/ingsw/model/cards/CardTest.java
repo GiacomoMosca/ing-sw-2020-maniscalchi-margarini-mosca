@@ -28,7 +28,7 @@ public class CardTest {
 
     @Before
     public void setUp() {
-        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2, "game");
         godController=new GodControllerConcrete(gamecontroller);
         card=new Card("god", "title", "description", 1, true, godController);
     }

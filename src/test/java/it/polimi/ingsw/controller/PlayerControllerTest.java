@@ -2,7 +2,6 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
-import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
@@ -32,7 +31,7 @@ public class PlayerControllerTest {
         socket=new Socket();
         virtualView=new VirtualView(socket, objectInputStream, objectOutputStream);
         playerController=new PlayerController(player, virtualView);
-        gameController=new GameController(virtualView, 2);
+        gameController=new GameController(virtualView, 2, "game");
         godController=new GodControllerConcrete(gameController);
         godController.setPlayer(player, virtualView);
         playerController.setGodController(godController);

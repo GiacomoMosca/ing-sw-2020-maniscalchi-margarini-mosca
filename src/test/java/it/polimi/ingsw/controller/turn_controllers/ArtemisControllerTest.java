@@ -32,8 +32,8 @@ public class ArtemisControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView virtualView, int num) {
-            super(virtualView, num);
+        public FakeGameController(VirtualView virtualView, int num, String gameName) {
+            super(virtualView, num, gameName);
         }
 
         @Override
@@ -75,15 +75,13 @@ public class ArtemisControllerTest {
                 game.setWinner(players.get(game.getActivePlayer()));
         }
 
-        @Override
-        public void broadcastBoard() { }
     }
         @Before
         public void setUp() throws Exception {
             //it's not okay to call fakeGameController.gameSetUp() for these tests because it would play a turn and we couldn't check what we need
             socket=new Socket();
             fakeVirtualView=new FakeVirtualView(socket, ois, ous);
-            fakeGameController=new FakeGameController(fakeVirtualView, 1);
+            fakeGameController=new FakeGameController(fakeVirtualView, 1, "game");
             artemisController=new ArtemisController(fakeGameController);
             Deck deck = fakeGameController.getGame().getDeck();
             Card card = artemisController.generateCard();
@@ -144,7 +142,7 @@ public class ArtemisControllerTest {
             }
             socket=new Socket();
             fakeVirtualView=new FakeVirtualViewToAnswerNo(socket, ois, ous);
-            fakeGameController=new FakeGameController(fakeVirtualView, 1);
+            fakeGameController=new FakeGameController(fakeVirtualView, 1, "game");
             artemisController=new ArtemisController(fakeGameController);
             artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
             Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));

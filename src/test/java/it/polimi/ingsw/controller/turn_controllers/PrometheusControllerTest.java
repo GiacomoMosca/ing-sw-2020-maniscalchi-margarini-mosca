@@ -31,8 +31,8 @@ public class PrometheusControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -74,15 +74,13 @@ public class PrometheusControllerTest {
                 game.setWinner(players.get(game.getActivePlayer()));
         }
 
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket=new Socket();
         fakeVirtualView=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView, 1, "game");
         prometheusController=new PrometheusController(fakeGameController);
     }
 
@@ -178,7 +176,7 @@ public class PrometheusControllerTest {
 
         socket=new Socket();
         fakeVirtualView=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView, 1, "game");
         prometheusController=new PrometheusController(fakeGameController);
         prometheusController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));
