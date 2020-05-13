@@ -31,8 +31,8 @@ public class MedusaControllerTest<MedudsaController> {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -82,15 +82,13 @@ public class MedusaControllerTest<MedudsaController> {
                 game.setWinner(players.get(game.getActivePlayer()));
         }
 
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket1=new Socket();
         fakeVirtualView1=new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 2);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 2, "game");
         medusaController=new MedusaController(fakeGameController);
     }
 

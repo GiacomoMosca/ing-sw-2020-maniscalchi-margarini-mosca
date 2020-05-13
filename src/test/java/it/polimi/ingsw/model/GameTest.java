@@ -35,7 +35,7 @@ public class GameTest {
         player2=new Player("Luigi","Verde");
         player3=new Player("Gian","Cachi");
         game=new Game(player1,3);
-        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),3);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),3, "game");
         godcontroller1=new GodControllerConcrete(gamecontroller);
         godcontroller2=new GodControllerConcrete(gamecontroller);
         modifier1=new Card("dio1", "a", "b",1, false, godcontroller1);

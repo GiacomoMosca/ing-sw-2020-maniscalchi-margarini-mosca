@@ -26,7 +26,7 @@ public class DeckTest {
 
     @Before
     public void setUp() {
-        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2);
+        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),2, "game");
         gc1=new GodControllerConcrete(gamecontroller);
         gc2=new GodControllerConcrete(gamecontroller);
         card1=new Card("god1", "title1", "description1", 1, true, gc1);

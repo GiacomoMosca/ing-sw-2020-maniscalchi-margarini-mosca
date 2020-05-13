@@ -32,8 +32,8 @@ public class GodControllerTest {
 
     private class FakeGameController extends GameController{
 
-        public FakeGameController(VirtualView client, int num) {
-          super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+          super(client, num, gameName);
         }
         
         @Override
@@ -86,16 +86,13 @@ public class GodControllerTest {
             if(result.equals("WON"))
                 game.setWinner(players.get(game.getActivePlayer()));
         }
-
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() {
         socket=new Socket();
         fakeVirtualView1=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView1,2 );
+        fakeGameController=new FakeGameController(fakeVirtualView1,2, "game");
         genericController1=new GodControllerConcrete(fakeGameController);
 
         fakeVirtualView2=new FakeVirtualView(socket, objectInputStream, objectOutputStream);
@@ -192,7 +189,7 @@ public class GodControllerTest {
         //need new initialization to use FakeVirtualViewToGenerateException instead of FakeVirtualView
         socket=new Socket();
         fakeVirtualView1=new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 1, "game");
         genericController1=new GodControllerConcrete(fakeGameController);
         genericController1.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));

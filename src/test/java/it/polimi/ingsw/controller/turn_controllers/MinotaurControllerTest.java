@@ -31,8 +31,8 @@ public class MinotaurControllerTest {
 
     public class FakeGameController extends GameController {
 
-        public FakeGameController(VirtualView client, int num) {
-            super(client, num);
+        public FakeGameController(VirtualView client, int num, String gameName) {
+            super(client, num, gameName);
         }
 
         @Override
@@ -73,16 +73,13 @@ public class MinotaurControllerTest {
             if (result.equals("WON"))
                 game.setWinner(players.get(game.getActivePlayer()));
         }
-
-        @Override
-        public void broadcastBoard() { }
     }
 
     @Before
     public void setUp() throws Exception {
         socket1=new Socket();
         fakeVirtualView1=new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 2);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 2, "game");
         minotaurController=new MinotaurController(fakeGameController);
 
         GodControllerConcrete genericController=new GodControllerConcrete(fakeGameController);
@@ -160,7 +157,7 @@ public class MinotaurControllerTest {
 
         socket1=new Socket();
         fakeVirtualView1=new FakeVirtualViewToGenerateException(socket1, objectInputStream1, objectOutputStream1);
-        fakeGameController=new FakeGameController(fakeVirtualView1, 1);
+        fakeGameController=new FakeGameController(fakeVirtualView1, 1, "game");
         minotaurController=new MinotaurController(fakeGameController);
         minotaurController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
         Worker worker=new Worker(fakeGameController.getGame().getPlayers().get(0));

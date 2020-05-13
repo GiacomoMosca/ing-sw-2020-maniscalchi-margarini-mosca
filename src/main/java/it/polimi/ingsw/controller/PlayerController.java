@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+
 public class PlayerController {
 
     private final Player player;
@@ -88,5 +89,4 @@ public class PlayerController {
             return "NEXT";
         }
     }
-
 }

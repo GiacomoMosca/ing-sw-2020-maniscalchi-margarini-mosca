@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<?import javafx.scene.layout.StackPane?>
+<AnchorPane maxHeight="1080.0" maxWidth="1920.0" prefHeight="540.0" pickOnBounds="true" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.TestGui">
+    <children>
+        <ImageView fx:id="gameBoard" fitHeight="540" fitWidth="960" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/board/SantoriniBoard.png" />
+            </image>
+        </ImageView>
+        <GridPane fx:id="gridPane" layoutX="285.0" layoutY="80.0" prefHeight="390.0" prefWidth="390.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="78.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="78.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="78.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="78.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="78.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="153.37911987304688" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="238.16592407226562" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="260.5806579589844" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="272.34600830078125" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="155.8223876953125" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+        </GridPane>
+    </children>
+</AnchorPane>

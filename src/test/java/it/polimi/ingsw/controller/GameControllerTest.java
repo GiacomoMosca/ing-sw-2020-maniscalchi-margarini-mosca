@@ -28,7 +28,7 @@ public class GameControllerTest {
         Player player1 = new Player("player1", "color1");
         virtualView1=new VirtualView(socket1, objectInputStream1, objectOutputStream1);
         playerController=new PlayerController(player1, virtualView1);
-        gameController=new GameController(virtualView1, 2);
+        gameController=new GameController(virtualView1, 2, "game");
         GodController godController = new GodControllerConcrete(gameController);
         godController.setPlayer(player1, virtualView1);
         playerController.setGodController(godController);

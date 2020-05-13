@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 
 import java.io.Serializable;
@@ -48,6 +49,14 @@ public class GameView implements Serializable {
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
         return board[y][x];
+    }
+
+    public ArrayList<CellView> getAllCells() {
+        ArrayList<CellView> allCells = new ArrayList<CellView>();
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                allCells.add(board[j][i]);
+        return allCells;
     }
 
     public ArrayList<CardView> getActiveModifiers() {
