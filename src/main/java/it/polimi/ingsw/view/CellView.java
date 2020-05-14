@@ -53,4 +53,5 @@ public class CellView implements Serializable {
         return worker;
     }
 
+
 }

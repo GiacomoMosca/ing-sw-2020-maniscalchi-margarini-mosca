@@ -9,6 +9,7 @@ import it.polimi.ingsw.view.VirtualView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class PlayerController {
 
     private final Player player;
@@ -88,5 +89,4 @@ public class PlayerController {
             return "next";
         }
     }
-
 }
