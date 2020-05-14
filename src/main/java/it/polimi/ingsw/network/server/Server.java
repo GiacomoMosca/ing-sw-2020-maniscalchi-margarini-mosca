@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -50,8 +52,7 @@ public class Server {
     private void newPlayerWorker(Socket client) {
         VirtualView player = null;
         try {
-            player = new VirtualView(client);
-            player.resetStreams();
+            player = new VirtualView(client, new ObjectInputStream(client.getInputStream()), new ObjectOutputStream(client.getOutputStream()));
 
             boolean taken = false;
             String nickname;
@@ -68,7 +69,7 @@ public class Server {
                     }
                     if (!taken) {
                         players.add(player);
-                        System.out.println(player.getId() + " joined"); // temp
+                        // System.out.println(player.getId() + " joined");
                         break;
                     }
                 }
@@ -89,7 +90,7 @@ public class Server {
             } catch (InterruptedException e) {
                 //
             } catch (IOException e) {
-                System.out.println(player.getId() + " rip"); // temp
+                // System.out.println(player.getId() + " rip");
                 removePlayer(player);
                 return;
             }
@@ -199,6 +200,11 @@ public class Server {
             if (!gameController.isRunning()) removeGame(gameController);
         }
         players.remove(player);
+        try {
+            player.getSocket().close();
+        } catch (IOException e) {
+            //
+        }
     }
 
 }

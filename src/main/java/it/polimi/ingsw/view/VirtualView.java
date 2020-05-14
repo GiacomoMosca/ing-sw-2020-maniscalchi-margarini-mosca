@@ -26,14 +26,20 @@ public class VirtualView {
     /**
      * creates a VirtualView associated with the Interface received as an argument
      */
-    public VirtualView(Socket socket) {
+    public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
         this.socket = socket;
+        this.input = input;
+        this.output = output;
         this.playerController = null;
     }
 
     public void resetStreams() throws IOException {
         input = new ObjectInputStream(socket.getInputStream());
         output = new ObjectOutputStream(socket.getOutputStream());
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
     /**

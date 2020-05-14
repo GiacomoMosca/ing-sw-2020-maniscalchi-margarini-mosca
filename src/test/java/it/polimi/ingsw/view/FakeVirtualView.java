@@ -1,8 +1,8 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.model.game_board.Board;
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
-import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class FakeVirtualView extends VirtualView {
     }
 
     @Override
-    public void displayBoard(ArrayList<Player> players, Board board) throws IOException {
+    public void updateGame(Game game, String desc, Card card) throws IOException {
     }
 
     @Override
@@ -46,4 +46,4 @@ public class FakeVirtualView extends VirtualView {
         return true;
     }
 
-    }
+}

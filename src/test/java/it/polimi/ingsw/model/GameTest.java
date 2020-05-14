@@ -21,9 +21,9 @@ import static org.junit.Assert.*;
 public class GameTest {
 
     GameController gamecontroller;
-    Game game=null;
-    Player player1, player2, player3=null;
-    Card modifier1, modifier2=null;
+    Game game = null;
+    Player player1, player2, player3 = null;
+    Card modifier1, modifier2 = null;
     GodController godcontroller1, godcontroller2;
     Socket socket;
     ObjectInputStream objectInputStream;
@@ -31,22 +31,23 @@ public class GameTest {
 
     @Before
     public void setUp() {
-        player1=new Player("Arianna","Giallo");
-        player2=new Player("Luigi","Verde");
-        player3=new Player("Gian","Cachi");
-        game=new Game(player1,3);
-        gamecontroller=new GameController(new VirtualView(socket, objectInputStream, objectOutputStream),3);
-        godcontroller1=new GodControllerConcrete(gamecontroller);
-        godcontroller2=new GodControllerConcrete(gamecontroller);
-        modifier1=new Card("dio1", "a", "b",1, false, godcontroller1);
-        modifier2=new Card("dio2", "d", "e",1, true, godcontroller2);
+        player1 = new Player("Arianna", "Giallo");
+        player2 = new Player("Luigi", "Verde");
+        player3 = new Player("Gian", "Cachi");
+        game = new Game("Test", player1, 3);
+        gamecontroller = new GameController(new VirtualView(socket, objectInputStream, objectOutputStream), 3, "Test");
+        godcontroller1 = new GodControllerConcrete(gamecontroller);
+        godcontroller2 = new GodControllerConcrete(gamecontroller);
+        modifier1 = new Card("dio1", "a", "b", 1, false, godcontroller1);
+        modifier2 = new Card("dio2", "d", "e", 1, true, godcontroller2);
     }
 
     @After
-    public void tearDown() { }
+    public void tearDown() {
+    }
 
     @Test
-    public void nextPlayer_noInputGiven_shouldSetTheNextPlayer(){
+    public void nextPlayer_noInputGiven_shouldSetTheNextPlayer() {
         game.addPlayer(player2);
         game.addPlayer(player3);
         assertEquals(game.getPlayers().get(game.getActivePlayer()), player1);
@@ -59,14 +60,14 @@ public class GameTest {
 
     }
 
-    @Test (expected = IndexOutOfBoundsException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void addPlayer_PlayerGiven_ShouldThrowException() {
         game.addPlayer(player2);
         game.addPlayer(player3);
         game.addPlayer(new Player("player4", "viola"));
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void addPlayer_ExistingPlayerGiven_ShouldThrowException() {
         game.addPlayer(player1);
     }
@@ -75,26 +76,26 @@ public class GameTest {
     public void getPlayerNum_NoInputGiven_ShouldReturnNumberOfPlayer() {
         game.addPlayer(player2);
         game.addPlayer(player3);
-        assertEquals(game.getPlayerNum(),3);
+        assertEquals(game.getPlayerNum(), 3);
     }
 
     @Test
     public void getBoard_NoInoutGiven_ShouldReturnBoard() {
-        Board board=new Board();
+        Board board = new Board();
         assertEquals(board, game.getBoard());
     }
 
     @Test
     public void getDeck_NoInoutGiven_ShouldReturnDeck() {
-        Deck deck=new Deck();
+        Deck deck = new Deck();
         assertEquals(deck, game.getDeck());
 
     }
 
     @Test
     public void getActivePlayer_NoInputGiven_ShouldReturnActivePlayer() {
-        assertEquals(game.getActivePlayer(),0);
-        assertSame(game.getPlayers().get(game.getActivePlayer()),player1);
+        assertEquals(game.getActivePlayer(), 0);
+        assertSame(game.getPlayers().get(game.getActivePlayer()), player1);
     }
 
     @Test
@@ -127,7 +128,7 @@ public class GameTest {
     public void getWinner_NoInputGiven_ShouldReturnWinner() {
         assertNull(game.getWinner());
         game.setWinner(player1);
-        assertSame(game.getWinner(),player1);
+        assertSame(game.getWinner(), player1);
     }
 
     @Test
@@ -140,7 +141,7 @@ public class GameTest {
     @Test
     public void setWinner_WinnerGiven_ShouldSetTheWinner() {
         game.setWinner(player1);
-        assertSame(game.getWinner(),player1);
+        assertSame(game.getWinner(), player1);
         assertTrue(game.hasWinner());
     }
 }
