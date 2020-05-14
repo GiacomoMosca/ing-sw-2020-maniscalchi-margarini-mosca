@@ -1,6 +1,9 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Board;
@@ -17,10 +20,10 @@ public abstract class GodController {
     protected final GameController gameController;
     protected final Game game;
     protected final Board board;
-    protected Card card;
     public Player player;
-    protected VirtualView client;
     public Worker activeWorker;
+    protected Card card;
+    protected VirtualView client;
     protected Cell startingPosition;
 
     /**
@@ -93,25 +96,26 @@ public abstract class GodController {
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
-        return "NEXT";
+        return "next";
     }
 
     /**
      * handles the moving phase of the turn
      */
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", null);
     }
@@ -119,20 +123,21 @@ public abstract class GodController {
     /**
      * handles the building phase of the turn
      */
-    public void buildPhase() throws IOException, ClassNotFoundException {
+    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
             buildPosition.build();
-        } catch (IllegalStateException e) {
-            System.out.println("ERROR: illegal build");
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("build", null);
     }
 
-    public boolean checkWin() {
-        return (activeWorker.getPosition().getBuildLevel() == 3) &&
-                (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1);
+    public String checkWin() {
+        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1))
+            return "winConditionAchieved";
+        return "nope";
     }
 
     /**

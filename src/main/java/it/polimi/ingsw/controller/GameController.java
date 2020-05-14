@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.*;
+import it.polimi.ingsw.exceptions.GameEndedException;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
@@ -11,13 +13,16 @@ import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameController {
 
+    protected final AtomicBoolean running;
+    protected final AtomicBoolean setup;
     protected Game game;
-    protected String gameName;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
+    protected ArrayList<PlayerController> spectators;
     protected ArrayList<String> colors;
 
     /**
@@ -31,16 +36,27 @@ public class GameController {
      * @param num    the number of players for the current game
      */
     public GameController(VirtualView client, int num, String gameName) {
+        running = new AtomicBoolean(true);
+        setup = new AtomicBoolean(true);
         playerControllers = new ArrayList<PlayerController>();
+        spectators = new ArrayList<PlayerController>();
         colors = new ArrayList<String>();
         colors.add("r");
         colors.add("g");
         colors.add("b");
         Player p1 = new Player(client.getId(), colors.get(0));
-        PlayerController p1Controller = new PlayerController(p1, client);
-        game = new Game(p1, num);
-        this.gameName = gameName;
+        PlayerController p1Controller = new PlayerController(p1, client, this);
+        game = new Game(gameName, p1, num);
         playerControllers.add(p1Controller);
+        client.setPlayerController(p1Controller);
+    }
+
+    public boolean isRunning() {
+        return running.get();
+    }
+
+    public boolean isSetup() {
+        return setup.get();
     }
 
     /**
@@ -50,11 +66,11 @@ public class GameController {
         return game;
     }
 
-    /**
-     * @return the current Game name
-     */
-    public String getGameName() {
-        return gameName;
+    public ArrayList<PlayerController> getAllControllers() {
+        ArrayList<PlayerController> allControllers = new ArrayList<PlayerController>();
+        allControllers.addAll(playerControllers);
+        allControllers.addAll(spectators);
+        return allControllers;
     }
 
     /**
@@ -66,15 +82,45 @@ public class GameController {
      *
      * @param client
      */
-    public void addPlayer(VirtualView client) {
+    public void addPlayer(VirtualView client) throws GameEndedException {
+        if (!running.get() || !setup.get()) throw new GameEndedException("game ended");
         if (playerControllers.size() >= game.getPlayerNum()) {
             System.out.println("ERROR: too many players");
             return;
         }
         Player player = new Player(client.getId(), colors.get(playerControllers.size()));
-        PlayerController playerController = new PlayerController(player, client);
+        PlayerController playerController = new PlayerController(player, client, this);
         game.addPlayer(player);
         playerControllers.add(playerController);
+        client.setPlayerController(playerController);
+        try {
+            broadcastMessage(client.getId() + " joined the game (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ")");
+        } catch (IOExceptionFromController e) {
+            handleDisconnection(e.getController());
+        }
+    }
+
+    public void addSpectator(VirtualView client) throws GameEndedException {
+        if (!running.get()) throw new GameEndedException("game ended");
+        Player spectator = new Player(client.getId(), null);
+        PlayerController spectatorController = new PlayerController(spectator, client, this);
+        spectators.add(spectatorController);
+        client.setPlayerController(spectatorController);
+        try {
+            displayBoard(spectatorController, "gameStart");
+        } catch (IOExceptionFromController e) {
+            removeSpectators(spectatorController);
+        }
+    }
+
+    private void removeSpectators(PlayerController controller) {
+        spectators.remove(controller);
+    }
+
+    private void removeSpectators(ArrayList<PlayerController> controllers) {
+        for (PlayerController controller : controllers) {
+            spectators.remove(controller);
+        }
     }
 
     /**
@@ -82,6 +128,7 @@ public class GameController {
      * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
      */
     public void gameSetUp() {
+        if (!setup.compareAndSet(true, false)) return;
         ArrayList<GodController> controllers = new ArrayList<GodController>();
         controllers.add(new ApolloController(this));
         controllers.add(new ArtemisController(this));
@@ -103,46 +150,53 @@ public class GameController {
         for (GodController godController : controllers) {
             deck.addCard(godController.generateCard());
         }
-        
+
         players = game.getPlayers();
 
-        broadcastMessage("Game started!");
-        pickCards();
-        chooseStartPlayer();
+        try {
+            broadcastMessage("Game started!");
+            broadcastBoard("gameSetup", null);
+            pickCards();
+            chooseStartPlayer();
+            broadcastBoard("gameSetup", null);
+            placeWorkers();
 
-        broadcastBoard("gameSetup", null);
-        placeWorkers();
-
-        broadcastBoard("gameStart", null);
-        playGame();
+            broadcastBoard("gameStart", null);
+            playGame();
+        } catch (IOExceptionFromController e) {
+            handleDisconnection(e.getController());
+        }
     }
 
-    private void pickCards() {
+    private void pickCards() throws IOExceptionFromController {
         Deck deck = game.getDeck();
-        boolean randomize = false;
         try {
-            randomize = playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Cards pool?");
-            if (randomize) {
+            if (playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Cards pool?")) {
                 deck.pickRandom(game.getPlayerNum());
             } else {
-                ArrayList<Card> choices = null;
-                choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);
+                ArrayList<Card> choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);
                 for (Card card : choices) {
                     deck.pickCard(card);
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            throw new IOExceptionFromController(e, playerControllers.get(0));
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return;
         }
         ArrayList<Card> cardPool = deck.getPickedCards();
         ArrayList<Card> chosenCards = new ArrayList<Card>();
         for (int i = 0; i < game.getPlayerNum(); i++) {
             int j = (i == game.getPlayerNum() - 1) ? 0 : i + 1;
-            Card chosenCard = null;
+            Card chosenCard;
             try {
                 chosenCard = playerControllers.get(j).getClient().chooseCards(cardPool, 1, chosenCards).get(0);
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException e) {
+                throw new IOExceptionFromController(e, playerControllers.get(j));
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                return;
             }
             cardPool.remove(chosenCard);
             chosenCards.add(chosenCard);
@@ -152,10 +206,12 @@ public class GameController {
         }
     }
 
-    private void chooseStartPlayer() {
+    private void chooseStartPlayer() throws IOExceptionFromController {
         try {
             game.setActivePlayer(playerControllers.get(0).getClient().chooseStartingPlayer(players));
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            throw new IOExceptionFromController(e, playerControllers.get(0));
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -163,28 +219,25 @@ public class GameController {
     /**
      * place the workers of all the players, asking them the localizations and then moving the workers there.
      */
-    private void placeWorkers() {
+    private void placeWorkers() throws IOExceptionFromController {
         ArrayList<Cell> freePositions = game.getBoard().getAllCells();
         for (int i = 0; i < game.getPlayerNum(); i++) {
             int p = game.getActivePlayer() + i;
             if (p >= game.getPlayerNum()) p = p - game.getPlayerNum();
             PlayerController controller = playerControllers.get(p);
             for (int j = 0; j < 2; j++) {
-                Cell position = null;
+                Cell position;
                 int w = j + 1;
                 try {
-                    controller.getClient().displayMessage("(Worker " + w + ") ");
+                    position = controller.getClient().chooseStartPosition(freePositions, w);
                 } catch (IOException e) {
+                    throw new IOExceptionFromController(e, controller);
+                } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                }
-                try {
-                    position = controller.getClient().chooseStartPosition(freePositions);
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                    continue;
+                    return;
                 }
                 freePositions.remove(position);
-                Worker worker = new Worker(players.get(p));
+                Worker worker = new Worker(players.get(p), w);
                 worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));
                 players.get(p).addWorker(worker);
                 broadcastBoard("placeWorker", null);
@@ -196,11 +249,12 @@ public class GameController {
     /**
      * plays out the game and handles wins/losses
      */
-    private void playGame() {
+    private void playGame() throws IOExceptionFromController {
         for (Player player : players) {
             if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());
         }
         while (!game.hasWinner()) {
+            if (!running.get()) return;
             Player currentPlayer = players.get(game.getActivePlayer());
             for (Card modifier : game.getActiveModifiers()) {
                 if (!modifier.hasAlwaysActiveModifier() && modifier.getController().getPlayer().equals(currentPlayer))
@@ -208,23 +262,25 @@ public class GameController {
             }
 
             broadcastMessage("=== " + currentPlayer.getId() + "'s turn === \n");
-            switch (playerControllers.get(game.getActivePlayer()).playTurn()) {
-                case "NEXT":
+            String result = playerControllers.get(game.getActivePlayer()).playTurn();
+            switch (result) {
+                case "next":
                     checkWorkers();
                     game.nextPlayer();
                     break;
-                case "LOST":
-                    eliminatePlayer(currentPlayer, "outOfMoves");
+                case "outOfMoves": case "outOfBuilds":
+                    eliminatePlayer(currentPlayer, result);
                     game.nextPlayer();
                     break;
-                case "WON":
-                    setWinner(currentPlayer, "winConditionAchieved");
+                case "winConditionAchieved": case "godConditionAchieved":
+                    setWinner(currentPlayer, result);
                     break;
                 default:
                     System.out.println("ERROR: invalid turn");
                     break;
             }
         }
+        if (!running.compareAndSet(true, false)) return;
         gameOver();
     }
 
@@ -232,13 +288,13 @@ public class GameController {
      * checks if the game has reached the maximum number of players
      */
     public boolean checkPlayersNumber() {
-        return game.getPlayers().size() == game.getPlayerNum();
+        return game.getPlayers().size() >= game.getPlayerNum();
     }
 
     /**
      * checks if any player has no workers left and, if so, removes them from the game
      */
-    public void checkWorkers() {
+    public void checkWorkers() throws IOExceptionFromController {
         for (Player player : players) {
             if (player.getWorkers().size() == 0) eliminatePlayer(player, "outOfWorkers");
         }
@@ -250,7 +306,7 @@ public class GameController {
      * @param player the losing player
      * @param reason the reason why the player lost
      */
-    private void eliminatePlayer(Player player, String reason) {
+    private void eliminatePlayer(Player player, String reason) throws IOExceptionFromController {
         player.setLost();
         notifyLoss(player, reason);
         ArrayList<Player> activePlayers = new ArrayList<Player>();
@@ -283,74 +339,136 @@ public class GameController {
     }
 
     /**
-     * shows the Board associated with the current Game
+     * broadcasts the Board associated with the current Game to all players and spectators
      */
-    public void broadcastBoard(String desc, Card card) {
-        for (PlayerController p : playerControllers) {
+    public void broadcastBoard(String desc, Card card) throws IOExceptionFromController {
+        for (PlayerController controller : playerControllers) {
             try {
-                p.getClient().displayBoard(game, desc, card);
+                controller.getClient().updateGame(game, desc, card);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IOExceptionFromController(e, controller);
             }
+        }
+        ArrayList<PlayerController> toRemove = new ArrayList<PlayerController>();
+        for (PlayerController controller : spectators) {
+            try {
+                controller.getClient().updateGame(game, desc, card);
+            } catch (IOException e) {
+                toRemove.add(controller);
+            }
+        }
+        removeSpectators(toRemove);
+    }
+
+    /**
+     * shows the Board associated with the current Game to the specified player
+     */
+    public void displayBoard(PlayerController player, String desc) throws IOExceptionFromController {
+        try {
+            player.getClient().updateGame(game, desc, null);
+        } catch (IOException e) {
+            throw new IOExceptionFromController(e, player);
         }
     }
 
     /**
-     * shows the message received as an argument
+     * broadcasts the message received as an argument to all players and spectators
      *
      * @param message the message to show
      */
-    public void broadcastMessage(String message) {
-        for (PlayerController p : playerControllers) {
+    public void broadcastMessage(String message) throws IOExceptionFromController {
+        for (PlayerController controller : playerControllers) {
             try {
-                p.getClient().displayMessage(message);
+                controller.getClient().displayMessage(message);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IOExceptionFromController(e, controller);
             }
         }
+        ArrayList<PlayerController> toRemove = new ArrayList<PlayerController>();
+        for (PlayerController controller : spectators) {
+            try {
+                controller.getClient().displayMessage(message);
+            } catch (IOException e) {
+                toRemove.add(controller);
+            }
+        }
+        removeSpectators(toRemove);
     }
 
     /**
-     * notifies all players that a player has lost
+     * notifies all players and spectators that a player has lost
      *
      * @param player the losing player
      * @param reason the reason why the player lost
      */
     public void notifyLoss(Player player, String reason) {
-        for (PlayerController p : playerControllers) {
+        for (PlayerController controller : playerControllers) {
             try {
-                p.getClient().notifyLoss(player, reason);
+                controller.getClient().notifyLoss(player, reason);
             } catch (IOException e) {
-                e.printStackTrace();
+                // handled later in case game is already over
             }
         }
+        ArrayList<PlayerController> toRemove = new ArrayList<PlayerController>();
+        for (PlayerController controller : spectators) {
+            try {
+                controller.getClient().notifyLoss(player, reason);
+            } catch (IOException e) {
+                toRemove.add(controller);
+            }
+        }
+        removeSpectators(toRemove);
     }
 
     /**
-     * notifies all players that a player has won
+     * notifies all players and spectators that a player has won
      *
      * @param player the winning player
      * @param reason the reason why the player won
      */
     public void notifyWin(Player player, String reason) {
-        for (PlayerController p : playerControllers) {
+        for (PlayerController controller : getAllControllers()) {
             try {
-                p.getClient().notifyWin(player, reason);
+                controller.getClient().notifyWin(player, reason);
             } catch (IOException e) {
-                e.printStackTrace();
+                // no need to handle disconnection, game is over
+            }
+        }
+    }
+
+    public void handleDisconnection(PlayerController controller) {
+        if (!running.get()) return;
+        if (playerControllers.contains(controller)) {
+            if (!running.compareAndSet(true, false)) return;
+            playerControllers.remove(controller);
+            notifyDisconnection(controller.getPlayer());
+            gameOver();
+        } else {
+            removeSpectators(controller);
+        }
+    }
+
+    public void notifyDisconnection(Player player) {
+        for (PlayerController controller : getAllControllers()) {
+            try {
+                controller.getClient().notifyDisconnection(player);
+            } catch (IOException e) {
+                // no need to handle disconnection, game is over
             }
         }
     }
 
     /**
-     * notifies all players that the game is over
+     * notifies all players and spectators that the game is over
      */
     public void gameOver() {
-        for (PlayerController p : playerControllers) {
+        if (running.get()) return;
+        for (PlayerController controller : getAllControllers()) {
+            controller.getClient().setPlayerController(null);
             try {
-                p.getClient().gameOver();
+                controller.getClient().gameOver();
             } catch (IOException e) {
-                e.printStackTrace();
+                // no need to handle disconnection, game is over
             }
         }
     }

@@ -33,4 +33,5 @@ public class CardView implements Serializable {
     public String getDescription() {
         return description;
     }
+
 }

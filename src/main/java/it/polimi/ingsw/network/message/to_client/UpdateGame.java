@@ -4,12 +4,12 @@ import it.polimi.ingsw.view.CardView;
 import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.UI;
 
-public class DisplayBoard extends ToClientMessage {
+public class UpdateGame extends ToClientMessage {
 
     protected String desc;
     protected CardView godPower;
 
-    public DisplayBoard(Object body, String desc, CardView godPower) {
+    public UpdateGame(Object body, String desc, CardView godPower) {
         super(body);
         this.desc = desc;
         this.godPower = godPower;
@@ -17,6 +17,7 @@ public class DisplayBoard extends ToClientMessage {
 
     @Override
     public void performAction(UI client) {
-        client.displayBoard((GameView) body, desc, godPower);
+        client.updateGame((GameView) body, desc, godPower);
     }
+
 }

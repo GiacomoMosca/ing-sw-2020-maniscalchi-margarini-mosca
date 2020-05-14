@@ -16,4 +16,5 @@ public class NotifyWin extends ToClientMessage {
     public void performAction(UI client) {
         client.notifyWin((PlayerView) body, reason);
     }
+
 }

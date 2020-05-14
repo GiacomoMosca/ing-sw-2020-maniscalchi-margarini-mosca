@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.PlayerController;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
@@ -17,9 +18,10 @@ import java.util.ArrayList;
 public class VirtualView {
 
     private final Socket socket;
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
     private String id;
+    private PlayerController playerController;
 
     /**
      * creates a VirtualView associated with the Interface received as an argument
@@ -28,6 +30,16 @@ public class VirtualView {
         this.socket = socket;
         this.input = input;
         this.output = output;
+        this.playerController = null;
+    }
+
+    public void resetStreams() throws IOException {
+        input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
     /**
@@ -37,15 +49,50 @@ public class VirtualView {
         return id;
     }
 
-    public String chooseNickname() throws IOException, ClassNotFoundException {
-        output.writeObject(new ChooseNickname(null));
+    public PlayerController getPlayerController() {
+        return playerController;
+    }
+
+    public void setPlayerController(PlayerController playerController) {
+        this.playerController = playerController;
+    }
+
+    public boolean isInGame() {
+        return (playerController != null);
+    }
+
+    public void checkAlive() throws IOException {
+        output.writeObject(new Ping(null));
+    }
+
+    public String chooseNickname(boolean taken) throws IOException, ClassNotFoundException {
+        output.writeObject(new ChooseNickname(taken));
         id = ((ToServerMessage) input.readObject()).getSender();
         return id;
+    }
+
+    public boolean chooseStartJoin() throws IOException, ClassNotFoundException {
+        output.writeObject(new ChooseStartJoin(null));
+        return (boolean) ((ToServerMessage) input.readObject()).getBody();
     }
 
     public int choosePlayersNumber() throws IOException, ClassNotFoundException {
         output.writeObject(new ChoosePlayersNumber(null));
         return (int) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public String chooseGameName(boolean taken) throws IOException, ClassNotFoundException {
+        output.writeObject(new ChooseGameName(taken));
+        return (String) ((ToServerMessage) input.readObject()).getBody();
+    }
+
+    public String chooseGameRoom(ArrayList<Game> gameRooms) throws IOException, ClassNotFoundException {
+        ArrayList<GameView> gameRoomsView = new ArrayList<GameView>();
+        for (Game game : gameRooms) {
+            gameRoomsView.add(new GameView(game));
+        }
+        output.writeObject(new ChooseGameRoom(gameRoomsView));
+        return (String) ((ToServerMessage) input.readObject()).getBody();
     }
 
     public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, ClassNotFoundException {
@@ -78,6 +125,17 @@ public class VirtualView {
         return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 
+    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions, int num) throws IOException, ClassNotFoundException {
+        ArrayList<CellView> positions = new ArrayList<CellView>();
+        for (Cell cell : possiblePositions) {
+            positions.add(new CellView(cell));
+        }
+        String desc = "start" + num;
+        ChoosePosition msg = new ChoosePosition(positions, desc);
+        output.writeObject(msg);
+        return possiblePositions.get((int) ((ToServerMessage) input.readObject()).getBody());
+    }
+
     /**
      * shows the Board of the current Game
      *
@@ -85,11 +143,11 @@ public class VirtualView {
      * @param desc
      * @param card
      */
-    public void displayBoard(Game game, String desc, Card card) throws IOException {
+    public void updateGame(Game game, String desc, Card card) throws IOException {
         GameView gameView = new GameView(game);
         CardView cardView = null;
         if (card != null) cardView = new CardView(card);
-        DisplayBoard msg = new DisplayBoard(gameView, desc, cardView);
+        UpdateGame msg = new UpdateGame(gameView, desc, cardView);
         output.writeObject(msg);
     }
 
@@ -151,16 +209,6 @@ public class VirtualView {
         return possibleBuilds.get((int) ((ToServerMessage) input.readObject()).getBody());
     }
 
-    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions) throws IOException, ClassNotFoundException {
-        ArrayList<CellView> positions = new ArrayList<CellView>();
-        for (Cell cell : possiblePositions) {
-            positions.add(new CellView(cell));
-        }
-        ChoosePosition msg = new ChoosePosition(positions, "start");
-        output.writeObject(msg);
-        return possiblePositions.get((int) ((ToServerMessage) input.readObject()).getBody());
-    }
-
     /**
      * @param query the question the player should answer to
      * @return true if the player answered "yes", false if the player answered "no"
@@ -183,28 +231,15 @@ public class VirtualView {
         output.writeObject(msg);
     }
 
+    public void notifyDisconnection(Player player) throws IOException {
+        PlayerView playerView = new PlayerView(player);
+        NotifyDisconnection msg = new NotifyDisconnection(playerView);
+        output.writeObject(msg);
+    }
+
     public void gameOver() throws IOException {
         GameOver msg = new GameOver(null);
         output.writeObject(msg);
-    }
-
-    //Multiple Games
-    public int chooseGameRoom(ArrayList<String> gameRooms) throws IOException, ClassNotFoundException {
-        ChooseGameRoom msg = new ChooseGameRoom(gameRooms);
-        output.writeObject(msg);
-        return (int) ((ToServerMessage) input.readObject()).getBody();
-    }
-
-    public String chooseGameName() throws IOException, ClassNotFoundException {
-        ChooseGameName msg = new ChooseGameName(null);
-        output.writeObject(msg);
-        return (String) ((ToServerMessage) input.readObject()).getBody();
-    }
-
-    public int chooseInt (String query, int max) throws IOException, ClassNotFoundException {
-        ChooseInt msg = new ChooseInt(query,max);
-        output.writeObject(msg);
-        return (int) ((ToServerMessage) input.readObject()).getBody();
     }
 
 }

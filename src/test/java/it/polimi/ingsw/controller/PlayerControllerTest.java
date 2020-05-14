@@ -11,7 +11,8 @@ import org.junit.Test;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 //not complete
 public class PlayerControllerTest {
@@ -27,12 +28,12 @@ public class PlayerControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        player=new Player("player", "color");
-        socket=new Socket();
-        virtualView=new VirtualView(socket, objectInputStream, objectOutputStream);
-        playerController=new PlayerController(player, virtualView);
-        gameController=new GameController(virtualView, 2, "game");
-        godController=new GodControllerConcrete(gameController);
+        player = new Player("player", "color");
+        socket = new Socket();
+        virtualView = new VirtualView(socket, objectInputStream, objectOutputStream);
+        gameController = new GameController(virtualView, 2, "Test");
+        playerController = new PlayerController(player, virtualView, gameController);
+        godController = new GodControllerConcrete(gameController);
         godController.setPlayer(player, virtualView);
         playerController.setGodController(godController);
     }

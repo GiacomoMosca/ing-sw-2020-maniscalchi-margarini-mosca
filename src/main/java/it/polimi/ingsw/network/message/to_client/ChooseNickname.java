@@ -10,6 +10,7 @@ public class ChooseNickname extends ToClientMessage {
 
     @Override
     public void performAction(UI client) {
-        client.chooseNickname();
+        client.chooseNickname((boolean) body);
     }
+
 }

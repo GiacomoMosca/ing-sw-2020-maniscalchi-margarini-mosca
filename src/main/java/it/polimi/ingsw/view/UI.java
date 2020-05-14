@@ -12,9 +12,17 @@ public interface UI {
 
     public void parseMessage(ToClientMessage message);
 
+    public void sendMessage(Object body);
+
     public String getServerIp();
 
-    public void chooseNickname();
+    public void chooseNickname(boolean taken);
+
+    public void chooseStartJoin();
+
+    public void chooseGameRoom(ArrayList<GameView> gameRooms);
+
+    public void chooseGameName(boolean taken);
 
     public void choosePlayersNumber();
 
@@ -27,7 +35,7 @@ public interface UI {
      *
      * @param board the Board of the current game
      */
-    public void displayBoard(GameView board, String desc, CardView godPower);
+    public void updateGame(GameView board, String desc, CardView godPower);
 
     /**
      * shows a message
@@ -48,13 +56,8 @@ public interface UI {
 
     public void notifyWin(PlayerView player, String reason);
 
+    public void notifyDisconnection(PlayerView player);
+
     public void gameOver();
-
-    //Multiple Games
-    public void chooseGameRoom(ArrayList<String> gameRooms);
-
-    public void chooseGameName();
-
-    public void chooseInt(String query, int max);
 
 }

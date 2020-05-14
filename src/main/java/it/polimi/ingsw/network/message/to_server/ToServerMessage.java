@@ -4,7 +4,7 @@ import it.polimi.ingsw.network.message.Message;
 
 public class ToServerMessage extends Message {
 
-    private String playerId;
+    private final String playerId;
 
     public ToServerMessage(Object body, String playerId) {
         super(body);

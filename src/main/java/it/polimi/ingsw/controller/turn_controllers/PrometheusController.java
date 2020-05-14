@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -47,7 +49,7 @@ public class PrometheusController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         wantBuildBefore = false;
@@ -55,16 +57,13 @@ public class PrometheusController extends GodController {
             wantBuildBefore = client.chooseYesNo("Do you want to build before moving?");
             if (wantBuildBefore) {
                 buildPhase();
-                movePhase();
-                if (checkWin()) return "WON";
-                buildPhase();
-                return "NEXT";
             }
         }
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
-        return "NEXT";
+        return "next";
     }
 
 
@@ -88,7 +87,7 @@ public class PrometheusController extends GodController {
      * otherwise doesn't allow him to move up
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleMoves;
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
@@ -96,8 +95,8 @@ public class PrometheusController extends GodController {
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: illegal move");
+        } catch (IllegalMoveException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("move", godPower);
     }
@@ -117,4 +116,5 @@ public class PrometheusController extends GodController {
         }
         return findLegalMoves(workerPosition, possibleMoves);
     }
+
 }

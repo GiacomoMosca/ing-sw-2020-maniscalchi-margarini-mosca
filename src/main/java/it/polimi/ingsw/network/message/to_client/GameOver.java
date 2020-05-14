@@ -12,4 +12,5 @@ public class GameOver extends ToClientMessage {
     public void performAction(UI client) {
         client.gameOver();
     }
+
 }

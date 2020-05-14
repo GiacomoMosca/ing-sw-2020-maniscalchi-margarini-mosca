@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 
@@ -41,14 +43,14 @@ public class AthenaController extends GodController {
      * handles the moving phase of the turn, and adds a Modifier if the worker moved up on this turn
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException {
+    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         try {
             activeWorker.move(movePosition);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalMoveException e) {
             System.out.println("ERROR: illegal move");
         }
         // + limit opponent's movements if worker moved up

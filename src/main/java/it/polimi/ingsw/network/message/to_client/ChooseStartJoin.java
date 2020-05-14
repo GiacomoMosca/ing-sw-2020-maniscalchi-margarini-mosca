@@ -2,17 +2,15 @@ package it.polimi.ingsw.network.message.to_client;
 
 import it.polimi.ingsw.view.UI;
 
-public class ChooseInt extends ToClientMessage {
+public class ChooseStartJoin extends ToClientMessage {
 
-    int max;
-
-    public ChooseInt(Object body,int max) {
+    public ChooseStartJoin(Object body) {
         super(body);
-        this.max = max;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseInt((String) body, max);
+        client.chooseStartJoin();
     }
+
 }

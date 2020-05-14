@@ -2,7 +2,6 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.game_board.Cell;
 
 public class PanController extends GodController {
 
@@ -38,9 +37,12 @@ public class PanController extends GodController {
      * @return true if a worker moves up from level two to level three or moves down two or more levels, false otherwise
      */
     @Override
-    public boolean checkWin() {
-        //Player also wins if his worker moves down two or more levels
-        return (((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1)) || 
-                (startingPosition.getBuildLevel() - activeWorker.getPosition().getBuildLevel() >= 2));
+    public String checkWin() {
+        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1))
+            return "winConditionAchieved";
+        if (startingPosition.getBuildLevel() - activeWorker.getPosition().getBuildLevel() >= 2)
+            return "godConditionAchieved";
+        return "nope";
     }
+
 }

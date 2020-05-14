@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
@@ -46,29 +48,30 @@ public class HestiaController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException {
+    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
         buildAgain = false;
         activeWorker = worker;
         startingPosition = worker.getPosition();
         movePhase();
-        if (checkWin()) return "WON";
+        if (!checkWin().equals("nope")) return checkWin();
+        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
         if (findPossibleBuilds(activeWorker.getPosition()).size() > 0) {
             buildAgain = client.chooseYesNo("Do you want to build again?");
             if (buildAgain)
                 buildPhase();
         }
-        return "NEXT";
+        return "next";
     }
 
-    public void buildPhase() throws IOException, ClassNotFoundException {
+    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Card godPower = (buildAgain) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
             buildPosition.build();
-        } catch (IllegalStateException e) {
-            System.out.println("ERROR: illegal build");
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
         }
         gameController.broadcastBoard("build", godPower);
     }
@@ -92,6 +95,6 @@ public class HestiaController extends GodController {
                 possibleBuilds.add(cell);
         }
         return findLegalBuilds(workerPosition, possibleBuilds);
-
     }
+
 }

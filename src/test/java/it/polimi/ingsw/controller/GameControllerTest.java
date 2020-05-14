@@ -2,17 +2,19 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
+import it.polimi.ingsw.exceptions.GameEndedException;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class GameControllerTest {
     private VirtualView virtualView1, virtualView2, virtualView3;
@@ -26,9 +28,9 @@ public class GameControllerTest {
     @Before
     public void setUp() throws Exception {
         Player player1 = new Player("player1", "color1");
-        virtualView1=new VirtualView(socket1, objectInputStream1, objectOutputStream1);
-        playerController=new PlayerController(player1, virtualView1);
-        gameController=new GameController(virtualView1, 2, "game");
+        virtualView1 = new VirtualView(socket1, objectInputStream1, objectOutputStream1);
+        gameController = new GameController(virtualView1, 2, "Test");
+        playerController = new PlayerController(player1, virtualView1, gameController);
         GodController godController = new GodControllerConcrete(gameController);
         godController.setPlayer(player1, virtualView1);
         playerController.setGodController(godController);
@@ -44,20 +46,32 @@ public class GameControllerTest {
     }
 
     @Test
-    public void addPlayer_virtualViewGiven_shouldAddThePlayer() {
-        virtualView2=new VirtualView(socket2, objectInputStream2, objectOutputStream2);
-        gameController.addPlayer(virtualView2);
+    public void addPlayer_virtualViewGiven_shouldAddThePlayer() throws GameEndedException, IOException {
+        virtualView2 = new VirtualView(socket2, objectInputStream2, objectOutputStream2);
+        try {
+            gameController.addPlayer(virtualView2);
+        } catch (NullPointerException e) {
+            //
+        }
 
         assertEquals(gameController.playerControllers.get(1).getPlayer(), gameController.getGame().getPlayers().get(1));
     }
 
     @Test
-    public void addPlayer_virtualViewGiven_shouldGenerateException() {
-        virtualView2=new VirtualView(socket2, objectInputStream2, objectOutputStream2);
-        gameController.addPlayer(virtualView2);
+    public void addPlayer_virtualViewGiven_shouldGenerateException() throws GameEndedException, IOException {
+        virtualView2 = new VirtualView(socket2, objectInputStream2, objectOutputStream2);
+        try {
+            gameController.addPlayer(virtualView2);
+        } catch (NullPointerException e) {
+            //
+        }
 
-        virtualView3=new VirtualView(socket3, objectInputStream3, objectOutputStream3);
-        gameController.addPlayer(virtualView3);
+        virtualView3 = new VirtualView(socket3, objectInputStream3, objectOutputStream3);
+        try {
+            gameController.addPlayer(virtualView3);
+        } catch (NullPointerException e) {
+            //
+        }
     }
 
     @Test

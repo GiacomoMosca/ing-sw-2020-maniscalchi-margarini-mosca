@@ -1,10 +1,12 @@
 package it.polimi.ingsw.model.players;
 
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.game_board.Cell;
 
 public class Worker {
 
     private final Player owner;
+    private final int num;
     private Cell position;
 
     /**
@@ -12,8 +14,9 @@ public class Worker {
      *
      * @param owner the player who owns the worker
      */
-    public Worker(Player owner) {
+    public Worker(Player owner, int num) {
         this.owner = owner;
+        this.num = num;
         this.position = null;
     }
 
@@ -22,6 +25,13 @@ public class Worker {
      */
     public Player getOwner() {
         return owner;
+    }
+
+    /**
+     * @return the worker's number
+     */
+    public int getNum() {
+        return num;
     }
 
     /**
@@ -47,8 +57,11 @@ public class Worker {
      * @param position the cell representing the new position of the worker
      * @throws IllegalArgumentException when trying to move the worker to a cell with a dome or another worker
      */
-    public void move(Cell position) throws IllegalArgumentException {
-        if (position.isDomed() || position.hasWorker()) throw new IllegalArgumentException();
+    public void move(Cell position) throws IllegalMoveException {
+        if (position.isDomed())
+            throw new IllegalMoveException("cell [" + position.getPosX() + "," + position.getPosY() + "] has a dome");
+        if (position.hasWorker())
+            throw new IllegalMoveException("cell [" + position.getPosX() + "," + position.getPosY() + "] has a worker");
         this.position.setWorker(null);
         position.setWorker(this);
         this.position = position;
