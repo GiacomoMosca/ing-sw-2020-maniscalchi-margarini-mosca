@@ -7,18 +7,20 @@ import java.util.ArrayList;
 
 public class ChooseCards extends ToClientMessage {
 
+    protected ArrayList<CardView> possibleCards;
     protected int num;
     protected ArrayList<CardView> pickedCards;
 
-    public ChooseCards(Object body, int num, ArrayList<CardView> pickedCards) {
-        super(body);
+    public ChooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
+        super("choose cards");
+        this.possibleCards = possibleCards;
         this.num = num;
         this.pickedCards = pickedCards;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseCards((ArrayList<CardView>) body, num, pickedCards);
+        client.chooseCards(possibleCards, num, pickedCards);
     }
 
 }

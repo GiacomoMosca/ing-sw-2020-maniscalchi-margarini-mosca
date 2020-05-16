@@ -7,13 +7,16 @@ import java.util.ArrayList;
 
 public class ChooseStartingPlayer extends ToClientMessage {
 
-    public ChooseStartingPlayer(Object body) {
-        super(body);
+    protected ArrayList<PlayerView> players;
+
+    public ChooseStartingPlayer(ArrayList<PlayerView> players) {
+        super("choose starting player");
+        this.players = players;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseStartingPlayer((ArrayList<PlayerView>) body);
+        client.chooseStartingPlayer(players);
     }
 
 }

@@ -1,7 +1,11 @@
 package it.polimi.ingsw.view.cli;
 
+import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
-import it.polimi.ingsw.network.message.to_server.ToServerMessage;
+import it.polimi.ingsw.network.message.to_server.SendBoolean;
+import it.polimi.ingsw.network.message.to_server.SendInteger;
+import it.polimi.ingsw.network.message.to_server.SendIntegers;
+import it.polimi.ingsw.network.message.to_server.SendString;
 import it.polimi.ingsw.view.*;
 
 import java.io.IOException;
@@ -10,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,6 +27,7 @@ public class CLI implements UI {
     private ObjectOutputStream output;
     private SynchronousQueue<String> messageQueue;
     private String id;
+    private GameView currentGame;
 
     public CLI() {
         this.running = new AtomicBoolean();
@@ -30,6 +36,7 @@ public class CLI implements UI {
 
     public void run() {
         running.set(true);
+        currentGame = null;
         messageQueue = new SynchronousQueue<String>();
         new Thread(this::inputListener).start();
 
@@ -89,6 +96,10 @@ public class CLI implements UI {
         }
     }
 
+    private void quit() {
+        stop();
+    }
+
     public synchronized void stop() {
         if (!running.compareAndSet(true, false)) return;
         System.out.println("\nPress ENTER to quit. ");
@@ -101,39 +112,104 @@ public class CLI implements UI {
         }
     }
 
+    public String getServerIp() {
+        System.out.println("\nServer IP address: ");
+        return getString();
+    }
+
     public void parseMessage(ToClientMessage message) {
         message.performAction(this);
     }
 
-    public void sendMessage(Object body) {
+    private int getInt() {
+        while (true) {
+            try {
+                return Integer.parseInt(messageQueue.take());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. ");
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
+    }
+
+    private String getString() {
+        while (true) {
+            try {
+                return messageQueue.take();
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
+    }
+
+    public void sendBoolean(boolean body) {
         try {
-            output.writeObject(new ToServerMessage(body, id));
+            output.writeObject(new SendBoolean(id, body));
         } catch (IOException e) {
             System.out.println("Disconnected. ");
             stop();
         }
     }
 
-    public String getServerIp() {
-        System.out.println("\nServer IP address: ");
-        return getString();
-    }
-
-    public void chooseNickname(boolean taken) {
-        if (taken) System.out.println("\nNickname already taken. ");
-        else System.out.println("\nChoose your nickname: ");
-        id = getString();
-        sendMessage(null);
-    }
-
-    public void chooseStartJoin() {
-        System.out.println("\n1: Start a new game \n2: Join a game ");
-        int num = getInt();
-        while (num < 1 || num > 2) {
-            System.out.println("Invalid input. ");
-            num = getInt();
+    public void sendInteger(int body) {
+        try {
+            output.writeObject(new SendInteger(id, body));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
         }
-        sendMessage(num == 1);
+    }
+
+    public void sendIntegers(ArrayList<Integer> body) {
+        try {
+            output.writeObject(new SendIntegers(id, body));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
+
+    public void sendString(String body) {
+        try {
+            output.writeObject(new SendString(id, body));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
+
+    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
+        StringBuilder string = new StringBuilder();
+        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
+        else string.append("\nPick your God Power: \n");
+        for (int i = 0; i < possibleCards.size(); i++) {
+            string.append(i + ": ");
+            string.append(possibleCards.get(i).getGod() + "\n");
+        }
+        if (pickedCards != null) for (CardView pickedCard : pickedCards) {
+            string.append("X: ");
+            string.append(pickedCard.getGod() + "\n");
+        }
+        System.out.println(string);
+        ArrayList<Integer> choices = new ArrayList<Integer>();
+        for (int i = 0; i < num; i++) {
+            int choice = getInt();
+            while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
+                System.out.println("Invalid input. ");
+                choice = getInt();
+            }
+            System.out.println("Picked " + possibleCards.get(choice).getGod());
+            choices.add(choice);
+        }
+        sendIntegers(choices);
+    }
+
+    public void chooseGameName(boolean taken) {
+        if (taken) System.out.println("\nName already taken. ");
+        else System.out.println("\nChoose a name for your game room: ");
+        String gameRoom = getString();
+        sendString(gameRoom);
     }
 
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
@@ -166,14 +242,14 @@ public class CLI implements UI {
             default:
                 room = gameRooms.get(choice - 2).getName();
         }
-        sendMessage(room);
+        sendString(room);
     }
 
-    public void chooseGameName(boolean taken) {
-        if (taken) System.out.println("\nName already taken. ");
-        else System.out.println("\nChoose a name for your game room: ");
-        String gameRoom = getString();
-        sendMessage(gameRoom);
+    public void chooseNickname(boolean taken) {
+        if (taken) System.out.println("\nNickname already taken. ");
+        else System.out.println("\nChoose your nickname: ");
+        id = getString();
+        sendString(null);
     }
 
     public void choosePlayersNumber() {
@@ -183,93 +259,7 @@ public class CLI implements UI {
             System.out.println("Invalid input. ");
             num = getInt();
         }
-        sendMessage(num);
-    }
-
-    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
-        StringBuilder string = new StringBuilder();
-        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
-        else string.append("\nPick your God Power: \n");
-        for (int i = 0; i < possibleCards.size(); i++) {
-            string.append(i + ": ");
-            string.append(possibleCards.get(i).getGod() + "\n");
-        }
-        if (pickedCards != null) for (CardView pickedCard : pickedCards) {
-            string.append("X: ");
-            string.append(pickedCard.getGod() + "\n");
-        }
-        System.out.println(string);
-        ArrayList<Integer> choices = new ArrayList<Integer>();
-        for (int i = 0; i < num; i++) {
-            int choice = getInt();
-            while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
-                System.out.println("Invalid input. ");
-                choice = getInt();
-            }
-            System.out.println("Picked " + possibleCards.get(choice).getGod());
-            choices.add(choice);
-        }
-        sendMessage(choices);
-    }
-
-    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        StringBuilder string = new StringBuilder();
-        string.append("\nChoose the starting player: \n");
-        for (int i = 0; i < players.size(); i++) {
-            string.append(i + ": ");
-            string.append(players.get(i).getId() + "\n");
-        }
-        System.out.println(string);
-        int choice = getInt();
-        while (choice < 0 || choice >= players.size()) {
-            System.out.println("Invalid input. ");
-            choice = getInt();
-        }
-        sendMessage(choice);
-    }
-
-    /**
-     * shows the board of the current game, at its actual state:
-     * " " if a cell is unoccupied
-     * "(color)" if the cell is occupied by a worker of the specified color
-     * "X" if the cell has a Dome
-     * "1" if the building level of the cell is 1
-     * "2" if the building level of the cell is 2
-     * "3" if the building level of the cell is 3
-     *
-     * @param board the board associated with the current game
-     */
-    public void updateGame(GameView board, String desc, CardView godPower) {
-        StringBuilder string = new StringBuilder();
-        string.append("\n    0  1  2  3  4 ");
-        string.append("\n");
-        for (int i = 0; i < 5; i++) {
-            string.append("  ----------------");
-            string.append("\n");
-            string.append(i + " ");
-            for (int j = 0; j < 5; j++) {
-                CellView cell = board.getCell(i, j);
-                string.append("|");
-                if (cell.isDomed()) string.append("X");
-                else string.append(cell.getBuildLevel() == 0 ? " " : cell.getBuildLevel());
-                if (cell.hasWorker()) string.append(cell.getWorker().getColor());
-                else string.append(" ");
-            }
-            string.append("|");
-            string.append("\n");
-        }
-        string.append("  ----------------");
-        string.append("\n");
-        System.out.println(string);
-    }
-
-    /**
-     * shows to display the message received as an argument
-     *
-     * @param message the message to show
-     */
-    public void displayMessage(String message) {
-        System.out.println("\n" + message);
+        sendInteger(num);
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
@@ -309,7 +299,33 @@ public class CLI implements UI {
             System.out.println("Invalid input. ");
             choice = getInt();
         }
-        sendMessage(choice);
+        sendInteger(choice);
+    }
+
+    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
+        StringBuilder string = new StringBuilder();
+        string.append("\nChoose the starting player: \n");
+        for (int i = 0; i < players.size(); i++) {
+            string.append(i + ": ");
+            string.append(players.get(i).getId() + "\n");
+        }
+        System.out.println(string);
+        int choice = getInt();
+        while (choice < 0 || choice >= players.size()) {
+            System.out.println("Invalid input. ");
+            choice = getInt();
+        }
+        sendInteger(choice);
+    }
+
+    public void chooseStartJoin() {
+        System.out.println("\n1: Start a new game \n2: Join a game ");
+        int num = getInt();
+        while (num < 1 || num > 2) {
+            System.out.println("Invalid input. ");
+            num = getInt();
+        }
+        sendBoolean(num == 1);
     }
 
     /**
@@ -325,7 +341,66 @@ public class CLI implements UI {
             choice = getString();
         }
         boolean res = choice.equals("y");
-        sendMessage(res);
+        sendBoolean(res);
+    }
+
+    public void displayBuild(CellView buildPosition, CardView godCard) {
+        currentGame.setCell(buildPosition);
+        displayBoard();
+    }
+
+    /**
+     * shows the board of the current game, at its actual state:
+     * " " if a cell is unoccupied
+     * "(color)" if the cell is occupied by a worker of the specified color
+     * "X" if the cell has a Dome
+     * "1" if the building level of the cell is 1
+     * "2" if the building level of the cell is 2
+     * "3" if the building level of the cell is 3
+     *
+     * @param game the board associated with the current game
+     */
+    public void displayGameInfo(GameView game, String desc) {
+        currentGame = game;
+        // TO DO: check if game is ok?
+        // TO DO: display player info? description?
+        displayBoard();
+    }
+
+    /**
+     * shows to display the message received as an argument
+     *
+     * @param message the message to show
+     */
+    public void displayMessage(String message) {
+        System.out.println("\n" + message);
+    }
+
+    public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
+        moves.forEach((startPosition, endPosition) -> {
+            CellView newStart = new CellView(
+                    startPosition.getPosX(), startPosition.getPosY(), startPosition.getBuildLevel(), startPosition.isDomed(), null
+            );
+            currentGame.setCell(newStart);
+            CellView newEnd = new CellView(
+                    endPosition.getPosX(), endPosition.getPosY(), endPosition.getBuildLevel(), endPosition.isDomed(), startPosition.getWorker()
+            );
+            currentGame.setCell(newEnd);
+        });
+        displayBoard();
+    }
+
+    public void displayPlaceWorker(CellView position) {
+        currentGame.setCell(position);
+        displayBoard();
+    }
+
+    public void notifyDisconnection(PlayerView player) {
+        System.out.println("\n" + player.getId() + " has disconnected. ");
+    }
+
+    public void notifyGameOver() {
+        System.out.println("\nGame over! \n\n\n\n\n");
     }
 
     public void notifyLoss(PlayerView player, String reason) {
@@ -368,38 +443,28 @@ public class CLI implements UI {
         System.out.println(string);
     }
 
-    public void notifyDisconnection(PlayerView player) {
-        System.out.println("\n" + player.getId() + " has disconnected. ");
-    }
-
-    public void gameOver() {
-        System.out.println("\nGame over! \n\n\n\n\n");
-    }
-
-    private void quit() {
-        stop();
-    }
-
-    private int getInt() {
-        while (true) {
-            try {
-                return Integer.parseInt(messageQueue.take());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. ");
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
+    private void displayBoard() {
+        StringBuilder string = new StringBuilder();
+        string.append("\n    0  1  2  3  4 ");
+        string.append("\n");
+        for (int i = 0; i < 5; i++) {
+            string.append("  ----------------");
+            string.append("\n");
+            string.append(i + " ");
+            for (int j = 0; j < 5; j++) {
+                CellView cell = currentGame.getCell(i, j);
+                string.append("|");
+                if (cell.isDomed()) string.append("X");
+                else string.append(cell.getBuildLevel() == 0 ? " " : cell.getBuildLevel());
+                if (cell.hasWorker()) string.append(cell.getWorker().getColor());
+                else string.append(" ");
             }
+            string.append("|");
+            string.append("\n");
         }
-    }
-
-    private String getString() {
-        while (true) {
-            try {
-                return messageQueue.take();
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
-            }
-        }
+        string.append("  ----------------");
+        string.append("\n");
+        System.out.println(string);
     }
 
 }

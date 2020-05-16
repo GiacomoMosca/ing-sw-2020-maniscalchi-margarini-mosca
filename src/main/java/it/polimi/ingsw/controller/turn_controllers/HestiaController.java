@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class HestiaController extends GodController {
         } catch (IllegalBuildException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("build", godPower);
+        displayBuild(new CellView(buildPosition), godPower);
     }
 
 

@@ -7,6 +7,7 @@ import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,12 +73,14 @@ public class ArtemisController extends GodController {
         Card godPower = (secondMove) ? card : null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(activeWorker.getPosition());
+        CellView endView = new CellView(movePosition);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("move", godPower);
+        displayMove(startView, endView, godPower);
     }
 
     /**

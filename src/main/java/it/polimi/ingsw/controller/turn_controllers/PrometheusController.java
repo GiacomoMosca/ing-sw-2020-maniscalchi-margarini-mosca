@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +60,8 @@ public class PrometheusController extends GodController {
                 buildPhase();
             }
         }
+        ArrayList<Cell> possibleMoves = wantBuildBefore ? findPossibleMoves(activeWorker.getPosition()) : findPossibleMovesNoUp(activeWorker.getPosition());
+        if (possibleMoves.size() == 0) return "outOfMoves";
         movePhase();
         if (!checkWin().equals("nope")) return checkWin();
         if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
@@ -93,12 +96,14 @@ public class PrometheusController extends GodController {
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
         else possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(activeWorker.getPosition());
+        CellView endView = new CellView(movePosition);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("move", godPower);
+        displayMove(startView, endView, godPower);
     }
 
     /**

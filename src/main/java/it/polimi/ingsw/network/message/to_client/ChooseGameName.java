@@ -4,13 +4,16 @@ import it.polimi.ingsw.view.UI;
 
 public class ChooseGameName extends ToClientMessage {
 
-    public ChooseGameName(Object body) {
-        super(body);
+    protected boolean taken;
+
+    public ChooseGameName(boolean taken) {
+        super("choose game name");
+        this.taken = taken;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseGameName((boolean) body);
+        client.chooseGameName(taken);
     }
 
 }

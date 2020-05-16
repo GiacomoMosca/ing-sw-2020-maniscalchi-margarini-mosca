@@ -4,13 +4,16 @@ import it.polimi.ingsw.view.UI;
 
 public class DisplayMessage extends ToClientMessage {
 
-    public DisplayMessage(Object body) {
-        super(body);
+    protected String message;
+
+    public DisplayMessage(String message) {
+        super("display message");
+        this.message = message;
     }
 
     @Override
     public void performAction(UI client) {
-        client.displayMessage((String) body);
+        client.displayMessage(message);
     }
 
 }

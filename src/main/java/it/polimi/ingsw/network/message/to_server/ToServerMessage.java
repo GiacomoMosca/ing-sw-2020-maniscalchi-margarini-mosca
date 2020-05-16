@@ -4,10 +4,10 @@ import it.polimi.ingsw.network.message.Message;
 
 public class ToServerMessage extends Message {
 
-    private final String playerId;
+    protected String playerId;
 
-    public ToServerMessage(Object body, String playerId) {
-        super(body);
+    public ToServerMessage(String msgId, String playerId) {
+        super(msgId);
         this.playerId = playerId;
     }
 

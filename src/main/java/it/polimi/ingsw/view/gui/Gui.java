@@ -94,7 +94,7 @@ public class Gui implements UI{//implements Runnable
     }
 
     @Override
-    public void gameOver() {
+    public void notifyGameOver() {
 
     }
 

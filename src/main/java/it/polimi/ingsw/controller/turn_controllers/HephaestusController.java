@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class HephaestusController extends GodController {
                 }
             }
         }
-        gameController.broadcastBoard("build", godPower);
+        displayBuild(new CellView(buildPosition), godPower);
     }
 
 }

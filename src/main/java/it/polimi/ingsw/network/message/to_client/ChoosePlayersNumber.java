@@ -4,8 +4,8 @@ import it.polimi.ingsw.view.UI;
 
 public class ChoosePlayersNumber extends ToClientMessage {
 
-    public ChoosePlayersNumber(Object body) {
-        super(body);
+    public ChoosePlayersNumber() {
+        super("choose players number");
     }
 
     @Override

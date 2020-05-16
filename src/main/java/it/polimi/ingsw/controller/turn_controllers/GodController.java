@@ -10,10 +10,12 @@ import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class GodController {
 
@@ -112,12 +114,14 @@ public abstract class GodController {
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(activeWorker.getPosition());
+        CellView endView = new CellView(movePosition);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("move", null);
+        displayMove(startView, endView, null);
     }
 
     /**
@@ -131,7 +135,7 @@ public abstract class GodController {
         } catch (IllegalBuildException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("build", null);
+        displayBuild(new CellView(buildPosition), null);
     }
 
     public String checkWin() {
@@ -224,6 +228,23 @@ public abstract class GodController {
      */
     public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
+    }
+
+    protected void displayMove(CellView startPosition, CellView endPosition, Card godPower) throws IOExceptionFromController {
+        HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
+        moves.put(startPosition, endPosition);
+        gameController.broadcastMove(moves, godPower);
+    }
+
+    protected void displayMove(CellView startPosition1, CellView endPosition1, CellView startPosition2, CellView endPosition2, Card godPower) throws IOExceptionFromController {
+        HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
+        moves.put(startPosition1, endPosition1);
+        moves.put(startPosition2, endPosition2);
+        gameController.broadcastMove(moves, godPower);
+    }
+
+    protected void displayBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
+        gameController.broadcastBuild(buildPosition, godPower);
     }
 
 }
