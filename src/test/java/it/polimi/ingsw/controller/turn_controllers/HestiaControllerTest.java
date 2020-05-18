@@ -52,7 +52,7 @@ public class HestiaControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWON() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWin() throws IOException, ClassNotFoundException, IOExceptionFromController {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = hestiaController.generateCard();
         deck.addCard(card);
@@ -69,15 +69,43 @@ public class HestiaControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldBuildTwoTimesAndReturnNEXT() {
+    public void runPhases_workerGiven_shouldBuildTwoTimesAndReturnNext() {
         //checking that the first building is on (0,0) and the second building on (1,2)
         //the worker starts from (2,2), moves to (1,1), builds the first time on (0,0) and the second time on (1,2)
         //because it's the first not-perimeter-cell
 
-        //calling gameSetUp() will later invoke runPhases, covering the case of return "NEXT"
+        //calling gameSetUp() will later invoke runPhases, covering the case of return "next"
         fakeGameController.gameSetUp();
         assertEquals(fakeGameController.getGame().getBoard().getCell(0, 0).getBuildLevel(), 1);
         assertEquals(fakeGameController.getGame().getBoard().getCell(1, 2).getBuildLevel(), 1);
+    }
+
+    @Test
+    public void buildPhase_noInputGiven_shouldGenerateIllegalBuildException() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        //a client who chooses to build in an illegal cell
+        class FakeVirtualViewToGenerateException extends FakeVirtualView {
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
+                super(socket, objectInputStream, objectOutputStream);
+            }
+
+            @Override
+            public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) {
+                return (fakeGameController.getGame().getBoard().getCell(2, 2));
+            }
+        }
+        //need new initialization to use FakeVirtualViewToGenerateException instead of FakeVirtualView
+        socket = new Socket();
+        fakeVirtualView = new FakeVirtualViewToGenerateException(socket, objectInputStream, objectOutputStream);
+        fakeGameController = new HestiaGameController(fakeVirtualView, 1, "HestiaTest");
+        hestiaController = new HestiaController(fakeGameController);
+        hestiaController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
+        Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(0, 0));
+        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        hestiaController.activeWorker = worker;
+        fakeGameController.getGame().getBoard().getCell(2, 2).buildDome();
+
+        hestiaController.buildPhase();
     }
 
     @Test

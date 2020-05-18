@@ -5,16 +5,18 @@ import it.polimi.ingsw.view.UI;
 
 public class NotifyWin extends ToClientMessage {
 
+    protected PlayerView player;
     protected String reason;
 
-    public NotifyWin(Object body, String reason) {
-        super(body);
+    public NotifyWin(PlayerView player, String reason) {
+        super("notify win");
+        this.player = player;
         this.reason = reason;
     }
 
     @Override
     public void performAction(UI client) {
-        client.notifyWin((PlayerView) body, reason);
+        client.notifyWin(player, reason);
     }
 
 }

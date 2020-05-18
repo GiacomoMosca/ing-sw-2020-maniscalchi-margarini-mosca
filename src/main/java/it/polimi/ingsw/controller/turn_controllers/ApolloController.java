@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,16 +47,18 @@ public class ApolloController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
-        Card godPower = null;
+        boolean godPower = false;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         // + allow swapping position with opponents
-        Cell oldPosition = activeWorker.getPosition();
+        Cell startPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(startPosition);
+        CellView endView = new CellView(movePosition);
         if (movePosition.hasWorker()) {
-            godPower = card;
+            godPower = true;
             Worker swappedWorker = movePosition.getWorker();
-            oldPosition.setWorker(swappedWorker);
-            swappedWorker.setPosition(oldPosition);
+            startPosition.setWorker(swappedWorker);
+            swappedWorker.setPosition(startPosition);
             movePosition.setWorker(activeWorker);
             activeWorker.setPosition(movePosition);
             //
@@ -66,7 +69,8 @@ public class ApolloController extends GodController {
                 System.out.println(e.getMessage());
             }
         }
-        gameController.broadcastBoard("move", godPower);
+        if (godPower) displayMove(startView, endView, endView, startView, card);
+        else displayMove(startView, endView, null);
     }
 
     /**

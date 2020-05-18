@@ -57,7 +57,20 @@ public class GameTest {
         assertEquals(game.getPlayers().get(game.getActivePlayer()), player3);
         game.nextPlayer();
         assertEquals(game.getPlayers().get(game.getActivePlayer()), player1);
+    }
 
+    @Test
+    public void setActivePlayer_PlayerNumberGiven_shouldSetTheActivePlayer() {
+        game.addPlayer(player2);
+        game.addPlayer(player3);
+        game.setActivePlayer(0);
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player1);
+        game.setActivePlayer(1);
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player2);
+        game.setActivePlayer(2);
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player3);
+        game.setActivePlayer(3);
+        assertEquals(game.getPlayers().get(game.getActivePlayer()), player3);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -143,5 +156,10 @@ public class GameTest {
         game.setWinner(player1);
         assertSame(game.getWinner(), player1);
         assertTrue(game.hasWinner());
+    }
+
+    @Test
+    public void getName_NoInputGiven_ShouldReturnName() {
+        assertSame(game.getName(), "Test");
     }
 }

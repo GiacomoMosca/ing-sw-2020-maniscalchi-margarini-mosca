@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,9 +48,8 @@ public class ZeusController extends GodController {
         } catch (IllegalBuildException e) {
             System.out.println(e.getMessage());
         }
-        if (buildPosition.getPosX() == activeWorker.getPosition().getPosX() && buildPosition.getPosY() == activeWorker.getPosition().getPosY())
-            gameController.broadcastBoard("build", card);
-        else gameController.broadcastBoard("build", null);
+        Card godPower = (buildPosition.getPosX() == activeWorker.getPosition().getPosX() && buildPosition.getPosY() == activeWorker.getPosition().getPosY()) ? card : null;
+        displayBuild(new CellView(buildPosition), godPower);
     }
 
     /**

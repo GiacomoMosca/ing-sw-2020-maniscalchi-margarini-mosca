@@ -13,6 +13,7 @@ public class GameView implements Serializable {
     private final String name;
     private final int playerNum;
     private final ArrayList<PlayerView> players;
+    private final int activePlayer;
     private final CellView[][] board;
     private final ArrayList<CardView> activeModifiers;
 
@@ -23,6 +24,7 @@ public class GameView implements Serializable {
         for (Player player : game.getPlayers()) {
             players.add(new PlayerView(player));
         }
+        activePlayer = game.getActivePlayer();
         board = new CellView[5][5];
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++) {
@@ -34,10 +36,11 @@ public class GameView implements Serializable {
         }
     }
 
-    public GameView(String name, int playerNum, ArrayList<PlayerView> players, CellView[][] board, ArrayList<CardView> modifiers) {
+    public GameView(String name, int playerNum, ArrayList<PlayerView> players, int activePlayer, CellView[][] board, ArrayList<CardView> modifiers) {
         this.name = name;
         this.playerNum = playerNum;
         this.players = players;
+        this.activePlayer = activePlayer;
         this.board = board;
         this.activeModifiers = modifiers;
     }
@@ -54,6 +57,10 @@ public class GameView implements Serializable {
         return new ArrayList<PlayerView>(players);
     }
 
+    public int getActivePlayer() {
+        return activePlayer;
+    }
+
     /**
      * @param x the x-coordinate of the requested cell
      * @param y the y-coordinate of the requested cell
@@ -63,6 +70,13 @@ public class GameView implements Serializable {
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
         return board[y][x];
+    }
+
+    public void setCell(CellView cell) throws ArrayIndexOutOfBoundsException {
+        int x = cell.getPosX();
+        int y = cell.getPosY();
+        if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
+        board[x][y] = cell;
     }
 
     public ArrayList<CellView> getAllCells() {

@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PlayerView</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PlayerView (it.polimi.ingsw.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlayerView</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    41.2%
+  </span>
+  <span class="absValue">
+    (7/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.io.Serializable;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;public class PlayerView implements Serializable {
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    private final String id;
+<i>10</i>&nbsp;    private final String color;
+<i>11</i>&nbsp;    private final String godCard;
+<i>12</i>&nbsp;    private final boolean hasLost;
+<i>13</i>&nbsp;
+<b class="fc"><i>14</i>&nbsp;    public PlayerView(Player player) {</b>
+<b class="fc"><i>15</i>&nbsp;        this.id = player.getId();</b>
+<b class="fc"><i>16</i>&nbsp;        this.color = player.getColor();</b>
+<b class="fc"><i>17</i>&nbsp;        if (player.getGodCard() == null) this.godCard = null;</b>
+<b class="fc"><i>18</i>&nbsp;        else this.godCard = player.getGodCard().getGod();</b>
+<b class="fc"><i>19</i>&nbsp;        this.hasLost = player.hasLost();</b>
+<b class="fc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<b class="nc"><i>22</i>&nbsp;    public PlayerView(String id, String color, String godCard, boolean hasLost) {</b>
+<b class="nc"><i>23</i>&nbsp;        this.id = id;</b>
+<b class="nc"><i>24</i>&nbsp;        this.color = color;</b>
+<b class="nc"><i>25</i>&nbsp;        this.godCard = godCard;</b>
+<b class="nc"><i>26</i>&nbsp;        this.hasLost = hasLost;</b>
+<b class="nc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public String getId() {
+<b class="nc"><i>30</i>&nbsp;        return id;</b>
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    public String getColor() {
+<b class="nc"><i>34</i>&nbsp;        return color;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    public String getGodCard() {
+<b class="nc"><i>38</i>&nbsp;        return godCard;</b>
+<i>39</i>&nbsp;    }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public boolean hasLost() {
+<b class="nc"><i>42</i>&nbsp;        return hasLost;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-18 23:58</div>
+</div>
+</body>
+</html>

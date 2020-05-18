@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 import it.polimi.ingsw.controller.FakeGameController;
 import it.polimi.ingsw.controller.PlayerController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
@@ -88,6 +89,33 @@ public class ApolloControllerTest {
 
         assertSame(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0, 1));
         assertSame(fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(1, 2));
+    }
+
+    @Test
+    public void movePhase_noInputGiven_shouldMoveTheWorkerRegularly() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        class FakeVirtualViewToGenerateException extends FakeVirtualView {
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
+                super(socket, objectInputStream, objectOutputStream);
+            }
+
+            @Override
+            public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) {
+                return (fakeGameController.getGame().getBoard().getCell(1, 1));
+            }
+        }
+
+        //new initialization needed to use FakeVirtualViewToGenerateException instead of FakeVirtualView
+        socket1 = new Socket();
+        fakeVirtualView1 = new FakeVirtualViewToGenerateException(socket1, objectInputStream1, objectOutputStream1);
+        fakeGameController = new ApolloGameController(fakeVirtualView1, 1, "ApolloTest");
+        apolloController = new ApolloController(fakeGameController);
+        apolloController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
+        Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(1, 2));
+        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        apolloController.activeWorker = worker;
+
+        apolloController.movePhase();
     }
 
     @Test

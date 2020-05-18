@@ -4,8 +4,8 @@ import it.polimi.ingsw.view.UI;
 
 public class ChooseStartJoin extends ToClientMessage {
 
-    public ChooseStartJoin(Object body) {
-        super(body);
+    public ChooseStartJoin() {
+        super("choose start/join");
     }
 
     @Override

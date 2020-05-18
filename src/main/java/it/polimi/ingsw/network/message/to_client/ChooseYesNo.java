@@ -4,13 +4,16 @@ import it.polimi.ingsw.view.UI;
 
 public class ChooseYesNo extends ToClientMessage {
 
-    public ChooseYesNo(Object body) {
-        super(body);
+    protected String query;
+
+    public ChooseYesNo(String query) {
+        super("choose yes/no");
+        this.query = query;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseYesNo((String) body);
+        client.chooseYesNo(query);
     }
 
 }

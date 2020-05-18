@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class AthenaController extends GodController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(oldPosition);
+        CellView endView = new CellView(movePosition);
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
@@ -59,7 +62,7 @@ public class AthenaController extends GodController {
             game.addModifier(card);
         }
         //
-        gameController.broadcastBoard("move", godPower);
+        displayMove(startView, endView, godPower);
     }
 
     /**

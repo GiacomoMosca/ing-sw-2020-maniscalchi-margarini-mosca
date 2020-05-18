@@ -8,13 +8,16 @@ import java.util.ArrayList;
 
 public class ChooseGameRoom extends ToClientMessage {
 
-    public ChooseGameRoom(Object body) {
-        super(body);
+    protected ArrayList<GameView> games;
+
+    public ChooseGameRoom(ArrayList<GameView> games) {
+        super("choose game room");
+        this.games = games;
     }
 
     @Override
     public void performAction(UI client) {
-        client.chooseGameRoom((ArrayList<GameView>) body);
+        client.chooseGameRoom(games);
     }
 
 }

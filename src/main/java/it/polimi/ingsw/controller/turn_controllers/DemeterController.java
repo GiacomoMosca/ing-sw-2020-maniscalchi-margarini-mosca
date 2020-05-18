@@ -5,6 +5,7 @@ import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class DemeterController extends GodController {
         } catch (IllegalBuildException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("build", null);
+        displayBuild(new CellView(buildPosition), null);
         possibleBuilds.remove(buildPosition);
         if ((possibleBuilds.size() != 0) && (client.chooseYesNo("Do you want to build again?"))) {
             buildPosition = client.chooseBuildPosition(possibleBuilds);
@@ -60,7 +61,7 @@ public class DemeterController extends GodController {
             } catch (IllegalBuildException e) {
                 System.out.println(e.getMessage());
             }
-            gameController.broadcastBoard("build", card);
+            displayBuild(new CellView(buildPosition), card);
         }
     }
 

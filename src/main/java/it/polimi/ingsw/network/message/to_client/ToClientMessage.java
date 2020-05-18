@@ -5,8 +5,8 @@ import it.polimi.ingsw.view.UI;
 
 public abstract class ToClientMessage extends Message {
 
-    public ToClientMessage(Object body) {
-        super(body);
+    public ToClientMessage(String msgId) {
+        super(msgId);
     }
 
     public abstract void performAction(UI client);

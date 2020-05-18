@@ -1,0 +1,608 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameController (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13.8%
+  </span>
+  <span class="absValue">
+    (4/ 29)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.2%
+  </span>
+  <span class="absValue">
+    (28/ 304)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.turn_controllers.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.exceptions.GameEndedException;
+<i>5</i>&nbsp;import it.polimi.ingsw.exceptions.IOExceptionFromController;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.Game;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.cards.Deck;
+<i>9</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>10</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>11</i>&nbsp;import it.polimi.ingsw.model.players.Worker;
+<i>12</i>&nbsp;import it.polimi.ingsw.view.CellView;
+<i>13</i>&nbsp;import it.polimi.ingsw.view.VirtualView;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import java.io.IOException;
+<i>16</i>&nbsp;import java.util.ArrayList;
+<i>17</i>&nbsp;import java.util.HashMap;
+<i>18</i>&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;public class GameController {
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    protected final AtomicBoolean running;
+<i>23</i>&nbsp;    protected final AtomicBoolean setup;
+<i>24</i>&nbsp;    protected Game game;
+<i>25</i>&nbsp;    protected ArrayList&lt;PlayerController&gt; playerControllers;
+<i>26</i>&nbsp;    protected ArrayList&lt;Player&gt; players;
+<i>27</i>&nbsp;    protected ArrayList&lt;PlayerController&gt; spectators;
+<i>28</i>&nbsp;    protected ArrayList&lt;String&gt; colors;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * creates a GameController.
+<i>32</i>&nbsp;     * creates the first player (associated with the VirtualView received as an argument),
+<i>33</i>&nbsp;     * associating his id and the color &quot;RED&quot;.
+<i>34</i>&nbsp;     * creates a PlayerController for the first player, associating the Player and his VirtualView.
+<i>35</i>&nbsp;     * adds the PlayerController.
+<i>36</i>&nbsp;     *
+<i>37</i>&nbsp;     * @param client the VirtualView associated with the first player
+<i>38</i>&nbsp;     * @param num    the number of players for the current game
+<i>39</i>&nbsp;     */
+<b class="fc"><i>40</i>&nbsp;    public GameController(VirtualView client, int num, String gameName) {</b>
+<b class="fc"><i>41</i>&nbsp;        running = new AtomicBoolean(true);</b>
+<b class="fc"><i>42</i>&nbsp;        setup = new AtomicBoolean(true);</b>
+<b class="fc"><i>43</i>&nbsp;        playerControllers = new ArrayList&lt;PlayerController&gt;();</b>
+<b class="fc"><i>44</i>&nbsp;        spectators = new ArrayList&lt;PlayerController&gt;();</b>
+<b class="fc"><i>45</i>&nbsp;        colors = new ArrayList&lt;String&gt;();</b>
+<b class="fc"><i>46</i>&nbsp;        colors.add(&quot;r&quot;);</b>
+<b class="fc"><i>47</i>&nbsp;        colors.add(&quot;g&quot;);</b>
+<b class="fc"><i>48</i>&nbsp;        colors.add(&quot;b&quot;);</b>
+<b class="fc"><i>49</i>&nbsp;        Player p1 = new Player(client.getId(), colors.get(0));</b>
+<b class="fc"><i>50</i>&nbsp;        PlayerController p1Controller = new PlayerController(p1, client, this);</b>
+<b class="fc"><i>51</i>&nbsp;        game = new Game(gameName, p1, num);</b>
+<b class="fc"><i>52</i>&nbsp;        playerControllers.add(p1Controller);</b>
+<b class="fc"><i>53</i>&nbsp;        client.setPlayerController(p1Controller);</b>
+<b class="fc"><i>54</i>&nbsp;    }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    public boolean isRunning() {
+<b class="nc"><i>57</i>&nbsp;        return running.get();</b>
+<i>58</i>&nbsp;    }
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    public boolean isSetup() {
+<b class="nc"><i>61</i>&nbsp;        return setup.get();</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * @return the current Game
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public Game getGame() {
+<b class="fc"><i>68</i>&nbsp;        return game;</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public ArrayList&lt;PlayerController&gt; getAllControllers() {
+<b class="nc"><i>72</i>&nbsp;        ArrayList&lt;PlayerController&gt; allControllers = new ArrayList&lt;PlayerController&gt;();</b>
+<b class="nc"><i>73</i>&nbsp;        allControllers.addAll(playerControllers);</b>
+<b class="nc"><i>74</i>&nbsp;        allControllers.addAll(spectators);</b>
+<b class="nc"><i>75</i>&nbsp;        return allControllers;</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    /**
+<i>79</i>&nbsp;     * adds a new player to the game.
+<i>80</i>&nbsp;     * creates the new player, associating his id (given by the VirtualView) and a color.
+<i>81</i>&nbsp;     * creates a PlayerController for the player and associates the player and his VirtualView.
+<i>82</i>&nbsp;     * &lt;p&gt;
+<i>83</i>&nbsp;     * and the game controller asso
+<i>84</i>&nbsp;     *
+<i>85</i>&nbsp;     * @param client
+<i>86</i>&nbsp;     */
+<i>87</i>&nbsp;    public void addPlayer(VirtualView client) throws GameEndedException {
+<b class="fc"><i>88</i>&nbsp;        if (!running.get() || !setup.get()) throw new GameEndedException(&quot;game ended&quot;);</b>
+<b class="fc"><i>89</i>&nbsp;        if (playerControllers.size() &gt;= game.getPlayerNum()) {</b>
+<b class="fc"><i>90</i>&nbsp;            System.out.println(&quot;ERROR: too many players&quot;);</b>
+<b class="fc"><i>91</i>&nbsp;            return;</b>
+<i>92</i>&nbsp;        }
+<b class="fc"><i>93</i>&nbsp;        Player player = new Player(client.getId(), colors.get(playerControllers.size()));</b>
+<b class="fc"><i>94</i>&nbsp;        PlayerController playerController = new PlayerController(player, client, this);</b>
+<b class="fc"><i>95</i>&nbsp;        game.addPlayer(player);</b>
+<b class="fc"><i>96</i>&nbsp;        playerControllers.add(playerController);</b>
+<b class="fc"><i>97</i>&nbsp;        client.setPlayerController(playerController);</b>
+<i>98</i>&nbsp;        try {
+<b class="fc"><i>99</i>&nbsp;            broadcastMessage(client.getId() + &quot; joined the game (&quot; + game.getPlayers().size() + &quot;/&quot; + game.getPlayerNum() + &quot;)&quot;);</b>
+<b class="nc"><i>100</i>&nbsp;        } catch (IOExceptionFromController e) {</b>
+<b class="nc"><i>101</i>&nbsp;            handleDisconnection(e.getController());</b>
+<b class="nc"><i>102</i>&nbsp;        }</b>
+<b class="nc"><i>103</i>&nbsp;    }</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    public void addSpectator(VirtualView client) throws GameEndedException {
+<b class="nc"><i>106</i>&nbsp;        if (!running.get()) throw new GameEndedException(&quot;game ended&quot;);</b>
+<b class="nc"><i>107</i>&nbsp;        Player spectator = new Player(client.getId(), null);</b>
+<b class="nc"><i>108</i>&nbsp;        PlayerController spectatorController = new PlayerController(spectator, client, this);</b>
+<b class="nc"><i>109</i>&nbsp;        spectators.add(spectatorController);</b>
+<b class="nc"><i>110</i>&nbsp;        client.setPlayerController(spectatorController);</b>
+<i>111</i>&nbsp;        try {
+<b class="nc"><i>112</i>&nbsp;            displayGameInfo(spectatorController, &quot;gameStart&quot;);</b>
+<b class="nc"><i>113</i>&nbsp;        } catch (IOExceptionFromController e) {</b>
+<b class="nc"><i>114</i>&nbsp;            removeSpectators(spectatorController);</b>
+<b class="nc"><i>115</i>&nbsp;        }</b>
+<b class="nc"><i>116</i>&nbsp;    }</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    private void removeSpectators(PlayerController controller) {
+<b class="nc"><i>119</i>&nbsp;        spectators.remove(controller);</b>
+<b class="nc"><i>120</i>&nbsp;    }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    private void removeSpectators(ArrayList&lt;PlayerController&gt; controllers) {
+<b class="nc"><i>123</i>&nbsp;        for (PlayerController controller : controllers) {</b>
+<b class="nc"><i>124</i>&nbsp;            spectators.remove(controller);</b>
+<b class="nc"><i>125</i>&nbsp;        }</b>
+<b class="nc"><i>126</i>&nbsp;    }</b>
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    /**
+<i>129</i>&nbsp;     * creates a GodController for every God Card, and adds all the cards to the deck.
+<i>130</i>&nbsp;     * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    public void gameSetUp() {
+<b class="nc"><i>133</i>&nbsp;        if (!setup.compareAndSet(true, false)) return;</b>
+<b class="nc"><i>134</i>&nbsp;        ArrayList&lt;GodController&gt; controllers = new ArrayList&lt;GodController&gt;();</b>
+<b class="nc"><i>135</i>&nbsp;        controllers.add(new ApolloController(this));</b>
+<b class="nc"><i>136</i>&nbsp;        controllers.add(new ArtemisController(this));</b>
+<b class="nc"><i>137</i>&nbsp;        controllers.add(new AthenaController(this));</b>
+<b class="nc"><i>138</i>&nbsp;        controllers.add(new AtlasController(this));</b>
+<b class="nc"><i>139</i>&nbsp;        controllers.add(new DemeterController(this));</b>
+<b class="nc"><i>140</i>&nbsp;        controllers.add(new HephaestusController(this));</b>
+<b class="nc"><i>141</i>&nbsp;        controllers.add(new HestiaController(this));</b>
+<b class="nc"><i>142</i>&nbsp;        controllers.add(new LimusController(this));</b>
+<b class="nc"><i>143</i>&nbsp;        controllers.add(new MedusaController(this));</b>
+<b class="nc"><i>144</i>&nbsp;        controllers.add(new MinotaurController(this));</b>
+<b class="nc"><i>145</i>&nbsp;        controllers.add(new PanController(this));</b>
+<b class="nc"><i>146</i>&nbsp;        controllers.add(new PrometheusController(this));</b>
+<b class="nc"><i>147</i>&nbsp;        controllers.add(new TritonController(this));</b>
+<b class="nc"><i>148</i>&nbsp;        controllers.add(new ZeusController(this));</b>
+<i>149</i>&nbsp;
+<b class="nc"><i>150</i>&nbsp;        Deck deck = game.getDeck();</b>
+<i>151</i>&nbsp;
+<b class="nc"><i>152</i>&nbsp;        for (GodController godController : controllers) {</b>
+<b class="nc"><i>153</i>&nbsp;            deck.addCard(godController.generateCard());</b>
+<b class="nc"><i>154</i>&nbsp;        }</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;        players = game.getPlayers();</b>
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;        try {
+<b class="nc"><i>159</i>&nbsp;            broadcastMessage(&quot;Game started!&quot;);</b>
+<b class="nc"><i>160</i>&nbsp;            broadcastGameInfo(&quot;gameSetup&quot;);</b>
+<b class="nc"><i>161</i>&nbsp;            pickCards();</b>
+<b class="nc"><i>162</i>&nbsp;            chooseStartPlayer();</b>
+<b class="nc"><i>163</i>&nbsp;            broadcastGameInfo(&quot;gameSetup&quot;);</b>
+<b class="nc"><i>164</i>&nbsp;            placeWorkers();</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;            broadcastGameInfo(&quot;gameStart&quot;);</b>
+<b class="nc"><i>167</i>&nbsp;            playGame();</b>
+<b class="nc"><i>168</i>&nbsp;        } catch (IOExceptionFromController e) {</b>
+<b class="nc"><i>169</i>&nbsp;            handleDisconnection(e.getController());</b>
+<b class="nc"><i>170</i>&nbsp;        }</b>
+<b class="nc"><i>171</i>&nbsp;    }</b>
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;    private void pickCards() throws IOExceptionFromController {
+<b class="nc"><i>174</i>&nbsp;        Deck deck = game.getDeck();</b>
+<i>175</i>&nbsp;        try {
+<b class="nc"><i>176</i>&nbsp;            if (playerControllers.get(0).getClient().chooseYesNo(&quot;Do you want to randomize the playable God Cards pool?&quot;)) {</b>
+<b class="nc"><i>177</i>&nbsp;                deck.pickRandom(game.getPlayerNum());</b>
+<i>178</i>&nbsp;            } else {
+<b class="nc"><i>179</i>&nbsp;                ArrayList&lt;Card&gt; choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);</b>
+<b class="nc"><i>180</i>&nbsp;                for (Card card : choices) {</b>
+<b class="nc"><i>181</i>&nbsp;                    deck.pickCard(card);</b>
+<b class="nc"><i>182</i>&nbsp;                }</b>
+<i>183</i>&nbsp;            }
+<b class="nc"><i>184</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>185</i>&nbsp;            throw new IOExceptionFromController(e, playerControllers.get(0));</b>
+<b class="nc"><i>186</i>&nbsp;        } catch (ClassNotFoundException e) {</b>
+<b class="nc"><i>187</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>188</i>&nbsp;            return;</b>
+<b class="nc"><i>189</i>&nbsp;        }</b>
+<b class="nc"><i>190</i>&nbsp;        ArrayList&lt;Card&gt; cardPool = deck.getPickedCards();</b>
+<b class="nc"><i>191</i>&nbsp;        ArrayList&lt;Card&gt; chosenCards = new ArrayList&lt;Card&gt;();</b>
+<b class="nc"><i>192</i>&nbsp;        for (int i = 0; i &lt; game.getPlayerNum(); i++) {</b>
+<b class="nc"><i>193</i>&nbsp;            int j = (i == game.getPlayerNum() - 1) ? 0 : i + 1;</b>
+<i>194</i>&nbsp;            Card chosenCard;
+<i>195</i>&nbsp;            try {
+<b class="nc"><i>196</i>&nbsp;                chosenCard = playerControllers.get(j).getClient().chooseCards(cardPool, 1, chosenCards).get(0);</b>
+<b class="nc"><i>197</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>198</i>&nbsp;                throw new IOExceptionFromController(e, playerControllers.get(j));</b>
+<b class="nc"><i>199</i>&nbsp;            } catch (ClassNotFoundException e) {</b>
+<b class="nc"><i>200</i>&nbsp;                e.printStackTrace();</b>
+<b class="nc"><i>201</i>&nbsp;                return;</b>
+<b class="nc"><i>202</i>&nbsp;            }</b>
+<b class="nc"><i>203</i>&nbsp;            cardPool.remove(chosenCard);</b>
+<b class="nc"><i>204</i>&nbsp;            chosenCards.add(chosenCard);</b>
+<b class="nc"><i>205</i>&nbsp;            players.get(j).setGodCard(chosenCard);</b>
+<b class="nc"><i>206</i>&nbsp;            playerControllers.get(j).setGodController(chosenCard.getController());</b>
+<b class="nc"><i>207</i>&nbsp;            broadcastMessage((players.get(j).getId() + &quot; is &quot; + chosenCard.getGod() + &quot; (&quot; + players.get(j).getColor() + &quot;)\n&quot;));</b>
+<i>208</i>&nbsp;        }
+<b class="nc"><i>209</i>&nbsp;    }</b>
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;    private void chooseStartPlayer() throws IOExceptionFromController {
+<i>212</i>&nbsp;        try {
+<b class="nc"><i>213</i>&nbsp;            game.setActivePlayer(playerControllers.get(0).getClient().chooseStartingPlayer(players));</b>
+<b class="nc"><i>214</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>215</i>&nbsp;            throw new IOExceptionFromController(e, playerControllers.get(0));</b>
+<b class="nc"><i>216</i>&nbsp;        } catch (ClassNotFoundException e) {</b>
+<b class="nc"><i>217</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>218</i>&nbsp;        }</b>
+<b class="nc"><i>219</i>&nbsp;    }</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    /**
+<i>222</i>&nbsp;     * place the workers of all the players, asking them the localizations and then moving the workers there.
+<i>223</i>&nbsp;     */
+<i>224</i>&nbsp;    private void placeWorkers() throws IOExceptionFromController {
+<b class="nc"><i>225</i>&nbsp;        ArrayList&lt;Cell&gt; freePositions = game.getBoard().getAllCells();</b>
+<b class="nc"><i>226</i>&nbsp;        for (int i = 0; i &lt; game.getPlayerNum(); i++) {</b>
+<b class="nc"><i>227</i>&nbsp;            int p = game.getActivePlayer() + i;</b>
+<b class="nc"><i>228</i>&nbsp;            if (p &gt;= game.getPlayerNum()) p = p - game.getPlayerNum();</b>
+<b class="nc"><i>229</i>&nbsp;            PlayerController controller = playerControllers.get(p);</b>
+<b class="nc"><i>230</i>&nbsp;            for (int j = 0; j &lt; 2; j++) {</b>
+<i>231</i>&nbsp;                Cell position;
+<b class="nc"><i>232</i>&nbsp;                int w = j + 1;</b>
+<i>233</i>&nbsp;                try {
+<b class="nc"><i>234</i>&nbsp;                    position = controller.getClient().chooseStartPosition(freePositions, w);</b>
+<b class="nc"><i>235</i>&nbsp;                } catch (IOException e) {</b>
+<b class="nc"><i>236</i>&nbsp;                    throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>237</i>&nbsp;                } catch (ClassNotFoundException e) {</b>
+<b class="nc"><i>238</i>&nbsp;                    e.printStackTrace();</b>
+<b class="nc"><i>239</i>&nbsp;                    return;</b>
+<b class="nc"><i>240</i>&nbsp;                }</b>
+<b class="nc"><i>241</i>&nbsp;                freePositions.remove(position);</b>
+<b class="nc"><i>242</i>&nbsp;                Worker worker = new Worker(players.get(p), w);</b>
+<b class="nc"><i>243</i>&nbsp;                worker.setPosition(game.getBoard().getCell(position.getPosX(), position.getPosY()));</b>
+<b class="nc"><i>244</i>&nbsp;                players.get(p).addWorker(worker);</b>
+<b class="nc"><i>245</i>&nbsp;                broadcastPlaceWorker(worker.getPosition());</b>
+<i>246</i>&nbsp;            }
+<i>247</i>&nbsp;        }
+<b class="nc"><i>248</i>&nbsp;    }</b>
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;    /**
+<i>252</i>&nbsp;     * plays out the game and handles wins/losses
+<i>253</i>&nbsp;     */
+<i>254</i>&nbsp;    private void playGame() throws IOExceptionFromController {
+<b class="nc"><i>255</i>&nbsp;        for (Player player : players) {</b>
+<b class="nc"><i>256</i>&nbsp;            if (player.getGodCard().hasAlwaysActiveModifier()) game.addModifier(player.getGodCard());</b>
+<b class="nc"><i>257</i>&nbsp;        }</b>
+<b class="nc"><i>258</i>&nbsp;        while (!game.hasWinner()) {</b>
+<b class="nc"><i>259</i>&nbsp;            if (!running.get()) return;</b>
+<b class="nc"><i>260</i>&nbsp;            Player currentPlayer = players.get(game.getActivePlayer());</b>
+<b class="nc"><i>261</i>&nbsp;            for (Card modifier : game.getActiveModifiers()) {</b>
+<b class="nc"><i>262</i>&nbsp;                if (!modifier.hasAlwaysActiveModifier() &amp;&amp; modifier.getController().getPlayer().equals(currentPlayer))</b>
+<b class="nc"><i>263</i>&nbsp;                    game.removeModifier(modifier);</b>
+<b class="nc"><i>264</i>&nbsp;            }</b>
+<i>265</i>&nbsp;
+<b class="nc"><i>266</i>&nbsp;            broadcastGameInfo(&quot;turnStart&quot;);</b>
+<b class="nc"><i>267</i>&nbsp;            String result = playerControllers.get(game.getActivePlayer()).playTurn();</b>
+<b class="nc"><i>268</i>&nbsp;            switch (result) {</b>
+<i>269</i>&nbsp;                case &quot;next&quot;:
+<b class="nc"><i>270</i>&nbsp;                    checkWorkers();</b>
+<b class="nc"><i>271</i>&nbsp;                    game.nextPlayer();</b>
+<b class="nc"><i>272</i>&nbsp;                    break;</b>
+<i>273</i>&nbsp;                case &quot;outOfMoves&quot;:
+<i>274</i>&nbsp;                case &quot;outOfBuilds&quot;:
+<b class="nc"><i>275</i>&nbsp;                    eliminatePlayer(currentPlayer, result);</b>
+<b class="nc"><i>276</i>&nbsp;                    game.nextPlayer();</b>
+<b class="nc"><i>277</i>&nbsp;                    break;</b>
+<i>278</i>&nbsp;                case &quot;winConditionAchieved&quot;:
+<i>279</i>&nbsp;                case &quot;godConditionAchieved&quot;:
+<b class="nc"><i>280</i>&nbsp;                    setWinner(currentPlayer, result);</b>
+<b class="nc"><i>281</i>&nbsp;                    break;</b>
+<i>282</i>&nbsp;                default:
+<b class="nc"><i>283</i>&nbsp;                    System.out.println(&quot;ERROR: invalid turn&quot;);</b>
+<i>284</i>&nbsp;                    break;
+<i>285</i>&nbsp;            }
+<b class="nc"><i>286</i>&nbsp;        }</b>
+<b class="nc"><i>287</i>&nbsp;        if (!running.compareAndSet(true, false)) return;</b>
+<b class="nc"><i>288</i>&nbsp;        gameOver();</b>
+<b class="nc"><i>289</i>&nbsp;    }</b>
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    /**
+<i>292</i>&nbsp;     * checks if the game has reached the maximum number of players
+<i>293</i>&nbsp;     */
+<i>294</i>&nbsp;    public boolean checkPlayersNumber() {
+<b class="nc"><i>295</i>&nbsp;        return game.getPlayers().size() &gt;= game.getPlayerNum();</b>
+<i>296</i>&nbsp;    }
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;    /**
+<i>299</i>&nbsp;     * checks if any player has no workers left and, if so, removes them from the game
+<i>300</i>&nbsp;     */
+<i>301</i>&nbsp;    public void checkWorkers() throws IOExceptionFromController {
+<b class="nc"><i>302</i>&nbsp;        for (Player player : players) {</b>
+<b class="nc"><i>303</i>&nbsp;            if (player.getWorkers().size() == 0) eliminatePlayer(player, &quot;outOfWorkers&quot;);</b>
+<b class="nc"><i>304</i>&nbsp;        }</b>
+<b class="nc"><i>305</i>&nbsp;    }</b>
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;    public void handleDisconnection(PlayerController controller) {
+<b class="nc"><i>308</i>&nbsp;        if (!running.get()) return;</b>
+<b class="nc"><i>309</i>&nbsp;        if (playerControllers.contains(controller)) {</b>
+<b class="nc"><i>310</i>&nbsp;            if (!running.compareAndSet(true, false)) return;</b>
+<b class="nc"><i>311</i>&nbsp;            playerControllers.remove(controller);</b>
+<b class="nc"><i>312</i>&nbsp;            notifyDisconnection(controller.getPlayer());</b>
+<b class="nc"><i>313</i>&nbsp;            gameOver();</b>
+<i>314</i>&nbsp;        } else {
+<b class="nc"><i>315</i>&nbsp;            removeSpectators(controller);</b>
+<i>316</i>&nbsp;        }
+<b class="nc"><i>317</i>&nbsp;    }</b>
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;    /**
+<i>320</i>&nbsp;     * removes a player from the game, then sets the winner if only one player is left
+<i>321</i>&nbsp;     *
+<i>322</i>&nbsp;     * @param player the losing player
+<i>323</i>&nbsp;     * @param reason the reason why the player lost
+<i>324</i>&nbsp;     */
+<i>325</i>&nbsp;    private void eliminatePlayer(Player player, String reason) throws IOExceptionFromController {
+<b class="nc"><i>326</i>&nbsp;        player.setLost();</b>
+<b class="nc"><i>327</i>&nbsp;        notifyLoss(player, reason);</b>
+<b class="nc"><i>328</i>&nbsp;        ArrayList&lt;Player&gt; activePlayers = new ArrayList&lt;Player&gt;();</b>
+<b class="nc"><i>329</i>&nbsp;        for (Player activePlayer : players) {</b>
+<b class="nc"><i>330</i>&nbsp;            if (!activePlayer.hasLost()) activePlayers.add(activePlayer);</b>
+<b class="nc"><i>331</i>&nbsp;        }</b>
+<b class="nc"><i>332</i>&nbsp;        if (activePlayers.size() == 1) {</b>
+<b class="nc"><i>333</i>&nbsp;            setWinner(activePlayers.get(0), &quot;lastPlayerStanding&quot;);</b>
+<b class="nc"><i>334</i>&nbsp;            return;</b>
+<i>335</i>&nbsp;        }
+<b class="nc"><i>336</i>&nbsp;        for (Card modifier : game.getActiveModifiers()) {</b>
+<b class="nc"><i>337</i>&nbsp;            if (modifier.getController().getPlayer().equals(player))</b>
+<b class="nc"><i>338</i>&nbsp;                game.removeModifier(modifier);</b>
+<b class="nc"><i>339</i>&nbsp;        }</b>
+<b class="nc"><i>340</i>&nbsp;        for (Worker worker : player.getWorkers()) {</b>
+<b class="nc"><i>341</i>&nbsp;            player.removeWorker(worker);</b>
+<b class="nc"><i>342</i>&nbsp;        }</b>
+<b class="nc"><i>343</i>&nbsp;        broadcastGameInfo(&quot;eliminatePlayer&quot;);</b>
+<b class="nc"><i>344</i>&nbsp;    }</b>
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;    /**
+<i>347</i>&nbsp;     * sets a player as the winner
+<i>348</i>&nbsp;     *
+<i>349</i>&nbsp;     * @param player the losing player
+<i>350</i>&nbsp;     * @param reason the reason why the player lost
+<i>351</i>&nbsp;     */
+<i>352</i>&nbsp;    private void setWinner(Player player, String reason) {
+<b class="nc"><i>353</i>&nbsp;        game.setWinner(player);</b>
+<b class="nc"><i>354</i>&nbsp;        notifyWin(player, reason);</b>
+<b class="nc"><i>355</i>&nbsp;    }</b>
+<i>356</i>&nbsp;
+<i>357</i>&nbsp;    public void broadcastBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
+<b class="nc"><i>358</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>359</i>&nbsp;            try {
+<b class="nc"><i>360</i>&nbsp;                controller.getClient().displayBuild(buildPosition, godPower);</b>
+<b class="nc"><i>361</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>362</i>&nbsp;                throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>363</i>&nbsp;            }</b>
+<b class="nc"><i>364</i>&nbsp;        }</b>
+<b class="nc"><i>365</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>366</i>&nbsp;            try {
+<b class="nc"><i>367</i>&nbsp;                controller.getClient().displayBuild(buildPosition, godPower);</b>
+<b class="nc"><i>368</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>369</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>370</i>&nbsp;            }</b>
+<b class="nc"><i>371</i>&nbsp;        }</b>
+<b class="nc"><i>372</i>&nbsp;    }</b>
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    /**
+<i>375</i>&nbsp;     * broadcasts the Board associated with the current Game to all players and spectators
+<i>376</i>&nbsp;     */
+<i>377</i>&nbsp;    public void broadcastGameInfo(String desc) throws IOExceptionFromController {
+<b class="nc"><i>378</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>379</i>&nbsp;            try {
+<b class="nc"><i>380</i>&nbsp;                controller.getClient().displayGameInfo(game, desc);</b>
+<b class="nc"><i>381</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>382</i>&nbsp;                throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>383</i>&nbsp;            }</b>
+<b class="nc"><i>384</i>&nbsp;        }</b>
+<b class="nc"><i>385</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>386</i>&nbsp;            try {
+<b class="nc"><i>387</i>&nbsp;                controller.getClient().displayGameInfo(game, desc);</b>
+<b class="nc"><i>388</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>389</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>390</i>&nbsp;            }</b>
+<b class="nc"><i>391</i>&nbsp;        }</b>
+<b class="nc"><i>392</i>&nbsp;    }</b>
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    /**
+<i>395</i>&nbsp;     * shows the Board associated with the current Game to the specified player
+<i>396</i>&nbsp;     */
+<i>397</i>&nbsp;    public void displayGameInfo(PlayerController player, String desc) throws IOExceptionFromController {
+<i>398</i>&nbsp;        try {
+<b class="nc"><i>399</i>&nbsp;            player.getClient().displayGameInfo(game, desc);</b>
+<b class="nc"><i>400</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>401</i>&nbsp;            throw new IOExceptionFromController(e, player);</b>
+<b class="nc"><i>402</i>&nbsp;        }</b>
+<b class="nc"><i>403</i>&nbsp;    }</b>
+<i>404</i>&nbsp;
+<i>405</i>&nbsp;    /**
+<i>406</i>&nbsp;     * broadcasts the message received as an argument to all players and spectators
+<i>407</i>&nbsp;     *
+<i>408</i>&nbsp;     * @param message the message to show
+<i>409</i>&nbsp;     */
+<i>410</i>&nbsp;    public void broadcastMessage(String message) throws IOExceptionFromController {
+<b class="fc"><i>411</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>412</i>&nbsp;            try {
+<b class="fc"><i>413</i>&nbsp;                controller.getClient().displayMessage(message);</b>
+<b class="nc"><i>414</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>415</i>&nbsp;                throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>416</i>&nbsp;            }</b>
+<b class="nc"><i>417</i>&nbsp;        }</b>
+<b class="nc"><i>418</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>419</i>&nbsp;            try {
+<b class="nc"><i>420</i>&nbsp;                controller.getClient().displayMessage(message);</b>
+<b class="nc"><i>421</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>422</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>423</i>&nbsp;            }</b>
+<b class="nc"><i>424</i>&nbsp;        }</b>
+<b class="nc"><i>425</i>&nbsp;    }</b>
+<i>426</i>&nbsp;
+<i>427</i>&nbsp;    public void broadcastMove(HashMap&lt;CellView, CellView&gt; moves, Card godPower) throws IOExceptionFromController {
+<b class="nc"><i>428</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>429</i>&nbsp;            try {
+<b class="nc"><i>430</i>&nbsp;                controller.getClient().displayMove(moves, godPower);</b>
+<b class="nc"><i>431</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>432</i>&nbsp;                throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>433</i>&nbsp;            }</b>
+<b class="nc"><i>434</i>&nbsp;        }</b>
+<b class="nc"><i>435</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>436</i>&nbsp;            try {
+<b class="nc"><i>437</i>&nbsp;                controller.getClient().displayMove(moves, godPower);</b>
+<b class="nc"><i>438</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>439</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>440</i>&nbsp;            }</b>
+<b class="nc"><i>441</i>&nbsp;        }</b>
+<b class="nc"><i>442</i>&nbsp;    }</b>
+<i>443</i>&nbsp;
+<i>444</i>&nbsp;    public void broadcastPlaceWorker(Cell workerPosition) throws IOExceptionFromController {
+<b class="nc"><i>445</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>446</i>&nbsp;            try {
+<b class="nc"><i>447</i>&nbsp;                controller.getClient().displayPlaceWorker(workerPosition);</b>
+<b class="nc"><i>448</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>449</i>&nbsp;                throw new IOExceptionFromController(e, controller);</b>
+<b class="nc"><i>450</i>&nbsp;            }</b>
+<b class="nc"><i>451</i>&nbsp;        }</b>
+<b class="nc"><i>452</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>453</i>&nbsp;            try {
+<b class="nc"><i>454</i>&nbsp;                controller.getClient().displayPlaceWorker(workerPosition);</b>
+<b class="nc"><i>455</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>456</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>457</i>&nbsp;            }</b>
+<b class="nc"><i>458</i>&nbsp;        }</b>
+<b class="nc"><i>459</i>&nbsp;    }</b>
+<i>460</i>&nbsp;
+<i>461</i>&nbsp;    public void notifyDisconnection(Player player) {
+<b class="nc"><i>462</i>&nbsp;        for (PlayerController controller : getAllControllers()) {</b>
+<i>463</i>&nbsp;            try {
+<b class="nc"><i>464</i>&nbsp;                controller.getClient().notifyDisconnection(player);</b>
+<b class="nc"><i>465</i>&nbsp;            } catch (IOException e) {</b>
+<i>466</i>&nbsp;                // no need to handle disconnection, game is over
+<b class="nc"><i>467</i>&nbsp;            }</b>
+<b class="nc"><i>468</i>&nbsp;        }</b>
+<b class="nc"><i>469</i>&nbsp;    }</b>
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;    /**
+<i>472</i>&nbsp;     * notifies all players and spectators that the game is over
+<i>473</i>&nbsp;     */
+<i>474</i>&nbsp;    public void gameOver() {
+<b class="nc"><i>475</i>&nbsp;        if (running.get()) return;</b>
+<b class="nc"><i>476</i>&nbsp;        for (PlayerController controller : getAllControllers()) {</b>
+<b class="nc"><i>477</i>&nbsp;            controller.getClient().setPlayerController(null);</b>
+<i>478</i>&nbsp;            try {
+<b class="nc"><i>479</i>&nbsp;                controller.getClient().gameOver();</b>
+<b class="nc"><i>480</i>&nbsp;            } catch (IOException e) {</b>
+<i>481</i>&nbsp;                // no need to handle disconnection, game is over
+<b class="nc"><i>482</i>&nbsp;            }</b>
+<b class="nc"><i>483</i>&nbsp;        }</b>
+<b class="nc"><i>484</i>&nbsp;    }</b>
+<i>485</i>&nbsp;
+<i>486</i>&nbsp;    /**
+<i>487</i>&nbsp;     * notifies all players and spectators that a player has lost
+<i>488</i>&nbsp;     *
+<i>489</i>&nbsp;     * @param player the losing player
+<i>490</i>&nbsp;     * @param reason the reason why the player lost
+<i>491</i>&nbsp;     */
+<i>492</i>&nbsp;    public void notifyLoss(Player player, String reason) {
+<b class="nc"><i>493</i>&nbsp;        for (PlayerController controller : playerControllers) {</b>
+<i>494</i>&nbsp;            try {
+<b class="nc"><i>495</i>&nbsp;                controller.getClient().notifyLoss(player, reason);</b>
+<b class="nc"><i>496</i>&nbsp;            } catch (IOException e) {</b>
+<i>497</i>&nbsp;                // handled later in case game is already over
+<b class="nc"><i>498</i>&nbsp;            }</b>
+<b class="nc"><i>499</i>&nbsp;        }</b>
+<b class="nc"><i>500</i>&nbsp;        for (PlayerController controller : spectators) {</b>
+<i>501</i>&nbsp;            try {
+<b class="nc"><i>502</i>&nbsp;                controller.getClient().notifyLoss(player, reason);</b>
+<b class="nc"><i>503</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>504</i>&nbsp;                handleDisconnection(controller);</b>
+<b class="nc"><i>505</i>&nbsp;            }</b>
+<b class="nc"><i>506</i>&nbsp;        }</b>
+<b class="nc"><i>507</i>&nbsp;    }</b>
+<i>508</i>&nbsp;
+<i>509</i>&nbsp;    /**
+<i>510</i>&nbsp;     * notifies all players and spectators that a player has won
+<i>511</i>&nbsp;     *
+<i>512</i>&nbsp;     * @param player the winning player
+<i>513</i>&nbsp;     * @param reason the reason why the player won
+<i>514</i>&nbsp;     */
+<i>515</i>&nbsp;    public void notifyWin(Player player, String reason) {
+<b class="nc"><i>516</i>&nbsp;        for (PlayerController controller : getAllControllers()) {</b>
+<i>517</i>&nbsp;            try {
+<b class="nc"><i>518</i>&nbsp;                controller.getClient().notifyWin(player, reason);</b>
+<b class="nc"><i>519</i>&nbsp;            } catch (IOException e) {</b>
+<i>520</i>&nbsp;                // no need to handle disconnection, game is over
+<b class="nc"><i>521</i>&nbsp;            }</b>
+<b class="nc"><i>522</i>&nbsp;        }</b>
+<b class="nc"><i>523</i>&nbsp;    }</b>
+<i>524</i>&nbsp;
+<i>525</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-18 23:58</div>
+</div>
+</body>
+</html>

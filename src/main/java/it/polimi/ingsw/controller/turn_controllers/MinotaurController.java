@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,22 +46,23 @@ public class MinotaurController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
-        Card godPower = null;
+        boolean godPower = false;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
+        CellView startView = new CellView(activeWorker.getPosition());
+        CellView endView = new CellView(movePosition);
+        CellView startView2 = null;
+        CellView endView2 = null;
         // + allow pushing away opponents
         if (movePosition.hasWorker()) {
-            godPower = card;
+            godPower = true;
             Worker pushedWorker = movePosition.getWorker();
             Cell nextCell;
             int nextX = movePosition.getPosX() + (movePosition.getPosX() - activeWorker.getPosition().getPosX());
             int nextY = movePosition.getPosY() + (movePosition.getPosY() - activeWorker.getPosition().getPosY());
-            try {
-                nextCell = board.getCell(nextX, nextY);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("ERROR: out of bounds");
-                return;
-            }
+            nextCell = board.getCell(nextX, nextY);
+            startView2 = endView;
+            endView2 = new CellView(nextCell);
             try {
                 pushedWorker.move(nextCell);
             } catch (IllegalMoveException e) {
@@ -74,7 +76,8 @@ public class MinotaurController extends GodController {
         } catch (IllegalMoveException e) {
             System.out.println(e.getMessage());
         }
-        gameController.broadcastBoard("move", godPower);
+        if (godPower) displayMove(startView, endView, startView2, endView2, card);
+        else displayMove(startView, endView, null);
     }
 
     /**

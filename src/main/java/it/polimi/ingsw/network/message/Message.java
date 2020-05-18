@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public abstract class Message implements Serializable {
 
-    protected Object body;
+    protected String msgId;
 
-    public Message(Object body) {
-        this.body = body;
+    public Message(String msgId) {
+        this.msgId = "[" + java.time.LocalDateTime.now() + "] " + msgId;
     }
 
-    public Object getBody() {
-        return body;
+    public String getMsgId() {
+        return msgId;
     }
 
 }

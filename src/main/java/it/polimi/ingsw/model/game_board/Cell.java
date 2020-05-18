@@ -59,9 +59,7 @@ public class Cell {
      * @throws IllegalStateException when it's not possible to build on this cell
      */
     public void build() throws IllegalBuildException {
-        if (buildLevel > 3)
-            throw new IllegalBuildException("cell [" + posX + "," + posY + "] is at build level" + buildLevel);
-        if (hasDome) throw new IllegalBuildException("cell [" + posX + "," + posY + "] already has a dome");
+        if (hasDome) throw new IllegalBuildException("cell [" + posX + "," + posY + "] is at build level " + buildLevel + " and already has a dome");
         if (buildLevel == 3) hasDome = true;
         else this.buildLevel++;
     }

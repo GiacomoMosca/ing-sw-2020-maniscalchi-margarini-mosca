@@ -3,6 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface UI {
 
@@ -10,32 +11,48 @@ public interface UI {
 
     public void stop();
 
-    public void parseMessage(ToClientMessage message);
-
-    public void sendMessage(Object body);
-
     public String getServerIp();
 
-    public void chooseNickname(boolean taken);
+    public void parseMessage(ToClientMessage message);
 
-    public void chooseStartJoin();
+    public void sendBoolean(boolean body);
 
-    public void chooseGameRoom(ArrayList<GameView> gameRooms);
+    public void sendInteger(int body);
 
-    public void chooseGameName(boolean taken);
+    public void sendIntegers(ArrayList<Integer> body);
 
-    public void choosePlayersNumber();
+    public void sendString(String body);
 
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards);
 
+    public void chooseGameName(boolean taken);
+
+    public void chooseGameRoom(ArrayList<GameView> gameRooms);
+
+    public void chooseNickname(boolean taken);
+
+    public void choosePlayersNumber();
+
+    public void choosePosition(ArrayList<CellView> positions, String desc);
+
     public void chooseStartingPlayer(ArrayList<PlayerView> players);
+
+    public void chooseStartJoin();
+
+    /**
+     * @param query the question the player should answer to
+     * @return true if the player answered "yes", false if the player answered "no"
+     */
+    public void chooseYesNo(String query);
+
+    public void displayBuild(CellView buildPosition, CardView godCard);
 
     /**
      * shows the game board
      *
-     * @param board the Board of the current game
+     * @param game the Board of the current game
      */
-    public void updateGame(GameView board, String desc, CardView godPower);
+    public void displayGameInfo(GameView game, String desc);
 
     /**
      * shows a message
@@ -44,20 +61,16 @@ public interface UI {
      */
     public void displayMessage(String message);
 
-    public void choosePosition(ArrayList<CellView> positions, String desc);
+    public void displayMove(HashMap<CellView, CellView> moves, CardView godCard);
 
-    /**
-     * @param query the question the player should answer to
-     * @return true if the player answered "yes", false if the player answered "no"
-     */
-    public void chooseYesNo(String query);
+    public void displayPlaceWorker(CellView position);
+
+    public void notifyDisconnection(PlayerView player);
+
+    public void notifyGameOver();
 
     public void notifyLoss(PlayerView player, String reason);
 
     public void notifyWin(PlayerView player, String reason);
-
-    public void notifyDisconnection(PlayerView player);
-
-    public void gameOver();
 
 }

@@ -5,13 +5,16 @@ import it.polimi.ingsw.view.UI;
 
 public class NotifyDisconnection extends ToClientMessage {
 
-    public NotifyDisconnection(Object body) {
-        super(body);
+    protected PlayerView player;
+
+    public NotifyDisconnection(PlayerView player) {
+        super("notify disconnection");
+        this.player = player;
     }
 
     @Override
     public void performAction(UI client) {
-        client.notifyDisconnection((PlayerView) body);
+        client.notifyDisconnection(player);
     }
 
 }

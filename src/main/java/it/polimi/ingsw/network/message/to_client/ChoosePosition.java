@@ -7,16 +7,18 @@ import java.util.ArrayList;
 
 public class ChoosePosition extends ToClientMessage {
 
+    protected ArrayList<CellView> positions;
     protected String desc;
 
-    public ChoosePosition(Object body, String desc) {
-        super(body);
+    public ChoosePosition(ArrayList<CellView> positions, String desc) {
+        super("choose position");
+        this.positions = positions;
         this.desc = desc;
     }
 
     @Override
     public void performAction(UI client) {
-        client.choosePosition((ArrayList<CellView>) body, desc);
+        client.choosePosition(positions, desc);
     }
 
 }
