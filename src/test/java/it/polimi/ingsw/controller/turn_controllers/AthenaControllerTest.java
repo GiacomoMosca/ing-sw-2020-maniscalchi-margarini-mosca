@@ -52,7 +52,7 @@ public class AthenaControllerTest {
     }*/
 
     @Test
-    public void movePhase_NoInputGiven_shouldMoveTheWorkerAndAddTheModifier() {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerAndAddTheModifier() {
         fakeGameController.gameSetUp();
         assertEquals(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0, 1));
         assertSame(fakeGameController.getGame().getActiveModifiers().get(0), athenaController.card);

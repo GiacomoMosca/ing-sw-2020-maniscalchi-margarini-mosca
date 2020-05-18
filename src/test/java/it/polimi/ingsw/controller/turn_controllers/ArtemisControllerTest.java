@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.FakeGameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
@@ -23,10 +24,10 @@ public class ArtemisControllerTest {
 
     private ArtemisController artemisController = null;
     private ArtemisGameController fakeGameController = null;
-    private FakeVirtualView fakeVirtualView;
-    private Socket socket;
-    private ObjectInputStream ois;
-    private ObjectOutputStream ous;
+    private FakeVirtualView fakeVirtualView, fakeVirtualView1;
+    private Socket socket, socket1;
+    private ObjectInputStream ois, objectInputStream1;
+    private ObjectOutputStream ous, objectOutputStream1;
 
     @Before
     public void setUp() throws Exception {
@@ -62,7 +63,7 @@ public class ArtemisControllerTest {
         }*/
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWONAfterTheFirstMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWonAfterTheFirstMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
         fakeGameController.getGame().getBoard().getCell(1, 2).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 1).setBuildLevel(3);
 
@@ -71,7 +72,7 @@ public class ArtemisControllerTest {
     }
 
     @Test
-    public void runPhasesAndFindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWONAfterTheSecondMoveAndArrayListOfAllNeighbors() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhasesAndFindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWonAfterTheSecondMoveAndArrayListOfAllNeighbors() throws IOException, ClassNotFoundException, IOExceptionFromController {
         fakeGameController.getGame().getBoard().getCell(1, 2).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 1).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 0).setBuildLevel(3);
@@ -104,6 +105,35 @@ public class ArtemisControllerTest {
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
 
         artemisController.runPhases(worker);
+    }
+
+    @Test
+    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        //a client who tries to move in a domed cell
+        class FakeVirtualViewToGenerateException extends FakeVirtualView {
+            public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
+                super(socket, objectInputStream, objectOutputStream);
+            }
+
+            @Override
+            public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) {
+                return (fakeGameController.getGame().getBoard().getCell(1, 1));
+            }
+        }
+
+        //new initialization needed to use FakeVirtualViewToGenerateException instead of FakeVirtualView
+        socket1 = new Socket();
+        fakeVirtualView1 = new FakeVirtualViewToGenerateException(socket1, objectInputStream1, objectOutputStream1);
+        fakeGameController = new ArtemisGameController(fakeVirtualView1, 1, "ArtemisTest");
+        artemisController = new ArtemisController(fakeGameController);
+        artemisController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
+        Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(1, 2));
+        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        artemisController.activeWorker = worker;
+        fakeGameController.getGame().getBoard().getCell(1, 1).buildDome();
+
+        artemisController.movePhase();
     }
 
     public class ArtemisGameController extends FakeGameController {

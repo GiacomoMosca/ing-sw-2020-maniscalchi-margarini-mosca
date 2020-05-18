@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FakeVirtualView extends VirtualView {
 
@@ -18,13 +19,6 @@ public class FakeVirtualView extends VirtualView {
         super(socket, objectInputStream, objectOutputStream);
     }
 
-    @Override
-    public void updateGame(Game game, String desc, Card card) throws IOException {
-    }
-
-    @Override
-    public void displayMessage(String message) throws IOException {
-    }
 
     @Override
     public Worker chooseWorker(ArrayList<Worker> workers) throws IOException, ClassNotFoundException {
@@ -44,6 +38,31 @@ public class FakeVirtualView extends VirtualView {
     @Override
     public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
         return true;
+    }
+
+    @Override
+    public void displayBuild(CellView buildPosition, Card godPower) throws IOException {
+        //
+    }
+
+    @Override
+    public void displayGameInfo(Game game, String desc) throws IOException {
+        //
+    }
+
+    @Override
+    public void displayMessage(String message) throws IOException {
+        //
+    }
+
+    @Override
+    public void displayMove(HashMap<CellView, CellView> moves, Card godPower) throws IOException {
+        //
+    }
+
+    @Override
+    public void displayPlaceWorker(Cell workerPosition) throws IOException {
+        //
     }
 
 }

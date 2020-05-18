@@ -208,7 +208,12 @@ public class CLI implements UI {
     public void chooseGameName(boolean taken) {
         if (taken) System.out.println("\nName already taken. ");
         else System.out.println("\nChoose a name for your game room: ");
-        String gameRoom = getString();
+        String gameRoom;
+        while (true) {
+            gameRoom = getString();
+            if (gameRoom.length() > 12) System.out.println("Invalid input (max 12 characters). ");
+            else break;
+        }
         sendString(gameRoom);
     }
 
@@ -248,7 +253,11 @@ public class CLI implements UI {
     public void chooseNickname(boolean taken) {
         if (taken) System.out.println("\nNickname already taken. ");
         else System.out.println("\nChoose your nickname: ");
-        id = getString();
+        while (true) {
+            id = getString();
+            if (id.length() > 12) System.out.println("Invalid input (max 12 characters). ");
+            else break;
+        }
         sendString(null);
     }
 

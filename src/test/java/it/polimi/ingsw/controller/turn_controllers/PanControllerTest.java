@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class PanControllerTest {
 
     private PanController panController;
-    private PanGameController fakeGameController;
+    private PanGameController fakeGameController1, fakeGameController2, fakeGameController3;
     private FakeVirtualView fakeVirtualView;
     private Socket socket;
     private ObjectInputStream objectInputStream;
@@ -30,8 +30,10 @@ public class PanControllerTest {
     public void setUp() throws Exception {
         socket = new Socket();
         fakeVirtualView = new FakeVirtualView(socket, objectInputStream, objectOutputStream);
-        fakeGameController = new PanGameController(fakeVirtualView, 1, "PanTest");
-        panController = new PanController(fakeGameController);
+        fakeGameController1 = new PanGameController(fakeVirtualView, 1, "PanTest", 1);
+        fakeGameController2 = new PanGameController(fakeVirtualView, 1, "PanTest", 2);
+        fakeGameController3 = new PanGameController(fakeVirtualView, 1, "PanTest", 3);
+        panController = new PanController(fakeGameController1);
     }
 
     @After
@@ -50,15 +52,32 @@ public class PanControllerTest {
     }
 
     @Test
-    public void checkWin_noInputGiven_shouldReturnTrue() {
-        fakeGameController.gameSetUp();
+    public void checkWin_noInputGiven_shouldReturnGodConditionAchieved() {
+        fakeGameController1.gameSetUp();
         assertEquals(panController.checkWin(), "godConditionAchieved");
+    }
+
+    @Test
+    public void checkWin_noInputGiven_shouldReturnWinConditionAchieved() {
+        panController = new PanController(fakeGameController2);
+        fakeGameController2.gameSetUp();
+        assertEquals(panController.checkWin(), "winConditionAchieved");
+    }
+
+    @Test
+    public void checkWin_noInputGiven_shouldReturnNope() {
+        panController = new PanController(fakeGameController3);
+        fakeGameController3.gameSetUp();
+        assertEquals(panController.checkWin(), "nope");
     }
 
     public class PanGameController extends FakeGameController {
 
-        public PanGameController(VirtualView client, int num, String gameName) {
+        int test;
+
+        public PanGameController(VirtualView client, int num, String gameName, int test) {
             super(client, num, gameName);
+            this.test = test;
         }
 
         @Override
@@ -88,7 +107,13 @@ public class PanControllerTest {
         }
 
         private void placeBuildings() {
-            game.getBoard().getCell(0, 1).setBuildLevel(0);
+            if (test == 1) {
+                game.getBoard().getCell(0, 1).setBuildLevel(0);
+            } else if (test == 2) {
+                game.getBoard().getCell(0, 1).setBuildLevel(3);
+            } else if (test == 3) {
+                game.getBoard().getCell(0, 1).setBuildLevel(1);
+            }
         }
 
     }

@@ -2,8 +2,12 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
+import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.VirtualView;
+
+import java.util.HashMap;
 
 public class FakeGameController extends GameController {
 
@@ -27,7 +31,28 @@ public class FakeGameController extends GameController {
     }
 
     @Override
-    public void broadcastBoard(String desc, Card card) {
+    public void broadcastBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
         //
     }
+
+    @Override
+    public void displayGameInfo(PlayerController player, String desc) throws IOExceptionFromController {
+        //
+    }
+
+    @Override
+    public void broadcastMessage(String message) throws IOExceptionFromController {
+        //
+    }
+
+    @Override
+    public void broadcastMove(HashMap<CellView, CellView> moves, Card godPower) throws IOExceptionFromController {
+        //
+    }
+
+    @Override
+    public void broadcastPlaceWorker(Cell workerPosition) throws IOExceptionFromController {
+        //
+    }
+
 }

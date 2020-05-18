@@ -71,7 +71,7 @@ public class MedusaControllerTest<MedudsaController> {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnNEXTAndBuildWhereAnOpponentWorkerStood() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnNextAndBuildWhereAnOpponentWorkerStood() throws IOException, ClassNotFoundException, IOExceptionFromController {
         socket2 = new Socket();
         genericController = new GodControllerConcrete(fakeGameController);
         fakeVirtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
@@ -97,6 +97,35 @@ public class MedusaControllerTest<MedudsaController> {
 
         assertEquals(medusaController.runPhases(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0)), "next");
         assertEquals(fakeGameController.getGame().getBoard().getCell(0, 0).getBuildLevel(), 1);
+    }
+
+    @Test
+    public void runPhases_workerGiven_shouldGenerateIllegalBuildException() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        socket2 = new Socket();
+        genericController = new GodControllerConcrete(fakeGameController);
+        fakeVirtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        Player player2 = new Player(fakeVirtualView2.getId(), "color");
+        PlayerController playerController = new PlayerController(player2, fakeVirtualView2, fakeGameController);
+        fakeGameController.getGame().addPlayer(player2);
+        Deck deck = fakeGameController.getGame().getDeck();
+        Card card = medusaController.generateCard();
+        deck.addCard(card);
+        deck.addCard(new Card("god", "title", "description", 1, false, genericController));
+        fakeGameController.getGame().getPlayers().get(0).setGodCard(card);
+        medusaController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView1);
+        fakeGameController.getGame().getPlayers().get(1).setGodCard(deck.getCards().get(1));
+        genericController.setPlayer(fakeGameController.getGame().getPlayers().get(1), fakeVirtualView2);
+        Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(2, 2));
+        fakeGameController.getGame().getBoard().getCell(1, 1).setBuildLevel(1);
+        fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
+        medusaController.activeWorker = worker;
+        Worker worker2 = new Worker(fakeGameController.getGame().getPlayers().get(1), 1);
+        worker2.setPosition(fakeGameController.getGame().getBoard().getCell(0, 0));
+        fakeGameController.getGame().getBoard().getCell(0, 0).buildDome();
+        fakeGameController.getGame().getPlayers().get(1).addWorker(worker2);
+
+        medusaController.runPhases(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0));
     }
 
     public class MedusaGameController extends FakeGameController {

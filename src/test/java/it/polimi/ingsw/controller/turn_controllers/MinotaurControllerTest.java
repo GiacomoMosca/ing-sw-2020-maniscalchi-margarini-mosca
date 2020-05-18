@@ -56,14 +56,24 @@ public class MinotaurControllerTest {
         genericController.setPlayer(fakeGameController.getGame().getPlayers().get(1), fakeVirtualView2);
 
         Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
-        worker.setPosition(fakeGameController.getGame().getBoard().getCell(0, 0));
+        worker.setPosition(fakeGameController.getGame().getBoard().getCell(3, 3));
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
         minotaurController.activeWorker = worker;
 
         Worker worker2 = new Worker(fakeGameController.getGame().getPlayers().get(1), 1);
-        worker2.setPosition(fakeGameController.getGame().getBoard().getCell(0, 1));
+        worker2.setPosition(fakeGameController.getGame().getBoard().getCell(2, 2));
         fakeGameController.getGame().getPlayers().get(1).addWorker(worker2);
         genericController.activeWorker = worker2;
+
+        Worker worker3 = new Worker(fakeGameController.getGame().getPlayers().get(1), 2);
+        worker3.setPosition(fakeGameController.getGame().getBoard().getCell(2, 3));
+        fakeGameController.getGame().getPlayers().get(1).addWorker(worker3);
+
+        Worker worker4 = new Worker(fakeGameController.getGame().getPlayers().get(1), 3);
+        worker4.setPosition(fakeGameController.getGame().getBoard().getCell(2, 4));
+        fakeGameController.getGame().getPlayers().get(1).addWorker(worker3);
+
+        fakeGameController.getGame().getBoard().getCell(1, 3).buildDome();
     }
 
     @After
@@ -82,19 +92,22 @@ public class MinotaurControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkersPushingAwayTheOpponent() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerPushingAwayTheOpponent() throws IOException, ClassNotFoundException, IOExceptionFromController {
         minotaurController.movePhase();
-        assertEquals(fakeGameController.getGame().getBoard().getCell(0, 1).getWorker(), fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0));
-        assertEquals(fakeGameController.getGame().getBoard().getCell(0, 2).getWorker(), fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0));
+        assertEquals(fakeGameController.getGame().getBoard().getCell(2, 2).getWorker(), fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0));
+        assertEquals(fakeGameController.getGame().getBoard().getCell(1, 1).getWorker(), fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0));
     }
 
     @Test
     public void findPossibleMoves_workerPositionGiven_shouldReturnAnArrayListWithAllTheNeighbors() {
-        assertEquals(fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getBoard().getCell(0, 0)), minotaurController.findPossibleMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition()));
+        ArrayList<Cell> goodNeighbors = fakeGameController.getGame().getBoard().getNeighbors(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
+        goodNeighbors.remove(fakeGameController.getGame().getBoard().getCell(2, 3));
+        goodNeighbors.remove(fakeGameController.getGame().getBoard().getCell(2, 4));
+        assertEquals(minotaurController.findPossibleMoves(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition()), goodNeighbors);
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateTwoMovingExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateTwoInvalidMoveExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
         //a client who chooses to move in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
