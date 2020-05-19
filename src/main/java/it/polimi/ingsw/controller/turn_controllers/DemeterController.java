@@ -13,16 +13,16 @@ import java.util.ArrayList;
 public class DemeterController extends GodController {
 
     /**
-     * creates a Demeter controller for this game
+     * Creates a Demeter controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public DemeterController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Demeter to their correct values
+     * Sets all the attributes of the God Card Demeter to their actual values.
      *
      * @return a complete Card
      */
@@ -41,7 +41,8 @@ public class DemeterController extends GodController {
     }
 
     /**
-     * handles the building phase of the turn, and eventually allows building one additional time, but not on the same space
+     * Handles the building phase of the turn, and eventually allows building one additional time, but not on the same
+     * space.
      */
     @Override
     public void buildPhase() throws NullPointerException, IOException, ClassNotFoundException, IOExceptionFromController {

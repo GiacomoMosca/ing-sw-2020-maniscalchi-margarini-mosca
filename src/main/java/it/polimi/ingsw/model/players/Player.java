@@ -4,6 +4,9 @@ import it.polimi.ingsw.model.cards.Card;
 
 import java.util.ArrayList;
 
+/**
+ * do we need to write a JavaDoc comment for every single class?
+ */
 public class Player {
 
     private final String id;
@@ -13,7 +16,7 @@ public class Player {
     private boolean hasLost;
 
     /**
-     * sets all the attributes associated with the player
+     * Sets all the attributes associated with the player to their actual values.
      *
      * @param id    the string that identifies the player
      * @param color the color associated with the player
@@ -48,7 +51,7 @@ public class Player {
     }
 
     /**
-     * sets the God Card received as an argument as the God Card associated with the player
+     * Sets the God Card received as an argument as the God Card associated with the player.
      *
      * @param godCard
      */
@@ -57,35 +60,42 @@ public class Player {
     }
 
     /**
-     * @return the list of the workers associated with this player
+     * @return an ArrayList of Worker objects associated with this player
      */
     public ArrayList<Worker> getWorkers() {
         return new ArrayList<Worker>(workers);
     }
 
     /**
-     * adds the worker received as an argument to the list of the workers associated with the player
+     * Adds the worker received as an argument to the list of the workers associated with the player.
      *
-     * @param worker
+     * @param worker the worker to add
      */
     public void addWorker(Worker worker) {
         workers.add(worker);
     }
 
     /**
-     * removes the worker from the list of the workers associated with the player
+     * Removes the worker received as an argument from the list of the workers associated with the player.
      *
-     * @param worker
+     * @param worker the worker to remove
      */
     public void removeWorker(Worker worker) {
         worker.getPosition().setWorker(null);
         workers.remove(worker);
     }
 
+    /**
+     *
+     * @return true if the player has lost, false otherwise
+     */
     public boolean hasLost() {
         return hasLost;
     }
 
+    /**
+     * Sets to the value true the parameter stating this player has lost.
+     */
     public void setLost() {
         hasLost = true;
     }

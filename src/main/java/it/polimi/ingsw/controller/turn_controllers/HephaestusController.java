@@ -13,16 +13,16 @@ import java.util.ArrayList;
 public class HephaestusController extends GodController {
 
     /**
-     * creates an Hephaestus controller for this game
+     * Creates an Hephaestus controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public HephaestusController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Hephaestus to their correct values
+     * Sets all the attributes of the God Card Hephaestus to their actual values.
      *
      * @return the complete Card
      */
@@ -41,7 +41,8 @@ public class HephaestusController extends GodController {
     }
 
     /**
-     * handles the building phase of the turn, which can be duplicated if the player wants
+     * Handles the building phase of the turn, which can be duplicated if the player wants: the player can build two
+     * times on the same block (not a dome).
      */
     @Override
     public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {

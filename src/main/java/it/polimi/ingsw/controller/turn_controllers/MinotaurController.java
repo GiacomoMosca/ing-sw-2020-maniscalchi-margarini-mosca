@@ -14,16 +14,16 @@ import java.util.ArrayList;
 public class MinotaurController extends GodController {
 
     /**
-     * creates a Minotaur controller for this game
+     * Creates a Minotaur controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public MinotaurController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Minotaur to their correct values
+     * Sets all the attributes of the God Card Minotaur to their actual values.
      *
      * @return the complete Card
      */
@@ -42,7 +42,9 @@ public class MinotaurController extends GodController {
     }
 
     /**
-     * handles the moving phase of the turn, allowing pushing away opponent workers
+     * Handles the moving phase of the turn, allowing pushing away opponent workers. If the player chooses to move to a
+     * cell occupied by an opponent worker, checks if it is unoccupied: if it's free, handles the pushing away of the
+     * opponent worker.
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
@@ -84,11 +86,12 @@ public class MinotaurController extends GodController {
     }
 
     /**
-     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
-     * also allows the worker to move to cells occupied by opponents (if they can be pushed away)
+     * Returns all the cells where a worker can move, with the only restrictions due to the general rules (other
+     * workers, domes, building levels). Also allows the worker to move to cells occupied by opponents (if they can be
+     * pushed away).
      *
      * @param workerPosition the position of the worker
-     * @return all the cells where a worker can move
+     * @return               all the cells where a worker can move
      */
     @Override
     public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

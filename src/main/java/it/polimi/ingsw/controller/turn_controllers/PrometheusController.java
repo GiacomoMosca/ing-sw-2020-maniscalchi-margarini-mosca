@@ -16,16 +16,16 @@ public class PrometheusController extends GodController {
     private boolean wantBuildBefore;
 
     /**
-     * creates a Prometheus controller for this game
+     * Creates a Prometheus controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public PrometheusController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Prometheus to their correct values
+     * Sets all the attributes of the God Card Prometheus to their actual values.
      *
      * @return the complete Card
      */
@@ -45,8 +45,9 @@ public class PrometheusController extends GodController {
 
 
     /**
-     * handles the phases of a turn: moving and building (which may be allowed two times, both before and after moving)
+     * Handles the phases of a turn: moving and building (which may be allowed two times, both before and after moving).
      *
+     * @param worker the active worker during this turn
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
@@ -86,7 +87,7 @@ public class PrometheusController extends GodController {
     }
 
     /**
-     * handles the moving phase of the turn: normally handles the phase if the player didn't build before moving;
+     * Handles the moving phase of the turn. If the player didn't build before moving, normally handles the phase;
      * otherwise doesn't allow him to move up
      */
     @Override
@@ -107,10 +108,10 @@ public class PrometheusController extends GodController {
     }
 
     /**
-     * finds all the possible moves that don't move up
+     * Finds all the possible moves that don't require moving up.
      *
-     * @param workerPosition the position of the worker
-     * @return all the cells where a worker can move
+     * @param workerPosition    the position of the worker
+     * @return                  all the cells where a worker can move
      */
     protected ArrayList<Cell> findPossibleMovesNoUp(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);

@@ -2,12 +2,15 @@ package it.polimi.ingsw.model.game_board;
 
 import java.util.ArrayList;
 
+/**
+ * do we need to write a JavaDoc comment for every single class?
+ */
 public class Board {
 
     private final Cell[][] cells;
 
     /**
-     * creates a new Board for the Game, having 25 cells
+     * Creates a new Board for the game, instantiating an ArrayList of 25 Cell objects.
      */
     public Board() {
         this.cells = new Cell[5][5];
@@ -17,9 +20,9 @@ public class Board {
     }
 
     /**
-     * @param x the x-coordinate of the requested cell
-     * @param y the y-coordinate of the requested cell
-     * @return the requested cell
+     * @param x the x-coordinate of the requested cell, ie the column
+     * @param y the y-coordinate of the requested cell, ie the row
+     * @return  the requested Cell object
      * @throws ArrayIndexOutOfBoundsException when the requested coordinates don't identify a cell of the Board
      */
     public Cell getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
@@ -27,6 +30,9 @@ public class Board {
         return cells[y][x];
     }
 
+    /**
+     * @return an ArrayList of Cell objects, containing all the cells of the board of this game
+     */
     public ArrayList<Cell> getAllCells() {
         ArrayList<Cell> allCells = new ArrayList<Cell>();
         for (int i = 0; i < 5; i++)
@@ -36,7 +42,7 @@ public class Board {
     }
 
     /**
-     * @param cell the Cell we want to set
+     * @param cell the Cell object we want to set
      * @param x    the x-coordinate of the cell
      * @param y    the y-coordinate of the cell
      * @throws ArrayIndexOutOfBoundsException when trying to set a cell with coordinates that don't identify a cell of the Board
@@ -47,8 +53,8 @@ public class Board {
     }
 
     /**
-     * @param pos the cell indicating the position we want to know the neighbors of
-     * @return a list of all the cells surrounding the requested one
+     * @param pos   the Cell object indicating the position we want to know the neighbors of
+     * @return      a list of all the cells surrounding the requested one
      */
     public ArrayList<Cell> getNeighbors(Cell pos) {
         Cell curr;
@@ -69,12 +75,11 @@ public class Board {
     }
 
     /**
-     * Indicates whether some other board is "equal to" this one.
+     * Indicates whether some other board is equal to this one.
      *
-     * @param obj the reference object with which to compare
-     * @return true if this board is the same as the obj argument, false otherwise.
+     * @param obj   the reference object with which to compare
+     * @return      true if this board is the same as the obj argument, false otherwise.
      */
-
     //////////////////////////////////////////////
     // EQUALS DA MODIFICARE !!! (RENDERE GENERICA)
     //////////////////////////////////////////////

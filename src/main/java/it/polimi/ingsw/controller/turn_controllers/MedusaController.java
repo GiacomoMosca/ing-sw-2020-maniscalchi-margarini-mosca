@@ -13,7 +13,7 @@ import java.io.IOException;
 public class MedusaController extends GodController {
 
     /**
-     * creates a Medusa controller for this game
+     * Creates a Medusa controller for this game.
      *
      * @param gameController
      */
@@ -22,7 +22,7 @@ public class MedusaController extends GodController {
     }
 
     /**
-     * sets all the attributes of the card to their correct values
+     * Sets all the attributes of the card to their actual values.
      *
      * @return a complete Card
      */
@@ -41,11 +41,11 @@ public class MedusaController extends GodController {
     }
 
     /**
-     * handles the basic phases of a turn: moving and building.
-     * At the end of the turn if any opponent’s Workers occupy lower neighboring spaces,
-     * replace them all with blocks and remove them from the game.
+     * Handles the basic phases of a turn: moving and building.
+     * At the end of the turn, if opponent workers occupy lower neighboring spaces, replaces them all with blocks and
+     * removes them from the game.
      *
-     * @param worker
+     * @param worker the active worker during this turn
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override

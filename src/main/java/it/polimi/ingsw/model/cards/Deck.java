@@ -3,13 +3,17 @@ package it.polimi.ingsw.model.cards;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * do we need to write a JavaDoc comment for every single class?
+ */
 public class Deck {
 
     private final ArrayList<Card> cards;
     private final ArrayList<Card> pickedCards;
 
     /**
-     * creates two ArrayList, one for all the God Power Cards and one for the cards used in the current Game
+     * Creates a Deck object, instantiating two ArrayList: one for all the God Cards and one for the cards effectively
+     * used in the current Game.
      */
     public Deck() {
         cards = new ArrayList<Card>();
@@ -17,31 +21,31 @@ public class Deck {
     }
 
     /**
-     * @return a list of all the God Power Cards
+     * @return an ArrayList containing all the God Cards
      */
     public ArrayList<Card> getCards() {
         return new ArrayList<Card>(cards);
     }
 
     /**
-     * @param card adds a God Power Card to the deck
+     * @param card adds the God Card received as an argument to the deck
      */
     public void addCard(Card card) {
         cards.add(card);
     }
 
     /**
-     * @return a list of all the God Power Cards picked up for this game
+     * @return an ArrayList of all the God Cards picked up for this game
      */
     public ArrayList<Card> getPickedCards() {
         return new ArrayList<Card>(pickedCards);
     }
 
     /**
-     * adds a card to the list of the picked cards to use for the current Game
+     * Adds a Card object to the list of the picked cards to use for the current Game.
      *
      * @param card the Card we want to use
-     * @throws IllegalArgumentException if the card is already part of the picked ones
+     * @throws IllegalArgumentException if the Card object received as an argument is already part of the picked cards
      */
     public void pickCard(Card card) throws IllegalArgumentException {
         if (pickedCards.contains(card)) throw new IllegalArgumentException();
@@ -49,16 +53,17 @@ public class Deck {
     }
 
     /**
-     * removes the card from the deck of the picked cards
+     * Removes the Card object received as an argument from the deck of the picked cards.
      *
-     * @param card
+     * @param card the Card object we want to remove
      */
     public void removePickedCard(Card card) {
         pickedCards.remove(card);
     }
 
     /**
-     * randomly pick n cards from the deck
+     * Randomly picks n Card objects from the deck. Before doing this, checks that the requested cards aren't more than
+     * those available.
      *
      * @param n the number of cards to pick from the deck
      * @throws IndexOutOfBoundsException when trying to pick more cards than those available
@@ -75,8 +80,8 @@ public class Deck {
     /**
      * Indicates whether some other deck is "equal to" this one.
      *
-     * @param obj the reference object with which to compare
-     * @return true if this deck is the same as the obj argument, false otherwise.
+     * @param obj   the reference object with which to compare
+     * @return      true if this deck is the same as the obj argument, false otherwise
      */
     @Override
     public boolean equals(Object obj) {
