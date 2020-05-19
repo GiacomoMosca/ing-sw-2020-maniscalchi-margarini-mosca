@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="1080.0" maxWidth="1920.0" pickOnBounds="true" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameChoiceController">
+   <children>
+      <ImageView fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/menu/santorini-review-main-1.jpg" />
+         </image></ImageView>
+      <Button layoutX="371.0" layoutY="271.0" mnemonicParsing="false" text="New Game" />
+      <Button layoutX="516.0" layoutY="271.0" mnemonicParsing="false" text="Join Game" />
+   </children>
+</AnchorPane>

@@ -2,6 +2,7 @@ package it.polimi.ingsw.network.client;
 
 import it.polimi.ingsw.view.UI;
 import it.polimi.ingsw.view.cli.CLI;
+import it.polimi.ingsw.view.gui.GUI;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -29,11 +30,9 @@ public class Client {
         }
         if (choice == 1)
             userInterface = new CLI();
-        else {
-            //userInterface = new GUI();
-            System.out.println("Coming soon :) \n");
-            userInterface = new CLI();
-        }
+        else
+            userInterface = new GUI();
+
         userInterface.run();
     }
 

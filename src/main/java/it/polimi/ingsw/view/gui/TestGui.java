@@ -2,9 +2,10 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.view.*;
 import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 /**
@@ -15,12 +16,15 @@ public class TestGui extends Application {
 
     GameView preparedBoard;
 
+    @FXML
+    private TextField serverIP;
+
     public static void main(String[] args) {
         TestGui.launch();
     }
 
     public void start(Stage stage) throws IOException {
-
+        /*
         ArrayList<PlayerView> players=new ArrayList<>();
         PlayerView player1=new PlayerView("player1", "red", "card1", false);
         PlayerView player2=new PlayerView("player2", "green", "card2", false);
@@ -63,10 +67,12 @@ public class TestGui extends Application {
         board[4][4] = new CellView(4, 4, 1, true, null);
 
 
-        preparedBoard=new GameView(players, board, cardViews);
+        preparedBoard=new GameView("test",3,players, board, cardViews);
+        */
 
-        Gui gui=new Gui();
-        gui.initBoard(preparedBoard);
-        gui.displayBoard(preparedBoard, "desc", card1);
+        GUI gui=new GUI();
+        //gui.initBoard(preparedBoard);
+        //gui.displayBoard(preparedBoard, "desc", card1);
+
     }
 }

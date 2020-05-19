@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1080.0" maxWidth="1920.0" pickOnBounds="true" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GUI">
+    <children>
+        <ImageView fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/menu/santorini-review-main-2.jpg" />
+            </image></ImageView>
+        <Label fx:id="insertNicknameText" layoutX="267.0" layoutY="254.0" text="Scegli il tuo nickname:">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <TextField fx:id="nickname" layoutX="456.0" layoutY="256.0" promptText="Nickname" />
+        <Button fx:id="chooseButton" layoutX="622.0" layoutY="256.0" mnemonicParsing="false" onAction="#handleChooseButton" text="Choose" />
+    </children>
+</AnchorPane>

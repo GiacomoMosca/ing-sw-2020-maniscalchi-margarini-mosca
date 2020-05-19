@@ -165,15 +165,14 @@ public class GameBoardController {
                     GridPane.setMargin(level, new Insets(0,2,4,0));
                     gridPane.add(level, cell.getPosX(), cell.getPosY());
                 }
-            }
+            }/*
             if (cell.hasWorker()){
                 GridPane.setRowIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosY());
                 GridPane.setColumnIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosX());
                 GridPane.setHalignment(imageViewForThisColor.get(cell.getWorkerColor()), HPos.CENTER);
                 imageViewForThisColor.get(cell.getWorkerColor()).setVisible(true);
                 imageViewForThisColor.get(cell.getWorkerColor()).toFront();
-
-            }
+            }*/
             if (cell.isDomed()){
                 ImageView dome=new ImageView("assets/buildings/dome.png");
                 dome.setFitWidth(66);
