@@ -50,6 +50,10 @@ public class VirtualView {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public PlayerController getPlayerController() {
         return playerController;
     }
