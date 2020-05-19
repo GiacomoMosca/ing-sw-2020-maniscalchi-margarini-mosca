@@ -13,16 +13,16 @@ import java.util.ArrayList;
 public class AtlasController extends GodController {
 
     /**
-     * creates an Atlas controller for this game
+     * Creates an Atlas controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public AtlasController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Atlas to their correct values
+     * Sets all the attributes of the God Card Atlas to their correct values.
      *
      * @return a complete Card
      */
@@ -41,7 +41,7 @@ public class AtlasController extends GodController {
     }
 
     /**
-     * handles the building phase of the turn, and allows building domes at any level
+     * Handles the building phase of the turn, and allows building domes at any level.
      */
     @Override
     public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {

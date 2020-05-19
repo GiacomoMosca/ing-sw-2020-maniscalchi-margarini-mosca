@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class ApolloController extends GodController {
 
     /**
-     * creates an Apollo controller for this game
+     * Creates an Apollo controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public ApolloController(GameController gameController) {
         super(gameController);
@@ -24,7 +24,7 @@ public class ApolloController extends GodController {
 
 
     /**
-     * sets all the attributes of the God Card Apollo to their correct values
+     * Sets all the attributes of the God Card Apollo to their actual values.
      *
      * @return a complete Card
      */
@@ -43,7 +43,11 @@ public class ApolloController extends GodController {
     }
 
     /**
-     * handles the moving phase of the turn, and eventually allows swapping position with opponents
+     * Handles the moving phase of the turn, and eventually allows swapping position with opponent workers.
+     * If the player chooses a move that requires swapping positions, handles this change.
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
@@ -74,11 +78,11 @@ public class ApolloController extends GodController {
     }
 
     /**
-     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
-     * and allows the movement to cells occupied by opponents
+     * Returns all the cells where a worker can move, with the only restrictions due to the general rules
+     * (other workers, domes, building levels) and allows the movement to cells occupied by opponent workers.
      *
-     * @param workerPosition the position of the worker
-     * @return all the cells where a worker can move
+     * @param workerPosition    the position of the worker
+     * @return                  all the cells where a worker can move
      */
     @Override
     public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

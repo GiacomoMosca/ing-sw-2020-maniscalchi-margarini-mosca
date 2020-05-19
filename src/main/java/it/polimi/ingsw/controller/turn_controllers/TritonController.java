@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class TritonController extends GodController {
 
     /**
-     * creates a Triton controller for this game
+     * Creates a Triton controller for this game.
      *
      * @param gameController
      */
@@ -22,7 +22,7 @@ public class TritonController extends GodController {
     }
 
     /**
-     * sets all the attributes of the God Card Triton to their correct values
+     * Sets all the attributes of the God Card Triton to their actual values.
      *
      * @return a complete Card
      */
@@ -41,8 +41,8 @@ public class TritonController extends GodController {
     }
 
     /**
-     * handles the moving phase of the turn, allowing moving a second time
-     * whether the first one was onto a perimeter space
+     * Handles the moving phase of the turn, allowing moving a second time whether the first one was onto a perimeter
+     * space
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ZeusController extends GodController {
 
     /**
-     * creates a Zeus controller for this game
+     * Creates a Zeus controller for this game.
      *
      * @param gameController
      */
@@ -22,7 +22,7 @@ public class ZeusController extends GodController {
     }
 
     /**
-     * sets all the attributes of the God Card Zeus to their correct values
+     * Sets all the attributes of the God Card Zeus to their actual values.
      *
      * @return the complete Card
      */
@@ -53,10 +53,11 @@ public class ZeusController extends GodController {
     }
 
     /**
-     * returns all the cells where a worker can build including its current cell, with the only restrictions due to the general rules (other workers, domes, building levels)
+     * Returns all the cells where a worker can build including its current cell, with the only restrictions due to the
+     * general rules (other workers, domes, building levels).
      *
-     * @param workerPosition the position of the worker
-     * @return all the cells where a worker can build
+     * @param workerPosition    the position of the worker
+     * @return                  all the cells where a worker can build
      */
     @Override
     public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {

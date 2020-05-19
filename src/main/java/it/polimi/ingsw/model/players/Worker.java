@@ -3,6 +3,9 @@ package it.polimi.ingsw.model.players;
 import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.game_board.Cell;
 
+/**
+ * do we need to write a JavaDoc comment for every single class?
+ */
 public class Worker {
 
     private final Player owner;
@@ -10,7 +13,7 @@ public class Worker {
     private Cell position;
 
     /**
-     * creates a worker
+     * Creates a Worker, setting the player received as an argument as the actual owner of this Worker.
      *
      * @param owner the player who owns the worker
      */
@@ -42,7 +45,7 @@ public class Worker {
     }
 
     /**
-     * sets the cell where the worker is located
+     * Sets the cell where the worker is located.
      *
      * @param position
      */
@@ -52,10 +55,11 @@ public class Worker {
     }
 
     /**
-     * properly moves the worker to a new unoccupied cell
+     * Properly moves the worker to a new unoccupied cell.
+     * Before doing this, checks if the desired position is available to be occupied.
      *
      * @param position the cell representing the new position of the worker
-     * @throws IllegalArgumentException when trying to move the worker to a cell with a dome or another worker
+     * @throws IllegalArgumentException when trying to move the worker to a cell with a dome or occupied by another worker
      */
     public void move(Cell position) throws IllegalMoveException {
         if (position.isDomed())

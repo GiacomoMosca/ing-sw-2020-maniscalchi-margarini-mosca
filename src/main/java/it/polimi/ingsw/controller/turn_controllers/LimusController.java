@@ -9,16 +9,16 @@ import java.util.ArrayList;
 public class LimusController extends GodController {
 
     /**
-     * creates a Limus controller for this game
+     * Creates a Limus controller for this game.
      *
-     * @param gameController
+     * @param gameController the Game Controller for this game
      */
     public LimusController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Limus to their correct values
+     * Sets all the attributes of the God Card Limus to their actual values.
      *
      * @return the complete Card
      */
@@ -37,13 +37,13 @@ public class LimusController extends GodController {
     }
 
     /**
-     * gets a list containing all the cells where an opponent worker can build and creates another list, removing from
-     * the previous all the cells neighboring the associated workers (unless the opponents can build there a dome to
+     * Gets a list containing all the cells where an opponent worker can build and creates another list, removing from
+     * the previous one all the cells neighboring the associated worker (unless the opponents can build there a dome to
      * create a Complete Tower)
      *
      * @param workerPosition the position of the worker
      * @param possibleBuilds all the cells where the worker is able to build, considering only the game restrictions
-     * @return all the cells where the worker is actually able to build
+     * @return               all the cells where the worker is actually able to build
      */
     @Override
     public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
