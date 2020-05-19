@@ -22,20 +22,11 @@ import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GUI extends Application implements UI {//implements Runnable
-
-    private Stage boardStage;
-    private Stage primaryStage;
-    //tutti i vari stage da decidere
-
-    private Scene sceneBoard;
-    //tutte le varie scene per gli stage da decidere
+public class GUI implements UI {//implements Runnable
 
     private GameBoardController gameBoardController;
-    private static ServerConnectionController serverConnectionController;
-    private static NicknameChoiceController nicknameChoiceController;
 
-    private AnchorPane anchorPane;
+    private Stage primaryStage;
 
     private final AtomicBoolean running;
     private Socket server;
@@ -44,61 +35,24 @@ public class GUI extends Application implements UI {//implements Runnable
     private SynchronousQueue<String> messageQueue;
     private String id;
 
-    @FXML
-    private TextField serverIP;
+    private ServerConnectionController serverConnectionController;
+    private NicknameChoiceController nicknameChoiceController;
 
-    @FXML
-    private TextField nickname;
 
     public GUI() {
         this.running = new AtomicBoolean();
         this.id = null;
     }
 
-
     @Override
     public void run() {
-        GUI.launch();
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        primaryStage=new Stage();
-        primaryStage.setTitle("SANTORINI");
-        serverConnectionController=new ServerConnectionController(primaryStage);
-        serverConnectionController.initialize();
-    }
-
-    private void inputListener() {
-        Scanner scanner = new Scanner(System.in);
-        while (running.get()) {
-            String input = scanner.nextLine();
-            switch (input) {
-                // more commands go here
-                case "/quit":
-                    quit();
-                    break;
-            }
-            messageQueue.offer(input);
-        }
-    }
-
-    @Override
-    public void stop() {
-        try {
-            super.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void connectToServer() {
         running.set(true);
         messageQueue = new SynchronousQueue<String>();
-        new Thread(this::inputListener).start();
 
-        String ip = serverIP.getText();
+        serverConnectionController=new ServerConnectionController(messageQueue);
+        nicknameChoiceController=new NicknameChoiceController(messageQueue);
+
+        String ip = getServerIp();
         server = new Socket();
         try {
             server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
@@ -140,6 +94,10 @@ public class GUI extends Application implements UI {//implements Runnable
         stop();
     }
 
+    @Override
+    public void stop() {
+    }
+
     public void parseMessage(ToClientMessage message) {
         message.performAction(this);
     }
@@ -154,11 +112,10 @@ public class GUI extends Application implements UI {//implements Runnable
     }
 
     public String getServerIp() {
-        return null;
+        return getString();
     }
 
     public void chooseNickname(boolean taken) {
-        //Stage primarStage=new Stage();
         nicknameChoiceController=new NicknameChoiceController(primaryStage);
         try {
             nicknameChoiceController.initialize();
@@ -183,7 +140,7 @@ public class GUI extends Application implements UI {//implements Runnable
         }
 
     }
-
+*/
 
     @Override
     public void choosePlayersNumber() {
@@ -274,5 +231,15 @@ public class GUI extends Application implements UI {//implements Runnable
 
     private void quit() {
         stop();
+    }
+
+    private String getString() {
+        while (true) {
+            try {
+                return messageQueue.take();
+            } catch (InterruptedException e) {
+                System.out.println("Error getting input. \n");
+            }
+        }
     }
 }

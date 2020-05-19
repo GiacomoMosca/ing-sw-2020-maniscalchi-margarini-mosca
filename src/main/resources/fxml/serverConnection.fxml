@@ -12,6 +12,6 @@
          </image></ImageView>
       <Label fx:id="insertIPText" layoutX="272.0" layoutY="260.0" text="Inserisci l'indirizzo IP del server:" />
       <TextField fx:id="serverIP" layoutX="456.0" layoutY="256.0" promptText="Server IP" />
-      <Button fx:id="connectButton" layoutX="622.0" layoutY="256.0" mnemonicParsing="false" onAction="#connectToServer" text="Connect" />
+      <Button fx:id="connectButton" layoutX="622.0" layoutY="256.0" mnemonicParsing="false" onAction="#connectButtonHandler" text="Connect" />
    </children>
 </AnchorPane>
