@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * class to start GUI without playing an entire game
  *
- */
+ *//*
 public class TestGui extends Application {
 
     GameView preparedBoard;
@@ -76,4 +76,4 @@ public class TestGui extends Application {
         //gui.choosePosition(positions, "move");
         gui.choosePosition(positions, "build");
     }
-}
+}*/

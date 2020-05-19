@@ -9,7 +9,6 @@ import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,9 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//rimozione definitiva di worker dalla board
-// onFinished animazione...
-//css o json
+//TO DO: rimozione definitiva di worker dalla board
+//vedere come funziona onFinished su animazione...
 public class GameBoardController {
 
     private final double offset=96.4;
@@ -44,7 +42,7 @@ public class GameBoardController {
     private ArrayList<ImageView> greenWorkers;
     private ArrayList<ImageView> blueWorkers;
 
-    private HashMap<Integer, Image> levelForACell;                  //tengo un'immagine e ne faccio una copia quando serve
+    private HashMap<Integer, Image> levelForACell;
     private HashMap<CellView, ImageView> highlightForThisCell;
     private ArrayList<ImageView> activeHighlights;
 
@@ -58,7 +56,6 @@ public class GameBoardController {
         greenWorkers=new ArrayList<>();
         blueWorkers=new ArrayList<>();
         activeHighlights=new ArrayList<>();
-
     }
 
     Stage getBoardStage(){
@@ -97,7 +94,7 @@ public class GameBoardController {
         }
     }
 
-    //allla chiamata di initBuildings devo già avere una gameview!
+    //OCCHIO: alla chiamata di initBuildings devo già avere una gameview!
     public void initBuildings(){
         Image level1=new Image("assets/buildings/build1.png");
         Image level2=new Image("assets/buildings/build2.png");
@@ -124,20 +121,15 @@ public class GameBoardController {
         hashMapForThisColor.get(workerColor).get(workerNumber).setVisible(true);
     }
 
-    //protected Integer chooseStartingPlayer(ArrayList<PlayerView> players)
-
-
-    //quando due worker vengono mossi in una sola volta?? esiste parallel transition (Apollo, Minotaur)
-    //verifica massimo scostamento che può essere fatto
+    //TO DO: quando due worker vengono mossi in una sola volta?? esiste parallel transition (Apollo, Minotaur), oppure
+    //creare entrambe le transizioni e farle partire fuori
     protected void moveWorker(HashMap<CellView, CellView> moves, CardView godCard){
         moves.forEach((startPosition, endPosition) -> {
-
             TranslateTransition transition = new TranslateTransition(Duration.seconds(1));
             ImageView movingWorker = hashMapForThisColor.get(startPosition.getWorker().getColor()).get(startPosition.getWorker().getNum()-1);
             int offsetX = endPosition.getPosX() - startPosition.getPosX();
             int offsetY = endPosition.getPosY() - startPosition.getPosY();
             movingWorker.toFront();
-
             transition.setToX(movingWorker.getX()+(offsetX*offset));
             transition.setToY(movingWorker.getY()+(offsetY*offset));
             transition.setNode(movingWorker);
@@ -191,14 +183,9 @@ public class GameBoardController {
         return (positions.indexOf(clickedCell));
     }
 
-    protected void checkBoard(GameView game){
-        //ogni quanto aggiornare la gameView?
-
-    }
-
 
     /**
-     * /////COSE MAGARI UTILI
+     * /////COSE MAGARI UTILI PER TUTTI
      *
      * //per modificare dal codice i valori dei margini di un elemento in una cella della tabella
      * GridPane.setMargin(level, new Insets(0,2,4,0));
@@ -221,7 +208,7 @@ public class GameBoardController {
      *         System.out.printf("Mouse clicked cell in [%d, %d]%n", colIndex, rowIndex);
      *     }
      *
-     *
+     * //cose che ho cancellato ma che non sono sicura di voler abbandonare per sempre
      *     protected void prepareBuildPhase(ArrayList<CellView> positions){
      *         for (CellView position : positions){
      *             //vado a pescare l'highligh di ogni cella in cui è possibile costruire e lo rendo visibile
@@ -243,8 +230,8 @@ public class GameBoardController {
      *     }
      *
      *
-     *            //controlla che come fattto sopra vada bene per offset negativi
-     *             /*switch (offsetX){
+     * //metodo laborioso per spostare i worker
+     *             switch (offsetX){
      *                 case 0:
      *                     //don't change column
      *                     transition.setToX(movingWorker.getX());
@@ -279,33 +266,36 @@ public class GameBoardController {
      *                 case -2:
      *                     transition.setToY(movingWorker.getY()-(2*offset));
      *                     break;
-     *             }*/
-
-    /*void updateBoard(GameView board){
-        for (CellView cell : board.getAllCells()){
-            if (cell.getBuildLevel()!=0){
-                for(int i=1; i<=cell.getBuildLevel(); i++){
-                    ImageView level=new ImageView(levelForACell.get(i));
-                    level.setVisible(true);
-                    GridPane.setHalignment(level, HPos.CENTER);
-                    gridPane.add(level, cell.getPosX(), cell.getPosY());
-                }
-            }
-            if (cell.hasWorker()){
-                GridPane.setRowIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosY());
-                GridPane.setColumnIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosX());
-                GridPane.setHalignment(imageViewForThisColor.get(cell.getWorkerColor()), HPos.CENTER);
-                imageViewForThisColor.get(cell.getWorkerColor()).setVisible(true);
-                imageViewForThisColor.get(cell.getWorkerColor()).toFront();
-            }
-            if (cell.isDomed()){
-                ImageView dome=new ImageView("assets/buildings/dome.png");
-                gridPane.add(dome, cell.getPosX(), cell.getPosY());
-                GridPane.setHalignment(dome, HPos.CENTER);
-                dome.setVisible(true);
-            }
-        }
-    }*/
+     *             }
+     *
+     *
+     * // primo metodo di visualizzazione board
+     *    void updateBoard(GameView board){
+     *         for (CellView cell : board.getAllCells()){
+     *             if (cell.getBuildLevel()!=0){
+     *                 for(int i=1; i<=cell.getBuildLevel(); i++){
+     *                     ImageView level=new ImageView(levelForACell.get(i));
+     *                     level.setVisible(true);
+     *                     GridPane.setHalignment(level, HPos.CENTER);
+     *                     gridPane.add(level, cell.getPosX(), cell.getPosY());
+     *                 }
+     *             }
+     *             if (cell.hasWorker()){
+     *                 GridPane.setRowIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosY());
+     *                 GridPane.setColumnIndex(imageViewForThisColor.get(cell.getWorkerColor()), cell.getPosX());
+     *                 GridPane.setHalignment(imageViewForThisColor.get(cell.getWorkerColor()), HPos.CENTER);
+     *                 imageViewForThisColor.get(cell.getWorkerColor()).setVisible(true);
+     *                 imageViewForThisColor.get(cell.getWorkerColor()).toFront();
+     *             }
+     *             if (cell.isDomed()){
+     *                 ImageView dome=new ImageView("assets/buildings/dome.png");
+     *                 gridPane.add(dome, cell.getPosX(), cell.getPosY());
+     *                 GridPane.setHalignment(dome, HPos.CENTER);
+     *                 dome.setVisible(true);
+     *             }
+     *         }
+     *     }
+     **/
 
 
 }

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
-import it.polimi.ingsw.network.message.to_server.SendInteger;
 import it.polimi.ingsw.view.*;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -12,68 +11,66 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-/**
- * supposizioni: la initialize() di GameBoardController viene chiamata "prima..."
- * creazione gui -> chiamata di gui.initBoard()
- * creazione gameBoardController -> chiamata di gameBoardController.initialize()
- * ogni quanto controllare la board?
- */
-
-public class Gui implements UI{//implements Runnable
+public class GUI implements UI{//implements Runnable
 
     private GameView currentGame;
     private Stage boardStage;
     //tutti i vari stage da decidere
 
     private Scene sceneBoard;
-    //tutte le varie scene per gli stage da decidere
+    //tutte le varie scene da decidere
 
     private GameBoardController gameBoardController;
 
+    public GUI() {
+
+    }
 
     @Override
     public void run() {
 
     }
+    private void inputListener() {
 
-    @Override
-    public void stop() {
+    }
+
+    private void quit() {
+
+    }
+
+    public synchronized void stop() {
 
     }
 
     @Override
     public String getServerIp() {
+        //default
         return null;
     }
 
     @Override
     public void parseMessage(ToClientMessage message) {
-        //do
+        message.performAction(this);
     }
 
     @Override
     public void sendBoolean(boolean body) {
-        //do
+
     }
 
     @Override
     public void sendInteger(int body) {
-        /*try {
-            output.writeObject(new SendInteger(id, body));
-        } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
-        }*/
+
     }
 
     @Override
     public void sendIntegers(ArrayList<Integer> body) {
-        //do
+
     }
 
     @Override
     public void sendString(String body) {
-        //do
+
     }
 
     @Override
@@ -100,8 +97,8 @@ public class Gui implements UI{//implements Runnable
 
     }
 
-    //utilizzo la stessa funzione per mostrare a schermo qualsiasi scelta: illumino le caselle! e quando le disillumino però?
-    //mostrare messaggi diversi
+    //TO DO: verificare in GameBoardController di "disilluminare" le celle dopo la scelta
+    //TO DO: decidere se mostrare messaggi diversi per ogni scelta
     @Override
     public void choosePosition(ArrayList<CellView> positions, String desc) {
             Integer choice=null;
@@ -134,44 +131,33 @@ public class Gui implements UI{//implements Runnable
 
 
     @Override
-    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        //gameBoardController.chooseStartingPlayer(players);
-    }
+    public void chooseStartingPlayer(ArrayList<PlayerView> players) { }
 
     @Override
-    public void chooseStartJoin() {
-
-    }
+    public void chooseStartJoin() { }
 
     @Override
-    public void chooseYesNo(String query) {
-
-    }
+    public void chooseYesNo(String query) { }
 
     @Override
     public void displayGameInfo(GameView game, String desc) {
+        //TO DO: decidere se aggiornare/controllare la "boardView" qui
         currentGame = game;
-        //in base al messaggio...
-        //per ora chiamo update e faccio un controllo
-        gameBoardController.checkBoard(game);
     }
 
     @Override
     public void displayMessage(String message) {
-        //di là stampa a schermo msg
+
     }
 
     @Override
     public void displayPlaceWorker(CellView position) {
         currentGame.setCell(position);
         gameBoardController.placeWorker(position);
-        //displayBoard();       non voglio mostrare nuova board ad ogni chiamata (?)
+        //TO DO: serve chiamare la displayBoard();  ?
     }
 
-    //cosa fare qui e dopo quando goDcard != null
-    //prima faccio muovere perhé mi serve cella di partenza
-    //poi aggiorno gameView
-    //poi mostro la board. vorrei mostrare la mossa con transizione alla fine! come si fa?
+    //TO DO: cosa fare qui e dopo quando godCard != null: mostrare potere usato?
     @Override
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
         gameBoardController.moveWorker(moves, godCard);
@@ -221,11 +207,6 @@ public class Gui implements UI{//implements Runnable
         gameBoardController.initialize();
     }
 
-    //ogni quanto?
-    public void updateBoard(GameView board){
-        //gameBoardController.updateBoard(board);
-    }
-
     public void displayBoard() {
         gameBoardController.getBoardStage().setResizable(true);
         gameBoardController.getBoardStage().setScene(gameBoardController.getBoardScene());
@@ -233,3 +214,12 @@ public class Gui implements UI{//implements Runnable
     }
 
 }
+
+
+/*
+ *  avremo controller per:
+ *  - inserire IP server / nickname
+ *  - start game / join game
+ *  - partita
+ *
+ */

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.cli;
 
-import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.SendBoolean;
 import it.polimi.ingsw.network.message.to_server.SendInteger;
