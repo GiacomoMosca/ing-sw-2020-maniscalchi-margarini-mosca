@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="1080.0" maxWidth="1920.0" pickOnBounds="true" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
     <children>
         <ImageView fx:id="gameBoard" fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/board/SantoriniBoard.png" />
+                <Image url="@../assets/board.png" />
             </image>
         </ImageView>
-        <GridPane fx:id="gridPane" layoutX="651.0" layoutY="121.0" prefHeight="482.0" prefWidth="482.0">
+        <GridPane fx:id="gridPane" layoutX="668.0" layoutY="119.0" prefHeight="482.0" prefWidth="482.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.4" minWidth="10.0" prefWidth="96.4" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.4" minWidth="10.0" prefWidth="96.4" />
@@ -30,6 +27,10 @@
                 <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="96.4" vgrow="SOMETIMES" />
             </rowConstraints>
         </GridPane>
+      <Text fx:id="textBox" layoutX="233.0" layoutY="618.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
     </children>
 </AnchorPane>
-
