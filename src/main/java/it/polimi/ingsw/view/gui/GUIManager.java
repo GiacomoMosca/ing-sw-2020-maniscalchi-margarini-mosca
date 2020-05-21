@@ -15,8 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GUIManager extends Application {
+
+    private final static AtomicBoolean busy = new AtomicBoolean(true);
 
     private static Stage stage;
 
@@ -37,6 +40,14 @@ public class GUIManager extends Application {
         launch();
     }
 
+    public boolean isBusy() {
+        return busy.get();
+    }
+
+    public boolean setBusy(boolean val) {
+        return busy.compareAndSet(!val, val);
+    }
+
     public void setGui(GUI gui) {
         this.gui = gui;
     }
@@ -54,10 +65,11 @@ public class GUIManager extends Application {
         Parent root = loader.load();
         currentScene = new Scene(root, 1280, 720);
         loginController = loader.getController();
-        loginController.setQueue(messageQueue);
+        loginController.setManager(this);
         stage.setScene(currentScene);
         stage.setResizable(false);
         stage.show();
+        busy.set(false);
         stage.setOnCloseRequest(event -> {
             Platform.exit();
             System.exit(0);
@@ -76,7 +88,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameLobbyScene = new Scene(root);
             gameLobbyController = loader.getController();
-            gameLobbyController.setQueue(messageQueue);
+            gameLobbyController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,7 +100,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameSetupScene = new Scene(root);
             gameSetupController = loader.getController();
-            gameSetupController.setQueue(messageQueue);
+            gameSetupController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,7 +112,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameBoardScene = new Scene(root);
             gameBoardController = loader.getController();
-            gameBoardController.setQueue(messageQueue);
+            gameBoardController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,40 +4,42 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 
-import java.util.concurrent.SynchronousQueue;
-
 public class GameLobbyController {
 
-    private SynchronousQueue<String> messageQueue;
+    private GUIManager manager;
 
     @FXML
     private Text textBox;
 
-    public void setQueue(SynchronousQueue<String> messageQueue) {
-        this.messageQueue = messageQueue;
+    public void setManager(GUIManager manager) {
+        this.manager = manager;
     }
 
     public void chooseStartJoin() {
         Platform.runLater(() -> {
             textBox.setText("Choose start/join");
+            manager.setBusy(false);
         });
     }
 
     public void chooseGameName() {
         Platform.runLater(() -> {
             textBox.setText("Choose game name");
+            manager.setBusy(false);
         });
     }
 
     public void choosePlayersNumber() {
         Platform.runLater(() -> {
             textBox.setText("Choose players number");
+            manager.setBusy(false);
         });
     }
 
     public void chooseGameRoom() {
         Platform.runLater(() -> {
             textBox.setText("Choose game room");
+            manager.setBusy(false);
         });
     }
 

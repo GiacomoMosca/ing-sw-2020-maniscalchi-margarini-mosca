@@ -73,6 +73,14 @@ public class GUI implements UI {//implements Runnable
 
         ToClientMessage message;
         while (running.get()) {
+            if (!manager.setBusy(true)) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    //
+                }
+                continue;
+            }
             try {
                 message = (ToClientMessage) input.readObject();
             } catch (IOException e) {
@@ -120,6 +128,13 @@ public class GUI implements UI {//implements Runnable
     }
 
     public String getServerIp() {
+        while (!manager.setBusy(true)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                //
+            }
+        }
         manager.getServerIp();
         System.out.println("\nServer IP address: ");
         return getString();
