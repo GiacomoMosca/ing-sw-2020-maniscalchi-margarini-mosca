@@ -157,10 +157,10 @@ public class GameController {
 
         try {
             broadcastMessage("Game started!");
-            broadcastGameInfo("gameSetup");
+            broadcastGameInfo("gameSetup1");
             pickCards();
+            broadcastGameInfo("gameSetup2");
             chooseStartPlayer();
-            broadcastGameInfo("gameSetup");
             placeWorkers();
 
             broadcastGameInfo("gameStart");

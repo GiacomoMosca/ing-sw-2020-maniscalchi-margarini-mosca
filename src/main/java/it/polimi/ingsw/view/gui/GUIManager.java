@@ -32,9 +32,9 @@ public class GUIManager extends Application {
     private static GameSetupController gameSetupController = null;
     private static GameBoardController gameBoardController = null;
 
-    private Scene currentScene;
-    private GUI gui;
-    private SynchronousQueue<String> messageQueue;
+    private static Scene currentScene;
+    private static GUI gui;
+    private static SynchronousQueue<String> messageQueue;
 
     public void run() {
         launch();
@@ -44,16 +44,22 @@ public class GUIManager extends Application {
         return busy.get();
     }
 
-    public boolean setBusy(boolean val) {
-        return busy.compareAndSet(!val, val);
+    public synchronized boolean setBusy(boolean val) {
+        boolean res = busy.compareAndSet(!val, val);
+        notifyAll();
+        return res;
     }
 
     public void setGui(GUI gui) {
-        this.gui = gui;
+        GUIManager.gui = gui;
     }
 
     public void setQueue(SynchronousQueue<String> messageQueue) {
-        this.messageQueue = messageQueue;
+        GUIManager.messageQueue = messageQueue;
+    }
+
+    public void putString(String string) {
+        messageQueue.offer(string);
     }
 
     @Override
@@ -129,11 +135,11 @@ public class GUIManager extends Application {
     // generic
 
     public void displayMessage(String message) {
-
+        setBusy(false);
     }
 
     public void chooseYesNo(String query) {
-
+        setBusy(false);
     }
 
     // LoginController
@@ -180,7 +186,7 @@ public class GUIManager extends Application {
     }
 
     public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        gameSetupController.chooseStartingPlayer();
+        gameBoardController.chooseStartingPlayer();
     }
 
     // GameBoardController

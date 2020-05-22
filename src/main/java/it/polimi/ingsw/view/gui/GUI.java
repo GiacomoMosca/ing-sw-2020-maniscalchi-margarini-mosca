@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
+import it.polimi.ingsw.network.message.to_client.Ping;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.SendBoolean;
 import it.polimi.ingsw.network.message.to_server.SendInteger;
@@ -22,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GUI implements UI {//implements Runnable
 
     private final AtomicBoolean running;
-    private GUIManager manager;
+    private final GUIManager manager;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -32,19 +33,19 @@ public class GUI implements UI {//implements Runnable
 
     public GUI() {
         this.running = new AtomicBoolean();
+        this.manager = new GUIManager();
         this.id = null;
     }
 
     @Override
     public void run() {
         running.set(true);
-        manager = new GUIManager();
         messageQueue = new SynchronousQueue<String>();
         currentGame = null;
 
         manager.setGui(this);
         manager.setQueue(messageQueue);
-        new Thread(() -> manager.run()).start();
+        new Thread(manager::run).start();
 
         new Thread(this::inputListener).start();
         String ip = getServerIp();
@@ -73,14 +74,6 @@ public class GUI implements UI {//implements Runnable
 
         ToClientMessage message;
         while (running.get()) {
-            if (!manager.setBusy(true)) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    //
-                }
-                continue;
-            }
             try {
                 message = (ToClientMessage) input.readObject();
             } catch (IOException e) {
@@ -90,9 +83,18 @@ public class GUI implements UI {//implements Runnable
                 e.printStackTrace();
                 break;
             }
-            if (message != null) {
-                parseMessage(message);
+            if (message == null) continue;
+            if (message instanceof Ping) continue;
+            synchronized (manager) {
+                while (!manager.setBusy(true)) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        //
+                    }
+                }
             }
+            parseMessage(message);
         }
         stop();
     }

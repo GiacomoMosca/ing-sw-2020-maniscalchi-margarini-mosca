@@ -22,11 +22,4 @@ public class GameSetupController {
         });
     }
 
-    public void chooseStartingPlayer() {
-        Platform.runLater(() -> {
-            textBox.setText("Choose starting player");
-            manager.setBusy(false);
-        });
-    }
-
 }

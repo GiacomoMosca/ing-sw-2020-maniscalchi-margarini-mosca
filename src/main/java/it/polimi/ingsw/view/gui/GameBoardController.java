@@ -22,6 +22,13 @@ public class GameBoardController {
         });
     }
 
+    public void chooseStartingPlayer() {
+        Platform.runLater(() -> {
+            textBox.setText("Choose starting player");
+            manager.setBusy(false);
+        });
+    }
+
     public void choosePosition() {
         Platform.runLater(() -> {
             textBox.setText("Choose position");
