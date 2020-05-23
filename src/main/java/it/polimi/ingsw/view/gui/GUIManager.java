@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GUIManager extends Application {
 
     private final static AtomicBoolean busy = new AtomicBoolean(true);
+    private final static Object busyLock = new Object();
 
     private static Stage stage;
 
@@ -34,32 +35,34 @@ public class GUIManager extends Application {
 
     private static Scene currentScene;
     private static GUI gui;
-    private static SynchronousQueue<String> messageQueue;
+    private static SynchronousQueue<Object> messageQueue;
 
     public void run() {
         launch();
-    }
-
-    public boolean isBusy() {
-        return busy.get();
-    }
-
-    public synchronized boolean setBusy(boolean val) {
-        boolean res = busy.compareAndSet(!val, val);
-        notifyAll();
-        return res;
     }
 
     public void setGui(GUI gui) {
         GUIManager.gui = gui;
     }
 
-    public void setQueue(SynchronousQueue<String> messageQueue) {
+    public void setQueue(SynchronousQueue<Object> messageQueue) {
         GUIManager.messageQueue = messageQueue;
     }
 
-    public void putString(String string) {
-        messageQueue.offer(string);
+    public Object getLock() {
+        return busyLock;
+    }
+
+    public boolean setBusy(boolean val) {
+        synchronized (busyLock) {
+            boolean res = busy.compareAndSet(!val, val);
+            busyLock.notifyAll();
+            return res;
+        }
+    }
+
+    public boolean isBusy() {
+        return busy.get();
     }
 
     @Override
@@ -94,7 +97,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameLobbyScene = new Scene(root);
             gameLobbyController = loader.getController();
-            gameLobbyController.setManager(this);
+            gameLobbyController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,7 +109,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameSetupScene = new Scene(root);
             gameSetupController = loader.getController();
-            gameSetupController.setManager(this);
+            gameSetupController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,7 +121,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameBoardScene = new Scene(root);
             gameBoardController = loader.getController();
-            gameBoardController.setManager(this);
+            gameBoardController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -132,6 +135,12 @@ public class GUIManager extends Application {
         });
     }
 
+    // queue
+
+    public void putObject(Object object) {
+        messageQueue.offer(object);
+    }
+
     // generic
 
     public void displayMessage(String message) {
@@ -139,7 +148,8 @@ public class GUIManager extends Application {
     }
 
     public void chooseYesNo(String query) {
-        setBusy(false);
+        if (currentScene.equals(gameSetupScene)) gameSetupController.chooseYesNo(query);
+        else setBusy(false);
     }
 
     // LoginController
@@ -180,20 +190,41 @@ public class GUIManager extends Application {
 
     // GameSetupController
 
-    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
-        setScene(gameSetupScene);
-        gameSetupController.chooseCards();
+    public void displayGameInfo(GameView game, String desc) {
+        switch (desc) {
+            case "gameSetup1":
+                setScene(gameSetupScene);
+                gameSetupController.displayGameInfo();
+                break;
+            case "gameSetup2":
+                setScene(gameBoardScene);
+                gameBoardController.displayGameInfo();
+                break;
+            default:
+                gameBoardController.displayGameInfo();
+                break;
+        }
     }
 
-    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        gameBoardController.chooseStartingPlayer();
+    public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
+        ArrayList<String> possibleCardsNames = new ArrayList<String>();
+        for (CardView card : possibleCards) {
+            possibleCardsNames.add(card.getGod().toLowerCase());
+        }
+        if (num > 1) gameSetupController.chooseAllCards(possibleCardsNames, num);
+        else {
+            ArrayList<String> pickedCardsNames = new ArrayList<String>();
+            for (CardView card : pickedCards) {
+                pickedCardsNames.add(card.getGod().toLowerCase());
+            }
+            gameSetupController.chooseMyCard(possibleCardsNames, pickedCardsNames);
+        }
     }
 
     // GameBoardController
 
-    public void displayGameInfo(GameView game, String desc) {
-        setScene(gameBoardScene);
-        gameBoardController.displayGameInfo();
+    public void chooseStartingPlayer(ArrayList<PlayerView> players) {
+        gameBoardController.chooseStartingPlayer();
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {

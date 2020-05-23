@@ -173,7 +173,7 @@ public class GameController {
     private void pickCards() throws IOExceptionFromController {
         Deck deck = game.getDeck();
         try {
-            if (playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Cards pool?")) {
+            if (playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Powers pool?")) {
                 deck.pickRandom(game.getPlayerNum());
             } else {
                 ArrayList<Card> choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);

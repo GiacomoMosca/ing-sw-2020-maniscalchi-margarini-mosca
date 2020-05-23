@@ -24,23 +24,25 @@ public class GUI implements UI {//implements Runnable
 
     private final AtomicBoolean running;
     private final GUIManager manager;
+    private final Object busyLock;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
-    private SynchronousQueue<String> messageQueue;
+    private SynchronousQueue<Object> messageQueue;
     private String id;
     private GameView currentGame;
 
     public GUI() {
         this.running = new AtomicBoolean();
         this.manager = new GUIManager();
+        this.busyLock = manager.getLock();
         this.id = null;
     }
 
     @Override
     public void run() {
         running.set(true);
-        messageQueue = new SynchronousQueue<String>();
+        messageQueue = new SynchronousQueue<Object>();
         currentGame = null;
 
         manager.setGui(this);
@@ -85,10 +87,10 @@ public class GUI implements UI {//implements Runnable
             }
             if (message == null) continue;
             if (message instanceof Ping) continue;
-            synchronized (manager) {
+            synchronized (busyLock) {
                 while (!manager.setBusy(true)) {
                     try {
-                        wait();
+                        busyLock.wait();
                     } catch (InterruptedException e) {
                         //
                     }
@@ -109,7 +111,13 @@ public class GUI implements UI {//implements Runnable
                     quit();
                     break;
             }
-            messageQueue.offer(input);
+            int numInput;
+            try {
+                numInput = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                numInput = -1;
+            }
+            messageQueue.offer((numInput == -1) ? input : numInput);
         }
     }
 
@@ -146,27 +154,49 @@ public class GUI implements UI {//implements Runnable
         message.performAction(this);
     }
 
-    private int getInt() {
-        while (true) {
-            try {
-                return Integer.parseInt(messageQueue.take());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. ");
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
-            }
+    // get from queue
+
+    public boolean getBoolean() {
+        boolean val = false;
+        try {
+            val = (Boolean) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
         }
+        return val;
     }
 
-    private String getString() {
-        while (true) {
-            try {
-                return messageQueue.take();
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
-            }
+    public int getInteger() {
+        int val = -1;
+        try {
+            val = (Integer) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
         }
+        return val;
     }
+
+    public ArrayList<Integer> getIntegers() {
+        ArrayList<Integer> val = null;
+        try {
+            val = (ArrayList<Integer>) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
+        }
+        return val;
+    }
+
+    public String getString() {
+        String val = null;
+        try {
+            val = (String) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
+        }
+        return val;
+    }
+
+    // send to server
 
     public void sendBoolean(boolean body) {
         try {
@@ -204,31 +234,11 @@ public class GUI implements UI {//implements Runnable
         }
     }
 
+    // message functions
+
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
         manager.chooseCards(possibleCards, num, pickedCards);
-        StringBuilder string = new StringBuilder();
-        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
-        else string.append("\nPick your God Power: \n");
-        for (int i = 0; i < possibleCards.size(); i++) {
-            string.append(i + ": ");
-            string.append(possibleCards.get(i).getGod() + "\n");
-        }
-        if (pickedCards != null) for (CardView pickedCard : pickedCards) {
-            string.append("X: ");
-            string.append(pickedCard.getGod() + "\n");
-        }
-        System.out.println(string);
-        ArrayList<Integer> choices = new ArrayList<Integer>();
-        for (int i = 0; i < num; i++) {
-            int choice = getInt();
-            while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
-                System.out.println("Invalid input. ");
-                choice = getInt();
-            }
-            System.out.println("Picked " + possibleCards.get(choice).getGod());
-            choices.add(choice);
-        }
-        sendIntegers(choices);
+        sendIntegers(getIntegers());
     }
 
     public void chooseGameName(boolean taken) {
@@ -259,10 +269,10 @@ public class GUI implements UI {//implements Runnable
             string.append(" (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ") ");
         }
         System.out.println(string);
-        int choice = getInt();
+        int choice = getInteger();
         while (choice < 0 || choice > i) {
             System.out.println("Invalid input. ");
-            choice = getInt();
+            choice = getInteger();
         }
         String room;
         switch (choice) {
@@ -293,10 +303,10 @@ public class GUI implements UI {//implements Runnable
     public void choosePlayersNumber() {
         manager.choosePlayersNumber();
         System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
-        int num = getInt();
+        int num = getInteger();
         while (num < 2 || num > 3) {
             System.out.println("Invalid input. ");
-            num = getInt();
+            num = getInteger();
         }
         sendInteger(num);
     }
@@ -334,10 +344,10 @@ public class GUI implements UI {//implements Runnable
         }
         string.append("\n");
         System.out.println(string);
-        int choice = getInt();
+        int choice = getInteger();
         while (choice < 0 || choice >= positions.size()) {
             System.out.println("Invalid input. ");
-            choice = getInt();
+            choice = getInteger();
         }
         sendInteger(choice);
     }
@@ -351,10 +361,10 @@ public class GUI implements UI {//implements Runnable
             string.append(players.get(i).getId() + "\n");
         }
         System.out.println(string);
-        int choice = getInt();
+        int choice = getInteger();
         while (choice < 0 || choice >= players.size()) {
             System.out.println("Invalid input. ");
-            choice = getInt();
+            choice = getInteger();
         }
         sendInteger(choice);
     }
@@ -362,10 +372,10 @@ public class GUI implements UI {//implements Runnable
     public void chooseStartJoin() {
         manager.chooseStartJoin();
         System.out.println("\n1: Start a new game \n2: Join a game ");
-        int num = getInt();
+        int num = getInteger();
         while (num < 1 || num > 2) {
             System.out.println("Invalid input. ");
-            num = getInt();
+            num = getInteger();
         }
         sendBoolean(num == 1);
     }
@@ -376,14 +386,19 @@ public class GUI implements UI {//implements Runnable
      * @param query the question the player should answer to
      */
     public void chooseYesNo(String query) {
-        manager.chooseYesNo(query);
-        System.out.println("\n" + query + " (y/n) ");
-        String choice = getString();
-        while (!choice.equals("y") && !choice.equals("n")) {
-            System.out.println("Invalid input. ");
-            choice = getString();
+        boolean res;
+        if (query.equals("Do you want to randomize the playable God Powers pool?")) {
+            manager.chooseYesNo(query);
+            res = getBoolean();
+        } else {
+            System.out.println("\n" + query + " (y/n) ");
+            String choice = getString();
+            while (!choice.equals("y") && !choice.equals("n")) {
+                System.out.println("Invalid input. ");
+                choice = getString();
+            }
+            res = choice.equals("y");
         }
-        boolean res = choice.equals("y");
         sendBoolean(res);
     }
 
