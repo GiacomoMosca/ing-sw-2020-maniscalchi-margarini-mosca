@@ -17,10 +17,9 @@ import java.util.HashMap;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GUIManager extends Application {
+public class TestManager extends Application {
 
     private final static AtomicBoolean busy = new AtomicBoolean(true);
-    private final static Object busyLock = new Object();
 
     private static Stage stage;
 
@@ -41,28 +40,14 @@ public class GUIManager extends Application {
         launch();
     }
 
-    public void setGui(GUI gui) {
-        GUIManager.gui = gui;
-    }
-
-    public void setQueue(SynchronousQueue<String> messageQueue) {
-        GUIManager.messageQueue = messageQueue;
-    }
-
-    public Object getLock() {
-        return busyLock;
-    }
-
-    public boolean setBusy(boolean val) {
-        synchronized (busyLock) {
-            boolean res = busy.compareAndSet(!val, val);
-            busyLock.notifyAll();
-            return res;
-        }
-    }
-
     public boolean isBusy() {
         return busy.get();
+    }
+
+    public synchronized boolean setBusy(boolean val) {
+        boolean res = busy.compareAndSet(!val, val);
+        notifyAll();
+        return res;
     }
 
     public void putString(String string) {
@@ -78,15 +63,15 @@ public class GUIManager extends Application {
         Parent root = loader.load();
         currentScene = new Scene(root, 1280, 720);
         loginController = loader.getController();
-        loginController.setManager(this);
         stage.setScene(currentScene);
         stage.setResizable(false);
-        stage.show();
-        busy.set(false);
         stage.setOnCloseRequest(event -> {
             Platform.exit();
             System.exit(0);
         });
+        setScene(gameSetupScene);
+        gameSetupController.displayGameInfo();
+        stage.show();
     }
 
     public void initAll() {
@@ -101,7 +86,6 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameLobbyScene = new Scene(root);
             gameLobbyController = loader.getController();
-            gameLobbyController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,7 +97,6 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameSetupScene = new Scene(root);
             gameSetupController = loader.getController();
-            gameSetupController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,7 +108,6 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameBoardScene = new Scene(root);
             gameBoardController = loader.getController();
-            gameBoardController.setManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }

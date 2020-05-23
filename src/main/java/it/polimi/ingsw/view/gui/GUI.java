@@ -24,6 +24,7 @@ public class GUI implements UI {//implements Runnable
 
     private final AtomicBoolean running;
     private final GUIManager manager;
+    private final Object busyLock;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -34,6 +35,7 @@ public class GUI implements UI {//implements Runnable
     public GUI() {
         this.running = new AtomicBoolean();
         this.manager = new GUIManager();
+        this.busyLock = manager.getLock();
         this.id = null;
     }
 
@@ -85,10 +87,10 @@ public class GUI implements UI {//implements Runnable
             }
             if (message == null) continue;
             if (message instanceof Ping) continue;
-            synchronized (manager) {
+            synchronized (busyLock) {
                 while (!manager.setBusy(true)) {
                     try {
-                        wait();
+                        busyLock.wait();
                     } catch (InterruptedException e) {
                         //
                     }

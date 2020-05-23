@@ -1,0 +1,10 @@
+@font-face {
+    font-family: LillyBelle;
+    src: url("/assets/fonts/LillyBelle.ttf");
+}
+
+#centerText {
+    -fx-font: 50px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(gaussian, black, 5, 0.3, 0, 0);
+}
