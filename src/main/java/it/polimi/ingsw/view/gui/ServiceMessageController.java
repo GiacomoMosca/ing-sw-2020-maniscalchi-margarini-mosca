@@ -4,25 +4,22 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 
-public class GameSetupController {
+public class ServiceMessageController {
 
     private GUIManager manager;
 
     @FXML
-    private Text textBox;
+    private Text serviceMessage;
 
     public void setManager(GUIManager manager) {
         this.manager = manager;
     }
 
-    public void chooseCards() {
+    public void displayMessage(String message){
         Platform.runLater(() -> {
-            textBox.setText("Choose cards");
-            manager.setBusy(false);
+            serviceMessage.setText(message);
+            serviceMessage.setLayoutX(424);
+            serviceMessage.setLayoutY(377);
         });
-    }
-
-
-    public void displayGameInfo() {
     }
 }

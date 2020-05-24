@@ -11,7 +11,7 @@ public class GameBoardController {
     @FXML
     private Text textBox;
 
-    public void initialize(GUIManager manager) {
+    public void setManager(GUIManager manager) {
         this.manager = manager;
     }
 

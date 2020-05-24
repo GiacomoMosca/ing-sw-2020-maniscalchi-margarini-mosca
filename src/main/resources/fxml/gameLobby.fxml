@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameLobbyController">
-    <children>
-        <Text fx:id="textBox" layoutX="517.0" layoutY="380.0" text="Login page">
-            <font>
-                <Font size="50.0" />
-            </font></Text>
-    </children>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameLobbyController">
+   <children>
+      <Button fx:id="startButton" layoutX="504.0" layoutY="336.0" mnemonicParsing="false" onAction="#startButtonHandler" text="Start">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="joinButton" layoutX="695.0" layoutY="337.0" mnemonicParsing="false" onAction="#joinButtonHandler" text="Join">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+   </children>
 </AnchorPane>

@@ -4,22 +4,24 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GameView implements Serializable {
 
-    private final String name;
-    private final int playerNum;
+    private final SimpleStringProperty name;
+    private final SimpleIntegerProperty playerNum;
     private final ArrayList<PlayerView> players;
     private final int activePlayer;
     private final CellView[][] board;
     private final ArrayList<CardView> activeModifiers;
 
     public GameView(Game game) {
-        name = game.getName();
-        playerNum = game.getPlayerNum();
+        name = new SimpleStringProperty(game.getName());
+        playerNum = new SimpleIntegerProperty(game.getPlayerNum());
         players = new ArrayList<PlayerView>();
         for (Player player : game.getPlayers()) {
             players.add(new PlayerView(player));
@@ -37,8 +39,8 @@ public class GameView implements Serializable {
     }
 
     public GameView(String name, int playerNum, ArrayList<PlayerView> players, int activePlayer, CellView[][] board, ArrayList<CardView> modifiers) {
-        this.name = name;
-        this.playerNum = playerNum;
+        this.name = new SimpleStringProperty(name);
+        this.playerNum = new SimpleIntegerProperty(playerNum);
         this.players = players;
         this.activePlayer = activePlayer;
         this.board = board;
@@ -46,11 +48,11 @@ public class GameView implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return name.get();
     }
 
     public int getPlayerNum() {
-        return playerNum;
+        return playerNum.get();
     }
 
     public ArrayList<PlayerView> getPlayers() {
