@@ -49,7 +49,6 @@ public class GUI implements UI {//implements Runnable
         manager.setQueue(messageQueue);
         new Thread(manager::run).start();
 
-        new Thread(this::inputListener).start();
         String ip = getServerIp();
         server = new Socket();
         try {
@@ -59,7 +58,6 @@ public class GUI implements UI {//implements Runnable
             stop();
             return;
         }
-        System.out.println("Connected! ");
 
         try {
             output = new ObjectOutputStream(server.getOutputStream());
@@ -77,9 +75,7 @@ public class GUI implements UI {//implements Runnable
         ToClientMessage message;
         while (running.get()) {
             try {
-                System.out.println("Messaggio ricevuto:");
                 message = (ToClientMessage) input.readObject();
-                System.out.println(message.toString());
             } catch (IOException e) {
                 System.out.println("Disconnected. ");
                 break;
@@ -101,20 +97,6 @@ public class GUI implements UI {//implements Runnable
             parseMessage(message);
         }
         stop();
-    }
-
-    private void inputListener() {
-        Scanner scanner = new Scanner(System.in);
-        while (running.get()) {
-            String input = scanner.nextLine();
-            switch (input) {
-                // more commands go here
-                case "/quit":
-                    quit();
-                    break;
-            }
-            messageQueue.offer(input);
-        }
     }
 
     private void quit() {
@@ -142,7 +124,6 @@ public class GUI implements UI {//implements Runnable
             }
         }
         manager.getServerIp();
-        System.out.println("\nServer IP address: ");
         return getString();
     }
 
@@ -238,7 +219,6 @@ public class GUI implements UI {//implements Runnable
     public void chooseGameName(boolean taken) {
         manager.chooseGameName(taken);
         if (taken) System.out.println("\nName already taken. ");
-        else System.out.println("\nChoose a name for your game room: ");
         String gameRoom;
         while (true) {
             gameRoom = getString();
@@ -250,24 +230,7 @@ public class GUI implements UI {//implements Runnable
 
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
         manager.chooseGameRoom(gameRooms);
-        StringBuilder string = new StringBuilder();
-        string.append("\n0: Back ");
-        string.append("\n1: Refresh list \n");
-        string.append("\nGame rooms: ");
-        int i = 1;
-        for (GameView game : gameRooms) {
-            i++;
-            string.append("\n");
-            string.append(i + ": ");
-            string.append(game.getName());
-            string.append(" (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ") ");
-        }
-        System.out.println(string);
         int choice = getInt();
-        while (choice < 0 || choice > i) {
-            System.out.println("Invalid input. ");
-            choice = getInt();
-        }
         String room;
         switch (choice) {
             case 0:
@@ -277,7 +240,7 @@ public class GUI implements UI {//implements Runnable
                 room = "/refresh";
                 break;
             default:
-                room = gameRooms.get(choice - 2).getName();
+                room = gameRooms.get(choice-2).getName();
         }
         sendString(room);
     }
@@ -285,7 +248,6 @@ public class GUI implements UI {//implements Runnable
     public void chooseNickname(boolean taken) {
         manager.chooseNickname(taken);
         if (taken) System.out.println("\nNickname already taken. ");
-        else System.out.println("\nChoose your nickname: ");
         while (true) {
             id = getString();
             if (id.length() > 12) System.out.println("Invalid input (max 12 characters). ");
@@ -296,7 +258,6 @@ public class GUI implements UI {//implements Runnable
 
     public void choosePlayersNumber() {
         manager.choosePlayersNumber();
-        System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
         int num = getInt();
         while (num < 2 || num > 3) {
             System.out.println("Invalid input. ");
@@ -365,7 +326,6 @@ public class GUI implements UI {//implements Runnable
 
     public void chooseStartJoin() {
         manager.chooseStartJoin();
-        System.out.println("\n1: Start a new game \n2: Join a game ");
         int num = getInt();
         while (num < 1 || num > 2) {
             System.out.println("Invalid input. ");
@@ -423,7 +383,6 @@ public class GUI implements UI {//implements Runnable
      */
     public void displayMessage(String message) {
         manager.displayMessage(message);
-        System.out.println("\n" + message);
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {

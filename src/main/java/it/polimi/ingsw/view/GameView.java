@@ -12,16 +12,16 @@ import java.util.ArrayList;
 
 public class GameView implements Serializable {
 
-    private final SimpleStringProperty name;
-    private final SimpleIntegerProperty playerNum;
+    private final String name;
+    private final int playerNum;
     private final ArrayList<PlayerView> players;
     private final int activePlayer;
     private final CellView[][] board;
     private final ArrayList<CardView> activeModifiers;
 
     public GameView(Game game) {
-        name = new SimpleStringProperty(game.getName());
-        playerNum = new SimpleIntegerProperty(game.getPlayerNum());
+        name = game.getName();
+        playerNum = game.getPlayerNum();
         players = new ArrayList<PlayerView>();
         for (Player player : game.getPlayers()) {
             players.add(new PlayerView(player));
@@ -39,8 +39,8 @@ public class GameView implements Serializable {
     }
 
     public GameView(String name, int playerNum, ArrayList<PlayerView> players, int activePlayer, CellView[][] board, ArrayList<CardView> modifiers) {
-        this.name = new SimpleStringProperty(name);
-        this.playerNum = new SimpleIntegerProperty(playerNum);
+        this.name =name;
+        this.playerNum = playerNum;
         this.players = players;
         this.activePlayer = activePlayer;
         this.board = board;
@@ -48,11 +48,11 @@ public class GameView implements Serializable {
     }
 
     public String getName() {
-        return name.get();
+        return name;
     }
 
     public int getPlayerNum() {
-        return playerNum.get();
+        return playerNum;
     }
 
     public ArrayList<PlayerView> getPlayers() {

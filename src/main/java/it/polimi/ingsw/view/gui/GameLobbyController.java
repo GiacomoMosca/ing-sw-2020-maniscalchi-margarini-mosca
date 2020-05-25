@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 public class GameLobbyController {
@@ -15,21 +16,55 @@ public class GameLobbyController {
     private GUIManager manager;
 
     @FXML
-    private Button startButton;
+    private ImageView newGameButtonPressed;
     @FXML
-    private Button joinButton;
+    private ImageView joinButtonPressed;
+    @FXML
+    private Text joinGame;
+    @FXML
+    private Text joinGamePressed;
+    @FXML
+    private Text newGame;
+    @FXML
+    private Text newGamePressed;
 
     public void setManager(GUIManager manager) {
         this.manager = manager;
     }
 
-    public void startButtonHandler(){
-        manager.putString("1");
-        manager.setBusy(false);
+    public void joinPressed(){
+        Platform.runLater(()-> {
+            joinButtonPressed.setVisible(true);
+            joinGame.setVisible(false);
+            joinGamePressed.setVisible(true);
+        });
     }
 
-    public void joinButtonHandler(){
-        manager.putString("2");
-        manager.setBusy(false);
+    public void joinReleased(){
+        Platform.runLater(()-> {
+            manager.putString("2");
+            manager.setBusy(false);
+            joinGamePressed.setVisible(false);
+            joinGame.setVisible(true);
+            joinButtonPressed.setVisible(false);
+        });
+    }
+
+    public void newGamePressed(){
+        Platform.runLater(()-> {
+            newGameButtonPressed.setVisible(true);
+            newGame.setVisible(false);
+            newGamePressed.setVisible(true);
+        });
+    }
+
+    public void newGameReleased(){
+        Platform.runLater(()-> {
+            manager.putString("1");
+            manager.setBusy(false);
+            newGamePressed.setVisible(false);
+            newGame.setVisible(true);
+            newGameButtonPressed.setVisible(false);
+        });
     }
 }
