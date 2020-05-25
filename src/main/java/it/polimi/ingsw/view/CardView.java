@@ -13,7 +13,7 @@ public class CardView implements Serializable {
     public CardView(Card card) {
         this.god = card.getGod();
         this.title = card.getTitle();
-        this.description = card.getDescription();;
+        this.description = card.getDescription();
     }
 
     public CardView(String god, String title, String description) {

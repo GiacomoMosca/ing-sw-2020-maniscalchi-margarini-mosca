@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.turn_controllers;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
+import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.game_board.Cell;
@@ -92,7 +93,6 @@ public class PrometheusController extends GodController {
      */
     @Override
     public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
-        Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleMoves;
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
         else possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -104,7 +104,7 @@ public class PrometheusController extends GodController {
         } catch (IllegalMoveException e) {
             System.out.println(e.getMessage());
         }
-        displayMove(startView, endView, godPower);
+        displayMove(startView, endView, null);
     }
 
     /**
@@ -121,6 +121,18 @@ public class PrometheusController extends GodController {
                 possibleMoves.add(cell);
         }
         return findLegalMoves(workerPosition, possibleMoves);
+    }
+
+    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+        Card godPower = (wantBuildBefore) ? card : null;
+        ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
+        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
+        try {
+            buildPosition.build();
+        } catch (IllegalBuildException e) {
+            System.out.println(e.getMessage());
+        }
+        displayBuild(new CellView(buildPosition), godPower);
     }
 
 }

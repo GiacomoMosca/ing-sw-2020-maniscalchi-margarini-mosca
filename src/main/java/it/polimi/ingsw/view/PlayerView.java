@@ -8,18 +8,18 @@ public class PlayerView implements Serializable {
 
     private final String id;
     private final String color;
-    private final String godCard;
+    private final CardView godCard;
     private final boolean hasLost;
 
     public PlayerView(Player player) {
         this.id = player.getId();
         this.color = player.getColor();
         if (player.getGodCard() == null) this.godCard = null;
-        else this.godCard = player.getGodCard().getGod();
+        else this.godCard = new CardView(player.getGodCard());
         this.hasLost = player.hasLost();
     }
 
-    public PlayerView(String id, String color, String godCard, boolean hasLost) {
+    public PlayerView(String id, String color, CardView godCard, boolean hasLost) {
         this.id = id;
         this.color = color;
         this.godCard = godCard;
@@ -34,7 +34,7 @@ public class PlayerView implements Serializable {
         return color;
     }
 
-    public String getGodCard() {
+    public CardView getGodCard() {
         return godCard;
     }
 

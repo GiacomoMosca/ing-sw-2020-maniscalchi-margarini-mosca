@@ -267,8 +267,7 @@ public class GUI implements UI {//implements Runnable
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
-        manager.choosePosition(positions, desc);
-        StringBuilder string = new StringBuilder();
+        /*StringBuilder string = new StringBuilder();
         string.append("\n");
         switch (desc) {
             case "start1":
@@ -302,14 +301,14 @@ public class GUI implements UI {//implements Runnable
         int choice = getInt();
         while (choice < 0 || choice >= positions.size()) {
             System.out.println("Invalid input. ");
-            choice = getInt();
-        }
-        sendInteger(choice);
+            choice = getInteger();
+        }*/
+        manager.choosePosition(positions, desc);
+        sendInteger(getInteger());
     }
 
     public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        manager.chooseStartingPlayer(players);
-        StringBuilder string = new StringBuilder();
+        /*StringBuilder string = new StringBuilder();
         string.append("\nChoose the starting player: \n");
         for (int i = 0; i < players.size(); i++) {
             string.append(i + ": ");
@@ -319,9 +318,10 @@ public class GUI implements UI {//implements Runnable
         int choice = getInt();
         while (choice < 0 || choice >= players.size()) {
             System.out.println("Invalid input. ");
-            choice = getInt();
-        }
-        sendInteger(choice);
+            choice = getInteger();
+        }*/
+        manager.chooseStartingPlayer(players);
+        sendInteger(getInteger());
     }
 
     public void chooseStartJoin() {
@@ -340,15 +340,23 @@ public class GUI implements UI {//implements Runnable
      * @param query the question the player should answer to
      */
     public void chooseYesNo(String query) {
-        manager.chooseYesNo(query);
-        System.out.println("\n" + query + " (y/n) ");
-        String choice = getString();
-        while (!choice.equals("y") && !choice.equals("n")) {
-            System.out.println("Invalid input. ");
-            choice = getString();
+        /*boolean res;
+
+        if (query.equals("Do you want to randomize the playable God Powers pool?")) {
+            manager.chooseYesNo(query);
+            res = getBoolean();
+        } else {
+            System.out.println("\n" + query + " (y/n) ");
+            String choice = getString();
+            while (!choice.equals("y") && !choice.equals("n")) {
+                System.out.println("Invalid input. ");
+                choice = getString();
+            }
+            res = choice.equals("y");
         }
-        boolean res = choice.equals("y");
-        sendBoolean(res);
+        sendBoolean(res);*/
+        manager.chooseYesNo(query);
+        sendBoolean(getBoolean());
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
@@ -371,9 +379,7 @@ public class GUI implements UI {//implements Runnable
     public void displayGameInfo(GameView game, String desc) {
         manager.displayGameInfo(game, desc);
         currentGame = game;
-        // TO DO: check if game is ok?
-        // TO DO: display player info? description?
-        displayBoard();
+        // displayBoard();
     }
 
     /**
@@ -386,7 +392,6 @@ public class GUI implements UI {//implements Runnable
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
-        manager.displayMove(moves, godCard);
         moves.forEach((startPosition, endPosition) -> {
             CellView newStart = new CellView(
                     startPosition.getPosX(), startPosition.getPosY(), startPosition.getBuildLevel(), startPosition.isDomed(), null
@@ -397,13 +402,14 @@ public class GUI implements UI {//implements Runnable
             );
             currentGame.setCell(newEnd);
         });
-        displayBoard();
+        manager.displayMove(moves, godCard);
+        //displayBoard();
     }
 
     public void displayPlaceWorker(CellView position) {
         manager.displayPlaceWorker(position);
         currentGame.setCell(position);
-        displayBoard();
+        //displayBoard();
     }
 
     public void notifyDisconnection(PlayerView player) {
@@ -459,7 +465,7 @@ public class GUI implements UI {//implements Runnable
     }
 
     private void displayBoard() {
-        StringBuilder string = new StringBuilder();
+        /* StringBuilder string = new StringBuilder();
         string.append("\n    0  1  2  3  4 ");
         string.append("\n");
         for (int i = 0; i < 5; i++) {
@@ -479,16 +485,7 @@ public class GUI implements UI {//implements Runnable
         }
         string.append("  ----------------");
         string.append("\n");
-        System.out.println(string);
+        System.out.println(string); */
     }
 
 }
-
-
-/*
- *  avremo controller per:
- *  - inserire IP server / nickname
- *  - start game / join game
- *  - partita
- *
- */
