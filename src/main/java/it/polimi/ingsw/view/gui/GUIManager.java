@@ -32,7 +32,7 @@ public class GUIManager extends Application {
     private static Scene joinGameScene;
     private static Scene serviceMessageScene;
 
-    private static StartController startController = null;
+    private static TitleController startController = null;
     private static LoginController loginController = null;
     private static NewGameController newGameController = null;
     private static JoinGameController joinGameController = null;

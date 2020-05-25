@@ -1,0 +1,18 @@
+@font-face {
+    font-family: LillyBelle;
+    src: url("/assets/fonts/LillyBelle.ttf");
+}
+
+/* Text */
+
+#buttonText, #buttonPressedText {
+    -fx-font: 18px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#text1, #text2 {
+    -fx-font: 25px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}

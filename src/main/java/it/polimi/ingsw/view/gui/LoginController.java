@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
@@ -15,25 +16,53 @@ public class LoginController {
     @FXML
     private TextField textField;
     @FXML
-    private Button button;
+    private ImageView connectButton;
     @FXML
-    private Label label;
+    private ImageView connectButtonPressed;
+    @FXML
+    private Text request;
+    @FXML
+    private Text connectText;
+    @FXML
+    private Text connectTextPressed;
 
     public void setManager(GUIManager manager) {
         this.manager = manager;
     }
 
-    public void ButtonHandler() {
-        manager.putString(textField.getText());
-        manager.setBusy(false);
+    public void pressed() {
+        Platform.runLater(() -> {
+            connectButtonPressed.setVisible(true);
+            connectText.setVisible(false);
+            connectTextPressed.setVisible(true);
+        });
+    }
+
+    public void released(){
+        connectButton.setDisable(true);
+        String choice = textField.getText();
+        if(!choice.trim().isEmpty()) {
+            manager.putString(choice);
+            manager.setBusy(false);
+        }
+        else
+            connectButton.setDisable(false);
+        Platform.runLater(() -> {
+            connectButtonPressed.setVisible(false);
+            connectText.setVisible(true);
+            connectTextPressed.setVisible(false);
+        });
     }
 
     public void chooseNickname() {
         Platform.runLater(() -> {
-            label.setText("Choose nickname:");
+            request.setText("Choose nickname:");
+            request.setLayoutX(341);
             textField.clear();
             textField.setPromptText("Nickname");
-            button.setText("Choose");
+            connectText.setText("Choose");
+            connectTextPressed.setText("Choose");
+            connectButton.setDisable(false);
             manager.setBusy(false);
         });
     }
