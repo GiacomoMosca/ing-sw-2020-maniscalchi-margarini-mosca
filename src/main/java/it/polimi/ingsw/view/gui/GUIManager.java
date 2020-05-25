@@ -138,7 +138,7 @@ public class GUIManager extends Application {
     // queue
 
     public void putObject(Object object) {
-        messageQueue.offer(object);
+        new Thread(() -> messageQueue.offer(object)).start();
     }
 
     // generic
@@ -150,7 +150,7 @@ public class GUIManager extends Application {
     public void chooseYesNo(String query) {
         if (currentScene.equals(gameSetupScene)) gameSetupController.chooseYesNo(query);
         else gameBoardController.chooseYesNo(query);
-            //setBusy(false);
+        //setBusy(false);
     }
 
     // LoginController

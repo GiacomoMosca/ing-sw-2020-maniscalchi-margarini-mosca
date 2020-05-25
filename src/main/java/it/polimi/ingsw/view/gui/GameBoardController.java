@@ -7,9 +7,8 @@ import it.polimi.ingsw.view.PlayerView;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -35,10 +34,13 @@ import java.util.HashMap;
 
 public class GameBoardController {
 
+    private final double CELLS_OFFSET = 96.4;
     @FXML
-    private Text textBox, firstPlayerID, secondPlayerID, thirdPlayerID, activePlayer;
+    private AnchorPane p1, p2, p3;
     @FXML
-    private GridPane gridPane;
+    private Text infoBox, firstPlayerID, secondPlayerID, thirdPlayerID;
+    @FXML
+    private GridPane buildPane, workerPane, highlightPane;
     @FXML
     private ImageView playerINFO_2P, playerINFO_3P;
     @FXML
@@ -53,17 +55,14 @@ public class GameBoardController {
     private Button yesButton, noButton;
     @FXML
     private StackPane godBox;
-
     private GUIManager manager;
-
-    private final double CELLS_OFFSET = 96.4;
-
     private GameView game;
     private ArrayList<String> playersId;
-    private ArrayList<String> godCards;
+    private ArrayList<CardView> godCards;
     private ArrayList<ImageView> playerHighlights;
+    private ArrayList<CellView> currentPositions;
+    private HashMap<Integer, HighlightCell> highlightForThisCell;
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
-    private HashMap<Point2D, ImageView> highlightForThisCell;
     private HashMap<String, ImageView> fullImageForThisGod;
 
     public void initialize(GUIManager manager) {
@@ -113,11 +112,10 @@ public class GameBoardController {
 
     public void initBuildings() {
         for (CellView cell : game.getAllCells()) {
-            ImageView highlight = new ImageView("assets/buildings/highlight_cell.png");
-            gridPane.add(highlight, cell.getPosX(), cell.getPosY());
-            gridPane.setHalignment(highlight, HPos.CENTER);
+            HighlightCell highlight = new HighlightCell("assets/buildings/highlight_cell.png", cell.getPosX(), cell.getPosY());
             highlight.setVisible(false);
-            highlightForThisCell.put(new Point2D(cell.getPosX(), cell.getPosY()), highlight);
+            highlightPane.add(highlight, cell.getPosX(), cell.getPosY());
+            highlightForThisCell.put(cell.getPosX() * 10 + cell.getPosY(), highlight);
         }
     }
 
@@ -125,58 +123,56 @@ public class GameBoardController {
         firstPlayerID.setText(playersId.get(0));
         secondPlayerID.setText(playersId.get(1));
 
-        playerColor_left_red.setVisible(true);
-        playerColor_left_green.setVisible(true);
-        playerColor_right_red.setVisible(true);
-        playerColor_right_green.setVisible(true);
-        playerColor_left_red.toFront();
-        playerColor_left_green.toFront();
-        playerColor_right_red.toFront();
-        playerColor_right_green.toFront();
-
         playerHighlights.add(playerHighlight1);
         playerHighlights.add(playerHighlight2);
 
-        playerIcon1.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(0) + ".png"));
-        playerIcon1.setVisible(true);
-        playerIcon2.toFront();
-        playerIcon2.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(1) + ".png"));
-        playerIcon2.toFront();
-        playerIcon2.setVisible(true);
+        playerIcon1.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(0).getGod() + ".png"));
+        Tooltip.install(playerIcon1, new Tooltip(
+                godCards.get(0).getGod() + "\n" +
+                        godCards.get(0).getTitle() + "\n" +
+                        godCards.get(0).getDescription()
+        ));
+        playerIcon2.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(1).getGod() + ".png"));
+        Tooltip.install(playerIcon2, new Tooltip(
+                godCards.get(1).getGod() + "\n" +
+                        godCards.get(1).getTitle() + "\n" +
+                        godCards.get(1).getDescription()
+        ));
 
-        ImageView firstFullGod=new ImageView("/assets/cards/godFull/full_" + godCards.get(0) + ".png");
+        ImageView firstFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(0).getGod() + ".png");
         godBox.getChildren().add(firstFullGod);
-        fullImageForThisGod.put(godCards.get(0), firstFullGod);
+        fullImageForThisGod.put(godCards.get(0).getGod(), firstFullGod);
         firstFullGod.setVisible(false);
-        ImageView secondFullGod=new ImageView("/assets/cards/godFull/full_" + godCards.get(1) + ".png");
+        ImageView secondFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(1).getGod() + ".png");
         godBox.getChildren().add(secondFullGod);
-        fullImageForThisGod.put(godCards.get(1), secondFullGod);
+        fullImageForThisGod.put(godCards.get(1).getGod(), secondFullGod);
         secondFullGod.setVisible(false);
 
 
         if (game.getPlayers().size() == 2) {
             playerINFO_2P.setVisible(true);
-            thirdPlayerID.setVisible(false);
 
         } else {
             playerINFO_3P.setVisible(true);
-            playerColor_left_blue.setVisible(true);
-            playerColor_right_blue.setVisible(true);
-            playerColor_left_blue.toFront();
-            playerColor_right_blue.toFront();
+            p3.setVisible(true);
             playerHighlights.add(playerHighlight3);
-
             thirdPlayerID.setText(playersId.get(2));
-
-            playerIcon3.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(2) + ".png"));
-            playerIcon3.toFront();
-            playerIcon3.setVisible(true);
-
-            ImageView thirdFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(2) + ".png");
+            playerIcon3.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(2).getGod() + ".png"));
+            Tooltip.install(playerIcon3, new Tooltip(
+                    godCards.get(2).getGod() + "\n" +
+                            godCards.get(2).getTitle() + "\n" +
+                            godCards.get(2).getDescription()
+            ));
+            ImageView thirdFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(2).getGod() + ".png");
             godBox.getChildren().add(thirdFullGod);
-            fullImageForThisGod.put(godCards.get(2), thirdFullGod);
+            fullImageForThisGod.put(godCards.get(2).getGod(), thirdFullGod);
             thirdFullGod.setVisible(false);
         }
+
+        for (ImageView highlight : playerHighlights)
+            highlight.setOnMouseClicked(t -> {
+                sendStartingPlayer(playerHighlights.indexOf(highlight));
+            });
 
         BackgroundImage yesButtonBackgroundImage = new BackgroundImage(new Image(getClass().getResource("/assets/infoBox/button_yes.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         BackgroundImage noButtonBackgroundImage = new BackgroundImage(new Image(getClass().getResource("/assets/infoBox/button_no.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
@@ -187,26 +183,27 @@ public class GameBoardController {
         noButton.setBackground(noButtonBackground);
         yesButton.setVisible(false);
         noButton.setVisible(false);
+        yesButton.setOnMouseClicked(t -> {
+            sendYesNoChoice(true);
+        });
+        noButton.setOnMouseClicked(t -> {
+            sendYesNoChoice(false);
+        });
     }
 
     public void displayGameInfo(GameView game, String desc) {
         Platform.runLater(() -> {
-            activePlayer.setText("[" + playersId.get(game.getActivePlayer()) + "'s turn]");
-            textBox.setText(desc);
+            infoBox.setText(playersId.get(game.getActivePlayer()) + "'s Turn");
             manager.setBusy(false);
         });
     }
 
     public void chooseStartingPlayer() {
         Platform.runLater(() -> {
-            textBox.setText("Choose starting player");
+            infoBox.setText("Choose the starting player");
             for (ImageView highlight : playerHighlights) {
                 highlight.setVisible(true);
-                highlight.setOnMouseClicked(t -> {
-                    sendStartingPlayer(playerHighlights.indexOf(highlight));
-                });
             }
-            manager.setBusy(false);
         });
     }
 
@@ -214,160 +211,143 @@ public class GameBoardController {
         Platform.runLater(() -> {
             for (ImageView highlight : playerHighlights)
                 highlight.setVisible(false);
+            manager.setBusy(false);
+            manager.putObject(value);
         });
-        manager.putObject(value);
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
+        String text;
+        switch (desc) {
+            case "start1":
+                text = "Choose the position for your first worker";
+                break;
+            case "start2":
+                text = "Choose the position for your second worker";
+                break;
+            case "worker":
+                text = "Choose the worker you want to use";
+                break;
+            case "move":
+                text = "Choose the position to move to";
+                break;
+            case "build":
+                text = "Choose the position to build in";
+                break;
+            default:
+                text = null;
+                break;
+        }
+        currentPositions = positions;
         Platform.runLater(() -> {
-            textBox.setText(desc);
+            infoBox.setText(text);
+            highlightPane.setVisible(true);
             for (CellView position : positions) {
-                Point2D point = new Point2D(position.getPosX(), position.getPosY());
-                highlightForThisCell.get(point).setVisible(true);
-                highlightForThisCell.get(point).toFront();
-                highlightForThisCell.get(point).setOnMouseClicked(t -> {
-                    for (CellView cell : positions) {
-                        Point2D clickedCell = new Point2D(cell.getPosX(), cell.getPosY());
-                        highlightForThisCell.get(clickedCell).setVisible(false);
-                    }
-                    manager.putObject(positions.indexOf(position));
-                });
+                highlightForThisCell.get(position.getPosX() * 10 + position.getPosY()).setVisible(true);
             }
-            manager.setBusy(false);
         });
+    }
+
+    public void sendPosition(HighlightCell cell) {
+        int selectedCell = -1;
+        for (CellView possibleCell : currentPositions) {
+            if (cell.posX == possibleCell.getPosX() && cell.posY == possibleCell.getPosY()) {
+                selectedCell = currentPositions.indexOf(possibleCell);
+                break;
+            }
+        }
+        manager.setBusy(false);
+        manager.putObject(selectedCell);
     }
 
     public void displayPlaceWorker(CellView position) {
         Platform.runLater(() -> {
-            textBox.setText("Display place worker");
-
             String workerColor = position.getWorker().getColor();
             int workerNumber = position.getWorker().getNum() - 1;
 
-            gridPane.add(workersForThisColor.get(workerColor).get(workerNumber), position.getPosX(), position.getPosY());
-            GridPane.setHalignment(workersForThisColor.get(workerColor).get(workerNumber), HPos.CENTER);                    //serve?
-            workersForThisColor.get(workerColor).get(workerNumber).toFront();
-            workersForThisColor.get(workerColor).get(workerNumber).setVisible(true);
+            workerPane.add(workersForThisColor.get(workerColor).get(workerNumber), position.getPosX(), position.getPosY());
             manager.setBusy(false);
         });
     }
 
-    //sicuramente si può abbreviare
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
+        Transition transition;
+        if (moves.size() == 2) {
+            ArrayList<Transition> transitions = new ArrayList<>();
+            moves.forEach((startPosition, endPosition) -> {
+                ImageView movingWorker = workersForThisColor.get(startPosition.getWorker().getColor()).get(startPosition.getWorker().getNum() - 1);
+                TranslateTransition oneWorkerMoving = new TranslateTransition(Duration.seconds(0.5), movingWorker);
+                double offsetX = endPosition.getPosX() - startPosition.getPosX();
+                double offsetY = endPosition.getPosY() - startPosition.getPosY();
+                oneWorkerMoving.setByX(offsetX * CELLS_OFFSET);
+                oneWorkerMoving.setByY(offsetY * CELLS_OFFSET);
+                transitions.add(oneWorkerMoving);
+            });
+            transition = new ParallelTransition(transitions.get(0), transitions.get(1));
+        } else {
+            TranslateTransition oneWorkerMoving = new TranslateTransition(Duration.seconds(0.5));
+            moves.forEach((startPosition, endPosition) -> {
+                ImageView movingWorker = workersForThisColor.get(startPosition.getWorker().getColor()).get(startPosition.getWorker().getNum() - 1);
+                oneWorkerMoving.setNode(movingWorker);
+                double offsetX = endPosition.getPosX() - startPosition.getPosX();
+                double offsetY = endPosition.getPosY() - startPosition.getPosY();
+                oneWorkerMoving.setByX(offsetX * CELLS_OFFSET);
+                oneWorkerMoving.setByY(offsetY * CELLS_OFFSET);
+            });
+            transition = oneWorkerMoving;
+        }
+
+        if (godCard != null) {
+            transition = addGodSplash(transition, godCard);
+        }
+
+        Transition finalTransition = transition;
+        finalTransition.setOnFinished(e -> manager.setBusy(false));
         Platform.runLater(() -> {
-            textBox.setText("Display move");
-
-            if (moves.size() == 2) {
-                ArrayList<Transition> transitions = new ArrayList<>();
-                moves.forEach((startPosition, endPosition) -> {
-                    ImageView movingWorker = workersForThisColor.get(startPosition.getWorker().getColor()).get(startPosition.getWorker().getNum() - 1);
-                    TranslateTransition oneWorkerMoving = new TranslateTransition(Duration.seconds(1), movingWorker);
-                    movingWorker.toFront();
-
-                    double offsetX = endPosition.getPosX() - startPosition.getPosX();
-                    double offsetY = endPosition.getPosY() - startPosition.getPosY();
-
-                    oneWorkerMoving.setByX(offsetX * CELLS_OFFSET);
-                    oneWorkerMoving.setByY(offsetY * CELLS_OFFSET);
-                    transitions.add(oneWorkerMoving);
-                });
-                ParallelTransition twoWorkersMoving = new ParallelTransition(transitions.get(0), transitions.get(1));
-
-                if (godCard != null) {
-                    textBox.setText("Display godPower");
-                    FadeTransition godAppearing = new FadeTransition(Duration.seconds(2), fullImageForThisGod.get(godCard.getGod()));
-                    fullImageForThisGod.get(godCard.getGod()).setVisible(true);
-                    fullImageForThisGod.get(godCard.getGod()).toFront();
-                    godAppearing.setFromValue(1);
-                    godAppearing.setToValue(0);
-
-                    SequentialTransition sequentialTransition = new SequentialTransition(godAppearing, twoWorkersMoving);
-                    sequentialTransition.play();
-                } else
-                    twoWorkersMoving.play();
-
-            } else {
-                TranslateTransition oneWorkerMoving = new TranslateTransition(Duration.seconds(1));
-                moves.forEach((startPosition, endPosition) -> {
-                    ImageView movingWorker = workersForThisColor.get(startPosition.getWorker().getColor()).get(startPosition.getWorker().getNum() - 1);   //check
-                    oneWorkerMoving.setNode(movingWorker);
-                    movingWorker.toFront();
-                    double offsetX = endPosition.getPosX() - startPosition.getPosX();
-                    double offsetY = endPosition.getPosY() - startPosition.getPosY();
-                    oneWorkerMoving.setByX(offsetX * CELLS_OFFSET);
-                    oneWorkerMoving.setByY(offsetY * CELLS_OFFSET);
-                });
-
-                if (godCard != null) {
-                    textBox.setText("Display godPower");
-                    FadeTransition godAppearing = new FadeTransition(Duration.seconds(2), fullImageForThisGod.get(godCard.getGod()));
-                    fullImageForThisGod.get(godCard.getGod()).setVisible(true);
-                    fullImageForThisGod.get(godCard.getGod()).toFront();
-                    godAppearing.setFromValue(1);
-                    godAppearing.setToValue(0);
-
-                    SequentialTransition sequentialTransition = new SequentialTransition(godAppearing, oneWorkerMoving);
-                    sequentialTransition.play();
-
-                } else
-                    oneWorkerMoving.play();
-            }
-            manager.setBusy(false);
+            finalTransition.play();
         });
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
+        Transition transition;
+        ImageView newBuilding;
+        if (!buildPosition.isDomed())
+            newBuilding = new ImageView("assets/buildings/build_" + buildPosition.getBuildLevel() + ".png");
+        else
+            newBuilding = new ImageView("assets/buildings/build_dome.png");
+        FadeTransition buildingAppearing = new FadeTransition(Duration.seconds(0.5), newBuilding);
+        buildingAppearing.setFromValue(0);
+        buildingAppearing.setToValue(1);
+
+        transition = buildingAppearing;
+        if (godCard != null) {
+            transition = addGodSplash(transition, godCard);
+        }
+
+        Transition finalTransition = transition;
+        finalTransition.setOnFinished(e -> manager.setBusy(false));
         Platform.runLater(() -> {
-            textBox.setText("Display build");
-            FadeTransition buildingAppearing = new FadeTransition(Duration.seconds(2));
-            buildingAppearing.setFromValue(0);
-            buildingAppearing.setToValue(1);
-
-            ImageView newBuilding;
-            if (!buildPosition.isDomed())
-                newBuilding = new ImageView("assets/buildings/build_" + buildPosition.getBuildLevel() + ".png");
-            else
-                newBuilding = new ImageView("assets/buildings/build_dome.png");
-
-            gridPane.add(newBuilding, buildPosition.getPosX(), buildPosition.getPosY());
-            GridPane.setHalignment(newBuilding, HPos.CENTER);
-            buildingAppearing.setNode(newBuilding);
-            newBuilding.toFront();
-
-            if (buildPosition.hasWorker())
-                workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1).toFront();
-                //esempio Zeus: se worker costruisce sotto di sé non viene asfaltato ;)
-
-            if (godCard != null) {
-                textBox.setText("Display godPower");
-                FadeTransition godAppearing = new FadeTransition(Duration.seconds(2), fullImageForThisGod.get(godCard.getGod()));
-                fullImageForThisGod.get(godCard.getGod()).setVisible(true);
-                fullImageForThisGod.get(godCard.getGod()).toFront();
-                godAppearing.setFromValue(1);
-                godAppearing.setToValue(0);
-
-                SequentialTransition sequentialTransition = new SequentialTransition(godAppearing, buildingAppearing);
-                sequentialTransition.play();
-            } else
-                buildingAppearing.play();
-            manager.setBusy(false);
+            buildPane.add(newBuilding, buildPosition.getPosX(), buildPosition.getPosY());
+            finalTransition.play();
         });
+    }
+
+    private SequentialTransition addGodSplash(Transition transition, CardView godCard) {
+        fullImageForThisGod.get(godCard.getGod()).setVisible(true);
+        FadeTransition godFadeIn = new FadeTransition(Duration.seconds(0.3), fullImageForThisGod.get(godCard.getGod()));
+        godFadeIn.setFromValue(0);
+        godFadeIn.setToValue(1);
+        FadeTransition godFadeOut = new FadeTransition(Duration.seconds(1), fullImageForThisGod.get(godCard.getGod()));
+        godFadeOut.setFromValue(1);
+        godFadeOut.setToValue(0);
+        return new SequentialTransition(godFadeIn, godFadeOut, transition);
     }
 
     public void chooseYesNo(String query) {
         Platform.runLater(() -> {
-            textBox.setText(query);
+            infoBox.setText(query);
             yesButton.setVisible(true);
             noButton.setVisible(true);
-
-            yesButton.setOnMouseClicked(t -> {
-                sendYesNoChoice(true);
-            });
-
-            noButton.setOnMouseClicked(t -> {
-                sendYesNoChoice(false);
-            });
-            manager.setBusy(false);
         });
     }
 
@@ -375,44 +355,61 @@ public class GameBoardController {
         Platform.runLater(() -> {
             yesButton.setVisible(false);
             noButton.setVisible(false);
+            manager.setBusy(false);
+            manager.putObject(answer);
         });
-        manager.putObject(answer);
     }
 
     //TO DO
 
     public void notifyDisconnection() {
         Platform.runLater(() -> {
-            textBox.setText("Disconnected!");
+            infoBox.setText("Disconnected!");
             manager.setBusy(false);
         });
     }
 
     public void notifyGameOver() {
         Platform.runLater(() -> {
-            textBox.setText("Game over!");
+            infoBox.setText("Game over!");
             manager.setBusy(false);
         });
     }
 
     public void notifyLoss() {
         Platform.runLater(() -> {
-            textBox.setText("You lose!");
+            infoBox.setText("You lose!");
             manager.setBusy(false);
         });
     }
 
     public void notifyWin() {
         Platform.runLater(() -> {
-            textBox.setText("You win!");
+            infoBox.setText("You win!");
             manager.setBusy(false);
         });
     }
 
     public void displayMessage(String query) {
         Platform.runLater(() -> {
-            textBox.setText(query);
+            infoBox.setText(query);
             manager.setBusy(false);
         });
+    }
+
+    private class HighlightCell extends ImageView {
+
+        public int posX, posY;
+
+        public HighlightCell(String s, int x, int y) {
+            super(s);
+            posX = x;
+            posY = y;
+            setOnMouseClicked(t -> {
+                for (CellView cell : currentPositions)
+                    highlightForThisCell.get(cell.getPosX() * 10 + cell.getPosY()).setVisible(false);
+                new Thread(() -> sendPosition(this)).start();
+            });
+        }
     }
 }

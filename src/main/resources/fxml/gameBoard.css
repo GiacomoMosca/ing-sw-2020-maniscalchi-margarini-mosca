@@ -3,17 +3,27 @@
     src: url('/assets/fonts/LillyBelle.ttf');
 }
 
-#textBox{
+#infoBox {
     -fx-font: 30px LillyBelle;
     -fx-fill: black;
 }
 
-#firstPlayerID, #secondPlayerID, #thirdPlayerID{
-    -fx-font: 40px LillyBelle;
+#firstPlayerID, #secondPlayerID, #thirdPlayerID {
+    -fx-font: 36px LillyBelle;
     -fx-fill: white;
+    -fx-stroke: #2d2723;
+    -fx-stroke-type: outside;
+    -fx-stroke-width: 2;
 }
 
-#activePlayer{
+#infoBox {
+    -fx-font: 32px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
+    -fx-line-spacing: -10px;
+}
+
+#activePlayer {
     -fx-font: 15px LillyBelle;
     -fx-fill: #412711
 }

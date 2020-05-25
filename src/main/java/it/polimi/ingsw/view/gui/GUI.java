@@ -426,9 +426,7 @@ public class GUI implements UI {//implements Runnable
     public void displayGameInfo(GameView game, String desc) {
         manager.displayGameInfo(game, desc);
         currentGame = game;
-        // TO DO: check if game is ok?
-        // TO DO: display player info? description?
-        displayBoard();
+        // displayBoard();
     }
 
     /**
@@ -515,7 +513,7 @@ public class GUI implements UI {//implements Runnable
     }
 
     private void displayBoard() {
-        StringBuilder string = new StringBuilder();
+        /* StringBuilder string = new StringBuilder();
         string.append("\n    0  1  2  3  4 ");
         string.append("\n");
         for (int i = 0; i < 5; i++) {
@@ -535,7 +533,7 @@ public class GUI implements UI {//implements Runnable
         }
         string.append("  ----------------");
         string.append("\n");
-        System.out.println(string);
+        System.out.println(string); */
     }
 
 }
