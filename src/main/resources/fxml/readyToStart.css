@@ -1,0 +1,18 @@
+@font-face {
+    font-family: LillyBelle;
+    src: url("/assets/fonts/LillyBelle.ttf");
+}
+
+/* Text */
+
+#title {
+    -fx-font: 40px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#enter, #pressedEnter {
+    -fx-font: 25px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}

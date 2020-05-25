@@ -65,7 +65,7 @@ public class GameBoardController {
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
     private HashMap<String, ImageView> fullImageForThisGod;
 
-    public void initialize(GUIManager manager) {
+    public void setManager(GUIManager manager) {
         this.manager = manager;
     }
 

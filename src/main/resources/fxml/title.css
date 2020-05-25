@@ -1,0 +1,12 @@
+@font-face {
+    font-family: LillyBelle;
+    src: url("/assets/fonts/LillyBelle.ttf");
+}
+
+/* Text */
+
+#playText, #playTextPressed {
+    -fx-font: 29px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}

@@ -125,7 +125,7 @@ public class Server {
     }
 
     private void newRoom(VirtualView player) throws IOException, ClassNotFoundException {
-        int playerNum = player.choosePlayersNumber();
+
         String gameName;
         boolean taken = false;
         while (true) {
@@ -140,6 +140,7 @@ public class Server {
                     }
                 }
                 if (!taken) {
+                    int playerNum = player.choosePlayersNumber();
                     GameController gameController = new GameController(player, playerNum, gameName);
                     gameControllers.add(gameController);
                     logger.log("new game " + gameName + " created");
