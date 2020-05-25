@@ -15,7 +15,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,7 +27,7 @@ public class GUI implements UI {//implements Runnable
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
-    private SynchronousQueue<String> messageQueue;
+    private SynchronousQueue<Object> messageQueue;
     private String id;
     private GameView currentGame;
 
@@ -42,7 +41,7 @@ public class GUI implements UI {//implements Runnable
     @Override
     public void run() {
         running.set(true);
-        messageQueue = new SynchronousQueue<String>();
+        messageQueue = new SynchronousQueue<Object>();
         currentGame = null;
 
         manager.setGui(this);
@@ -131,27 +130,49 @@ public class GUI implements UI {//implements Runnable
         message.performAction(this);
     }
 
-    private int getInt() {
-        while (true) {
-            try {
-                return Integer.parseInt(messageQueue.take());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. ");
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
-            }
+    // get from queue
+
+    public boolean getBoolean() {
+        boolean val = false;
+        try {
+            val = (Boolean) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
         }
+        return val;
     }
 
-    private String getString() {
-        while (true) {
-            try {
-                return messageQueue.take();
-            } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
-            }
+    public int getInteger() {
+        int val = -1;
+        try {
+            val = (Integer) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
         }
+        return val;
     }
+
+    public ArrayList<Integer> getIntegers() {
+        ArrayList<Integer> val = null;
+        try {
+            val = (ArrayList<Integer>) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
+        }
+        return val;
+    }
+
+    public String getString() {
+        String val = null;
+        try {
+            val = (String) messageQueue.take();
+        } catch (InterruptedException e) {
+            System.out.println("Error getting input. \n");
+        }
+        return val;
+    }
+
+    // send to server
 
     public void sendBoolean(boolean body) {
         try {
@@ -189,31 +210,11 @@ public class GUI implements UI {//implements Runnable
         }
     }
 
+    // message functions
+
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
         manager.chooseCards(possibleCards, num, pickedCards);
-        StringBuilder string = new StringBuilder();
-        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
-        else string.append("\nPick your God Power: \n");
-        for (int i = 0; i < possibleCards.size(); i++) {
-            string.append(i + ": ");
-            string.append(possibleCards.get(i).getGod() + "\n");
-        }
-        if (pickedCards != null) for (CardView pickedCard : pickedCards) {
-            string.append("X: ");
-            string.append(pickedCard.getGod() + "\n");
-        }
-        System.out.println(string);
-        ArrayList<Integer> choices = new ArrayList<Integer>();
-        for (int i = 0; i < num; i++) {
-            int choice = getInt();
-            while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
-                System.out.println("Invalid input. ");
-                choice = getInt();
-            }
-            System.out.println("Picked " + possibleCards.get(choice).getGod());
-            choices.add(choice);
-        }
-        sendIntegers(choices);
+        sendIntegers(getIntegers());
     }
 
     public void chooseGameName(boolean taken) {
@@ -230,7 +231,7 @@ public class GUI implements UI {//implements Runnable
 
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
         manager.chooseGameRoom(gameRooms);
-        int choice = getInt();
+        int choice = getInteger();
         String room;
         switch (choice) {
             case 0:
@@ -240,7 +241,7 @@ public class GUI implements UI {//implements Runnable
                 room = "/refresh";
                 break;
             default:
-                room = gameRooms.get(choice-2).getName();
+                room = gameRooms.get(choice - 2).getName();
         }
         sendString(room);
     }
@@ -258,105 +259,38 @@ public class GUI implements UI {//implements Runnable
 
     public void choosePlayersNumber() {
         manager.choosePlayersNumber();
-        int num = getInt();
+        int num = getInteger();
         while (num < 2 || num > 3) {
             System.out.println("Invalid input. ");
-            num = getInt();
+            num = getInteger();
         }
         sendInteger(num);
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
-        /*StringBuilder string = new StringBuilder();
-        string.append("\n");
-        switch (desc) {
-            case "start1":
-                string.append("(Worker 1) Choose the starting position for your worker:");
-                break;
-            case "start2":
-                string.append("(Worker 2) Choose the starting position for your worker:");
-                break;
-            case "worker":
-                string.append("Choose a worker:");
-                break;
-            case "move":
-                string.append("Choose a position to move to:");
-                break;
-            case "build":
-                string.append("Choose a position to build in:");
-                break;
-        }
-        string.append("\n");
-        for (int i = 0; i < positions.size(); i++) {
-            CellView cell = positions.get(i);
-            if (i > 0) {
-                string.append(", ");
-                if (i % 5 == 0) string.append("\n");
-            }
-            string.append(i + ": ");
-            string.append("[" + cell.getPosX() + ", " + cell.getPosY() + "]");
-        }
-        string.append("\n");
-        System.out.println(string);
-        int choice = getInt();
-        while (choice < 0 || choice >= positions.size()) {
-            System.out.println("Invalid input. ");
-            choice = getInteger();
-        }*/
         manager.choosePosition(positions, desc);
         sendInteger(getInteger());
     }
 
     public void chooseStartingPlayer(ArrayList<PlayerView> players) {
-        /*StringBuilder string = new StringBuilder();
-        string.append("\nChoose the starting player: \n");
-        for (int i = 0; i < players.size(); i++) {
-            string.append(i + ": ");
-            string.append(players.get(i).getId() + "\n");
-        }
-        System.out.println(string);
-        int choice = getInt();
-        while (choice < 0 || choice >= players.size()) {
-            System.out.println("Invalid input. ");
-            choice = getInteger();
-        }*/
         manager.chooseStartingPlayer(players);
         sendInteger(getInteger());
     }
 
     public void chooseStartJoin() {
         manager.chooseStartJoin();
-        int num = getInt();
+        int num = getInteger();
         while (num < 1 || num > 2) {
             System.out.println("Invalid input. ");
-            num = getInt();
+            num = getInteger();
         }
         sendBoolean(num == 1);
     }
 
-    /**
-     * shows the question and waits until the player has answered ("y" for "yes", "n" for "no")
-     *
-     * @param query the question the player should answer to
-     */
     public void chooseYesNo(String query) {
-        /*boolean res;
-
-        if (query.equals("Do you want to randomize the playable God Powers pool?")) {
-            manager.chooseYesNo(query);
-            res = getBoolean();
-        } else {
-            System.out.println("\n" + query + " (y/n) ");
-            String choice = getString();
-            while (!choice.equals("y") && !choice.equals("n")) {
-                System.out.println("Invalid input. ");
-                choice = getString();
-            }
-            res = choice.equals("y");
-        }
-        sendBoolean(res);*/
         manager.chooseYesNo(query);
         sendBoolean(getBoolean());
+
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
@@ -365,30 +299,14 @@ public class GUI implements UI {//implements Runnable
         displayBoard();
     }
 
-    /**
-     * shows the board of the current game, at its actual state:
-     * " " if a cell is unoccupied
-     * "(color)" if the cell is occupied by a worker of the specified color
-     * "X" if the cell has a Dome
-     * "1" if the building level of the cell is 1
-     * "2" if the building level of the cell is 2
-     * "3" if the building level of the cell is 3
-     *
-     * @param game the board associated with the current game
-     */
     public void displayGameInfo(GameView game, String desc) {
         manager.displayGameInfo(game, desc);
         currentGame = game;
-        // displayBoard();
     }
 
-    /**
-     * shows to display the message received as an argument
-     *
-     * @param message the message to show
-     */
     public void displayMessage(String message) {
         manager.displayMessage(message);
+        System.out.println("\n" + message);
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
@@ -403,13 +321,11 @@ public class GUI implements UI {//implements Runnable
             currentGame.setCell(newEnd);
         });
         manager.displayMove(moves, godCard);
-        //displayBoard();
     }
 
     public void displayPlaceWorker(CellView position) {
         manager.displayPlaceWorker(position);
         currentGame.setCell(position);
-        //displayBoard();
     }
 
     public void notifyDisconnection(PlayerView player) {
@@ -465,27 +381,7 @@ public class GUI implements UI {//implements Runnable
     }
 
     private void displayBoard() {
-        /* StringBuilder string = new StringBuilder();
-        string.append("\n    0  1  2  3  4 ");
-        string.append("\n");
-        for (int i = 0; i < 5; i++) {
-            string.append("  ----------------");
-            string.append("\n");
-            string.append(i + " ");
-            for (int j = 0; j < 5; j++) {
-                CellView cell = currentGame.getCell(i, j);
-                string.append("|");
-                if (cell.isDomed()) string.append("X");
-                else string.append(cell.getBuildLevel() == 0 ? " " : cell.getBuildLevel());
-                if (cell.hasWorker()) string.append(cell.getWorker().getColor());
-                else string.append(" ");
-            }
-            string.append("|");
-            string.append("\n");
-        }
-        string.append("  ----------------");
-        string.append("\n");
-        System.out.println(string); */
+        //
     }
 
 }

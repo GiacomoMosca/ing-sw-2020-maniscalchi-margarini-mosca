@@ -3,57 +3,49 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" stylesheets="@newGame.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.NewGameController">
-   <children>
-      <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/cardSelect/cardSelect_bg.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/cardSelect/cardSelect_frame.png" />
-         </image>
-      </ImageView>
-      <TextField fx:id="textField" layoutX="569.0" layoutY="331.0" promptText="Game Name" />
-      <ChoiceBox fx:id="choiceBox" layoutX="668.0" layoutY="377.0" prefHeight="25.0" prefWidth="51.0" visible="false" />
-      <Text fx:id="text1" layoutX="410.0" layoutY="350.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Name" />
-      <Text fx:id="text2" layoutX="465.0" layoutY="397.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Players Number" visible="false" />
-      <StackPane fx:id="stackPane" layoutX="730.0" layoutY="327.0" prefHeight="8.0" prefWidth="130.0">
-         <children>
-            <ImageView fx:id="button" fitHeight="150.0" fitWidth="130.0" onMousePressed="#pressed" onMouseReleased="#chooseReleased" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../assets/newGame/btn_green.png" />
-               </image>
-               <StackPane.margin>
-                  <Insets />
-               </StackPane.margin>
-            </ImageView>
-            <ImageView fx:id="buttonPressed" fitHeight="150.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" visible="false">
-               <image>
-                  <Image url="@../assets/newGame/btn_green_pressed.png" />
-               </image>
-               <StackPane.margin>
-                  <Insets />
-               </StackPane.margin>
-            </ImageView>
-            <Text fx:id="buttonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose">
-               <StackPane.margin>
-                  <Insets top="-7.0" />
-               </StackPane.margin>
-            </Text>
-            <Text fx:id="buttonPressedText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose" visible="false">
-               <StackPane.margin>
-                  <Insets top="-3.0" />
-               </StackPane.margin>
-            </Text>
-         </children>
-      </StackPane>
-   </children>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0"
+            stylesheets="@newGame.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.NewGameController">
+    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../assets/cardSelect/cardSelect_bg.png"/>
+    </ImageView>
+    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../assets/cardSelect/cardSelect_frame.png"/>
+    </ImageView>
+    <TextField fx:id="textField" layoutX="569.0" layoutY="331.0" promptText="Game Name"/>
+    <ChoiceBox fx:id="choiceBox" layoutX="668.0" layoutY="377.0" prefHeight="25.0" prefWidth="51.0"
+               visible="false"/>
+    <Text fx:id="text1" layoutX="410.0" layoutY="350.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Name"/>
+    <Text fx:id="text2" layoutX="465.0" layoutY="397.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Players Number"
+          visible="false"/>
+    <StackPane fx:id="stackPane" layoutX="730.0" layoutY="327.0" prefHeight="8.0" prefWidth="130.0">
+        <ImageView fx:id="button" fitHeight="150.0" fitWidth="130.0" onMousePressed="#pressed"
+                   onMouseReleased="#chooseReleased" pickOnBounds="true" preserveRatio="true">
+            <StackPane.margin>
+                <Insets/>
+            </StackPane.margin>
+            <Image url="@../assets/newGame/btn_green.png"/>
+        </ImageView>
+        <ImageView fx:id="buttonPressed" fitHeight="150.0" fitWidth="130.0" pickOnBounds="true"
+                   preserveRatio="true" visible="false">
+            <StackPane.margin>
+                <Insets/>
+            </StackPane.margin>
+            <Image url="@../assets/newGame/btn_green_pressed.png"/>
+        </ImageView>
+        <Text fx:id="buttonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose">
+            <StackPane.margin>
+                <Insets top="-7.0"/>
+            </StackPane.margin>
+        </Text>
+        <Text fx:id="buttonPressedText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="Choose" visible="false">
+            <StackPane.margin>
+                <Insets top="-3.0"/>
+            </StackPane.margin>
+        </Text>
+    </StackPane>
 </AnchorPane>

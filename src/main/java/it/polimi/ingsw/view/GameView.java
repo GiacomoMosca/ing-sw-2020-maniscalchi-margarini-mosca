@@ -2,10 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class GameView implements Serializable {
     }
 
     public GameView(String name, int playerNum, ArrayList<PlayerView> players, int activePlayer, CellView[][] board, ArrayList<CardView> modifiers) {
-        this.name =name;
+        this.name = name;
         this.playerNum = playerNum;
         this.players = players;
         this.activePlayer = activePlayer;

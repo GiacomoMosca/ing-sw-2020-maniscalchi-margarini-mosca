@@ -1,13 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameSetupController">
-    <children>
-        <Text fx:id="textBox" layoutX="517.0" layoutY="380.0" text="Game setup">
-            <font>
-                <Font size="50.0" />
-            </font></Text>
-    </children>
+<?import javafx.scene.text.Text?>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameSetup.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.GameSetupController">
+    <ImageView fitHeight="720.0" fitWidth="1280.0" preserveRatio="true">
+        <Image url="@../assets/cardSelect/cardSelect_bg.png"/>
+    </ImageView>
+    <VBox fx:id="centerTextBox" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Text fx:id="centerText" text="Picking God Powers..."/>
+    </VBox>
+    <VBox fx:id="chooseYesNoBox" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0"
+          AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="0.0">
+        <Text fx:id="chooseYesNoText" textAlignment="CENTER" wrappingWidth="900.0">
+        </Text>
+        <HBox alignment="CENTER">
+            <ImageView fx:id="yesButton" preserveRatio="true">
+                <Image url="@../assets/cardSelect/button_yes.png"/>
+            </ImageView>
+            <ImageView fx:id="noButton" preserveRatio="true">
+                <Image url="@../assets/cardSelect/button_no.png"/>
+                <HBox.margin>
+                    <Insets left="50.0"/>
+                </HBox.margin>
+            </ImageView>
+            <VBox.margin>
+                <Insets/>
+            </VBox.margin>
+            <padding>
+                <Insets top="30.0"/>
+            </padding>
+        </HBox>
+    </VBox>
+    <ScrollPane fx:id="scrollPane" fitToHeight="true" hbarPolicy="ALWAYS" layoutY="74.0" prefHeight="560.0"
+                vbarPolicy="NEVER" visible="false" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+        <HBox fx:id="scrollPaneBox" alignment="CENTER" prefHeight="560.0">
+            <padding>
+                <Insets left="30.0" right="40.0" top="40.0"/>
+            </padding>
+        </HBox>
+    </ScrollPane>
+    <HBox fx:id="centerCardsBox" alignment="CENTER" layoutY="74.0" prefHeight="560.0" visible="false"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <padding>
+            <Insets left="20.0" right="20.0" top="30.0"/>
+        </padding>
+    </HBox>
+    <ImageView fitHeight="720.0" fitWidth="1280.0" mouseTransparent="true" preserveRatio="true">
+        <Image url="@../assets/cardSelect/cardSelect_frame.png"/>
+    </ImageView>
+    <StackPane fx:id="bannerBox" mouseTransparent="true" visible="false" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0">
+        <ImageView preserveRatio="true">
+            <Image url="@../assets/cardSelect/banner_red.png"/>
+            <StackPane.margin>
+                <Insets left="-20.0"/>
+            </StackPane.margin>
+        </ImageView>
+        <Text fx:id="topBannerText">
+            <StackPane.margin>
+                <Insets top="-40.0"/>
+            </StackPane.margin>
+        </Text>
+        <padding>
+            <Insets top="-20.0"/>
+        </padding>
+    </StackPane>
+    <StackPane fx:id="confirmBox" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0">
+        <ImageView mouseTransparent="true" preserveRatio="true">
+            <Image url="@../assets/cardSelect/button_grey.png"/>
+        </ImageView>
+        <ImageView fx:id="confirmButton" preserveRatio="true" visible="false">
+            <Image url="@../assets/cardSelect/button_red.png"/>
+        </ImageView>
+        <Text fx:id="confirmText" mouseTransparent="true" text="CONFIRM">
+            <StackPane.margin>
+                <Insets top="-7.0"/>
+            </StackPane.margin>
+        </Text>
+    </StackPane>
+    <AnchorPane fx:id="cover" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
+    </AnchorPane>
 </AnchorPane>

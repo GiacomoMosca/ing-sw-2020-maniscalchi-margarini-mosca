@@ -6,9 +6,9 @@ public class TableItem {
     private String gameName;
     private String playersInRoom;
 
-    public TableItem(GameView gameView){
-        this.gameName=gameView.getName();
-        this.playersInRoom=String.valueOf(gameView.getPlayers().size()) + "/" + String.valueOf(gameView.getPlayerNum());
+    public TableItem(GameView gameView) {
+        this.gameName = gameView.getName();
+        this.playersInRoom = String.valueOf(gameView.getPlayers().size()) + "/" + String.valueOf(gameView.getPlayerNum());
     }
 
     public String getGameName() {

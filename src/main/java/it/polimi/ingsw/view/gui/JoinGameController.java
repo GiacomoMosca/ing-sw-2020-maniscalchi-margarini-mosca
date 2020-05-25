@@ -5,18 +5,13 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class JoinGameController {
 
@@ -56,38 +51,38 @@ public class JoinGameController {
     private ImageView confirmButtonPressed;
 
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
-    public void backButtonPressed(){
-        Platform.runLater(()->{
+    public void backButtonPressed() {
+        Platform.runLater(() -> {
             backButtonPressed.setVisible(true);
             backButtonText.setVisible(false);
             backPressedButtonText.setVisible(true);
         });
     }
 
-    public void refreshButtonPressed(){
-        Platform.runLater(()->{
+    public void refreshButtonPressed() {
+        Platform.runLater(() -> {
             refreshButtonPressed.setVisible(true);
             refreshButtonText.setVisible(false);
             refreshPressedButtonText.setVisible(true);
         });
     }
 
-    public void confirmButtonPressed(){
-        Platform.runLater(()->{
+    public void confirmButtonPressed() {
+        Platform.runLater(() -> {
             confirmButtonPressed.setVisible(true);
             confirmButtonText.setVisible(false);
             confirmPressedButtonText.setVisible(true);
         });
     }
 
-    public void backButtonReleased(){
-        Platform.runLater(()->{
+    public void backButtonReleased() {
+        Platform.runLater(() -> {
             backButton.setDisable(true);
-            manager.putString("0");
+            manager.putObject(0);
             manager.setBusy(false);
             backButtonPressed.setVisible(false);
             backPressedButtonText.setVisible(false);
@@ -96,9 +91,9 @@ public class JoinGameController {
         });
     }
 
-    public void refreshButtonReleased(){
-        Platform.runLater(()->{
-            manager.putString("1");
+    public void refreshButtonReleased() {
+        Platform.runLater(() -> {
+            manager.putObject(1);
             manager.setBusy(false);
             refreshButtonPressed.setVisible(false);
             refreshPressedButtonText.setVisible(false);
@@ -106,27 +101,25 @@ public class JoinGameController {
         });
     }
 
-    public void confirmButtonReleased(){
+    public void confirmButtonReleased() {
         confirmButton.setDisable(true);
         int choice = gameRoomsList.getSelectionModel().getSelectedIndex();
-        if(choice!=-1){
-            manager.putString(String.valueOf(choice+2));
+        if (choice != -1) {
+            manager.putObject(choice + 2);
             manager.setBusy(false);
-        }
-        else
+        } else
             confirmButton.setDisable(false);
 
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             confirmButtonPressed.setVisible(false);
             confirmPressedButtonText.setVisible(false);
             confirmButtonText.setVisible(true);
         });
     }
 
-    public void chooseGameRoom(ArrayList<GameView> gameRooms){
-
+    public void chooseGameRoom(ArrayList<GameView> gameRooms) {
         ArrayList<TableItem> rooms = new ArrayList<TableItem>();
-        for(GameView gameView : gameRooms)
+        for (GameView gameView : gameRooms)
             rooms.add(new TableItem(gameView));
 
         final ObservableList<TableItem> data = FXCollections.observableArrayList(rooms);

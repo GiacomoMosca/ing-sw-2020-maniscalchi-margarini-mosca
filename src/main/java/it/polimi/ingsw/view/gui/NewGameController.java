@@ -4,9 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -36,7 +34,7 @@ public class NewGameController {
     private StackPane stackPane;
 
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
@@ -48,14 +46,13 @@ public class NewGameController {
         });
     }
 
-    public void chooseReleased(){
+    public void chooseReleased() {
         button.setDisable(true);
-        String gameName=textField.getText();
-        if(!gameName.trim().isEmpty()){
-            manager.putString(gameName);
+        String gameName = textField.getText();
+        if (!gameName.trim().isEmpty()) {
+            manager.putObject(gameName);
             manager.setBusy(false);
-        }
-        else
+        } else
             button.setDisable(false);
 
         Platform.runLater(() -> {
@@ -66,14 +63,13 @@ public class NewGameController {
 
     }
 
-    public void startReleased(){
+    public void startReleased() {
         button.setDisable(true);
-        String playersNum=choiceBox.getSelectionModel().getSelectedItem();
-        if(playersNum!=null){
-            manager.putString(playersNum);
+        String playersNum = choiceBox.getSelectionModel().getSelectedItem();
+        if (playersNum != null) {
+            manager.putObject(Integer.parseInt(playersNum));
             manager.setBusy(false);
-        }
-        else
+        } else
             button.setDisable(false);
 
         Platform.runLater(() -> {
@@ -88,7 +84,7 @@ public class NewGameController {
             textField.editableProperty().setValue(false);
             text2.setVisible(true);
             choiceBox.setVisible(true);
-            ObservableList<String> availableChoices = FXCollections.observableArrayList("2","3");
+            ObservableList<String> availableChoices = FXCollections.observableArrayList("2", "3");
             choiceBox.setItems(availableChoices);
             stackPane.setLayoutY(350);
             buttonText.setText("Start Game");

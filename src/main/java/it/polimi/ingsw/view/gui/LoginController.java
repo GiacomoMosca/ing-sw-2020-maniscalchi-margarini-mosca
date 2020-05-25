@@ -2,12 +2,9 @@ package it.polimi.ingsw.view.gui;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 public class LoginController {
 
@@ -26,7 +23,7 @@ public class LoginController {
     @FXML
     private Text connectTextPressed;
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
@@ -42,7 +39,7 @@ public class LoginController {
         connectButton.setDisable(true);
         String choice = textField.getText();
         if(!choice.trim().isEmpty()) {
-            manager.putString(choice);
+            manager.putObject(choice);
             manager.setBusy(false);
         }
         else

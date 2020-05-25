@@ -30,7 +30,7 @@ public class GUIManager extends Application {
     private static Scene logInScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
-    private static Scene serviceMessageScene;
+    //private static Scene serviceMessageScene;
 
     private static TitleController startController = null;
     private static LoginController loginController = null;
@@ -39,11 +39,11 @@ public class GUIManager extends Application {
     private static GameLobbyController gameLobbyController = null;
     private static GameSetupController gameSetupController = null;
     private static GameBoardController gameBoardController = null;
-    private static ServiceMessageController serviceMessageController = null;
+    //private static ServiceMessageController serviceMessageController = null;
 
     private static Scene currentScene;
     private static GUI gui;
-    private static SynchronousQueue<String> messageQueue;
+    private static SynchronousQueue<Object> messageQueue;
 
     public void run() {
         launch();
@@ -53,7 +53,7 @@ public class GUIManager extends Application {
         GUIManager.gui = gui;
     }
 
-    public void setQueue(SynchronousQueue<String> messageQueue) {
+    public void setQueue(SynchronousQueue<Object> messageQueue) {
         GUIManager.messageQueue = messageQueue;
     }
 
@@ -71,10 +71,6 @@ public class GUIManager extends Application {
 
     public boolean isBusy() {
         return busy.get();
-    }
-
-    public void putString(String string) {
-        messageQueue.offer(string);
     }
 
     @Override
@@ -103,7 +99,7 @@ public class GUIManager extends Application {
         initLogIn();
         initNewGame();
         initJoinGame();
-        initServiceMessage();
+        //initServiceMessage();
     }
 
     private void initLogIn() {
@@ -112,7 +108,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             logInScene = new Scene(root);
             loginController = loader.getController();
-            loginController.setManager(this);
+            loginController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,7 +120,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             newGameScene = new Scene(root);
             newGameController = loader.getController();
-            newGameController.setManager(this);
+            newGameController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,7 +132,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             joinGameScene = new Scene(root);
             joinGameController = loader.getController();
-            joinGameController.setManager(this);
+            joinGameController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,7 +144,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameLobbyScene = new Scene(root);
             gameLobbyController = loader.getController();
-            gameLobbyController.setManager(this);
+            gameLobbyController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -160,7 +156,7 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameSetupScene = new Scene(root);
             gameSetupController = loader.getController();
-            gameSetupController.setManager(this);
+            gameSetupController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,23 +168,23 @@ public class GUIManager extends Application {
             Parent root = loader.load();
             gameBoardScene = new Scene(root);
             gameBoardController = loader.getController();
-            gameBoardController.setManager(this);
+            gameBoardController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void initServiceMessage() {
+    /* private void initServiceMessage() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/serviceMessage.fxml"));
         try {
             Parent root = loader.load();
             serviceMessageScene = new Scene(root);
             serviceMessageController = loader.getController();
-            serviceMessageController.setManager(this);
+            serviceMessageController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    } */
 
     private void setScene(Scene scene) {
         if (currentScene == scene) return;
@@ -197,6 +193,7 @@ public class GUIManager extends Application {
             stage.setScene(scene);
         });
     }
+
     // queue
 
     public void putObject(Object object) {
@@ -206,15 +203,14 @@ public class GUIManager extends Application {
     // generic
 
     public void displayMessage(String message) {
-        setScene(serviceMessageScene);
-        serviceMessageController.displayMessage(message);
+        //setScene(serviceMessageScene);
+        //serviceMessageController.displayMessage(message);
         setBusy(false);
     }
 
     public void chooseYesNo(String query) {
         if (currentScene.equals(gameSetupScene)) gameSetupController.chooseYesNo(query);
         else gameBoardController.chooseYesNo(query);
-        //setBusy(false);
     }
 
     // LoginController
@@ -258,10 +254,12 @@ public class GUIManager extends Application {
     public void displayGameInfo(GameView game, String desc) {
         switch (desc) {
             case "gameSetup1":
+                initGameSetup();
                 setScene(gameSetupScene);
                 gameSetupController.displayGameInfo();
                 break;
             case "gameSetup2":
+                initGameBoard();
                 setScene(gameBoardScene);
                 gameBoardController.initialize(game);
                 gameBoardController.displayGameInfo(game, desc);
@@ -273,7 +271,18 @@ public class GUIManager extends Application {
     }
 
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
-        gameSetupController.chooseCards();
+        ArrayList<String> possibleCardsNames = new ArrayList<String>();
+        for (CardView card : possibleCards) {
+            possibleCardsNames.add(card.getGod().toLowerCase());
+        }
+        if (num > 1) gameSetupController.chooseAllCards(possibleCardsNames, num);
+        else {
+            ArrayList<String> pickedCardsNames = new ArrayList<String>();
+            for (CardView card : pickedCards) {
+                pickedCardsNames.add(card.getGod().toLowerCase());
+            }
+            gameSetupController.chooseMyCard(possibleCardsNames, pickedCardsNames);
+        }
     }
 
     // GameBoardController

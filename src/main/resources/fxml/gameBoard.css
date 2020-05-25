@@ -3,6 +3,11 @@
     src: url('/assets/fonts/LillyBelle.ttf');
 }
 
+@font-face {
+    font-family: Minion Pro;
+    src: url('/assets/fonts/MinionPro-Regular.otf');
+}
+
 #infoBox {
     -fx-font: 30px LillyBelle;
     -fx-fill: black;
@@ -26,4 +31,8 @@
 #activePlayer {
     -fx-font: 15px LillyBelle;
     -fx-fill: #412711
+}
+
+#godBox {
+    -fx-effect: dropshadow(three-pass-box, white, 30, 0.5, 0, 0);
 }

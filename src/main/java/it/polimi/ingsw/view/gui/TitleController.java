@@ -20,16 +20,17 @@ public class TitleController {
         this.manager = manager;
     }
 
-    public void pressed(){
-        Platform.runLater(() ->{
+    public void pressed() {
+        Platform.runLater(() -> {
             playButton.setVisible(true);
             playText.setVisible(false);
             playTextPressed.setVisible(true);
         });
 
     }
-    public void released(){
-        Platform.runLater(() ->{
+
+    public void released() {
+        Platform.runLater(() -> {
             manager.setBusy(false);
             playButton.setVisible(false);
             playTextPressed.setVisible(false);

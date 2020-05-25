@@ -11,11 +11,11 @@ public class ServiceMessageController {
     @FXML
     private Text serviceMessage;
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
-    public void displayMessage(String message){
+    public void displayMessage(String message) {
         Platform.runLater(() -> {
             serviceMessage.setText(message);
             serviceMessage.setLayoutX(424);

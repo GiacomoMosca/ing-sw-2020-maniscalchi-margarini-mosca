@@ -65,7 +65,7 @@ public class GameBoardController {
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
     private HashMap<String, ImageView> fullImageForThisGod;
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
@@ -111,6 +111,7 @@ public class GameBoardController {
     }
 
     public void initBuildings() {
+        highlightPane.getChildren().clear();
         for (CellView cell : game.getAllCells()) {
             HighlightCell highlight = new HighlightCell("assets/buildings/highlight_cell.png", cell.getPosX(), cell.getPosY());
             highlight.setVisible(false);
@@ -128,17 +129,18 @@ public class GameBoardController {
 
         playerIcon1.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(0).getGod() + ".png"));
         Tooltip.install(playerIcon1, new Tooltip(
-                godCards.get(0).getGod() + "\n" +
-                        godCards.get(0).getTitle() + "\n" +
+                "★ " + godCards.get(0).getGod() + "\n" +
+                        "☆ " + godCards.get(0).getTitle() + "\n" +
                         godCards.get(0).getDescription()
         ));
         playerIcon2.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(1).getGod() + ".png"));
         Tooltip.install(playerIcon2, new Tooltip(
-                godCards.get(1).getGod() + "\n" +
-                        godCards.get(1).getTitle() + "\n" +
+                "★ " + godCards.get(1).getGod() + "\n" +
+                        "☆ " + godCards.get(1).getTitle() + "\n" +
                         godCards.get(1).getDescription()
         ));
 
+        godBox.getChildren().clear();
         ImageView firstFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(0).getGod() + ".png");
         godBox.getChildren().add(firstFullGod);
         fullImageForThisGod.put(godCards.get(0).getGod(), firstFullGod);
@@ -159,8 +161,8 @@ public class GameBoardController {
             thirdPlayerID.setText(playersId.get(2));
             playerIcon3.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(2).getGod() + ".png"));
             Tooltip.install(playerIcon3, new Tooltip(
-                    godCards.get(2).getGod() + "\n" +
-                            godCards.get(2).getTitle() + "\n" +
+                    "★ " + godCards.get(2).getGod() + "\n" +
+                            "☆ " + godCards.get(2).getTitle() + "\n" +
                             godCards.get(2).getDescription()
             ));
             ImageView thirdFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(2).getGod() + ".png");
@@ -192,8 +194,11 @@ public class GameBoardController {
     }
 
     public void displayGameInfo(GameView game, String desc) {
+        String text;
+        if (desc.equals("gameSetup2")) text = "Placing workers...";
+        else text = playersId.get(game.getActivePlayer()) + "'s Turn";
         Platform.runLater(() -> {
-            infoBox.setText(playersId.get(game.getActivePlayer()) + "'s Turn");
+            infoBox.setText(text);
             manager.setBusy(false);
         });
     }

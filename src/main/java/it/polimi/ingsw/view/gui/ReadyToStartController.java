@@ -24,17 +24,17 @@ public class ReadyToStartController {
         this.manager = manager;
     }
 
-    public void pressed(){
-        Platform.runLater(()->{
+    public void pressed() {
+        Platform.runLater(() -> {
             buttonPressed.setVisible(true);
             enter.setVisible(false);
             pressedEnter.setVisible(true);
         });
     }
 
-    public void released(){
+    public void released() {
         manager.setBusy(false);
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             buttonPressed.setVisible(false);
             pressedEnter.setVisible(false);
             enter.setVisible(true);

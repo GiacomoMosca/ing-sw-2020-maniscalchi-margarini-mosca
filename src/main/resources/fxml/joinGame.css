@@ -5,7 +5,7 @@
 
 /* Text */
 
-#refreshPressedButtonText, #refreshButtonText, #backPressedButtonText, #backButtonText, #confirmPressedButtonText, #confirmButtonText  {
+#refreshPressedButtonText, #refreshButtonText, #backPressedButtonText, #backButtonText, #confirmPressedButtonText, #confirmButtonText {
     -fx-font: 25px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
