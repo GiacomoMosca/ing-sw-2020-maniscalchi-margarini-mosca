@@ -20,6 +20,7 @@ public class Server {
     private final int port;
     private final ArrayList<GameController> gameControllers;
     private final ArrayList<VirtualView> players;
+    private Logger logger;
 
 
     public Server(int port) {
@@ -30,26 +31,42 @@ public class Server {
     }
 
     public void start() {
+        try {
+            logger = new Logger();
+        } catch (IOException e) {
+            e.printStackTrace();
+            stop();
+            System.exit(1);
+            return;
+        }
         ServerSocket socket;
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
-            System.out.println("Cannot open server socket. ");
+            logger.logError("Cannot open server socket. ");
+            stop();
             System.exit(1);
             return;
         }
+
+        logger.log("started");
 
         while (running.get()) {
             try {
                 Socket client = socket.accept();
                 new Thread(() -> newPlayerWorker(client)).start();
             } catch (IOException e) {
-                System.out.println("Connection dropped. ");
+                //
             }
         }
     }
 
+    private void stop() {
+        logger.close();
+    }
+
     private void newPlayerWorker(Socket client) {
+        logger.log("new connection accepted");
         VirtualView player = null;
         try {
             player = new VirtualView(client, new ObjectInputStream(client.getInputStream()), new ObjectOutputStream(client.getOutputStream()));
@@ -69,7 +86,7 @@ public class Server {
                     }
                     if (!taken) {
                         players.add(player);
-                        // System.out.println(player.getId() + " joined");
+                        logger.log("new player " + nickname + " joined");
                         break;
                     }
                 }
@@ -125,6 +142,7 @@ public class Server {
                 if (!taken) {
                     GameController gameController = new GameController(player, playerNum, gameName);
                     gameControllers.add(gameController);
+                    logger.log("new game " + gameName + " created");
                     player.displayMessage("Waiting for players...");
                     break;
                 }
@@ -164,11 +182,13 @@ public class Server {
                 }
             }
             player.displayMessage("Joining room " + gameController.getGame().getName() + "...");
+            logger.log(player.getId() + " joined " + gameController.getGame().getName());
             if (spectator) {
                 gameController.addSpectator(player);
             } else {
                 gameController.addPlayer(player);
                 if (gameController.checkPlayersNumber()) {
+                    logger.log("game " + gameController.getGame().getName() + " started");
                     GameController finalGameController = gameController;
                     new Thread(() -> gameWorker(finalGameController)).start();
                 } else player.displayMessage("Waiting for players...");
@@ -188,18 +208,21 @@ public class Server {
     private void removeGame(GameController gameController) {
         if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
         gameControllers.remove(gameController);
+        logger.log("game " + gameController.getGame().getName() + " ended");
         for (PlayerController controller : gameController.getAllControllers()) {
             new Thread(() -> playerLobby(controller.getClient())).start();
         }
     }
 
     private void removePlayer(VirtualView player) {
+        if (player == null || !players.contains(player)) return;
         if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {
             GameController gameController = player.getPlayerController().getGame();
             gameController.handleDisconnection(player.getPlayerController());
             if (!gameController.isRunning()) removeGame(gameController);
         }
         players.remove(player);
+        logger.log(player.getId() + " disconnected");
         try {
             player.getSocket().close();
         } catch (IOException e) {

@@ -1,6 +1,8 @@
 # IntelliJ local files
+/.gradle/
 /.idea/
 *.iml
 
 # Output files
 /target/
+log.txt
