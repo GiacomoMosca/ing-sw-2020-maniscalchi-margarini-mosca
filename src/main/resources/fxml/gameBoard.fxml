@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameBoard.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
     <children>
         <ImageView fx:id="gameBoard" fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/board.png" />
             </image>
         </ImageView>
+        <StackPane fx:id="godBox" layoutX="700.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="332.0" prefWidth="417.0">
+        </StackPane>
         <GridPane fx:id="gridPane" layoutX="668.0" layoutY="119.0" prefHeight="482.0" prefWidth="482.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.4" minWidth="10.0" prefWidth="96.4" />
@@ -27,7 +36,85 @@
                 <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="96.4" vgrow="SOMETIMES" />
             </rowConstraints>
         </GridPane>
-      <Text fx:id="textBox" layoutX="233.0" layoutY="618.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+      <Text fx:id="textBox" layoutX="111.0" layoutY="633.0" stroke="#eee7dd" strokeType="OUTSIDE" text="text" textAlignment="CENTER" wrappingWidth="337.1884765625">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="playerINFO_2P" fitHeight="275.0" fitWidth="498.0" layoutX="29.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerInfo_2P.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerINFO_3P" fitHeight="354.0" fitWidth="498.0" layoutX="29.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerInfo_3P.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerColor_left_red" fitHeight="75.0" fitWidth="10.0" layoutX="60.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_left_red.png" />
+         </image></ImageView>
+      <ImageView fx:id="playerColor_left_green" fitHeight="75.0" fitWidth="10.0" layoutX="60.0" layoutY="169.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_left_green.png" />
+         </image></ImageView>
+      <ImageView fx:id="playerColor_left_blue" fitHeight="75.0" fitWidth="10.0" layoutX="60.0" layoutY="247.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_left_blue.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerColor_right_blue" fitHeight="75.0" fitWidth="10.0" layoutX="489.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_right_blue.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerColor_right_green" fitHeight="75.0" fitWidth="10.0" layoutX="489.0" layoutY="169.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_right_green.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerColor_right_red" fitHeight="75.0" fitWidth="10.0" layoutX="489.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/playerColor_right_red.png" />
+         </image>
+      </ImageView>
+      <Text fx:id="firstPlayerID" layoutX="101.0" layoutY="147.0" stroke="BLACK" strokeType="OUTSIDE" text="Text">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
+      <Text fx:id="secondPlayerID" layoutX="101.0" layoutY="225.0" stroke="BLACK" strokeType="OUTSIDE" text="Text">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
+      <Text fx:id="thirdPlayerID" layoutX="101.0" layoutY="303.0" stroke="BLACK" strokeType="OUTSIDE" text="Text">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="playerIcon1" fitHeight="75.0" fitWidth="125.0" layoutX="375.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true" visible="true" />
+      <ImageView fx:id="playerIcon2" fitHeight="75.0" fitWidth="125.0" layoutX="375.0" layoutY="169.0" pickOnBounds="true" preserveRatio="true" visible="true" />
+      <ImageView fx:id="playerIcon3" fitHeight="75.0" fitWidth="125.0" layoutX="375.0" layoutY="249.0" pickOnBounds="true" preserveRatio="true" visible="false" />
+      <ImageView fx:id="playerHighlight1" fitHeight="75.0" fitWidth="438.0" layoutX="61.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/highlight_player.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerHighlight2" fitHeight="75.0" fitWidth="438.0" layoutX="61.0" layoutY="168.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/highlight_player.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerHighlight3" fitHeight="75.0" fitWidth="438.0" layoutX="61.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../assets/playerInfo/highlight_player.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="yesButton" layoutX="437.0" layoutY="541.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="59.0" prefWidth="104.0" visible="false" />
+      <Button fx:id="noButton" layoutX="437.0" layoutY="607.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="104.0" visible="false" />
+      <Text fx:id="activePlayer" layoutX="101.0" layoutY="581.0" stroke="#eee7dd" strokeType="OUTSIDE" text="text" wrappingWidth="199.1884765625">
          <font>
             <Font size="50.0" />
          </font>

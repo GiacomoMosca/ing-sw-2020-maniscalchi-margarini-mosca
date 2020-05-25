@@ -149,7 +149,8 @@ public class GUIManager extends Application {
 
     public void chooseYesNo(String query) {
         if (currentScene.equals(gameSetupScene)) gameSetupController.chooseYesNo(query);
-        else setBusy(false);
+        else gameBoardController.chooseYesNo(query);
+            //setBusy(false);
     }
 
     // LoginController
@@ -198,10 +199,11 @@ public class GUIManager extends Application {
                 break;
             case "gameSetup2":
                 setScene(gameBoardScene);
-                gameBoardController.displayGameInfo();
+                gameBoardController.initialize(game);
+                gameBoardController.displayGameInfo(game, desc);
                 break;
             default:
-                gameBoardController.displayGameInfo();
+                gameBoardController.displayGameInfo(game, desc);
                 break;
         }
     }
@@ -228,20 +230,19 @@ public class GUIManager extends Application {
     }
 
     public void choosePosition(ArrayList<CellView> positions, String desc) {
-        gameBoardController.choosePosition();
-
+        gameBoardController.choosePosition(positions, desc);
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
-        gameBoardController.displayBuild();
+        gameBoardController.displayBuild(buildPosition, godCard);
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
-        gameBoardController.displayMove();
+        gameBoardController.displayMove(moves, godCard);
     }
 
     public void displayPlaceWorker(CellView position) {
-        gameBoardController.displayPlaceWorker();
+        gameBoardController.displayPlaceWorker(position);
     }
 
     public void notifyDisconnection(PlayerView player) {
