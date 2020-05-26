@@ -8,10 +8,10 @@
             stylesheets="@gameLobby.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.view.gui.GameLobbyController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/cardSelect/cardSelect_bg.png"/>
+        <Image url="@../assets/graphics/cardSelect_bg.png"/>
     </ImageView>
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/cardSelect/cardSelect_frame.png"/>
+        <Image url="@../assets/graphics/cardSelect_frame.png"/>
     </ImageView>
     <StackPane layoutY="310.0" prefHeight="100.0" prefWidth="1280.0">
         <ImageView fx:id="newGameButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#newGamePressed"
@@ -19,28 +19,28 @@
             <StackPane.margin>
                 <Insets left="-300.0"/>
             </StackPane.margin>
-            <Image url="@../assets/gameLobby/btn_coral.png"/>
+            <Image url="@../assets/buttons/btn_red.png"/>
         </ImageView>
         <ImageView fx:id="newGameButtonPressed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
                    preserveRatio="true" visible="false">
             <StackPane.margin>
                 <Insets left="-300.0"/>
             </StackPane.margin>
-            <Image url="@../assets/gameLobby/btn_coral_pressed.png"/>
+            <Image url="@../assets/buttons/btn_red_pressed.png"/>
         </ImageView>
         <ImageView fx:id="joinButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#joinPressed"
                    onMouseReleased="#joinReleased" pickOnBounds="true" preserveRatio="true">
             <StackPane.margin>
                 <Insets right="-300.0"/>
             </StackPane.margin>
-            <Image url="@../assets/gameLobby/btn_green.png"/>
+            <Image url="@../assets/buttons/btn_green.png"/>
         </ImageView>
         <ImageView fx:id="joinButtonPressed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
                    preserveRatio="true" visible="false">
             <StackPane.margin>
                 <Insets right="-300.0"/>
             </StackPane.margin>
-            <Image url="@../assets/gameLobby/btn_green_pressed.png"/>
+            <Image url="@../assets/buttons/btn_green_pressed.png"/>
         </ImageView>
         <Text fx:id="newGamePressed" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
               text="New Game" visible="false">

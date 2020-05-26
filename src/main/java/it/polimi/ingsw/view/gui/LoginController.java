@@ -35,14 +35,13 @@ public class LoginController {
         });
     }
 
-    public void released(){
+    public void released() {
         connectButton.setDisable(true);
         String choice = textField.getText();
-        if(!choice.trim().isEmpty()) {
+        if (!choice.trim().isEmpty()) {
             manager.putObject(choice);
             manager.setBusy(false);
-        }
-        else
+        } else
             connectButton.setDisable(false);
         Platform.runLater(() -> {
             connectButtonPressed.setVisible(false);

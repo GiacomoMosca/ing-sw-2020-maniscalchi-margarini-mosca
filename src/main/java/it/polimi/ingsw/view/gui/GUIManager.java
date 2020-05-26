@@ -30,7 +30,6 @@ public class GUIManager extends Application {
     private static Scene logInScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
-    //private static Scene serviceMessageScene;
 
     private static TitleController startController = null;
     private static LoginController loginController = null;
@@ -39,7 +38,6 @@ public class GUIManager extends Application {
     private static GameLobbyController gameLobbyController = null;
     private static GameSetupController gameSetupController = null;
     private static GameBoardController gameBoardController = null;
-    //private static ServiceMessageController serviceMessageController = null;
 
     private static Scene currentScene;
     private static GUI gui;
@@ -99,7 +97,6 @@ public class GUIManager extends Application {
         initLogIn();
         initNewGame();
         initJoinGame();
-        //initServiceMessage();
     }
 
     private void initLogIn() {
@@ -173,18 +170,6 @@ public class GUIManager extends Application {
             e.printStackTrace();
         }
     }
-
-    /* private void initServiceMessage() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/serviceMessage.fxml"));
-        try {
-            Parent root = loader.load();
-            serviceMessageScene = new Scene(root);
-            serviceMessageController = loader.getController();
-            serviceMessageController.initialize(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } */
 
     private void setScene(Scene scene) {
         if (currentScene == scene) return;

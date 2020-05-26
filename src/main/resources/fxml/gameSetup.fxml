@@ -9,7 +9,7 @@
             xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.view.gui.GameSetupController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" preserveRatio="true">
-        <Image url="@../assets/cardSelect/cardSelect_bg.png"/>
+        <Image url="@../assets/graphics/cardSelect_bg.png"/>
     </ImageView>
     <VBox fx:id="centerTextBox" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -21,10 +21,10 @@
         </Text>
         <HBox alignment="CENTER">
             <ImageView fx:id="yesButton" preserveRatio="true">
-                <Image url="@../assets/cardSelect/button_yes.png"/>
+                <Image url="@../assets/buttons/btn_small_red.png"/>
             </ImageView>
             <ImageView fx:id="noButton" preserveRatio="true">
-                <Image url="@../assets/cardSelect/button_no.png"/>
+                <Image url="@../assets/buttons/btn_small_red.png"/>
                 <HBox.margin>
                     <Insets left="50.0"/>
                 </HBox.margin>
@@ -52,12 +52,12 @@
         </padding>
     </HBox>
     <ImageView fitHeight="720.0" fitWidth="1280.0" mouseTransparent="true" preserveRatio="true">
-        <Image url="@../assets/cardSelect/cardSelect_frame.png"/>
+        <Image url="@../assets/graphics/cardSelect_frame.png"/>
     </ImageView>
     <StackPane fx:id="bannerBox" mouseTransparent="true" visible="false" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0">
         <ImageView preserveRatio="true">
-            <Image url="@../assets/cardSelect/banner_red.png"/>
+            <Image url="@../assets/graphics/banner_red.png"/>
             <StackPane.margin>
                 <Insets left="-20.0"/>
             </StackPane.margin>
@@ -74,10 +74,10 @@
     <StackPane fx:id="confirmBox" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0">
         <ImageView mouseTransparent="true" preserveRatio="true">
-            <Image url="@../assets/cardSelect/button_grey.png"/>
+            <Image url="@../assets/buttons/btn_gray.png"/>
         </ImageView>
         <ImageView fx:id="confirmButton" preserveRatio="true" visible="false">
-            <Image url="@../assets/cardSelect/button_red.png"/>
+            <Image url="@../assets/buttons/btn_red.png"/>
         </ImageView>
         <Text fx:id="confirmText" mouseTransparent="true" text="CONFIRM">
             <StackPane.margin>

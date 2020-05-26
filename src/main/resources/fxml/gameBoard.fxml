@@ -9,7 +9,7 @@
             xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/board.png"/>
+        <Image url="@../assets/board/board.png"/>
     </ImageView>
     <GridPane fx:id="buildPane" alignment="CENTER" layoutX="668.0" layoutY="119.0" prefHeight="482.0" prefWidth="482.0">
         <columnConstraints>
@@ -82,23 +82,23 @@
     </StackPane>
     <ImageView fx:id="playerINFO_2P" fitHeight="275.0" fitWidth="498.0" layoutX="29.0" layoutY="28.0"
                pickOnBounds="true" preserveRatio="true" visible="false">
-        <Image url="@../assets/playerInfo/playerInfo_2P.png"/>
+        <Image url="@../assets/board/playerInfo/playerInfo_2P.png"/>
     </ImageView>
     <ImageView fx:id="playerINFO_3P" fitHeight="354.0" fitWidth="498.0" layoutX="29.0" layoutY="28.0"
                pickOnBounds="true" preserveRatio="true" visible="false">
-        <Image url="@../assets/playerInfo/playerInfo_3P.png"/>
+        <Image url="@../assets/board/playerInfo/playerInfo_3P.png"/>
     </ImageView>
     <AnchorPane fx:id="p1" layoutX="61.0" layoutY="90.0" prefHeight="75.0" prefWidth="438.0">
         <ImageView fx:id="playerHighlight1" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/playerInfo/highlight_player.png"/>
+            <Image url="@../assets/board/playerInfo/highlight_player.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_left_red" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.leftAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_left_red.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_left_red.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_right_red" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.rightAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_right_red.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_right_red.png"/>
         </ImageView>
         <ImageView fx:id="playerIcon1" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
         <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -112,15 +112,15 @@
     </AnchorPane>
     <AnchorPane fx:id="p2" layoutX="61.0" layoutY="169.0" prefHeight="75.0" prefWidth="438.0">
         <ImageView fx:id="playerHighlight2" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/playerInfo/highlight_player.png"/>
+            <Image url="@../assets/board/playerInfo/highlight_player.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_left_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.leftAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_left_green.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_left_green.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_right_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.rightAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_right_green.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_right_green.png"/>
         </ImageView>
         <ImageView fx:id="playerIcon2" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
         <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -134,15 +134,15 @@
     </AnchorPane>
     <AnchorPane fx:id="p3" layoutX="61.0" layoutY="248.0" prefHeight="75.0" prefWidth="438.0" visible="false">
         <ImageView fx:id="playerHighlight3" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/playerInfo/highlight_player.png"/>
+            <Image url="@../assets/board/playerInfo/highlight_player.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_left_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.leftAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_left_blue.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_left_blue.png"/>
         </ImageView>
         <ImageView fx:id="playerColor_right_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
                    AnchorPane.rightAnchor="0.0">
-            <Image url="@../assets/playerInfo/playerColor_right_blue.png"/>
+            <Image url="@../assets/board/playerInfo/playerColor_right_blue.png"/>
         </ImageView>
         <ImageView fx:id="playerIcon3" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
         <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -156,9 +156,9 @@
     </AnchorPane>
     <Button fx:id="yesButton" layoutX="437.0" layoutY="541.0" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="59.0" prefWidth="104.0"
-            visible="false"/>
+            text="YES" visible="false"/>
     <Button fx:id="noButton" layoutX="437.0" layoutY="607.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="104.0"
-            visible="false"/>
+            text="NO" visible="false"/>
     <StackPane fx:id="godBox" layoutX="700.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity"
                minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="332.0" prefWidth="417.0">
     </StackPane>

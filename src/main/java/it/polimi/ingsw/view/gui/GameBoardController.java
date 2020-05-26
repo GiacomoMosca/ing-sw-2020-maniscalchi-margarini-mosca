@@ -18,14 +18,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-//cosa non molto bella: illuminazione build parte mentre worker si muove. si può cliccare sulla cella in cui costruire
-//ancora prima della fine della mossa
-
-//non riesco a portare in primo piano l'apparizione in grande della carta. e bisogna centrare le img nello stackpane
-
-//mi sa che il potere di Efesto viene mostrato dopo essere stato usato
-
 //TO DO: player eliminato -> oscurarlo dal pannello (se 3 giocatori)
 
 //TO DO: bottoni in css
@@ -94,18 +86,18 @@ public class GameBoardController {
     public void initWorkers() {
         ArrayList<ImageView> redWorkers = new ArrayList<>();
         ArrayList<ImageView> greenWorkers = new ArrayList<>();
-        redWorkers.add(new ImageView("assets/workers/worker_red.png"));
-        redWorkers.add(new ImageView("assets/workers/worker_red.png"));
-        greenWorkers.add(new ImageView("assets/workers/worker_green.png"));
-        greenWorkers.add(new ImageView("assets/workers/worker_green.png"));
+        redWorkers.add(new ImageView("assets/board/workers/worker_red.png"));
+        redWorkers.add(new ImageView("assets/board/workers/worker_red.png"));
+        greenWorkers.add(new ImageView("assets/board/workers/worker_green.png"));
+        greenWorkers.add(new ImageView("assets/board/workers/worker_green.png"));
 
         workersForThisColor.put("g", greenWorkers);
         workersForThisColor.put("r", redWorkers);
 
         if (game.getPlayers().size() == 3) {
             ArrayList<ImageView> blueWorkers = new ArrayList<>();
-            blueWorkers.add(new ImageView("assets/workers/worker_blue.png"));
-            blueWorkers.add(new ImageView("assets/workers/worker_blue.png"));
+            blueWorkers.add(new ImageView("assets/board/workers/worker_blue.png"));
+            blueWorkers.add(new ImageView("assets/board/workers/worker_blue.png"));
             workersForThisColor.put("b", blueWorkers);
         }
     }
@@ -113,7 +105,7 @@ public class GameBoardController {
     public void initBuildings() {
         highlightPane.getChildren().clear();
         for (CellView cell : game.getAllCells()) {
-            HighlightCell highlight = new HighlightCell("assets/buildings/highlight_cell.png", cell.getPosX(), cell.getPosY());
+            HighlightCell highlight = new HighlightCell("assets/board/buildings/highlight_cell.png", cell.getPosX(), cell.getPosY());
             highlight.setVisible(false);
             highlightPane.add(highlight, cell.getPosX(), cell.getPosY());
             highlightForThisCell.put(cell.getPosX() * 10 + cell.getPosY(), highlight);
@@ -127,13 +119,13 @@ public class GameBoardController {
         playerHighlights.add(playerHighlight1);
         playerHighlights.add(playerHighlight2);
 
-        playerIcon1.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(0).getGod() + ".png"));
+        playerIcon1.setImage(new Image("/assets/gods/playerIcon/icon_" + godCards.get(0).getGod().toLowerCase() + ".png"));
         Tooltip.install(playerIcon1, new Tooltip(
                 "★ " + godCards.get(0).getGod() + "\n" +
                         "☆ " + godCards.get(0).getTitle() + "\n" +
                         godCards.get(0).getDescription()
         ));
-        playerIcon2.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(1).getGod() + ".png"));
+        playerIcon2.setImage(new Image("/assets/gods/playerIcon/icon_" + godCards.get(1).getGod().toLowerCase() + ".png"));
         Tooltip.install(playerIcon2, new Tooltip(
                 "★ " + godCards.get(1).getGod() + "\n" +
                         "☆ " + godCards.get(1).getTitle() + "\n" +
@@ -141,11 +133,11 @@ public class GameBoardController {
         ));
 
         godBox.getChildren().clear();
-        ImageView firstFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(0).getGod() + ".png");
+        ImageView firstFullGod = new ImageView("/assets/gods/godFull/full_" + godCards.get(0).getGod().toLowerCase() + ".png");
         godBox.getChildren().add(firstFullGod);
         fullImageForThisGod.put(godCards.get(0).getGod(), firstFullGod);
         firstFullGod.setVisible(false);
-        ImageView secondFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(1).getGod() + ".png");
+        ImageView secondFullGod = new ImageView("/assets/gods/godFull/full_" + godCards.get(1).getGod().toLowerCase() + ".png");
         godBox.getChildren().add(secondFullGod);
         fullImageForThisGod.put(godCards.get(1).getGod(), secondFullGod);
         secondFullGod.setVisible(false);
@@ -159,13 +151,13 @@ public class GameBoardController {
             p3.setVisible(true);
             playerHighlights.add(playerHighlight3);
             thirdPlayerID.setText(playersId.get(2));
-            playerIcon3.setImage(new Image("/assets/cards/playerIcon/icon_" + godCards.get(2).getGod() + ".png"));
+            playerIcon3.setImage(new Image("/assets/gods/playerIcon/icon_" + godCards.get(2).getGod().toLowerCase() + ".png"));
             Tooltip.install(playerIcon3, new Tooltip(
                     "★ " + godCards.get(2).getGod() + "\n" +
                             "☆ " + godCards.get(2).getTitle() + "\n" +
                             godCards.get(2).getDescription()
             ));
-            ImageView thirdFullGod = new ImageView("/assets/cards/godFull/full_" + godCards.get(2).getGod() + ".png");
+            ImageView thirdFullGod = new ImageView("/assets/gods/godFull/full_" + godCards.get(2).getGod().toLowerCase() + ".png");
             godBox.getChildren().add(thirdFullGod);
             fullImageForThisGod.put(godCards.get(2).getGod(), thirdFullGod);
             thirdFullGod.setVisible(false);
@@ -176,8 +168,14 @@ public class GameBoardController {
                 sendStartingPlayer(playerHighlights.indexOf(highlight));
             });
 
-        BackgroundImage yesButtonBackgroundImage = new BackgroundImage(new Image(getClass().getResource("/assets/infoBox/button_yes.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        BackgroundImage noButtonBackgroundImage = new BackgroundImage(new Image(getClass().getResource("/assets/infoBox/button_no.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage yesButtonBackgroundImage = new BackgroundImage(
+                new Image(getClass().getResource("/assets/buttons/btn_small_blue.png").toExternalForm()),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT
+        );
+        BackgroundImage noButtonBackgroundImage = new BackgroundImage(
+                new Image(getClass().getResource("/assets/buttons/btn_small_blue.png").toExternalForm()),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT
+        );
         Background yesButtonBackground = new Background(yesButtonBackgroundImage);
         Background noButtonBackground = new Background(noButtonBackgroundImage);
 
@@ -317,9 +315,9 @@ public class GameBoardController {
         Transition transition;
         ImageView newBuilding;
         if (!buildPosition.isDomed())
-            newBuilding = new ImageView("assets/buildings/build_" + buildPosition.getBuildLevel() + ".png");
+            newBuilding = new ImageView("assets/board/buildings/build_" + buildPosition.getBuildLevel() + ".png");
         else
-            newBuilding = new ImageView("assets/buildings/build_dome.png");
+            newBuilding = new ImageView("assets/board/buildings/build_dome.png");
         FadeTransition buildingAppearing = new FadeTransition(Duration.seconds(0.5), newBuilding);
         buildingAppearing.setFromValue(0);
         buildingAppearing.setToValue(1);
