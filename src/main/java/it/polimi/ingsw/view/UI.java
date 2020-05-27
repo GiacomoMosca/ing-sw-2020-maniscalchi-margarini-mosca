@@ -69,8 +69,10 @@ public interface UI {
 
     public void notifyGameOver();
 
-    public void notifyLoss(PlayerView player, String reason);
+    public void notifyGameStarting();
 
-    public void notifyWin(PlayerView player, String reason);
+    public void notifyLoss(String reason, PlayerView winner);
+
+    public void notifyWin(String reason);
 
 }

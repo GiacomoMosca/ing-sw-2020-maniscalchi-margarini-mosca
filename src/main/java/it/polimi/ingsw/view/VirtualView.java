@@ -122,8 +122,7 @@ public class VirtualView {
             positions.add(new CellView(cell));
         }
         String desc = "start" + num;
-        ChoosePosition msg = new ChoosePosition(positions, desc);
-        output.writeObject(msg);
+        output.writeObject(new ChoosePosition(positions, desc));
         return possiblePositions.get(((SendInteger) input.readObject()).getBody());
     }
 
@@ -138,8 +137,7 @@ public class VirtualView {
         for (Worker worker : workers) {
             positions.add(new CellView(worker.getPosition()));
         }
-        ChoosePosition msg = new ChoosePosition(positions, "worker");
-        output.writeObject(msg);
+        output.writeObject(new ChoosePosition(positions, "worker"));
         return workers.get(((SendInteger) input.readObject()).getBody());
     }
 
@@ -154,8 +152,7 @@ public class VirtualView {
         for (Cell cell : possibleMoves) {
             positions.add(new CellView(cell));
         }
-        ChoosePosition msg = new ChoosePosition(positions, "move");
-        output.writeObject(msg);
+        output.writeObject(new ChoosePosition(positions, "move"));
         return possibleMoves.get(((SendInteger) input.readObject()).getBody());
     }
 
@@ -170,8 +167,7 @@ public class VirtualView {
         for (Cell cell : possibleBuilds) {
             positions.add(new CellView(cell));
         }
-        ChoosePosition msg = new ChoosePosition(positions, "build");
-        output.writeObject(msg);
+        output.writeObject(new ChoosePosition(positions, "build"));
         return possibleBuilds.get(((SendInteger) input.readObject()).getBody());
     }
 
@@ -194,15 +190,13 @@ public class VirtualView {
      * @return true if the player answered "yes", false if the player answered "no"
      */
     public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
-        ChooseYesNo msg = new ChooseYesNo(query);
-        output.writeObject(msg);
+        output.writeObject(new ChooseYesNo(query));
         return ((SendBoolean) input.readObject()).getBody();
     }
 
     public void displayBuild(CellView buildPosition, Card godPower) throws IOException {
         CardView godView = (godPower == null) ? null : new CardView(godPower);
-        DisplayBuild msg = new DisplayBuild(buildPosition, godView);
-        output.writeObject(msg);
+        output.writeObject(new DisplayBuild(buildPosition, godView));
     }
 
     /**
@@ -213,8 +207,7 @@ public class VirtualView {
      */
     public void displayGameInfo(Game game, String desc) throws IOException {
         GameView gameView = new GameView(game);
-        DisplayGameInfo msg = new DisplayGameInfo(gameView, desc);
-        output.writeObject(msg);
+        output.writeObject(new DisplayGameInfo(gameView, desc));
     }
 
     /**
@@ -223,42 +216,40 @@ public class VirtualView {
      * @param message
      */
     public void displayMessage(String message) throws IOException {
-        DisplayMessage msg = new DisplayMessage(message);
-        output.writeObject(msg);
+        output.writeObject(new DisplayMessage(message));
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, Card godPower) throws IOException {
         CardView godView = (godPower == null) ? null : new CardView(godPower);
-        DisplayMove msg = new DisplayMove(moves, godView);
-        output.writeObject(msg);
+        output.writeObject(new DisplayMove(moves, godView));
     }
 
     public void displayPlaceWorker(Cell workerPosition) throws IOException {
-        DisplayPlaceWorker msg = new DisplayPlaceWorker(new CellView(workerPosition));
-        output.writeObject(msg);
+        CellView cellView = new CellView(workerPosition);
+        output.writeObject(new DisplayPlaceWorker(cellView));
     }
 
-    public void notifyLoss(Player player, String reason) throws IOException {
-        PlayerView playerView = new PlayerView(player);
-        NotifyLoss msg = new NotifyLoss(playerView, reason);
-        output.writeObject(msg);
+    public void notifyGameStarting() throws IOException, ClassNotFoundException {
+        output.writeObject(new NotifyGameStarting());
+        input.readObject();
     }
 
-    public void notifyWin(Player player, String reason) throws IOException {
-        PlayerView playerView = new PlayerView(player);
-        NotifyWin msg = new NotifyWin(playerView, reason);
-        output.writeObject(msg);
+    public void notifyLoss(String reason, Player winner) throws IOException {
+        PlayerView winnerView = (winner == null) ? null : new PlayerView(winner);
+        output.writeObject(new NotifyLoss(reason, winnerView));
+    }
+
+    public void notifyWin(String reason) throws IOException {
+        output.writeObject(new NotifyWin(reason));
     }
 
     public void notifyDisconnection(Player player) throws IOException {
         PlayerView playerView = new PlayerView(player);
-        NotifyDisconnection msg = new NotifyDisconnection(playerView);
-        output.writeObject(msg);
+        output.writeObject(new NotifyDisconnection(playerView));
     }
 
-    public void gameOver() throws IOException {
-        NotifyGameOver msg = new NotifyGameOver();
-        output.writeObject(msg);
+    public void notifyGameOver() throws IOException {
+        output.writeObject(new NotifyGameOver());
     }
 
 }

@@ -58,13 +58,14 @@ public class MedusaController extends GodController {
         buildPhase();
         for (Cell cell : board.getNeighbors(activeWorker.getPosition())) {
             if (cell.hasWorker() && !player.getWorkers().contains(cell.getWorker()) && cell.getBuildLevel() < activeWorker.getPosition().getBuildLevel()) {
-                cell.getWorker().getOwner().removeWorker(cell.getWorker());
                 try {
                     cell.build();
                 } catch (IllegalBuildException e) {
                     System.out.println(e.getMessage());
                 }
-                displayBuild(new CellView(cell), card);
+                CellView cellView = new CellView(cell);
+                cell.getWorker().getOwner().removeWorker(cell.getWorker());
+                displayBuild(cellView, card);
             }
         }
         return "next";

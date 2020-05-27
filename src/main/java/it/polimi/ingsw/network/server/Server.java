@@ -153,13 +153,12 @@ public class Server {
 
     private void joinRoom(VirtualView player) throws IOException, ClassNotFoundException {
         GameController gameController = null;
-        boolean spectator = false;
         String gameRoom;
         try {
             while (true) {
                 ArrayList<Game> gameRooms = new ArrayList<Game>();
                 for (GameController game : gameControllers) {
-                    gameRooms.add(game.getGame());
+                    if (!game.checkPlayersNumber()) gameRooms.add(game.getGame());
                 }
                 gameRoom = player.chooseGameRoom(gameRooms);
                 if (gameRoom.equals("/back")) {
@@ -174,31 +173,27 @@ public class Server {
                         }
                     }
                     if (gameController == null) throw new GameEndedException("game ended");
-                    if (gameController.checkPlayersNumber()) {
-                        if (player.chooseYesNo("The game room is full. Do you want to join as a spectator?"))
-                            spectator = true;
-                        else continue;
-                    }
                     break;
                 }
             }
             player.displayMessage("Joining room " + gameController.getGame().getName() + "...");
             logger.log(player.getId() + " joined " + gameController.getGame().getName());
-            if (spectator) {
-                gameController.addSpectator(player);
-            } else {
-                gameController.addPlayer(player);
-                if (gameController.checkPlayersNumber()) {
-                    logger.log("game " + gameController.getGame().getName() + " started");
-                    GameController finalGameController = gameController;
-                    new Thread(() -> gameWorker(finalGameController)).start();
-                } else player.displayMessage("Waiting for players...");
-            }
+            gameController.addPlayer(player);
+            if (gameController.checkPlayersNumber()) {
+                startGame(gameController);
+            } else
+                player.displayMessage("Waiting for players...");
         } catch (GameEndedException e) {
             player.displayMessage("The room doesn't exist anymore. ");
             if (gameController != null) removeGame(gameController);
             new Thread(() -> playerLobby(player)).start();
         }
+    }
+
+    private void startGame(GameController gameController) throws IOException, ClassNotFoundException {
+        gameController.getControllers().get(0).getClient().notifyGameStarting();
+        logger.log("game " + gameController.getGame().getName() + " started");
+        new Thread(() -> gameWorker(gameController)).start();
     }
 
     private void gameWorker(GameController gameController) {
@@ -210,7 +205,8 @@ public class Server {
         if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
         gameControllers.remove(gameController);
         logger.log("game " + gameController.getGame().getName() + " ended");
-        for (PlayerController controller : gameController.getAllControllers()) {
+        for (PlayerController controller : gameController.getControllers()) {
+            if (controller == null) continue;
             new Thread(() -> playerLobby(controller.getClient())).start();
         }
     }

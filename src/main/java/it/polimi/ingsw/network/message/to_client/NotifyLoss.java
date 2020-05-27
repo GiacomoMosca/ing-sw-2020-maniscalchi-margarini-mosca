@@ -5,18 +5,18 @@ import it.polimi.ingsw.view.UI;
 
 public class NotifyLoss extends ToClientMessage {
 
-    protected PlayerView player;
     protected String reason;
+    protected PlayerView winner;
 
-    public NotifyLoss(PlayerView player, String reason) {
+    public NotifyLoss(String reason, PlayerView winner) {
         super("notify loss");
-        this.player = player;
         this.reason = reason;
+        this.winner = winner;
     }
 
     @Override
     public void performAction(UI client) {
-        client.notifyLoss(player, reason);
+        client.notifyLoss(reason, winner);
     }
 
 }

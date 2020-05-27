@@ -36,11 +36,6 @@ public class FakeGameController extends GameController {
     }
 
     @Override
-    public void displayGameInfo(PlayerController player, String desc) throws IOExceptionFromController {
-        //
-    }
-
-    @Override
     public void broadcastMessage(String message) throws IOExceptionFromController {
         //
     }

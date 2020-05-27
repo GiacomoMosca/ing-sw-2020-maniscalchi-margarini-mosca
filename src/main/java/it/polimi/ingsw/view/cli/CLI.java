@@ -411,33 +411,35 @@ public class CLI implements UI {
         System.out.println("\nGame over! \n\n\n\n\n");
     }
 
-    public void notifyLoss(PlayerView player, String reason) {
+    public void notifyGameStarting() {
+        System.out.println("\nGame is starting! Press ENTER to continue. ");
+        getString();
+        sendBoolean(true);
+    }
+
+    public void notifyLoss(String reason, PlayerView winner) {
         StringBuilder string = new StringBuilder();
-        if (player.getId().equals(id)) {
-            string.append("You lost! ");
+        string.append("You lost! ");
+        if (winner != null) {
+            string.append(winner.getId() + " won!");
         } else {
-            string.append(player.getId() + " lost! ");
-        }
-        switch (reason) {
-            case "outOfMoves":
-                string.append("(No legal moves available)\n");
-                break;
-            case "outOfWorkers":
-                string.append("(All workers have been removed from the game)\n");
-                break;
-            default:
-                break;
+            switch (reason) {
+                case "outOfMoves":
+                    string.append("(No legal moves available)\n");
+                    break;
+                case "outOfWorkers":
+                    string.append("(All workers have been removed from the game)\n");
+                    break;
+                default:
+                    break;
+            }
         }
         System.out.println(string);
     }
 
-    public void notifyWin(PlayerView player, String reason) {
+    public void notifyWin(String reason) {
         StringBuilder string = new StringBuilder();
-        if (player.getId().equals(id)) {
-            string.append("Congratulations! You won! ");
-        } else {
-            string.append(player.getId() + " won! ");
-        }
+        string.append("Congratulations! You won! ");
         switch (reason) {
             case "winConditionAchieved":
                 string.append("(Win condition achieved)\n");

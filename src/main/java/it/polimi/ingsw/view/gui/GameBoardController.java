@@ -314,6 +314,7 @@ public class GameBoardController {
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
+        if (buildPosition.hasWorker()) System.out.println("worker here!");
         Transition transition;
         ImageView newBuilding;
         if (!buildPosition.isDomed())

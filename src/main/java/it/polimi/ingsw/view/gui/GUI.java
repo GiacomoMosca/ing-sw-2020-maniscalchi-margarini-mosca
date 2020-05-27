@@ -15,6 +15,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -296,7 +297,6 @@ public class GUI implements UI {//implements Runnable
     public void displayBuild(CellView buildPosition, CardView godCard) {
         manager.displayBuild(buildPosition, godCard);
         currentGame.setCell(buildPosition);
-        displayBoard();
     }
 
     public void displayGameInfo(GameView game, String desc) {
@@ -310,6 +310,7 @@ public class GUI implements UI {//implements Runnable
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
+        manager.displayMove(moves, godCard);
         moves.forEach((startPosition, endPosition) -> {
             CellView newStart = new CellView(
                     startPosition.getPosX(), startPosition.getPosY(), startPosition.getBuildLevel(), startPosition.isDomed(), null
@@ -320,7 +321,6 @@ public class GUI implements UI {//implements Runnable
             );
             currentGame.setCell(newEnd);
         });
-        manager.displayMove(moves, godCard);
     }
 
     public void displayPlaceWorker(CellView position) {
@@ -333,40 +333,43 @@ public class GUI implements UI {//implements Runnable
         System.out.println("\n" + player.getId() + " has disconnected. ");
     }
 
+    public void notifyGameStarting() {
+        manager.setBusy(false);
+        System.out.println("\nGame is starting! Press ENTER to continue. ");
+        new Scanner(System.in).nextLine();
+        sendBoolean(true);
+    }
+
     public void notifyGameOver() {
         manager.notifyGameOver();
         System.out.println("\nGame over! \n\n\n\n\n");
     }
 
-    public void notifyLoss(PlayerView player, String reason) {
-        manager.notifyLoss(player, reason);
+    public void notifyLoss(String reason, PlayerView winner) {
+        manager.setBusy(false);
         StringBuilder string = new StringBuilder();
-        if (player.getId().equals(id)) {
-            string.append("You lost! ");
+        string.append("You lost! ");
+        if (winner != null) {
+            string.append(winner.getId() + " won!");
         } else {
-            string.append(player.getId() + " lost! ");
-        }
-        switch (reason) {
-            case "outOfMoves":
-                string.append("(No legal moves available)\n");
-                break;
-            case "outOfWorkers":
-                string.append("(All workers have been removed from the game)\n");
-                break;
-            default:
-                break;
+            switch (reason) {
+                case "outOfMoves":
+                    string.append("(No legal moves available)\n");
+                    break;
+                case "outOfWorkers":
+                    string.append("(All workers have been removed from the game)\n");
+                    break;
+                default:
+                    break;
+            }
         }
         System.out.println(string);
     }
 
-    public void notifyWin(PlayerView player, String reason) {
-        manager.notifyWin(player, reason);
+    public void notifyWin(String reason) {
+        manager.setBusy(false);
         StringBuilder string = new StringBuilder();
-        if (player.getId().equals(id)) {
-            string.append("Congratulations! You won! ");
-        } else {
-            string.append(player.getId() + " won! ");
-        }
+        string.append("Congratulations! You won! ");
         switch (reason) {
             case "winConditionAchieved":
                 string.append("(Win condition achieved)\n");
@@ -378,10 +381,6 @@ public class GUI implements UI {//implements Runnable
                 break;
         }
         System.out.println(string);
-    }
-
-    private void displayBoard() {
-        //
     }
 
 }

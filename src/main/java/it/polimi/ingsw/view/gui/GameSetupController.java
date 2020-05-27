@@ -38,6 +38,7 @@ public class GameSetupController {
 
     public void initialize(GUIManager manager) {
         this.manager = manager;
+        setDefaultValues();
         yesButton.setOnMouseClicked(t -> {
             clickYesNo(true);
         });
