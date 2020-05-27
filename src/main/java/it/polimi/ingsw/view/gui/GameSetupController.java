@@ -116,7 +116,7 @@ public class GameSetupController {
                 centerCardsBox.getChildren().add(cardImage);
             }
             for (String card : pickedCards) {
-                ImageView cardImage = new ImageView("assets/cards/godCards/card_" + card + ".png");
+                ImageView cardImage = new ImageView("assets/gods/godCards/card_" + card + ".png");
                 cardImage.setEffect(new ColorAdjust(0.0, -1.0, -0.5, 0.2));
                 centerCardsBox.getChildren().add(cardImage);
             }
@@ -153,7 +153,7 @@ public class GameSetupController {
         private boolean clicked = false;
 
         public GodImageView(String s) {
-            super("assets/cards/godCards/card_" + s + ".png");
+            super("assets/gods/godCards/card_" + s + ".png");
             card = s;
             setOnMouseClicked(t -> {
                 if (clicked) {
