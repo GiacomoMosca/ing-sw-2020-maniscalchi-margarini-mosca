@@ -54,7 +54,7 @@ public class MedusaControllerTest<MedudsaController> {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWON() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWON() throws Exception {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = medusaController.generateCard();
         deck.addCard(card);
@@ -71,7 +71,7 @@ public class MedusaControllerTest<MedudsaController> {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnNextAndBuildWhereAnOpponentWorkerStood() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnNextAndBuildWhereAnOpponentWorkerStood() throws Exception {
         socket2 = new Socket();
         genericController = new GodControllerConcrete(fakeGameController);
         fakeVirtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
@@ -100,7 +100,7 @@ public class MedusaControllerTest<MedudsaController> {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldGenerateIllegalBuildException() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldGenerateIllegalBuildException() throws Exception {
         socket2 = new Socket();
         genericController = new GodControllerConcrete(fakeGameController);
         fakeVirtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);

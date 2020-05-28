@@ -9,6 +9,8 @@ public interface UI {
 
     public void run();
 
+    public void serverListener();
+
     public void stop();
 
     public String getServerIp();

@@ -45,7 +45,7 @@ public class TritonController extends GodController {
      * space
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         CellView startView = new CellView(activeWorker.getPosition());

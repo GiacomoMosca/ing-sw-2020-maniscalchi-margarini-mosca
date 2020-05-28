@@ -92,7 +92,7 @@ public class MinotaurControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkerPushingAwayTheOpponent() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerPushingAwayTheOpponent() throws Exception {
         minotaurController.movePhase();
         assertEquals(fakeGameController.getGame().getBoard().getCell(2, 2).getWorker(), fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0));
         assertEquals(fakeGameController.getGame().getBoard().getCell(1, 1).getWorker(), fakeGameController.getGame().getPlayers().get(1).getWorkers().get(0));
@@ -107,7 +107,7 @@ public class MinotaurControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateTwoInvalidMoveExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateTwoInvalidMoveExceptions() throws Exception {
         //a client who chooses to move in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

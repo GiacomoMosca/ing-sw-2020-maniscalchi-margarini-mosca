@@ -52,7 +52,7 @@ public class PrometheusController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         wantBuildBefore = false;
@@ -92,7 +92,7 @@ public class PrometheusController extends GodController {
      * otherwise doesn't allow him to move up
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves;
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
         else possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -123,7 +123,7 @@ public class PrometheusController extends GodController {
         return findLegalMoves(workerPosition, possibleMoves);
     }
 
-    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

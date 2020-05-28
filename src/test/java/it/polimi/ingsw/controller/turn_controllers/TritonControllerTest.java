@@ -62,7 +62,7 @@ public class TritonControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateFirstExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateFirstExceptionIllegalMove() throws Exception {
         //a client who chooses to move in a domed cell and doesn't want to move again
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -95,7 +95,7 @@ public class TritonControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateSecondExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateSecondExceptionIllegalMove() throws Exception {
         //a client who chooses to move twice in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -133,7 +133,7 @@ public class TritonControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheSecondTime() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldMoveTheSecondTime() throws Exception {
         tritonController.setPlayer(fakeGameController.getGame().getPlayers().get(0), fakeVirtualView);
         Worker worker = new Worker(fakeGameController.getGame().getPlayers().get(0), 1);
         worker.setPosition(fakeGameController.getGame().getBoard().getCell(4, 4));

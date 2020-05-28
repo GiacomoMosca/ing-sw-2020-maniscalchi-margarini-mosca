@@ -12,4 +12,5 @@ public class SendInteger extends ToServerMessage {
     public int getBody() {
         return body;
     }
+
 }

@@ -14,4 +14,5 @@ public class SendIntegers extends ToServerMessage {
     public ArrayList<Integer> getBody() {
         return body;
     }
+
 }

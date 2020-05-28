@@ -12,4 +12,5 @@ public class SendString extends ToServerMessage {
     public String getBody() {
         return body;
     }
+
 }

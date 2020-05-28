@@ -47,7 +47,7 @@ public class MinotaurController extends GodController {
      * opponent worker.
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         boolean godPower = false;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);

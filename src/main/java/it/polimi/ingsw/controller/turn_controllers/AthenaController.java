@@ -44,7 +44,7 @@ public class AthenaController extends GodController {
      * Handles the moving phase of the turn, adding a Modifier if the worker moved up on this turn.
      */
     @Override
-    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();

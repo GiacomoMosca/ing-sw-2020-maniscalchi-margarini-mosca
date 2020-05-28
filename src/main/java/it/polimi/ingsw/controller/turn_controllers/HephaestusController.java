@@ -45,7 +45,7 @@ public class HephaestusController extends GodController {
      * times on the same block (not a dome).
      */
     @Override
-    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

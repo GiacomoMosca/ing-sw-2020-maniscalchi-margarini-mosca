@@ -91,7 +91,7 @@ public class Server {
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | InterruptedException e) {
             removePlayer(player);
         }
         VirtualView finalPlayer = player;
@@ -119,13 +119,12 @@ public class Server {
             boolean newGame = player.chooseStartJoin();
             if (newGame) newRoom(player);
             else joinRoom(player);
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | InterruptedException e) {
             removePlayer(player);
         }
     }
 
-    private void newRoom(VirtualView player) throws IOException, ClassNotFoundException {
-
+    private void newRoom(VirtualView player) throws IOException, InterruptedException {
         String gameName;
         boolean taken = false;
         while (true) {
@@ -151,7 +150,7 @@ public class Server {
         }
     }
 
-    private void joinRoom(VirtualView player) throws IOException, ClassNotFoundException {
+    private void joinRoom(VirtualView player) throws IOException, InterruptedException {
         GameController gameController = null;
         String gameRoom;
         try {
@@ -190,7 +189,7 @@ public class Server {
         }
     }
 
-    private void startGame(GameController gameController) throws IOException, ClassNotFoundException {
+    private void startGame(GameController gameController) throws IOException, InterruptedException {
         gameController.getControllers().get(0).getClient().notifyGameStarting();
         logger.log("game " + gameController.getGame().getName() + " started");
         new Thread(() -> gameWorker(gameController)).start();

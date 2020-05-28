@@ -84,7 +84,7 @@ public class ApolloControllerTest {
     /**/
 
     @Test
-    public void movePhase_noInputGiven_shouldSwapTheTwoWorkers() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldSwapTheTwoWorkers() throws Exception {
         apolloController.movePhase();
 
         assertSame(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0, 1));
@@ -92,7 +92,7 @@ public class ApolloControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkerRegularly() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerRegularly() throws Exception {
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
                 super(socket, objectInputStream, objectOutputStream);
@@ -119,7 +119,7 @@ public class ApolloControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws Exception {
         //a client who tries to move in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

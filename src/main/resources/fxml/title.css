@@ -5,8 +5,12 @@
 
 /* Text */
 
-#playText, #playTextPressed {
+#playText, #playText_pressed {
     -fx-font: 29px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#playButton {
+    -fx-cursor: hand;
 }

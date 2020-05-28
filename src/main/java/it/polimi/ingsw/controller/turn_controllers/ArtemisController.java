@@ -52,7 +52,7 @@ public class ArtemisController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
         secondMove = false;
@@ -69,7 +69,7 @@ public class ArtemisController extends GodController {
         return "next";
     }
 
-    public void movePhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (secondMove) ? card : null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);

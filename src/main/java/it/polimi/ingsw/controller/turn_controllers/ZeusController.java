@@ -40,7 +40,7 @@ public class ZeusController extends GodController {
         return card;
     }
 
-    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

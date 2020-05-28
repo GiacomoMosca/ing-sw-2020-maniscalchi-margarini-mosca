@@ -59,7 +59,7 @@ public class AthenaControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws Exception {
         //a client who chooses to move in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

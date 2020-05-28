@@ -65,7 +65,7 @@ public class DemeterControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldGenerateTwoIllegalBuildExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase_noInputGiven_shouldGenerateTwoIllegalBuildExceptions() throws Exception {
         //a client who chooses to build two times in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

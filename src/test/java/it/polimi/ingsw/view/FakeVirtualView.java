@@ -21,22 +21,22 @@ public class FakeVirtualView extends VirtualView {
 
 
     @Override
-    public Worker chooseWorker(ArrayList<Worker> workers) throws IOException, ClassNotFoundException {
+    public Worker chooseWorker(ArrayList<Worker> workers) {
         return workers.get(0);
     }
 
     @Override
-    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) throws IOException, ClassNotFoundException {
+    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) {
         return possibleMoves.get(0);
     }
 
     @Override
-    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) throws IOException, ClassNotFoundException {
+    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) {
         return possibleBuilds.get(0);
     }
 
     @Override
-    public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
+    public boolean chooseYesNo(String query) {
         return true;
     }
 

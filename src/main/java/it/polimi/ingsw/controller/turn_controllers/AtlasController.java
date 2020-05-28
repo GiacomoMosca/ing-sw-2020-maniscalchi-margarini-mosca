@@ -44,7 +44,7 @@ public class AtlasController extends GodController {
      * Handles the building phase of the turn, and allows building domes at any level.
      */
     @Override
-    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

@@ -49,7 +49,7 @@ public class HestiaController extends GodController {
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
     @Override
-    public String runPhases(Worker worker) throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
         buildAgain = false;
         activeWorker = worker;
         startingPosition = worker.getPosition();
@@ -65,7 +65,7 @@ public class HestiaController extends GodController {
         return "next";
     }
 
-    public void buildPhase() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (buildAgain) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

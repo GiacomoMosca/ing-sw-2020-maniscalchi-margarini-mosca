@@ -12,4 +12,5 @@ public class SendBoolean extends ToServerMessage {
     public boolean getBody() {
         return body;
     }
+
 }

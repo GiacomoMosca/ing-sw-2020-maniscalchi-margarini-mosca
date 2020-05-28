@@ -10,11 +10,9 @@ public class TitleController {
     private GUIManager manager;
 
     @FXML
-    private ImageView playButton;
+    private ImageView playButton, playButton_pressed;
     @FXML
-    private Text playText;
-    @FXML
-    private Text playTextPressed;
+    private Text playText, playText_pressed;
 
     public void setManager(GUIManager manager) {
         this.manager = manager;
@@ -22,9 +20,9 @@ public class TitleController {
 
     public void pressed() {
         Platform.runLater(() -> {
-            playButton.setVisible(true);
+            playButton_pressed.setVisible(true);
             playText.setVisible(false);
-            playTextPressed.setVisible(true);
+            playText_pressed.setVisible(true);
         });
 
     }
@@ -32,8 +30,8 @@ public class TitleController {
     public void released() {
         Platform.runLater(() -> {
             manager.setBusy(false);
-            playButton.setVisible(false);
-            playTextPressed.setVisible(false);
+            playButton_pressed.setVisible(false);
+            playText_pressed.setVisible(false);
             playText.setVisible(true);
         });
     }

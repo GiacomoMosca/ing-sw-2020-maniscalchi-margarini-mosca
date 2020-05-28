@@ -63,7 +63,7 @@ public class ArtemisControllerTest {
         }*/
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWonAfterTheFirstMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWonAfterTheFirstMove() throws Exception {
         fakeGameController.getGame().getBoard().getCell(1, 2).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 1).setBuildLevel(3);
 
@@ -72,7 +72,7 @@ public class ArtemisControllerTest {
     }
 
     @Test
-    public void runPhasesAndFindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWonAfterTheSecondMoveAndArrayListOfAllNeighbors() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhasesAndFindPossibleMoves_workerGivenAndNoInputGiven_shouldReturnWonAfterTheSecondMoveAndArrayListOfAllNeighbors() throws Exception {
         fakeGameController.getGame().getBoard().getCell(1, 2).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 1).setBuildLevel(2);
         fakeGameController.getGame().getBoard().getCell(0, 0).setBuildLevel(3);
@@ -83,7 +83,7 @@ public class ArtemisControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldNotAcceptToMoveTheSecondTime() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldNotAcceptToMoveTheSecondTime() throws Exception {
         //a client who chooses not to move the second time
         class FakeVirtualViewToAnswerNo extends FakeVirtualView {
             public FakeVirtualViewToAnswerNo(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -108,7 +108,7 @@ public class ArtemisControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldGenerateExceptionIllegalMove() throws Exception {
         //a client who tries to move in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

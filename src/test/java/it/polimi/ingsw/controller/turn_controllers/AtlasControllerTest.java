@@ -60,7 +60,7 @@ public class AtlasControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldGenerateExceptionIllegalBuild() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase_noInputGiven_shouldGenerateExceptionIllegalBuild() throws Exception {
         //a client who chooses to build in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

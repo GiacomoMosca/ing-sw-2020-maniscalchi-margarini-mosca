@@ -28,8 +28,8 @@ public class GameController {
 
     /**
      * creates a GameController.
-     * creates the first player (associated with the VirtualView received as an argument),
-     * associating his id and the color "RED".
+     * Creates the first player (associated with the VirtualView received as an argument),
+     * associating his id and the color "r".
      * creates a PlayerController for the first player, associating the Player and his VirtualView.
      * adds the PlayerController.
      *
@@ -129,9 +129,9 @@ public class GameController {
 
         try {
             broadcastMessage("Game started!");
-            broadcastGameInfo("gameSetup1");
+            broadcastGameInfo("gameSetup");
             pickCards();
-            broadcastGameInfo("gameSetup2");
+            broadcastGameInfo("boardSetup");
             chooseStartPlayer();
             placeWorkers();
 
@@ -153,11 +153,8 @@ public class GameController {
                     deck.pickCard(card);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new IOExceptionFromController(e, playerControllers.get(0));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
         }
         ArrayList<Card> cardPool = deck.getPickedCards();
         ArrayList<Card> chosenCards = new ArrayList<Card>();
@@ -166,11 +163,8 @@ public class GameController {
             Card chosenCard;
             try {
                 chosenCard = playerControllers.get(j).getClient().chooseCards(cardPool, 1, chosenCards).get(0);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 throw new IOExceptionFromController(e, playerControllers.get(j));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                return;
             }
             cardPool.remove(chosenCard);
             chosenCards.add(chosenCard);
@@ -183,10 +177,8 @@ public class GameController {
     private void chooseStartPlayer() throws IOExceptionFromController {
         try {
             game.setActivePlayer(playerControllers.get(0).getClient().chooseStartingPlayer(players));
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new IOExceptionFromController(e, playerControllers.get(0));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -204,11 +196,8 @@ public class GameController {
                 int w = j + 1;
                 try {
                     position = controller.getClient().chooseStartPosition(freePositions, w);
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException e) {
                     throw new IOExceptionFromController(e, controller);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    return;
                 }
                 freePositions.remove(position);
                 Worker worker = new Worker(players.get(p), w);
@@ -256,7 +245,6 @@ public class GameController {
                     break;
             }
         }
-        if (!running.compareAndSet(true, false)) return;
         gameOver();
     }
 
@@ -276,7 +264,10 @@ public class GameController {
         }
     }
 
-    public void checkDisconnection(IOException e, PlayerController controller) throws IOExceptionFromController {
+    /**
+     * checks whether the player who disconnected is currently in the game or not
+     */
+    public void checkDisconnection(Exception e, PlayerController controller) throws IOExceptionFromController {
         if (controller == null) return;
         if (controller.getPlayer().hasLost()) {
             playerControllers.set(playerControllers.indexOf(controller), null);
@@ -284,11 +275,18 @@ public class GameController {
             throw new IOExceptionFromController(e, controller);
     }
 
+    /**
+     * handles the disconnection of a player and eventually terminates the current game
+     */
     public void handleDisconnection(PlayerController controller) {
-        if (!running.compareAndSet(true, false)) return;
-        playerControllers.remove(controller);
-        notifyDisconnection(controller.getPlayer());
-        gameOver();
+        if (!running.get() || controller == null) return;
+        if (controller.getPlayer().hasLost()) {
+            playerControllers.set(playerControllers.indexOf(controller), null);
+        } else {
+            playerControllers.remove(controller);
+            notifyDisconnection(controller.getPlayer());
+            gameOver();
+        }
     }
 
     /**
@@ -337,7 +335,16 @@ public class GameController {
     }
 
     /**
-     * broadcasts the Board associated with the current Game to all players and spectators
+     * broadcasts all info associated with the current Game to all players
+     *
+     * @param desc the description associated with this broadcast; can be
+     *             <p><ul>
+     *             <li>gameSetup: sends player info
+     *             <li>boardSetup: sends player info with god cards
+     *             <li>gameStart: signals the end of the setup stage
+     *             <li>turnStart: signals the beginning of a new turn
+     *             <li>a notifyLoss description: signals the loss of the first player in a 3 player game
+     *             </ul></p>
      */
     public void broadcastGameInfo(String desc) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
@@ -351,7 +358,7 @@ public class GameController {
     }
 
     /**
-     * broadcasts the message received as an argument to all players and spectators
+     * broadcasts the message received as an argument to all players
      *
      * @param message the message to show
      */
@@ -400,10 +407,10 @@ public class GameController {
     }
 
     /**
-     * sets a player as the winner
+     * sets a player as the winner and notifies all players
      *
-     * @param player the losing player
-     * @param reason the reason why the player lost
+     * @param player the winning player
+     * @param reason the reason why the player won
      */
     private void setWinner(Player player, String reason) {
         game.setWinner(player);
@@ -422,10 +429,10 @@ public class GameController {
     }
 
     /**
-     * notifies all players and spectators that the game is over
+     * notifies all players that the game is over and terminates it
      */
     public void gameOver() {
-        if (running.get()) return;
+        if (running.compareAndSet(true, false)) return;
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
             controller.getClient().setPlayerController(null);

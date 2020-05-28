@@ -52,7 +52,7 @@ public class HestiaControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWin() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWin() throws Exception {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = hestiaController.generateCard();
         deck.addCard(card);
@@ -81,7 +81,7 @@ public class HestiaControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldGenerateIllegalBuildException() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase_noInputGiven_shouldGenerateIllegalBuildException() throws Exception {
         //a client who chooses to build in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

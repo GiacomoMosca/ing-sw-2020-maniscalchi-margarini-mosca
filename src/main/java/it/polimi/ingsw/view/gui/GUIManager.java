@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class GUIManager extends Application {
     private static Scene gameLobbyScene;
     private static Scene gameSetupScene;
     private static Scene gameBoardScene;
-    private static Scene logInScene;
+    private static Scene loginScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
 
@@ -76,6 +77,7 @@ public class GUIManager extends Application {
         initAll();
         stage = primaryStage;
         stage.setTitle("Santorini");
+        stage.getIcons().add(new Image("/assets/graphics/icon.png"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/title.fxml"));
         Parent root = loader.load();
         currentScene = new Scene(root, 1280, 720);
@@ -91,19 +93,19 @@ public class GUIManager extends Application {
     }
 
     public void initAll() {
+        initLogin();
         initGameLobby();
-        initGameSetup();
-        initGameBoard();
-        initLogIn();
         initNewGame();
         initJoinGame();
+        initGameSetup();
+        initGameBoard();
     }
 
-    private void initLogIn() {
+    private void initLogin() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         try {
             Parent root = loader.load();
-            logInScene = new Scene(root);
+            loginScene = new Scene(root);
             loginController = loader.getController();
             loginController.initialize(this);
         } catch (IOException e) {
@@ -208,7 +210,7 @@ public class GUIManager extends Application {
                 //
             }
         }
-        setScene(logInScene);
+        setScene(loginScene);
     }
 
     public void chooseNickname(boolean taken) {
@@ -218,10 +220,12 @@ public class GUIManager extends Application {
     // GameLobbyController
 
     public void chooseStartJoin() {
+        initGameLobby();
         setScene(gameLobbyScene);
     }
 
     public void chooseGameName(boolean taken) {
+        initNewGame();
         setScene(newGameScene);
     }
 
@@ -230,6 +234,7 @@ public class GUIManager extends Application {
     }
 
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
+        initJoinGame();
         setScene(joinGameScene);
         joinGameController.chooseGameRoom(gameRooms);
     }
@@ -238,12 +243,12 @@ public class GUIManager extends Application {
 
     public void displayGameInfo(GameView game, String desc) {
         switch (desc) {
-            case "gameSetup1":
+            case "gameSetup":
                 initGameSetup();
                 setScene(gameSetupScene);
                 gameSetupController.displayGameInfo();
                 break;
-            case "gameSetup2":
+            case "boardSetup":
                 initGameBoard();
                 setScene(gameBoardScene);
                 gameBoardController.initialize(game);

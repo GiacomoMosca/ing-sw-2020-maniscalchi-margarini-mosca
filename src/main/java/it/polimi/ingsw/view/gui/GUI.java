@@ -2,10 +2,7 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.network.message.to_client.Ping;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
-import it.polimi.ingsw.network.message.to_server.SendBoolean;
-import it.polimi.ingsw.network.message.to_server.SendInteger;
-import it.polimi.ingsw.network.message.to_server.SendIntegers;
-import it.polimi.ingsw.network.message.to_server.SendString;
+import it.polimi.ingsw.network.message.to_server.*;
 import it.polimi.ingsw.view.*;
 
 import java.io.IOException;
@@ -16,6 +13,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,6 +27,7 @@ public class GUI implements UI {//implements Runnable
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private LinkedBlockingQueue<ToClientMessage> serverQueue;
     private SynchronousQueue<Object> messageQueue;
     private String id;
     private GameView currentGame;
@@ -72,19 +72,16 @@ public class GUI implements UI {//implements Runnable
             return;
         }
 
+        serverQueue = new LinkedBlockingQueue<ToClientMessage>();
+        new Thread(this::serverListener).start();
         ToClientMessage message;
         while (running.get()) {
             try {
-                message = (ToClientMessage) input.readObject();
-            } catch (IOException e) {
+                message = serverQueue.take();
+            } catch (InterruptedException e) {
                 System.out.println("Disconnected. ");
                 break;
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                break;
             }
-            if (message == null) continue;
-            if (message instanceof Ping) continue;
             synchronized (busyLock) {
                 while (!manager.setBusy(true)) {
                     try {
@@ -97,6 +94,27 @@ public class GUI implements UI {//implements Runnable
             parseMessage(message);
         }
         stop();
+    }
+
+    public void serverListener() {
+        ToClientMessage serverMessage;
+        while (running.get()) {
+            try {
+                serverMessage = (ToClientMessage) input.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                running.compareAndSet(true, false);
+                System.out.println("Disconnected. ");
+                break;
+            }
+            if (serverMessage instanceof Ping) pong();
+            else {
+                try {
+                    serverQueue.put(serverMessage);
+                } catch (InterruptedException e) {
+                    //
+                }
+            }
+        }
     }
 
     private void quit() {
@@ -174,6 +192,15 @@ public class GUI implements UI {//implements Runnable
     }
 
     // send to server
+
+    public void pong() {
+        try {
+            output.writeObject(new Pong(id));
+        } catch (IOException e) {
+            System.out.println("Disconnected. ");
+            stop();
+        }
+    }
 
     public void sendBoolean(boolean body) {
         try {

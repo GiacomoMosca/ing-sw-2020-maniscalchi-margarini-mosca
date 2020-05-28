@@ -52,7 +52,7 @@ public class PrometheusControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnNEXT() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnNEXT() throws Exception {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = prometheusController.generateCard();
         deck.addCard(card);
@@ -111,7 +111,7 @@ public class PrometheusControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldNotBuildBeforeAndGenerateMovingException() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void movePhase_noInputGiven_shouldNotBuildBeforeAndGenerateMovingException() throws Exception {
         //a client who chooses to move in an illegal cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {

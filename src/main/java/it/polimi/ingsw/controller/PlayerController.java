@@ -82,11 +82,8 @@ public class PlayerController {
             if (playableWorkers.size() == 0) return "outOfMoves";
             else activeWorker = client.chooseWorker(playableWorkers);
             return godController.runPhases(activeWorker);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new IOExceptionFromController(e, this);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return "next";
         }
     }
 }

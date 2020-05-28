@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
@@ -100,9 +101,9 @@
                    AnchorPane.rightAnchor="0.0">
             <Image url="@../assets/board/playerInfo/playerColor_right_red.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon1" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
-        <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" mouseTransparent="true">
+        <ImageView fx:id="playerIcon1" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="firstPlayerID" text="Text">
                 <StackPane.margin>
                     <Insets left="30.0"/>
@@ -122,9 +123,9 @@
                    AnchorPane.rightAnchor="0.0">
             <Image url="@../assets/board/playerInfo/playerColor_right_green.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon2" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
-        <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" mouseTransparent="true">
+        <ImageView fx:id="playerIcon2" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="secondPlayerID" text="Text">
                 <StackPane.margin>
                     <Insets left="30.0"/>
@@ -144,9 +145,9 @@
                    AnchorPane.rightAnchor="0.0">
             <Image url="@../assets/board/playerInfo/playerColor_right_blue.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon3" AnchorPane.rightAnchor="0.0" pickOnBounds="true" preserveRatio="true"/>
-        <StackPane alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" mouseTransparent="true">
+        <ImageView fx:id="playerIcon3" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="thirdPlayerID" text="Text">
                 <StackPane.margin>
                     <Insets left="30.0"/>
@@ -154,6 +155,12 @@
             </Text>
         </StackPane>
     </AnchorPane>
+    <ImageView fx:id="logButton" layoutX="29.0" layoutY="428.0" onMouseClicked="#logOn">
+        <Image url="@../assets/board/logButton.png"/>
+    </ImageView>
+    <ImageView fx:id="logButton_pressed" layoutX="29.0" layoutY="428.0" onMouseClicked="#logOff" visible="false">
+        <Image url="@../assets/board/logButton_pressed.png"/>
+    </ImageView>
     <Button fx:id="yesButton" layoutX="437.0" layoutY="541.0" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="59.0" prefWidth="104.0"
             text="YES" visible="false"/>
@@ -162,4 +169,7 @@
     <StackPane fx:id="godBox" layoutX="700.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity"
                minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="332.0" prefWidth="417.0">
     </StackPane>
+    <TextArea fx:id="log" editable="false" layoutX="123.0" layoutY="394.0" prefHeight="110.0" prefWidth="400.0"
+              maxHeight="110.0" maxWidth="400.0" visible="false">
+    </TextArea>
 </AnchorPane>

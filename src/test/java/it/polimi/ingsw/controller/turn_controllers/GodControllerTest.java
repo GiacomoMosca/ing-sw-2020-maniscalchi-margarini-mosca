@@ -71,7 +71,7 @@ public class GodControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnWON() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnWON() throws Exception {
         //it's not okay to call fakeGameController.gameSetUp(): it would later call runPhases(), changing the expected result
         //so recreating here the game situation: worker will move from (1,2) to (0,1)
         //setting their building levels respectively to 2 and 3 so that the worker wins
@@ -90,7 +90,7 @@ public class GodControllerTest {
     }
 
     @Test
-    public void runPhases_workerGiven_shouldReturnNEXT() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_workerGiven_shouldReturnNEXT() throws Exception {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);
@@ -106,13 +106,13 @@ public class GodControllerTest {
     }
 
     @Test
-    public void movePhase_noInputGiven_shouldMoveTheWorkerInTheExpectedCell() throws IOException, ClassNotFoundException {
+    public void movePhase_noInputGiven_shouldMoveTheWorkerInTheExpectedCell() throws Exception {
         fakeGameController.addPlayer(fakeVirtualView2);
         assertSame(fakeGameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition(), fakeGameController.getGame().getBoard().getCell(0, 1));
     }
 
     @Test
-    public void runPhases_noInputGiven_shouldGenerateMovingAndBuildingExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void runPhases_noInputGiven_shouldGenerateMovingAndBuildingExceptions() throws Exception {
         //a client who chooses to move and to build in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -146,7 +146,7 @@ public class GodControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldBuildOnTheExpectedCell() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase_noInputGiven_shouldBuildOnTheExpectedCell() throws Exception {
         Deck deck = fakeGameController.getGame().getDeck();
         Card card = new Card("god", "title", "description", 1, true, genericController1);
         deck.addCard(card);

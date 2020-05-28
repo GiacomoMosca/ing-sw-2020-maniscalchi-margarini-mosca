@@ -4,7 +4,7 @@
 }
 
 @font-face {
-    font-family: Minion Pro;
+    font-family: "Minion Pro";
     src: url('/assets/fonts/MinionPro-Regular.otf');
 }
 
@@ -35,4 +35,36 @@
 
 #godBox {
     -fx-effect: dropshadow(three-pass-box, white, 30, 0.5, 0, 0);
+}
+
+/* log */
+
+#log {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-background-radius: 5px;
+}
+
+#log .content {
+    -fx-background-color: transparent;
+}
+
+#log .viewport {
+    -fx-background-color: transparent;
+}
+
+#log .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+#log .increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#log .scroll-bar .thumb {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 5em;
+    -fx-effect: innershadow(three-pass-box, black, 5, 0.7, 0, 0);
 }

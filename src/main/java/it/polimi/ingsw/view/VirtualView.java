@@ -15,10 +15,16 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class VirtualView {
 
+    private final AtomicBoolean alive;
     private final Socket socket;
+    private final SynchronousQueue<ToServerMessage> messageQueue;
+    private final SynchronousQueue<ToServerMessage> pingQueue;
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private String id;
@@ -28,10 +34,14 @@ public class VirtualView {
      * creates a VirtualView associated with the Interface received as an argument
      */
     public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
+        this.alive = new AtomicBoolean(true);
         this.socket = socket;
         this.input = input;
+        this.messageQueue = new SynchronousQueue<ToServerMessage>();
+        this.pingQueue = new SynchronousQueue<ToServerMessage>();
         this.output = output;
         this.playerController = null;
+        new Thread(this::clientListener).start();
     }
 
     public void resetStreams() throws IOException {
@@ -66,11 +76,43 @@ public class VirtualView {
         return (playerController != null);
     }
 
-    public void checkAlive() throws IOException {
-        output.writeObject(new Ping());
+    public void clientListener() {
+        ToServerMessage clientMessage;
+        while (alive.get()) {
+            try {
+                clientMessage = (ToServerMessage) input.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                alive.compareAndSet(true, false);
+                messageQueue.offer(new ErrorMessage("disconnected"));
+                break;
+            }
+            if (clientMessage instanceof Pong) pingQueue.offer(clientMessage);
+            else messageQueue.offer(clientMessage);
+        }
     }
 
-    public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, ClassNotFoundException {
+    public ToServerMessage takeInput() throws InterruptedException {
+        ToServerMessage input = messageQueue.take();
+        if (input instanceof ErrorMessage) throw new InterruptedException("disconnected");
+        return input;
+    }
+
+    public void checkAlive() throws IOException {
+        int attempts = 0;
+        while (attempts < 2) {
+            output.writeObject(new Ping());
+            try {
+                pingQueue.poll(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                attempts++;
+                continue;
+            }
+            break;
+        }
+        if (attempts >= 2 || !alive.get()) throw new IOException("timed out");
+    }
+
+    public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, InterruptedException {
         ArrayList<CardView> possibleCardsView = new ArrayList<CardView>();
         for (Card card : possibleCards) {
             possibleCardsView.add(new CardView(card));
@@ -83,7 +125,7 @@ public class VirtualView {
             }
         }
         output.writeObject(new ChooseCards(possibleCardsView, num, pickedCardsView));
-        ArrayList<Integer> choices = ((SendIntegers) input.readObject()).getBody();
+        ArrayList<Integer> choices = ((SendIntegers) takeInput()).getBody();
         ArrayList<Card> chosenCards = new ArrayList<Card>();
         for (int i : choices) {
             chosenCards.add(possibleCards.get(i));
@@ -91,39 +133,39 @@ public class VirtualView {
         return chosenCards;
     }
 
-    public String chooseGameName(boolean taken) throws IOException, ClassNotFoundException {
+    public String chooseGameName(boolean taken) throws IOException, InterruptedException {
         output.writeObject(new ChooseGameName(taken));
-        return ((SendString) input.readObject()).getBody();
+        return ((SendString) takeInput()).getBody();
     }
 
-    public String chooseGameRoom(ArrayList<Game> gameRooms) throws IOException, ClassNotFoundException {
+    public String chooseGameRoom(ArrayList<Game> gameRooms) throws IOException, InterruptedException {
         ArrayList<GameView> gameRoomsView = new ArrayList<GameView>();
         for (Game game : gameRooms) {
             gameRoomsView.add(new GameView(game));
         }
         output.writeObject(new ChooseGameRoom(gameRoomsView));
-        return ((SendString) input.readObject()).getBody();
+        return ((SendString) takeInput()).getBody();
     }
 
-    public String chooseNickname(boolean taken) throws IOException, ClassNotFoundException {
+    public String chooseNickname(boolean taken) throws IOException, InterruptedException {
         output.writeObject(new ChooseNickname(taken));
-        id = ((SendString) input.readObject()).getSender();
+        id = ((SendString) takeInput()).getSender();
         return id;
     }
 
-    public int choosePlayersNumber() throws IOException, ClassNotFoundException {
+    public int choosePlayersNumber() throws IOException, InterruptedException {
         output.writeObject(new ChoosePlayersNumber());
-        return ((SendInteger) input.readObject()).getBody();
+        return ((SendInteger) takeInput()).getBody();
     }
 
-    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions, int num) throws IOException, ClassNotFoundException {
+    public Cell chooseStartPosition(ArrayList<Cell> possiblePositions, int num) throws IOException, InterruptedException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possiblePositions) {
             positions.add(new CellView(cell));
         }
         String desc = "start" + num;
         output.writeObject(new ChoosePosition(positions, desc));
-        return possiblePositions.get(((SendInteger) input.readObject()).getBody());
+        return possiblePositions.get(((SendInteger) takeInput()).getBody());
     }
 
     /**
@@ -132,13 +174,13 @@ public class VirtualView {
      * @param workers the workers the player can choose for his turn
      * @return the worker the player chose
      */
-    public Worker chooseWorker(ArrayList<Worker> workers) throws IOException, ClassNotFoundException {
+    public Worker chooseWorker(ArrayList<Worker> workers) throws IOException, InterruptedException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Worker worker : workers) {
             positions.add(new CellView(worker.getPosition()));
         }
         output.writeObject(new ChoosePosition(positions, "worker"));
-        return workers.get(((SendInteger) input.readObject()).getBody());
+        return workers.get(((SendInteger) takeInput()).getBody());
     }
 
     /**
@@ -147,13 +189,13 @@ public class VirtualView {
      * @param possibleMoves an ArrayList containing all the possible moves a player can do with a worker
      * @return the cell the player decided to move his worker to
      */
-    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) throws IOException, ClassNotFoundException {
+    public Cell chooseMovePosition(ArrayList<Cell> possibleMoves) throws IOException, InterruptedException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possibleMoves) {
             positions.add(new CellView(cell));
         }
         output.writeObject(new ChoosePosition(positions, "move"));
-        return possibleMoves.get(((SendInteger) input.readObject()).getBody());
+        return possibleMoves.get(((SendInteger) takeInput()).getBody());
     }
 
     /**
@@ -162,36 +204,36 @@ public class VirtualView {
      * @param possibleBuilds an ArrayList containing all the possible builds a player can do with a worker
      * @return the cell the player decided to build on
      */
-    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) throws IOException, ClassNotFoundException {
+    public Cell chooseBuildPosition(ArrayList<Cell> possibleBuilds) throws IOException, InterruptedException {
         ArrayList<CellView> positions = new ArrayList<CellView>();
         for (Cell cell : possibleBuilds) {
             positions.add(new CellView(cell));
         }
         output.writeObject(new ChoosePosition(positions, "build"));
-        return possibleBuilds.get(((SendInteger) input.readObject()).getBody());
+        return possibleBuilds.get(((SendInteger) takeInput()).getBody());
     }
 
-    public int chooseStartingPlayer(ArrayList<Player> players) throws IOException, ClassNotFoundException {
+    public int chooseStartingPlayer(ArrayList<Player> players) throws IOException, InterruptedException {
         ArrayList<PlayerView> playerViews = new ArrayList<PlayerView>();
         for (Player player : players) {
             playerViews.add(new PlayerView(player));
         }
         output.writeObject(new ChooseStartingPlayer(playerViews));
-        return ((SendInteger) input.readObject()).getBody();
+        return ((SendInteger) takeInput()).getBody();
     }
 
-    public boolean chooseStartJoin() throws IOException, ClassNotFoundException {
+    public boolean chooseStartJoin() throws IOException, InterruptedException {
         output.writeObject(new ChooseStartJoin());
-        return ((SendBoolean) input.readObject()).getBody();
+        return ((SendBoolean) takeInput()).getBody();
     }
 
     /**
      * @param query the question the player should answer to
      * @return true if the player answered "yes", false if the player answered "no"
      */
-    public boolean chooseYesNo(String query) throws IOException, ClassNotFoundException {
+    public boolean chooseYesNo(String query) throws IOException, InterruptedException {
         output.writeObject(new ChooseYesNo(query));
-        return ((SendBoolean) input.readObject()).getBody();
+        return ((SendBoolean) takeInput()).getBody();
     }
 
     public void displayBuild(CellView buildPosition, Card godPower) throws IOException {
@@ -229,9 +271,9 @@ public class VirtualView {
         output.writeObject(new DisplayPlaceWorker(cellView));
     }
 
-    public void notifyGameStarting() throws IOException, ClassNotFoundException {
+    public void notifyGameStarting() throws IOException, InterruptedException {
         output.writeObject(new NotifyGameStarting());
-        input.readObject();
+        takeInput();
     }
 
     public void notifyLoss(String reason, Player winner) throws IOException {

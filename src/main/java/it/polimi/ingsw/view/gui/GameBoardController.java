@@ -8,6 +8,7 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -43,6 +44,10 @@ public class GameBoardController {
     private ImageView playerIcon1, playerIcon2, playerIcon3;
     @FXML
     private ImageView playerHighlight1, playerHighlight2, playerHighlight3;
+    @FXML
+    private ImageView logButton, logButton_pressed;
+    @FXML
+    private TextArea log;
     @FXML
     private Button yesButton, noButton;
     @FXML
@@ -192,11 +197,24 @@ public class GameBoardController {
     }
 
     public void displayGameInfo(GameView game, String desc) {
-        String text;
-        if (desc.equals("gameSetup2")) text = "Placing workers...";
-        else text = playersId.get(game.getActivePlayer()) + "'s Turn";
+        String text = null;
+        switch (desc) {
+            case "boardSetup":
+                text = "Placing workers...";
+                break;
+            case "gameStart":
+                pushToLog("\n=== GAME START ===");
+                break;
+            case "turnStart":
+                text = playersId.get(game.getActivePlayer()) + "'s Turn";
+                pushToLog("\n=== " + playersId.get(game.getActivePlayer()) + "'s Turn ===");
+                break;
+            default:
+                break;
+        }
+        String finalText = text;
         Platform.runLater(() -> {
-            infoBox.setText(text);
+            if (finalText != null) infoBox.setText(finalText);
             manager.setBusy(false);
         });
     }
@@ -274,6 +292,20 @@ public class GameBoardController {
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" ⮞\t");
+        if (godCard != null) stringBuilder.append("[" + godCard.getGod() + "] ");
+        stringBuilder.append("move ");
+        boolean second = false;
+        for (HashMap.Entry<CellView, CellView> entry : moves.entrySet()) {
+            if (second) stringBuilder.append(" and ");
+            second = true;
+            stringBuilder.append("[" + entry.getKey().getPosX() + "," + entry.getKey().getPosY() + "]");
+            stringBuilder.append(" to ");
+            stringBuilder.append("[" + entry.getValue().getPosX() + "," + entry.getValue().getPosY() + "]");
+        }
+        pushToLog(stringBuilder.toString());
+
         Transition transition;
         if (moves.size() == 2) {
             ArrayList<Transition> transitions = new ArrayList<>();
@@ -312,7 +344,16 @@ public class GameBoardController {
     }
 
     public void displayBuild(CellView buildPosition, CardView godCard) {
-        if (buildPosition.hasWorker()) System.out.println("worker here!");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" ✖\t");
+        if (godCard != null) stringBuilder.append("[" + godCard.getGod() + "] ");
+        stringBuilder.append("build ");
+        if (buildPosition.isDomed()) stringBuilder.append("dome");
+        else stringBuilder.append("level " + buildPosition.getBuildLevel());
+        stringBuilder.append(" on ");
+        stringBuilder.append("[" + buildPosition.getPosX() + "," + buildPosition.getPosY() + "]");
+        pushToLog(stringBuilder.toString());
+
         Transition transition;
         ImageView newBuilding;
         if (!buildPosition.isDomed())
@@ -398,6 +439,32 @@ public class GameBoardController {
         Platform.runLater(() -> {
             infoBox.setText(query);
             manager.setBusy(false);
+        });
+    }
+
+    @FXML
+    private void logOn() {
+        Platform.runLater(() -> {
+            log.setVisible(true);
+            logButton.setVisible(false);
+            logButton_pressed.setVisible(true);
+        });
+    }
+
+    @FXML
+    private void logOff() {
+        Platform.runLater(() -> {
+            log.setVisible(false);
+            logButton.setVisible(true);
+            logButton_pressed.setVisible(false);
+        });
+    }
+
+    private void pushToLog(String message) {
+        Platform.runLater(() -> {
+            log.setText(log.getText() + "\n" + message);
+            log.selectPositionCaret(log.getLength());
+            log.deselect();
         });
     }
 

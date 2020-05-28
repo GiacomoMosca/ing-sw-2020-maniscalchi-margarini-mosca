@@ -58,7 +58,7 @@ public class HephaestusControllerTest {
     }
 
     @Test
-    public void buildPhase_noInputGiven_shouldGenerateTwoBuildingExceptions() throws IOException, ClassNotFoundException, IOExceptionFromController {
+    public void buildPhase_noInputGiven_shouldGenerateTwoBuildingExceptions() throws Exception {
         //a client who chooses to build twice in a domed cell
         class FakeVirtualViewToGenerateException extends FakeVirtualView {
             public FakeVirtualViewToGenerateException(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
