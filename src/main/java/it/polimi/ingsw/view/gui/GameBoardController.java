@@ -356,15 +356,27 @@ public class GameBoardController {
 
         Transition transition;
         ImageView newBuilding;
+        ImageView firstBuilding;
         if (!buildPosition.isDomed())
             newBuilding = new ImageView("assets/board/buildings/build_" + buildPosition.getBuildLevel() + ".png");
         else
             newBuilding = new ImageView("assets/board/buildings/build_dome.png");
         FadeTransition buildingAppearing = new FadeTransition(Duration.seconds(0.5), newBuilding);
+        newBuilding.setOpacity(0);
         buildingAppearing.setFromValue(0);
         buildingAppearing.setToValue(1);
 
         transition = buildingAppearing;
+        if (godCard != null && godCard.getGod().equals("Hephaestus")) {
+            firstBuilding = new ImageView("assets/board/buildings/build_" + (buildPosition.getBuildLevel() - 1) + ".png");
+            firstBuilding.setOpacity(0);
+            FadeTransition firstBuildingAppearing = new FadeTransition(Duration.seconds(0.5), firstBuilding);
+            firstBuildingAppearing.setFromValue(0);
+            firstBuildingAppearing.setToValue(1);
+            transition=new SequentialTransition(firstBuildingAppearing, buildingAppearing);
+        }
+        else
+            firstBuilding=null;
         if (godCard != null) {
             transition = addGodSplash(transition, godCard);
         }
@@ -372,6 +384,11 @@ public class GameBoardController {
         Transition finalTransition = transition;
         finalTransition.setOnFinished(e -> manager.setBusy(false));
         Platform.runLater(() -> {
+            if (godCard != null && godCard.getGod().equals("Hephaestus"))
+                buildPane.add(firstBuilding, buildPosition.getPosX(), buildPosition.getPosY());
+            if (godCard != null && godCard.getGod().equals("Medusa"))
+                workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1).setVisible(false);
+
             buildPane.add(newBuilding, buildPosition.getPosX(), buildPosition.getPosY());
             finalTransition.play();
         });
@@ -484,3 +501,12 @@ public class GameBoardController {
         }
     }
 }
+
+
+/*
+if (godCard != null && godCard.getGod().equals("Medusa")) {
+                if (!buildPosition.hasWorker())
+                    System.out.println("in questa buildPosition ricevuta "+ buildPosition.getPosX()+ ", " + buildPosition.getPosY() + " non c'è alcun worker. e invece dovrebbe!");
+                //workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1).setVisible(false);
+            }
+ */

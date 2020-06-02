@@ -19,7 +19,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class GUI implements UI {//implements Runnable
+public class GUI implements UI {
 
     private final AtomicBoolean running;
     private final GUIManager manager;
