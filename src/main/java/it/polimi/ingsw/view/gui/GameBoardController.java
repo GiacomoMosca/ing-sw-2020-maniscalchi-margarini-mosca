@@ -45,11 +45,15 @@ public class GameBoardController {
     @FXML
     private ImageView playerHighlight1, playerHighlight2, playerHighlight3;
     @FXML
-    private ImageView logButton, logButton_pressed;
+    private StackPane yesPane, noPane;
+    @FXML
+    private ImageView yesButton, yesButton_p, noButton, noButton_p;
+    @FXML
+    private Text yesText, yesText_p, noText, noText_p;
+    @FXML
+    private ImageView logButton, logButton_p;
     @FXML
     private TextArea log;
-    @FXML
-    private Button yesButton, noButton;
     @FXML
     private StackPane godBox;
     private GUIManager manager;
@@ -112,6 +116,7 @@ public class GameBoardController {
         for (CellView cell : game.getAllCells()) {
             HighlightCell highlight = new HighlightCell("assets/board/buildings/highlight_cell.png", cell.getPosX(), cell.getPosY());
             highlight.setVisible(false);
+            highlight.setId("highlight");
             highlightPane.add(highlight, cell.getPosX(), cell.getPosY());
             highlightForThisCell.put(cell.getPosX() * 10 + cell.getPosY(), highlight);
         }
@@ -168,32 +173,13 @@ public class GameBoardController {
             thirdFullGod.setVisible(false);
         }
 
-        for (ImageView highlight : playerHighlights)
+        for (ImageView highlight : playerHighlights) {
+            highlight.setId("highlight");
             highlight.setOnMouseClicked(t -> {
                 sendStartingPlayer(playerHighlights.indexOf(highlight));
             });
+        }
 
-        BackgroundImage yesButtonBackgroundImage = new BackgroundImage(
-                new Image(getClass().getResource("/assets/buttons/btn_small_blue.png").toExternalForm()),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT
-        );
-        BackgroundImage noButtonBackgroundImage = new BackgroundImage(
-                new Image(getClass().getResource("/assets/buttons/btn_small_blue.png").toExternalForm()),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT
-        );
-        Background yesButtonBackground = new Background(yesButtonBackgroundImage);
-        Background noButtonBackground = new Background(noButtonBackgroundImage);
-
-        yesButton.setBackground(yesButtonBackground);
-        noButton.setBackground(noButtonBackground);
-        yesButton.setVisible(false);
-        noButton.setVisible(false);
-        yesButton.setOnMouseClicked(t -> {
-            sendYesNoChoice(true);
-        });
-        noButton.setOnMouseClicked(t -> {
-            sendYesNoChoice(false);
-        });
     }
 
     public void displayGameInfo(GameView game, String desc) {
@@ -391,18 +377,49 @@ public class GameBoardController {
     public void chooseYesNo(String query) {
         Platform.runLater(() -> {
             infoBox.setText(query);
-            yesButton.setVisible(true);
-            noButton.setVisible(true);
+            yesPane.setVisible(true);
+            noPane.setVisible(true);
         });
     }
 
-    public void sendYesNoChoice(boolean answer) {
+    @FXML
+    private void yesPressed() {
         Platform.runLater(() -> {
-            yesButton.setVisible(false);
-            noButton.setVisible(false);
-            manager.setBusy(false);
-            manager.putObject(answer);
+            yesButton_p.setVisible(true);
+            yesText_p.setVisible(true);
         });
+    }
+
+    @FXML
+    private void yesReleased() {
+        Platform.runLater(() -> {
+            yesButton_p.setVisible(false);
+            yesText_p.setVisible(false);
+            yesPane.setVisible(false);
+            noPane.setVisible(false);
+            manager.setBusy(false);
+        });
+        manager.putObject(true);
+    }
+
+    @FXML
+    private void noPressed() {
+        Platform.runLater(() -> {
+            noButton_p.setVisible(true);
+            noText_p.setVisible(true);
+        });
+    }
+
+    @FXML
+    private void noReleased() {
+        Platform.runLater(() -> {
+            noButton_p.setVisible(false);
+            noText_p.setVisible(false);
+            yesPane.setVisible(false);
+            noPane.setVisible(false);
+            manager.setBusy(false);
+        });
+        manager.putObject(false);
     }
 
     //TO DO
@@ -447,7 +464,7 @@ public class GameBoardController {
         Platform.runLater(() -> {
             log.setVisible(true);
             logButton.setVisible(false);
-            logButton_pressed.setVisible(true);
+            logButton_p.setVisible(true);
         });
     }
 
@@ -456,7 +473,7 @@ public class GameBoardController {
         Platform.runLater(() -> {
             log.setVisible(false);
             logButton.setVisible(true);
-            logButton_pressed.setVisible(false);
+            logButton_p.setVisible(false);
         });
     }
 

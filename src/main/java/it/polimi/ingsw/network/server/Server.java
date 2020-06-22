@@ -138,14 +138,14 @@ public class Server {
                         break;
                     }
                 }
-                if (!taken) {
-                    int playerNum = player.choosePlayersNumber();
-                    GameController gameController = new GameController(player, playerNum, gameName);
-                    gameControllers.add(gameController);
-                    logger.log("new game " + gameName + " created");
-                    player.displayMessage("Waiting for players...");
-                    break;
-                }
+            }
+            if (!taken) {
+                int playerNum = player.choosePlayersNumber();
+                GameController gameController = new GameController(player, 3, gameName);
+                gameControllers.add(gameController);
+                logger.log("new game " + gameName + " created");
+                player.displayMessage("Waiting for players...");
+                break;
             }
         }
     }

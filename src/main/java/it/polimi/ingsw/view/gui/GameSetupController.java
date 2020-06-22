@@ -28,9 +28,11 @@ public class GameSetupController {
     @FXML
     private StackPane bannerBox, confirmBox;
     @FXML
-    private Text centerText, chooseYesNoText, topBannerText, confirmText;
+    private Text centerText, chooseYesNoText, topBannerText;
     @FXML
-    private ImageView yesButton, noButton, confirmButton;
+    private Text yesText, yesText_p, noText, noText_p, confirmText, confirmText_p;
+    @FXML
+    private ImageView yesButton, yesButton_p, noButton, noButton_p, confirmButton, confirmButton_p;
 
     private ArrayList<String> possibleCards;
     private ArrayList<String> choices;
@@ -39,15 +41,6 @@ public class GameSetupController {
     public void initialize(GUIManager manager) {
         this.manager = manager;
         setDefaultValues();
-        yesButton.setOnMouseClicked(t -> {
-            clickYesNo(true);
-        });
-        noButton.setOnMouseClicked(t -> {
-            clickYesNo(false);
-        });
-        confirmButton.setOnMouseClicked(t -> {
-            clickConfirm();
-        });
     }
 
     public void setDefaultValues() {
@@ -61,19 +54,58 @@ public class GameSetupController {
         centerTextBox.setVisible(true);
     }
 
-    public void clickYesNo(boolean value) {
+    @FXML
+    private void yesPressed() {
         Platform.runLater(() -> {
-            setDefaultValues();
-            manager.setBusy(false);
+            yesButton_p.setVisible(true);
+            yesText_p.setVisible(true);
         });
-        manager.putObject(value);
     }
 
-    public void clickConfirm() {
+    @FXML
+    private void yesReleased() {
         Platform.runLater(() -> {
             setDefaultValues();
-            scrollPaneBox.getChildren().clear();
-            centerCardsBox.getChildren().clear();
+            yesButton_p.setVisible(false);
+            yesText_p.setVisible(false);
+            manager.setBusy(false);
+        });
+        manager.putObject(true);
+    }
+
+    @FXML
+    private void noPressed() {
+        Platform.runLater(() -> {
+            noButton_p.setVisible(true);
+            noText_p.setVisible(true);
+        });
+    }
+
+    @FXML
+    private void noReleased() {
+        Platform.runLater(() -> {
+            setDefaultValues();
+            noButton_p.setVisible(false);
+            noText_p.setVisible(false);
+            manager.setBusy(false);
+        });
+        manager.putObject(false);
+    }
+
+    @FXML
+    private void confirmPressed() {
+        Platform.runLater(() -> {
+            confirmButton_p.setVisible(true);
+            confirmText_p.setVisible(true);
+        });
+    }
+
+    @FXML
+    private void confirmReleased() {
+        Platform.runLater(() -> {
+            setDefaultValues();
+            confirmButton_p.setVisible(false);
+            confirmText_p.setVisible(false);
             manager.setBusy(false);
         });
         ArrayList<Integer> ints = new ArrayList<Integer>();
@@ -155,6 +187,7 @@ public class GameSetupController {
         public GodImageView(String s) {
             super("assets/gods/godCards/card_" + s + ".png");
             card = s;
+            setId("cardNotClicked");
             setOnMouseClicked(t -> {
                 if (clicked) {
                     clicked = false;

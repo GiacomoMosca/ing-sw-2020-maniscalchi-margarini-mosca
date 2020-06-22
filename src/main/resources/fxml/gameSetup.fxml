@@ -4,7 +4,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 <AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameSetup.css"
             xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.view.gui.GameSetupController">
@@ -20,18 +20,43 @@
         <Text fx:id="chooseYesNoText" textAlignment="CENTER" wrappingWidth="900.0">
         </Text>
         <HBox alignment="CENTER">
-            <ImageView fx:id="yesButton" preserveRatio="true">
-                <Image url="@../assets/buttons/btn_small_red.png"/>
-            </ImageView>
-            <ImageView fx:id="noButton" preserveRatio="true">
-                <Image url="@../assets/buttons/btn_small_red.png"/>
+            <StackPane>
+                <ImageView fx:id="yesButton" preserveRatio="true" fitHeight="75.0" onMousePressed="#yesPressed"
+                           onMouseReleased="#yesReleased">
+                    <Image url="@../assets/buttons/btn_small_red.png"/>
+                </ImageView>
+                <Text fx:id="yesText" mouseTransparent="true" text="YES">
+                    <StackPane.margin>
+                        <Insets top="-8.0"/>
+                    </StackPane.margin>
+                </Text>
+                <ImageView fx:id="yesButton_p" preserveRatio="true" fitHeight="75.0" mouseTransparent="true"
+                           visible="false">
+                    <Image url="@../assets/buttons/btn_small_red_pressed.png"/>
+                </ImageView>
+                <Text fx:id="yesText_p" mouseTransparent="true" text="YES" visible="false">
+                </Text>
+            </StackPane>
+            <StackPane>
+                <ImageView fx:id="noButton" preserveRatio="true" fitHeight="75.0" onMousePressed="#noPressed"
+                           onMouseReleased="#noReleased">
+                    <Image url="@../assets/buttons/btn_small_red.png"/>
+                </ImageView>
+                <Text fx:id="noText" mouseTransparent="true" text="NO">
+                    <StackPane.margin>
+                        <Insets top="-8.0"/>
+                    </StackPane.margin>
+                </Text>
+                <ImageView fx:id="noButton_p" preserveRatio="true" fitHeight="75.0" mouseTransparent="true"
+                           visible="false">
+                    <Image url="@../assets/buttons/btn_small_red_pressed.png"/>
+                </ImageView>
+                <Text fx:id="noText_p" mouseTransparent="true" text="NO" visible="false">
+                </Text>
                 <HBox.margin>
                     <Insets left="50.0"/>
                 </HBox.margin>
-            </ImageView>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
+            </StackPane>
             <padding>
                 <Insets top="30.0"/>
             </padding>
@@ -73,16 +98,23 @@
     </StackPane>
     <StackPane fx:id="confirmBox" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0">
-        <ImageView mouseTransparent="true" preserveRatio="true">
+        <ImageView mouseTransparent="true" preserveRatio="true" fitHeight="75.0">
             <Image url="@../assets/buttons/btn_gray.png"/>
         </ImageView>
-        <ImageView fx:id="confirmButton" preserveRatio="true" visible="false">
+        <ImageView fx:id="confirmButton" preserveRatio="true" fitHeight="75.0" visible="false"
+                   onMousePressed="#confirmPressed" onMouseReleased="#confirmReleased">
             <Image url="@../assets/buttons/btn_red.png"/>
         </ImageView>
         <Text fx:id="confirmText" mouseTransparent="true" text="CONFIRM">
             <StackPane.margin>
-                <Insets top="-7.0"/>
+                <Insets top="-8.0"/>
             </StackPane.margin>
+        </Text>
+        <ImageView fx:id="confirmButton_p" mouseTransparent="true" preserveRatio="true" fitHeight="75.0"
+                   visible="false">
+            <Image url="@../assets/buttons/btn_red_pressed.png"/>
+        </ImageView>
+        <Text fx:id="confirmText_p" mouseTransparent="true" text="CONFIRM" visible="false">
         </Text>
     </StackPane>
     <AnchorPane fx:id="cover" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

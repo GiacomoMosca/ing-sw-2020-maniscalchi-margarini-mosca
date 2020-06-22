@@ -3,15 +3,11 @@
     src: url('/assets/fonts/LillyBelle.ttf');
 }
 
-@font-face {
-    font-family: "Minion Pro";
-    src: url('/assets/fonts/MinionPro-Regular.otf');
+#godBox {
+    -fx-effect: dropshadow(three-pass-box, white, 30, 0.5, 0, 0);
 }
 
-#infoBox {
-    -fx-font: 30px LillyBelle;
-    -fx-fill: black;
-}
+/* Text */
 
 #firstPlayerID, #secondPlayerID, #thirdPlayerID {
     -fx-font: 36px LillyBelle;
@@ -33,11 +29,7 @@
     -fx-fill: #412711
 }
 
-#godBox {
-    -fx-effect: dropshadow(three-pass-box, white, 30, 0.5, 0, 0);
-}
-
-/* log */
+/* Log */
 
 #log {
     -fx-font-size: 14px;
@@ -67,4 +59,16 @@
     -fx-background-color: rgba(0, 0, 0, 0.5);
     -fx-background-radius: 5em;
     -fx-effect: innershadow(three-pass-box, black, 5, 0.7, 0, 0);
+}
+
+/* Buttons */
+
+#yesText, #yesText_p, #noText, #noText_p {
+    -fx-font: 28px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 4, 0.3, 0, 0);
+}
+
+#highlight, #yesButton, #noButton, #logButton, #logButton_p {
+    -fx-cursor: hand;
 }

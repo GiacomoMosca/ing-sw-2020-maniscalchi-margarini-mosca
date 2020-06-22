@@ -37,12 +37,6 @@
     -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
 }
 
-#confirmText {
-    -fx-font: 35px LillyBelle;
-    -fx-fill: white;
-    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
-}
-
 /* God Cards */
 
 #cardClicked {
@@ -51,3 +45,12 @@
 
 /* Buttons */
 
+#yesText, #yesText_p, #noText, #noText_p, #confirmText, #confirmText_p {
+    -fx-font: 35px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#yesButton, #noButton, #confirmButton, #cardNotClicked, #cardClicked {
+    -fx-cursor: hand;
+}
