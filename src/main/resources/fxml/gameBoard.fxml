@@ -5,6 +5,8 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.effect.Shadow?>
+<?import javafx.scene.effect.ColorAdjust?>
 <AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameBoard.css"
             xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.view.gui.GameBoardController">
@@ -105,6 +107,7 @@
                     <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
+            <StackPane fx:id="opaquePanel1" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <AnchorPane fx:id="p2" layoutX="61.0" layoutY="169.0" prefHeight="75.0" prefWidth="438.0">
@@ -128,6 +131,7 @@
                     <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
+            <StackPane fx:id="opaquePanel2" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <AnchorPane fx:id="p3" layoutX="61.0" layoutY="248.0" prefHeight="75.0" prefWidth="438.0" visible="false">
@@ -151,6 +155,7 @@
                     <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
+            <StackPane fx:id="opaquePanel3" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <ImageView fx:id="logButton" layoutX="29.0" layoutY="428.0" onMouseClicked="#logOn">
@@ -203,4 +208,128 @@
     <TextArea fx:id="log" editable="false" layoutX="123.0" layoutY="394.0" prefHeight="110.0" prefWidth="400.0"
               maxHeight="110.0" maxWidth="400.0" visible="false">
     </TextArea>
+    <StackPane fx:id="opaqueBackground" mouseTransparent="true" prefHeight="720.0" prefWidth="1280.0" visible="false">
+        <effect>
+            <Shadow blurType="GAUSSIAN" color="#6b3535" height="78.33" radius="53.0" width="135.67">
+                <input>
+                    <ColorAdjust saturation="-0.75"/>
+                </input>
+            </Shadow>
+        </effect>
+    </StackPane>
+    <StackPane fx:id="infoScreen" prefHeight="720.0" prefWidth="1280.0" visible="false">
+        <children>
+            <ImageView fx:id="continueButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#continueButtonPressed"
+                       onMouseReleased="#continueButtonReleased" pickOnBounds="true" preserveRatio="true"
+                       visible="false" StackPane.alignment="CENTER">
+                <StackPane.margin>
+                    <Insets top="200.0"/>
+                </StackPane.margin>
+                <image>
+                    <Image url="@../assets/buttons/btn_green.png"/>
+                </image>
+            </ImageView>
+            <ImageView fx:id="continueButtonPressed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <image>
+                    <Image url="@../assets/buttons/btn_green_pressed.png"/>
+                </image>
+                <StackPane.margin>
+                    <Insets top="200.0"/>
+                </StackPane.margin>
+            </ImageView>
+            <ImageView fx:id="returnToLobbyButton" fitHeight="150.0" fitWidth="200.0"
+                       onMousePressed="#returnToLobbyButtonPressed" onMouseReleased="#returnToLobbyButtonReleased"
+                       pickOnBounds="true" preserveRatio="true" visible="false">
+                <image>
+                    <Image url="@../assets/buttons/btn_blue.png"/>
+                </image>
+                <StackPane.margin>
+                    <Insets top="200.0"/>
+                </StackPane.margin>
+            </ImageView>
+            <ImageView fx:id="returnToLobbyButtonPressed" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <image>
+                    <Image url="@../assets/buttons/btn_blue_pressed.png"/>
+                </image>
+                <StackPane.margin>
+                    <Insets top="200.0"/>
+                </StackPane.margin>
+            </ImageView>
+            <Text fx:id="disconnectionMessage" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="Text" textAlignment="CENTER" visible="false" wrappingWidth="493.22900390625" x="1000.0"/>
+            <Text fx:id="gameOverMessage" layoutX="-362.0" layoutY="375.0" mouseTransparent="true" strokeType="OUTSIDE"
+                  strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false" wrappingWidth="432.22900390625"
+                  x="1000.0"/>
+            <Text fx:id="eliminationMessage" layoutX="-362.0" layoutY="375.0" mouseTransparent="true"
+                  strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false"
+                  wrappingWidth="432.22900390625" x="1000.0"/>
+            <Text fx:id="continueButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="continue" textAlignment="CENTER" visible="false">
+                <StackPane.margin>
+                    <Insets top="192.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="continueButtonPressedText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="continue" textAlignment="CENTER" visible="false">
+                <StackPane.margin>
+                    <Insets top="196.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="returnToLobbyButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="return to lobby" textAlignment="CENTER" visible="false">
+                <StackPane.margin>
+                    <Insets top="192.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="returnToLobbyButtonPressedText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="return to lobby" textAlignment="CENTER" visible="false">
+                <StackPane.margin>
+                    <Insets top="196.0"/>
+                </StackPane.margin>
+            </Text>
+        </children>
+    </StackPane>
+    <StackPane fx:id="winLossScreen" prefHeight="720.0" prefWidth="1280.0" visible="false">
+        <children>
+            <ImageView fx:id="winOrLossScreen" fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true"
+                       preserveRatio="true"/>
+            <Text fx:id="reasonMessage" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                <StackPane.margin>
+                    <Insets top="180.0"/>
+                </StackPane.margin>
+            </Text>
+            <ImageView fx:id="confirmButton" fitHeight="150.0" fitWidth="207.0" onMousePressed="#confirmButtonPressed"
+                       onMouseReleased="#confirmButtonReleased" pickOnBounds="true" preserveRatio="true">
+                <StackPane.margin>
+                    <Insets top="570.0"/>
+                </StackPane.margin>
+                <image>
+                    <Image url="@../assets/buttons/btn_green.png"/>
+                </image>
+            </ImageView>
+            <ImageView fx:id="confirmButtonPressed" fitHeight="150.0" fitWidth="207.0" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <image>
+                    <Image url="@../assets/buttons/btn_green_pressed.png"/>
+                </image>
+                <StackPane.margin>
+                    <Insets top="570.0"/>
+                </StackPane.margin>
+            </ImageView>
+            <Text fx:id="confirmButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="confirm" textAlignment="CENTER">
+                <StackPane.margin>
+                    <Insets top="558.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="confirmButtonPressedText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="confirm" textAlignment="CENTER" visible="false">
+                <StackPane.margin>
+                    <Insets top="561.0"/>
+                </StackPane.margin>
+            </Text>
+        </children>
+    </StackPane>
 </AnchorPane>

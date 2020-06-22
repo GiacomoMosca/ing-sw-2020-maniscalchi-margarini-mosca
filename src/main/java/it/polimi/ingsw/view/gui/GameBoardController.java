@@ -19,11 +19,9 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//TO DO: player eliminato -> oscurarlo dal pannello (se 3 giocatori)
+//strano messaggio di giocatore eliminato che looppa
+//cose un po' lente: schermate vittoria/sconfitta e animazione nuova God
 
-//TO DO: bottoni in css
-
-//TO DO: rimuovere le immagini dopo averle usate
 
 public class GameBoardController {
 
@@ -55,7 +53,15 @@ public class GameBoardController {
     @FXML
     private TextArea log;
     @FXML
-    private StackPane godBox;
+    private Text disconnectionMessage, gameOverMessage, eliminationMessage, reasonMessage;
+    @FXML
+    private StackPane opaquePanel1, opaquePanel2, opaquePanel3, godBox, opaqueBackground, infoScreen, winLossScreen;
+    @FXML
+    private ImageView confirmButton, confirmButtonPressed, continueButton, continueButtonPressed, returnToLobbyButton, returnToLobbyButtonPressed;
+    @FXML
+    private Text confirmButtonText, confirmButtonPressedText, continueButtonText, continueButtonPressedText, returnToLobbyButtonText, returnToLobbyButtonPressedText;
+    @FXML
+    private ImageView winOrLossScreen;
     private GUIManager manager;
     private GameView game;
     private ArrayList<String> playersId;
@@ -65,6 +71,7 @@ public class GameBoardController {
     private HashMap<Integer, HighlightCell> highlightForThisCell;
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
     private HashMap<String, ImageView> fullImageForThisGod;
+    private HashMap<String, StackPane> opaquePanelForThisPlayer;
 
     public void initialize(GUIManager manager) {
         this.manager = manager;
@@ -76,6 +83,7 @@ public class GameBoardController {
             workersForThisColor = new HashMap<>();
             highlightForThisCell = new HashMap<>();
             fullImageForThisGod = new HashMap<>();
+            opaquePanelForThisPlayer = new HashMap<>();
             playersId = new ArrayList<>();
             godCards = new ArrayList<>();
             playerHighlights = new ArrayList<>();
@@ -152,6 +160,11 @@ public class GameBoardController {
         fullImageForThisGod.put(godCards.get(1).getGod(), secondFullGod);
         secondFullGod.setVisible(false);
 
+        opaquePanelForThisPlayer.put(playersId.get(0), opaquePanel1);
+        opaquePanelForThisPlayer.put(playersId.get(1), opaquePanel2);
+        infoScreen.setVisible(false);
+        winLossScreen.setVisible(false);
+
 
         if (game.getPlayers().size() == 2) {
             playerINFO_2P.setVisible(true);
@@ -171,6 +184,7 @@ public class GameBoardController {
             godBox.getChildren().add(thirdFullGod);
             fullImageForThisGod.put(godCards.get(2).getGod(), thirdFullGod);
             thirdFullGod.setVisible(false);
+            opaquePanelForThisPlayer.put(playersId.get(2), opaquePanel3);
         }
 
         for (ImageView highlight : playerHighlights) {
@@ -195,6 +209,11 @@ public class GameBoardController {
                 text = playersId.get(game.getActivePlayer()) + "'s Turn";
                 pushToLog("\n=== " + playersId.get(game.getActivePlayer()) + "'s Turn ===");
                 break;
+            case "outOfMoves":
+            case "outOfBuilds":
+            case "outOfWorkers":
+                eliminatePlayer(game, desc);
+                text = "";
             default:
                 break;
         }
@@ -202,6 +221,32 @@ public class GameBoardController {
         Platform.runLater(() -> {
             if (finalText != null) infoBox.setText(finalText);
             manager.setBusy(false);
+        });
+    }
+
+    private void eliminatePlayer(GameView game, String desc) {
+        String eliminatedPlayer = null;
+        ArrayList<ImageView> workersToRemove=new ArrayList<>();
+
+        for (PlayerView player : game.getPlayers()) {
+            if (!player.hasLost()) continue;
+            eliminatedPlayer = player.getId();
+            workersToRemove.add(workersForThisColor.get(player.getColor()).get(0));     //anche se ne era rimasto uno solo teoricamente noproblem
+            workersToRemove.add(workersForThisColor.get(player.getColor()).get(1));
+        }
+        eliminationMessage.setText(eliminatedPlayer + " were eliminated");
+
+        String finalEliminatedPlayer = eliminatedPlayer;
+        Platform.runLater(() -> {
+            opaqueBackground.setVisible(true);
+            infoScreen.setVisible(true);
+            opaquePanelForThisPlayer.get(finalEliminatedPlayer).setVisible(true);
+            eliminationMessage.setVisible(true);
+            workersToRemove.get(0).setVisible(false);
+            workersToRemove.get(1).setVisible(false);
+            continueButton.setVisible(true);
+            continueButtonText.setVisible(true);
+
         });
     }
 
@@ -399,6 +444,87 @@ public class GameBoardController {
         });
     }
 
+    public void notifyDisconnection(PlayerView player) {
+        disconnectionMessage.setText(player.getId() + " disconnected !");
+        Platform.runLater(() -> {
+            opaqueBackground.setVisible(true);
+            infoScreen.setVisible(true);
+            disconnectionMessage.setVisible(true);
+            continueButton.setVisible(true);
+            continueButtonText.setVisible(true);
+        });
+    }
+
+    public void notifyGameOver() {
+        gameOverMessage.setText("Game over!");
+
+        Platform.runLater(() -> {
+            infoScreen.setVisible(true);
+            disconnectionMessage.setVisible(true);
+            returnToLobbyButton.setVisible(true);
+            returnToLobbyButtonText.setVisible(true);
+            manager.setBusy(false);
+        });
+    }
+
+    public void notifyLoss(String reason, PlayerView player) {
+        winOrLossScreen.setImage(new Image("/assets/graphics/defeatScreen.png"));
+        String winReason=null;
+
+        switch (reason) {                                                                   //sono tutti i casi possibili?
+            case "outOfMoves":
+                winReason = "No legal moves available!";
+                break;
+            case "outOfWorkers":
+                winReason = "All your workers have\nbeen removed from the game";
+                break;
+            case "outOfBuilds":
+                winReason = "No legal builds available!";
+                break;
+            case "godConditionAchieved":
+                winReason = player.getId() + "'s worker achieved *his god's*" + "\n\twin condition!";
+                break;
+            case "winConditionAchieved":
+                winReason = player.getId() + "'s worker reached\n\tthe top level!";         //lunghezza max nome
+                break;
+            default:
+                break;
+        }
+
+        reasonMessage.setText(winReason);
+        Platform.runLater(() -> {
+                    opaqueBackground.setVisible(true);
+                    winLossScreen.setVisible(true);
+                }
+        );
+    }
+
+    public void notifyWin(String reason) {
+        winOrLossScreen.setImage(new Image("/assets/graphics/victoryScreen.png"));
+        String winReason;
+        if (reason.equals("godConditionAchieved"))
+            winReason = "You achieved your god's" + "\n\twin condition!";                   //nome del god!!!
+        else if (reason.equals("winConditionAchieved"))
+            winReason = "You reached the top level!";
+        else
+            winReason = "All other players were eliminated";
+        reasonMessage.setText(winReason);
+
+        Platform.runLater(() -> {
+            opaqueBackground.setVisible(true);
+            winLossScreen.setVisible(true);
+        });
+    }
+
+    public void displayMessage(String query) {
+        Platform.runLater(() -> {
+            infoBox.setText(query);
+            manager.setBusy(false);
+        });
+    }
+
+    //FXML
+
     @FXML
     private void yesPressed() {
         Platform.runLater(() -> {
@@ -439,41 +565,59 @@ public class GameBoardController {
         manager.putObject(false);
     }
 
-    //TO DO
-
-    public void notifyDisconnection() {
+    @FXML
+    private void confirmButtonPressed() {
         Platform.runLater(() -> {
-            infoBox.setText("Disconnected!");
+            confirmButtonPressed.setVisible(true);
+            confirmButtonText.setVisible(false);
+            confirmButtonPressedText.setVisible(true);
+        });
+    }
+
+    @FXML
+    private void confirmButtonReleased() {
+        Platform.runLater(() -> {
+            confirmButtonPressed.setVisible(false);
+            confirmButtonPressedText.setVisible(false);
+            confirmButtonText.setVisible(true);
+            winLossScreen.setVisible(false);
             manager.setBusy(false);
         });
     }
 
-    public void notifyGameOver() {
-        Platform.runLater(() -> {
-            infoBox.setText("Game over!");
-            manager.setBusy(false);
-        });
+    @FXML
+    private void continueButtonPressed() {
+        continueButtonPressed.setVisible(true);
+        continueButtonText.setVisible(false);
+        continueButtonPressedText.setVisible(true);
     }
 
-    public void notifyLoss() {
-        Platform.runLater(() -> {
-            infoBox.setText("You lose!");
-            manager.setBusy(false);
-        });
+    @FXML
+    private void continueButtonReleased() {
+        continueButtonPressed.setVisible(false);
+        continueButtonPressedText.setVisible(false);
+        continueButtonText.setVisible(true);
+        infoScreen.setVisible(false);
+        disconnectionMessage.setVisible(false);
+        eliminationMessage.setVisible(false);
+        opaqueBackground.setVisible(false);
+        manager.setBusy(false);
     }
 
-    public void notifyWin() {
-        Platform.runLater(() -> {
-            infoBox.setText("You win!");
-            manager.setBusy(false);
-        });
+    @FXML
+    private void returnToLobbyButtonPressed() {
+        returnToLobbyButtonPressed.setVisible(true);
+        returnToLobbyButtonText.setVisible(false);
+        returnToLobbyButtonPressedText.setVisible(true);
     }
 
-    public void displayMessage(String query) {
-        Platform.runLater(() -> {
-            infoBox.setText(query);
-            manager.setBusy(false);
-        });
+    @FXML
+    private void returnToLobbyButtonReleased() {
+        returnToLobbyButtonPressed.setVisible(false);
+        returnToLobbyButtonPressedText.setVisible(false);
+        returnToLobbyButtonText.setVisible(true);
+        infoScreen.setVisible(false);
+        manager.setBusy(false);
     }
 
     @FXML
@@ -518,12 +662,3 @@ public class GameBoardController {
         }
     }
 }
-
-
-/*
-if (godCard != null && godCard.getGod().equals("Medusa")) {
-                if (!buildPosition.hasWorker())
-                    System.out.println("in questa buildPosition ricevuta "+ buildPosition.getPosX()+ ", " + buildPosition.getPosY() + " non c'è alcun worker. e invece dovrebbe!");
-                //workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1).setVisible(false);
-            }
- */

@@ -187,11 +187,13 @@ public class GUIManager extends Application {
         new Thread(() -> messageQueue.offer(object)).start();
     }
 
-    // generic 
+    // generic
 
     public void displayMessage(String message) {
         //setScene(serviceMessageScene);
         //serviceMessageController.displayMessage(message);
+        if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
+
         setBusy(false);
     }
 
@@ -298,19 +300,19 @@ public class GUIManager extends Application {
     }
 
     public void notifyDisconnection(PlayerView player) {
-        gameBoardController.notifyDisconnection();
+        gameBoardController.notifyDisconnection(player);
     }
 
     public void notifyGameOver() {
         gameBoardController.notifyGameOver();
     }
 
-    public void notifyLoss(PlayerView player, String reason) {
-        gameBoardController.notifyLoss();
+    public void notifyLoss(String reason, PlayerView player) {
+        gameBoardController.notifyLoss(reason, player);
     }
 
-    public void notifyWin(PlayerView player, String reason) {
-        gameBoardController.notifyWin();
+    public void notifyWin(String reason) {
+        gameBoardController.notifyWin(reason);
     }
 
 }

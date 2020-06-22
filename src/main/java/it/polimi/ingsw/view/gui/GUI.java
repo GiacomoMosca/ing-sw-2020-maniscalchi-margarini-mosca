@@ -373,7 +373,8 @@ public class GUI implements UI {
     }
 
     public void notifyLoss(String reason, PlayerView winner) {
-        manager.setBusy(false);
+        manager.notifyLoss(reason, winner);
+        //manager.setBusy(false);
         StringBuilder string = new StringBuilder();
         string.append("You lost! ");
         if (winner != null) {
@@ -394,7 +395,8 @@ public class GUI implements UI {
     }
 
     public void notifyWin(String reason) {
-        manager.setBusy(false);
+        manager.notifyWin(reason);
+        //manager.setBusy(false);
         StringBuilder string = new StringBuilder();
         string.append("Congratulations! You won! ");
         switch (reason) {

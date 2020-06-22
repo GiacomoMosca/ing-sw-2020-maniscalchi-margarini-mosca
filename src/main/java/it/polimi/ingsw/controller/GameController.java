@@ -432,7 +432,7 @@ public class GameController {
      * notifies all players that the game is over and terminates it
      */
     public void gameOver() {
-        if (running.compareAndSet(true, false)) return;
+        if (!running.compareAndSet(true, false)) return;
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
             controller.getClient().setPlayerController(null);
