@@ -187,7 +187,7 @@ public class GUIManager extends Application {
         new Thread(() -> messageQueue.offer(object)).start();
     }
 
-    // generic
+    // generic 
 
     public void displayMessage(String message) {
         //setScene(serviceMessageScene);
