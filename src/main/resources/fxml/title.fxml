@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Text?>
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0"
-            stylesheets="@title.css" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.TitleController">
+
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@title.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.TitleController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/titleScreen.png"/>
+        <Image url="@../assets/graphics/titleScreen.png" />
     </ImageView>
     <StackPane AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <ImageView fitHeight="65.0" onMousePressed="#pressed" onMouseReleased="#released" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_blue.png"/>
+            <Image url="@../assets/buttons/btn_blue.png" />
         </ImageView>
-        <ImageView fx:id="playButton" fitHeight="65.0" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_blue_pressed.png"/>
+        <ImageView fx:id="playButton" fitHeight="65.0" mouseTransparent="true" preserveRatio="true" visible="false">
+            <Image url="@../assets/buttons/btn_blue_pressed.png" />
         </ImageView>
         <Text fx:id="playText" mouseTransparent="true" text="Let's Play">
             <StackPane.margin>
-                <Insets top="-14.0"/>
+                <Insets top="-14.0" />
             </StackPane.margin>
         </Text>
         <Text fx:id="playTextPressed" mouseTransparent="true" text="Let's Play" visible="false">
             <StackPane.margin>
-                <Insets top="-8.0"/>
+                <Insets top="-8.0" />
             </StackPane.margin>
         </Text>
     </StackPane>

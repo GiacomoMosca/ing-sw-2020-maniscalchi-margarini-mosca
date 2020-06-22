@@ -6,13 +6,13 @@
 /* Text */
 
 #title {
-    -fx-font: 40px LillyBelle;
+    -fx-font: 60px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }
 
 #enter, #pressedEnter {
-    -fx-font: 25px LillyBelle;
+    -fx-font: 35px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }

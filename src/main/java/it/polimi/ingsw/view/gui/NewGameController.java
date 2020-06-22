@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,10 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class NewGameController {
 
     private GUIManager manager;
+    private PauseTransition visiblePause;
 
     @FXML
     private ImageView button;
@@ -31,11 +34,21 @@ public class NewGameController {
     @FXML
     private Text buttonText;
     @FXML
+    private Text error;
+    @FXML
+    private Text centerText;
+    @FXML
     private StackPane stackPane;
 
 
     public void initialize(GUIManager manager) {
         this.manager = manager;
+        visiblePause = new PauseTransition(
+                Duration.seconds(2)
+        );
+        visiblePause.setOnFinished(
+                event -> error.setVisible(false)
+        );
     }
 
     public void pressed() {
@@ -50,9 +63,14 @@ public class NewGameController {
         button.setDisable(true);
         String gameName = textField.getText();
         if (!gameName.trim().isEmpty()) {
-            manager.putObject(gameName);
-            manager.setBusy(false);
-        } else
+            if(gameName.length()>12)
+                errorMessage("Invalid input (max 12 characters)");
+            else {
+                manager.putObject(gameName);
+                manager.setBusy(false);
+            }
+        }
+        else
             button.setDisable(false);
 
         Platform.runLater(() -> {
@@ -68,15 +86,29 @@ public class NewGameController {
         String playersNum = choiceBox.getSelectionModel().getSelectedItem();
         if (playersNum != null) {
             manager.putObject(Integer.parseInt(playersNum));
+            Platform.runLater(() -> {
+                buttonPressed.setVisible(false);
+                buttonPressedText.setVisible(false);
+                buttonText.setVisible(true);
+                text1.setVisible(false);
+                text2.setVisible(false);
+                choiceBox.setVisible(false);
+                textField.setVisible(false);
+                button.setVisible(false);
+                buttonText.setVisible(false);
+                centerText.setVisible(true);
+            });
             manager.setBusy(false);
-        } else
+        }
+        else {
             button.setDisable(false);
+            Platform.runLater(() -> {
+                buttonPressed.setVisible(false);
+                buttonPressedText.setVisible(false);
+                buttonText.setVisible(true);
+            });
+        }
 
-        Platform.runLater(() -> {
-            buttonPressed.setVisible(false);
-            buttonPressedText.setVisible(false);
-            buttonText.setVisible(true);
-        });
     }
 
     public void choosePlayersNumber() {
@@ -91,7 +123,15 @@ public class NewGameController {
             buttonPressedText.setText("Start Game");
             button.setOnMouseReleased(e -> startReleased());
             button.setDisable(false);
-            manager.setBusy(false);
+            //manager.setBusy(false); //Serve?
         });
+    }
+
+    public void errorMessage(String message){
+        textField.clear();
+        error.setText(message);
+        error.setVisible(true);
+        visiblePause.play();
+        button.setDisable(false);
     }
 }

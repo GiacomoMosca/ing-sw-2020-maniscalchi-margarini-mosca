@@ -25,6 +25,7 @@ public class GUI implements UI {//implements Runnable
     private final AtomicBoolean running;
     private final GUIManager manager;
     private final Object busyLock;
+    private boolean connected;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -41,6 +42,8 @@ public class GUI implements UI {//implements Runnable
 
     @Override
     public void run() {
+
+        connected = false;
         running.set(true);
         messageQueue = new SynchronousQueue<Object>();
         currentGame = null;
@@ -49,28 +52,34 @@ public class GUI implements UI {//implements Runnable
         manager.setQueue(messageQueue);
         new Thread(manager::run).start();
 
-        String ip = getServerIp();
-        server = new Socket();
-        try {
-            server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
-        } catch (IOException e) {
-            System.out.println("Server unreachable. ");
-            stop();
-            return;
-        }
-
-        try {
-            output = new ObjectOutputStream(server.getOutputStream());
-            input = new ObjectInputStream(server.getInputStream());
-        } catch (IOException e) {
-            System.out.println("Server is down. ");
-            stop();
-            return;
-        } catch (ClassCastException e) {
-            System.out.println("Protocol violation. ");
-            stop();
-            return;
-        }
+        String ip;
+        do {
+            server = new Socket();
+            ip = getServerIp();
+            try {
+                server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
+                connected = true;
+            } catch (IOException e) {
+                manager.initLogIn();
+                manager.serverErrorMessage("Server unreachable. ");
+                connected = false;
+            }
+            if(connected) {
+                try {
+                    output = new ObjectOutputStream(server.getOutputStream());
+                    input = new ObjectInputStream(server.getInputStream());
+                    connected = true;
+                } catch (IOException e) {
+                    manager.initLogIn();
+                    manager.serverErrorMessage("Server is down. ");
+                    connected = false;
+                } catch (ClassCastException e) {
+                    manager.initLogIn();
+                    manager.serverErrorMessage("Protocol violation. ");
+                    connected = false;
+                }
+            }
+        }while(!connected);
 
         ToClientMessage message;
         while (running.get()) {
@@ -105,7 +114,6 @@ public class GUI implements UI {//implements Runnable
 
     public synchronized void stop() {
         if (!running.compareAndSet(true, false)) return;
-        System.out.println("\nPress ENTER to quit. ");
         try {
             if (server != null) server.close();
             if (input != null) input.close();
@@ -220,13 +228,7 @@ public class GUI implements UI {//implements Runnable
 
     public void chooseGameName(boolean taken) {
         manager.chooseGameName(taken);
-        if (taken) System.out.println("\nName already taken. ");
-        String gameRoom;
-        while (true) {
-            gameRoom = getString();
-            if (gameRoom.length() > 12) System.out.println("Invalid input (max 12 characters). ");
-            else break;
-        }
+        String gameRoom = getString();
         sendString(gameRoom);
     }
 
@@ -249,22 +251,13 @@ public class GUI implements UI {//implements Runnable
 
     public void chooseNickname(boolean taken) {
         manager.chooseNickname(taken);
-        if (taken) System.out.println("\nNickname already taken. ");
-        while (true) {
-            id = getString();
-            if (id.length() > 12) System.out.println("Invalid input (max 12 characters). ");
-            else break;
-        }
+        id = getString();
         sendString(null);
     }
 
     public void choosePlayersNumber() {
         manager.choosePlayersNumber();
         int num = getInteger();
-        while (num < 2 || num > 3) {
-            System.out.println("Invalid input. ");
-            num = getInteger();
-        }
         sendInteger(num);
     }
 
@@ -281,10 +274,6 @@ public class GUI implements UI {//implements Runnable
     public void chooseStartJoin() {
         manager.chooseStartJoin();
         int num = getInteger();
-        while (num < 1 || num > 2) {
-            System.out.println("Invalid input. ");
-            num = getInteger();
-        }
         sendBoolean(num == 1);
     }
 
@@ -306,7 +295,7 @@ public class GUI implements UI {//implements Runnable
 
     public void displayMessage(String message) {
         manager.displayMessage(message);
-        System.out.println("\n" + message);
+        System.out.println("\n" + message + "(NON STAMPARE)\n");
     }
 
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
@@ -334,9 +323,9 @@ public class GUI implements UI {//implements Runnable
     }
 
     public void notifyGameStarting() {
-        manager.setBusy(false);
+        manager.gameStarting();
         System.out.println("\nGame is starting! Press ENTER to continue. ");
-        new Scanner(System.in).nextLine();
+        //new Scanner(System.in).nextLine();
         sendBoolean(true);
     }
 

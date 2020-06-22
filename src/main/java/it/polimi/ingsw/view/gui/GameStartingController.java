@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
-public class ReadyToStartController {
+public class GameStartingController {
 
     private GUIManager manager;
 
@@ -20,7 +20,7 @@ public class ReadyToStartController {
     @FXML
     private Text enter;
 
-    public void setManager(GUIManager manager) {
+    public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
