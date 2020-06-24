@@ -44,8 +44,8 @@ public class GUIManager extends Application {
 
     private static Scene currentScene;
     private static GUI gui;
-    private String id;
     private static SynchronousQueue<Object> messageQueue;
+    private String id;
 
     public void run() {
         launch();
@@ -161,7 +161,7 @@ public class GUIManager extends Application {
         }
     }
 
-    private void initGameStarting(){
+    private void initGameStarting() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gameStarting.fxml"));
         try {
             Parent root = loader.load();
@@ -241,11 +241,11 @@ public class GUIManager extends Application {
 
     public void chooseNickname(boolean taken) {
         loginController.chooseNickname();
-        if(taken)
+        if (taken)
             loginController.errorMessage("Nickname already taken");
     }
 
-    public void serverErrorMessage(String message){
+    public void serverErrorMessage(String message) {
         loginController.errorMessage(message);
     }
 
@@ -259,7 +259,7 @@ public class GUIManager extends Application {
     public void chooseGameName(boolean taken) {
         initNewGame();
         setScene(newGameScene);
-        if(taken)
+        if (taken)
             newGameController.errorMessage("Game name already taken");
     }
 
@@ -275,7 +275,7 @@ public class GUIManager extends Application {
 
     // ReadyToStartController
 
-    public void gameStarting(){
+    public void gameStarting() {
         setScene(gameStarting);
     }
 

@@ -267,11 +267,14 @@ public class GameController {
                     checkWorkers();
                     game.nextPlayer();
                     break;
-                case "outOfMoves": case "outOfBuilds": case "outOfWorkers":
+                case "outOfMoves":
+                case "outOfBuilds":
+                case "outOfWorkers":
                     eliminatePlayer(currentPlayer, result);
                     game.nextPlayer();
                     break;
-                case "winConditionAchieved": case "godConditionAchieved":
+                case "winConditionAchieved":
+                case "godConditionAchieved":
                     setWinner(currentPlayer, result);
                     break;
                 default:
@@ -303,7 +306,7 @@ public class GameController {
     /**
      * Checks whether the Player who disconnected is currently in the Game or not.
      *
-     * @param e the caught exception
+     * @param e          the caught exception
      * @param controller the controller to check
      * @throws IOExceptionFromController
      */

@@ -12,7 +12,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -59,26 +58,26 @@ public class GUI implements UI {
                 server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);
                 connected = true;
             } catch (IOException e) {
-                manager.initLogIn();
+                manager.initLogin();
                 manager.serverErrorMessage("Server unreachable. ");
                 connected = false;
             }
-            if(connected) {
+            if (connected) {
                 try {
                     output = new ObjectOutputStream(server.getOutputStream());
                     input = new ObjectInputStream(server.getInputStream());
                     connected = true;
                 } catch (IOException e) {
-                    manager.initLogIn();
+                    manager.initLogin();
                     manager.serverErrorMessage("Server is down. ");
                     connected = false;
                 } catch (ClassCastException e) {
-                    manager.initLogIn();
+                    manager.initLogin();
                     manager.serverErrorMessage("Protocol violation. ");
                     connected = false;
                 }
             }
-        }while(!connected);
+        } while (!connected);
 
         serverQueue = new LinkedBlockingQueue<ToClientMessage>();
         new Thread(this::serverListener).start();
