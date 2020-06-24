@@ -231,13 +231,11 @@ public class GameController {
                     checkWorkers();
                     game.nextPlayer();
                     break;
-                case "outOfMoves":
-                case "outOfBuilds":
+                case "outOfMoves": case "outOfBuilds": case "outOfWorkers":
                     eliminatePlayer(currentPlayer, result);
                     game.nextPlayer();
                     break;
-                case "winConditionAchieved":
-                case "godConditionAchieved":
+                case "winConditionAchieved": case "godConditionAchieved":
                     setWinner(currentPlayer, result);
                     break;
                 default:
@@ -260,7 +258,7 @@ public class GameController {
      */
     public void checkWorkers() throws IOExceptionFromController {
         for (Player player : players) {
-            if (player.getWorkers().size() == 0) eliminatePlayer(player, "outOfWorkers");
+            if (!player.hasLost() && player.getWorkers().size() == 0) eliminatePlayer(player, "outOfWorkers");
         }
     }
 

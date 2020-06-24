@@ -42,14 +42,23 @@ public class GUIManager extends Application {
 
     private static Scene currentScene;
     private static GUI gui;
+    private String id;
     private static SynchronousQueue<Object> messageQueue;
 
     public void run() {
         launch();
     }
 
-    public void setGui(GUI gui) {
+    public void setGUI(GUI gui) {
         GUIManager.gui = gui;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setQueue(SynchronousQueue<Object> messageQueue) {

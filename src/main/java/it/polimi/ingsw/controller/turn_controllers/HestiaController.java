@@ -34,7 +34,8 @@ public class HestiaController extends GodController {
         Card card = new Card(
                 "Hestia",
                 "Goddess of Hearth and Home",
-                "Your Build: Your Worker may build one additional time. The additional build cannot be on a perimeter space.",
+                "Your Build: Your Worker may build one additional time. " +
+                        "\nThe additional build cannot be on a perimeter space.",
                 2,
                 false,
                 this
@@ -44,7 +45,7 @@ public class HestiaController extends GodController {
     }
 
     /**
-     * handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimetter space)
+     * handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimeter space)
      *
      * @return "WON" if the player won, "NEXT" if the game goes on
      */
@@ -57,9 +58,9 @@ public class HestiaController extends GodController {
         if (!checkWin().equals("nope")) return checkWin();
         if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
         buildPhase();
+        buildAgain = true;
         if (findPossibleBuilds(activeWorker.getPosition()).size() > 0) {
-            buildAgain = client.chooseYesNo("Do you want to build again?");
-            if (buildAgain)
+            if (client.chooseYesNo("Do you want to build again?"))
                 buildPhase();
         }
         return "next";

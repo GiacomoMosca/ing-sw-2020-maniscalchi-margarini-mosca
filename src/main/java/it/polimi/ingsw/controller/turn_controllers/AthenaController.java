@@ -31,7 +31,8 @@ public class AthenaController extends GodController {
         Card card = new Card(
                 "Athena",
                 "Goddess of Wisdom",
-                "Opponent’s Turn: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.",
+                "Opponent’s Turn: If one of your Workers moved up on your " +
+                        "\nlast turn, opponent Workers cannot move up this turn.",
                 1,
                 false,
                 this

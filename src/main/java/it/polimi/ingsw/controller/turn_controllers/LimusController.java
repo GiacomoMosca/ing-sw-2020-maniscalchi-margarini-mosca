@@ -27,7 +27,8 @@ public class LimusController extends GodController {
         Card card = new Card(
                 "Limus",
                 "Goddess of Famine",
-                "Opponent’s Turn: Opponent Workers cannot build on spaces neighboring your Workers, unless building a dome to create a Complete Tower.",
+                "Opponent’s Turn: Opponent Workers cannot build on spaces neighboring " +
+                        "\nyour Workers, unless building a dome to create a Complete Tower.",
                 2,
                 true,
                 this

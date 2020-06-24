@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,7 +44,7 @@ public class GUI implements UI {
         messageQueue = new SynchronousQueue<Object>();
         currentGame = null;
 
-        manager.setGui(this);
+        manager.setGUI(this);
         manager.setQueue(messageQueue);
         new Thread(manager::run).start();
 
@@ -282,6 +281,7 @@ public class GUI implements UI {
             if (id.length() > 12) System.out.println("Invalid input (max 12 characters). ");
             else break;
         }
+        manager.setId(id);
         sendString(null);
     }
 

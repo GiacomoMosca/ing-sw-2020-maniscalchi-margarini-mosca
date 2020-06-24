@@ -24,7 +24,8 @@ public class PanController extends GodController {
         Card card = new Card(
                 "Pan",
                 "God of the Wild",
-                "Win Condition: You also win if your Worker moves down two or more levels.",
+                "Win Condition: You also win if your Worker moves down two " +
+                        "\nor more levels.",
                 1,
                 false,
                 this

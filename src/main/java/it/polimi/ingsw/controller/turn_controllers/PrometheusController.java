@@ -35,7 +35,8 @@ public class PrometheusController extends GodController {
         Card card = new Card(
                 "Prometheus",
                 "Titan Benefactor of Mankind",
-                "Your Turn: If your Worker does not move up, it may build both before and after moving.",
+                "Your Turn: If your Worker does not move up, it may build both " +
+                        "\nbefore and after moving.",
                 1,
                 false,
                 this
@@ -67,6 +68,7 @@ public class PrometheusController extends GodController {
         movePhase();
         if (!checkWin().equals("nope")) return checkWin();
         if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return "outOfBuilds";
+        wantBuildBefore = false;
         buildPhase();
         return "next";
     }

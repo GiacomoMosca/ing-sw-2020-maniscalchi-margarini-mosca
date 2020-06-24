@@ -141,7 +141,7 @@ public class Server {
             }
             if (!taken) {
                 int playerNum = player.choosePlayersNumber();
-                GameController gameController = new GameController(player, 3, gameName);
+                GameController gameController = new GameController(player, playerNum, gameName);
                 gameControllers.add(gameController);
                 logger.log("new game " + gameName + " created");
                 player.displayMessage("Waiting for players...");

@@ -31,7 +31,8 @@ public class AtlasController extends GodController {
         Card card = new Card(
                 "Atlas",
                 "Titan Shouldering the Heavens",
-                "Your Build: Your Worker may build a dome at any level including the ground.",
+                "Your Build: Your Worker may build a dome at any level " +
+                        "\nincluding the ground.",
                 1,
                 false,
                 this

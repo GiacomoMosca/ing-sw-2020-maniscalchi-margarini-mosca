@@ -7,12 +7,13 @@ import it.polimi.ingsw.view.PlayerView;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -39,6 +40,8 @@ public class GameBoardController {
     @FXML
     private ImageView playerColor_right_red, playerColor_right_green, playerColor_right_blue;
     @FXML
+    private ImageView activeModifier1, activeModifier2, activeModifier3;
+    @FXML
     private ImageView playerIcon1, playerIcon2, playerIcon3;
     @FXML
     private ImageView playerHighlight1, playerHighlight2, playerHighlight3;
@@ -57,9 +60,9 @@ public class GameBoardController {
     @FXML
     private StackPane opaquePanel1, opaquePanel2, opaquePanel3, godBox, opaqueBackground, infoScreen, winLossScreen;
     @FXML
-    private ImageView confirmButton, confirmButtonPressed, continueButton, continueButtonPressed, returnToLobbyButton, returnToLobbyButtonPressed;
+    private ImageView confirmButton, confirmButton_p, continueButton, continueButton_p, returnToLobbyButton, returnToLobbyButton_p;
     @FXML
-    private Text confirmButtonText, confirmButtonPressedText, continueButtonText, continueButtonPressedText, returnToLobbyButtonText, returnToLobbyButtonPressedText;
+    private Text confirmButtonText, confirmButtonText_p, continueButtonText, continueButtonText_p, returnToLobbyButtonText, returnToLobbyButtonText_p;
     @FXML
     private ImageView winOrLossScreen;
     private GUIManager manager;
@@ -67,6 +70,7 @@ public class GameBoardController {
     private ArrayList<String> playersId;
     private ArrayList<CardView> godCards;
     private ArrayList<ImageView> playerHighlights;
+    private ArrayList<ImageView> modifiers;
     private ArrayList<CellView> currentPositions;
     private HashMap<Integer, HighlightCell> highlightForThisCell;
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
@@ -87,6 +91,7 @@ public class GameBoardController {
             playersId = new ArrayList<>();
             godCards = new ArrayList<>();
             playerHighlights = new ArrayList<>();
+            modifiers = new ArrayList<>();
 
             for (PlayerView player : game.getPlayers())
                 playersId.add(player.getId());
@@ -143,12 +148,16 @@ public class GameBoardController {
                         "☆ " + godCards.get(0).getTitle() + "\n" +
                         godCards.get(0).getDescription()
         ));
+        Tooltip.install(activeModifier1, new Tooltip("God Power currently active during opponents' turns"));
+        modifiers.add(activeModifier1);
         playerIcon2.setImage(new Image("/assets/gods/playerIcon/icon_" + godCards.get(1).getGod().toLowerCase() + ".png"));
         Tooltip.install(playerIcon2, new Tooltip(
                 "★ " + godCards.get(1).getGod() + "\n" +
                         "☆ " + godCards.get(1).getTitle() + "\n" +
                         godCards.get(1).getDescription()
         ));
+        Tooltip.install(activeModifier2, new Tooltip("God Power currently active during opponents' turns"));
+        modifiers.add(activeModifier2);
 
         godBox.getChildren().clear();
         ImageView firstFullGod = new ImageView("/assets/gods/godFull/full_" + godCards.get(0).getGod().toLowerCase() + ".png");
@@ -180,6 +189,8 @@ public class GameBoardController {
                             "☆ " + godCards.get(2).getTitle() + "\n" +
                             godCards.get(2).getDescription()
             ));
+            Tooltip.install(activeModifier3, new Tooltip("God Power currently active during opponents' turns"));
+            modifiers.add(activeModifier3);
             ImageView thirdFullGod = new ImageView("/assets/gods/godFull/full_" + godCards.get(2).getGod().toLowerCase() + ".png");
             godBox.getChildren().add(thirdFullGod);
             fullImageForThisGod.put(godCards.get(2).getGod(), thirdFullGod);
@@ -213,30 +224,59 @@ public class GameBoardController {
             case "outOfBuilds":
             case "outOfWorkers":
                 eliminatePlayer(game, desc);
-                text = "";
+                break;
             default:
                 break;
         }
         String finalText = text;
+        ArrayList<ImageView> activeModifiers = new ArrayList<ImageView>();
+        for (CardView activeModifier : game.getActiveModifiers()) {
+            for (PlayerView playerView : game.getPlayers()) {
+                if (playerView.getGodCard().getGod().equals(activeModifier.getGod())) {
+                    activeModifiers.add(modifiers.get(game.getPlayers().indexOf(playerView)));
+                    break;
+                }
+            }
+        }
         Platform.runLater(() -> {
             if (finalText != null) infoBox.setText(finalText);
+            for (ImageView modifier : modifiers) modifier.setVisible(false);
+            for (ImageView modifier : activeModifiers) modifier.setVisible(true);
             manager.setBusy(false);
         });
     }
 
     private void eliminatePlayer(GameView game, String desc) {
-        String eliminatedPlayer = null;
-        ArrayList<ImageView> workersToRemove=new ArrayList<>();
+        PlayerView eliminatedPlayer = null;
+        ArrayList<ImageView> workersToRemove = new ArrayList<>();
+        String reason;
 
         for (PlayerView player : game.getPlayers()) {
             if (!player.hasLost()) continue;
-            eliminatedPlayer = player.getId();
-            workersToRemove.add(workersForThisColor.get(player.getColor()).get(0));     //anche se ne era rimasto uno solo teoricamente noproblem
-            workersToRemove.add(workersForThisColor.get(player.getColor()).get(1));
+            eliminatedPlayer = player;
+            break;
         }
-        eliminationMessage.setText(eliminatedPlayer + " were eliminated");
+        if (eliminatedPlayer == null || eliminatedPlayer.getId().equals(manager.getId())) return;
 
-        String finalEliminatedPlayer = eliminatedPlayer;
+        workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(0));
+        workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(1));
+        switch (desc) {
+            case "outOfMoves":
+                reason = "(No legal moves available)";
+                break;
+            case "outOfWorkers":
+                reason = "(All their workers were removed from the game)";
+                break;
+            case "outOfBuilds":
+                reason = "(No legal builds available)";
+                break;
+            default:
+                reason = null;
+                break;
+        }
+        eliminationMessage.setText(eliminatedPlayer.getId() + " lost!\n" + reason);
+
+        String finalEliminatedPlayer = eliminatedPlayer.getId();
         Platform.runLater(() -> {
             opaqueBackground.setVisible(true);
             infoScreen.setVisible(true);
@@ -387,7 +427,7 @@ public class GameBoardController {
 
         Transition transition;
         ImageView newBuilding;
-        ImageView firstBuilding;
+        ImageView firstBuilding = null;
         if (!buildPosition.isDomed())
             newBuilding = new ImageView("assets/board/buildings/build_" + buildPosition.getBuildLevel() + ".png");
         else
@@ -404,22 +444,24 @@ public class GameBoardController {
             FadeTransition firstBuildingAppearing = new FadeTransition(Duration.seconds(0.5), firstBuilding);
             firstBuildingAppearing.setFromValue(0);
             firstBuildingAppearing.setToValue(1);
-            transition=new SequentialTransition(firstBuildingAppearing, buildingAppearing);
+            transition = new SequentialTransition(firstBuildingAppearing, buildingAppearing);
+        } else if (godCard != null && godCard.getGod().equals("Medusa")) {
+            FadeTransition removingWorker = new FadeTransition(Duration.seconds(0.5),
+                    workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1));
+            removingWorker.setFromValue(1);
+            removingWorker.setToValue(0);
+            transition = new SequentialTransition(removingWorker, buildingAppearing);
         }
-        else
-            firstBuilding=null;
         if (godCard != null) {
             transition = addGodSplash(transition, godCard);
         }
 
         Transition finalTransition = transition;
         finalTransition.setOnFinished(e -> manager.setBusy(false));
+        ImageView finalFirstBuilding = firstBuilding;
         Platform.runLater(() -> {
             if (godCard != null && godCard.getGod().equals("Hephaestus"))
-                buildPane.add(firstBuilding, buildPosition.getPosX(), buildPosition.getPosY());
-            if (godCard != null && godCard.getGod().equals("Medusa"))
-                workersForThisColor.get(buildPosition.getWorker().getColor()).get(buildPosition.getWorker().getNum() - 1).setVisible(false);
-
+                buildPane.add(finalFirstBuilding, buildPosition.getPosX(), buildPosition.getPosY());
             buildPane.add(newBuilding, buildPosition.getPosX(), buildPosition.getPosY());
             finalTransition.play();
         });
@@ -457,61 +499,60 @@ public class GameBoardController {
 
     public void notifyGameOver() {
         gameOverMessage.setText("Game over!");
-
         Platform.runLater(() -> {
+            opaqueBackground.setVisible(true);
             infoScreen.setVisible(true);
-            disconnectionMessage.setVisible(true);
+            gameOverMessage.setVisible(true);
             returnToLobbyButton.setVisible(true);
             returnToLobbyButtonText.setVisible(true);
-            manager.setBusy(false);
         });
     }
 
     public void notifyLoss(String reason, PlayerView player) {
         winOrLossScreen.setImage(new Image("/assets/graphics/defeatScreen.png"));
-        String winReason=null;
-
+        String lossReason = null;
         switch (reason) {                                                                   //sono tutti i casi possibili?
             case "outOfMoves":
-                winReason = "No legal moves available!";
+                lossReason = "No legal moves available!";
                 break;
             case "outOfWorkers":
-                winReason = "All your workers have\nbeen removed from the game";
+                lossReason = "All your workers were removed from the game!";
                 break;
             case "outOfBuilds":
-                winReason = "No legal builds available!";
+                lossReason = "No legal builds available!";
                 break;
             case "godConditionAchieved":
-                winReason = player.getId() + "'s worker achieved *his god's*" + "\n\twin condition!";
+                lossReason = player.getId() + "'s worker achieved his god's win condition!";
                 break;
             case "winConditionAchieved":
-                winReason = player.getId() + "'s worker reached\n\tthe top level!";         //lunghezza max nome
+                lossReason = player.getId() + "'s worker reached the top level!";         //lunghezza max nome
                 break;
             default:
                 break;
         }
-
-        reasonMessage.setText(winReason);
+        String finalLossReason = lossReason;
         Platform.runLater(() -> {
-                    opaqueBackground.setVisible(true);
-                    winLossScreen.setVisible(true);
-                }
-        );
+            reasonMessage.setText(finalLossReason);
+            winLossScreen.setVisible(true);
+        });
     }
 
     public void notifyWin(String reason) {
         winOrLossScreen.setImage(new Image("/assets/graphics/victoryScreen.png"));
         String winReason;
-        if (reason.equals("godConditionAchieved"))
-            winReason = "You achieved your god's" + "\n\twin condition!";                   //nome del god!!!
-        else if (reason.equals("winConditionAchieved"))
-            winReason = "You reached the top level!";
-        else
-            winReason = "All other players were eliminated";
-        reasonMessage.setText(winReason);
-
+        switch (reason) {
+            case "godConditionAchieved":
+                winReason = "You achieved your god's win condition!";
+                break;
+            case "winConditionAchieved":
+                winReason = "You reached the top level!";
+                break;
+            default:
+                winReason = "All other players were eliminated!";
+        }
+        String finalWinReason = winReason;
         Platform.runLater(() -> {
-            opaqueBackground.setVisible(true);
+            reasonMessage.setText(finalWinReason);
             winLossScreen.setVisible(true);
         });
     }
@@ -568,18 +609,18 @@ public class GameBoardController {
     @FXML
     private void confirmButtonPressed() {
         Platform.runLater(() -> {
-            confirmButtonPressed.setVisible(true);
             confirmButtonText.setVisible(false);
-            confirmButtonPressedText.setVisible(true);
+            confirmButton_p.setVisible(true);
+            confirmButtonText_p.setVisible(true);
         });
     }
 
     @FXML
     private void confirmButtonReleased() {
         Platform.runLater(() -> {
-            confirmButtonPressed.setVisible(false);
-            confirmButtonPressedText.setVisible(false);
             confirmButtonText.setVisible(true);
+            confirmButton_p.setVisible(false);
+            confirmButtonText_p.setVisible(false);
             winLossScreen.setVisible(false);
             manager.setBusy(false);
         });
@@ -587,37 +628,43 @@ public class GameBoardController {
 
     @FXML
     private void continueButtonPressed() {
-        continueButtonPressed.setVisible(true);
-        continueButtonText.setVisible(false);
-        continueButtonPressedText.setVisible(true);
+        Platform.runLater(() -> {
+            continueButton_p.setVisible(true);
+            continueButtonText.setVisible(false);
+            continueButtonText_p.setVisible(true);
+        });
     }
 
     @FXML
     private void continueButtonReleased() {
-        continueButtonPressed.setVisible(false);
-        continueButtonPressedText.setVisible(false);
-        continueButtonText.setVisible(true);
-        infoScreen.setVisible(false);
-        disconnectionMessage.setVisible(false);
-        eliminationMessage.setVisible(false);
-        opaqueBackground.setVisible(false);
-        manager.setBusy(false);
+        Platform.runLater(() -> {
+            continueButton_p.setVisible(false);
+            continueButtonText_p.setVisible(false);
+            infoScreen.setVisible(false);
+            disconnectionMessage.setVisible(false);
+            eliminationMessage.setVisible(false);
+            opaqueBackground.setVisible(false);
+            manager.setBusy(false);
+        });
     }
 
     @FXML
     private void returnToLobbyButtonPressed() {
-        returnToLobbyButtonPressed.setVisible(true);
-        returnToLobbyButtonText.setVisible(false);
-        returnToLobbyButtonPressedText.setVisible(true);
+        Platform.runLater(() -> {
+            returnToLobbyButton_p.setVisible(true);
+            returnToLobbyButtonText.setVisible(false);
+            returnToLobbyButtonText_p.setVisible(true);
+        });
     }
 
     @FXML
     private void returnToLobbyButtonReleased() {
-        returnToLobbyButtonPressed.setVisible(false);
-        returnToLobbyButtonPressedText.setVisible(false);
-        returnToLobbyButtonText.setVisible(true);
-        infoScreen.setVisible(false);
-        manager.setBusy(false);
+        Platform.runLater(() -> {
+            returnToLobbyButton_p.setVisible(false);
+            returnToLobbyButtonText_p.setVisible(false);
+            infoScreen.setVisible(false);
+            manager.setBusy(false);
+        });
     }
 
     @FXML

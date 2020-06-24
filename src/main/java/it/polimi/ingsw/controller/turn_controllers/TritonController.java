@@ -31,7 +31,8 @@ public class TritonController extends GodController {
         Card card = new Card(
                 "Triton",
                 "God of the Waves",
-                "Your Move: Each time your Worker moves onto a perimeter space (ground or block), it may immediately move again.",
+                "Your Move: Each time your Worker moves onto a perimeter space " +
+                        "\n(ground or block), it may immediately move again.",
                 2,
                 false,
                 this

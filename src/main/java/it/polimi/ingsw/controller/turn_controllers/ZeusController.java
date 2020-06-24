@@ -31,7 +31,9 @@ public class ZeusController extends GodController {
         Card card = new Card(
                 "Zeus",
                 "God of the Sky",
-                "Your Build: Your Worker may build under itself in its current space, forcing it up one level. You do not win by forcing yourself up to the third level.",
+                "Your Build: Your Worker may build under itself in its current space, " +
+                        "\nforcing it up one level. You do not win by forcing yourself up " +
+                        "\nto the third level.",
                 2,
                 false,
                 this

@@ -33,7 +33,9 @@ public class ApolloController extends GodController {
         Card card = new Card(
                 "Apollo",
                 "God of Music",
-                "Your Move: Your Worker may move into an opponent Worker’s space (using normal movement rules) and force their Worker to the space yours just vacated (swapping their positions).",
+                "Your Move: Your Worker may move into an opponent Worker’s space " +
+                        "\n(using normal movement rules) and force their Worker to the space " +
+                        "\nyours just vacated (swapping their positions).",
                 1,
                 false,
                 this
