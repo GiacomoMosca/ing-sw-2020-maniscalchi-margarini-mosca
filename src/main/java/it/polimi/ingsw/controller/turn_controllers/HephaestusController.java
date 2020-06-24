@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class HephaestusController extends GodController {
 
     /**
-     * Creates an Hephaestus controller for this game.
+     * HephaestusController constructor.
      *
-     * @param gameController the Game Controller for this game
+     * @param gameController the GameController for this game
      */
     public HephaestusController(GameController gameController) {
         super(gameController);
@@ -42,8 +42,12 @@ public class HephaestusController extends GodController {
     }
 
     /**
-     * Handles the building phase of the turn, which can be duplicated if the player wants: the player can build two
-     * times on the same block (not a dome).
+     * Handles the building phase of the turn, which may be duplicated: the Player can build two times on the same block (not a dome).
+     * Calls displayBuild with a non-null Card parameter if the Hephaestus God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {

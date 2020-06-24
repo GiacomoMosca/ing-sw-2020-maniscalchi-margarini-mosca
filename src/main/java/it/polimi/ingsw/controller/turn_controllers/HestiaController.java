@@ -16,16 +16,16 @@ public class HestiaController extends GodController {
     private boolean buildAgain;
 
     /**
-     * creates an Hestia controller for this game
+     * HestiaController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      */
     public HestiaController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Hestia to their correct values
+     * Sets all the attributes of the God Card Hestia to their actual values.
      *
      * @return the complete Card
      */
@@ -45,9 +45,12 @@ public class HestiaController extends GodController {
     }
 
     /**
-     * handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimeter space)
+     * Handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimeter space).
      *
-     * @return "WON" if the player won, "NEXT" if the game goes on
+     * @return "winConditionAchieved" if the player won, "next" if the game goes on, "outOfBuilds" if the Worker can't build
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
@@ -66,6 +69,15 @@ public class HestiaController extends GodController {
         return "next";
     }
 
+    /**
+     * Handles the building phase of the turn, which may be duplicated: the Player can build two times, but the second build cannot be on a perimeter space.
+     * Calls displayBuild with a non-null Card parameter if the Hestia God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
+     */
+    @Override
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (buildAgain) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
@@ -80,11 +92,10 @@ public class HestiaController extends GodController {
 
 
     /**
-     * returns all the cells where a worker can build, with the only restrictions due to the general rules (other workers and domes)
-     * and allows a second building
+     * Returns all the Cells where a worker can build, with the only restrictions due to the general rules (other workers and domes), and allows the second build.
      *
-     * @param workerPosition the position of the worker
-     * @return all the cells where a worker can build
+     * @param workerPosition the position of the Worker
+     * @return all the Cells where a Worker can build
      */
     @Override
     public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {

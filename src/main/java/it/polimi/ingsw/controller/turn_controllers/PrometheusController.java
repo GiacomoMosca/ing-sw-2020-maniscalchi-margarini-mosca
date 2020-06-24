@@ -17,9 +17,9 @@ public class PrometheusController extends GodController {
     private boolean wantBuildBefore;
 
     /**
-     * Creates a Prometheus controller for this game.
+     * PrometheusController constructor.
      *
-     * @param gameController the Game Controller for this game
+     * @param gameController the GameController for this Game
      */
     public PrometheusController(GameController gameController) {
         super(gameController);
@@ -49,8 +49,11 @@ public class PrometheusController extends GodController {
     /**
      * Handles the phases of a turn: moving and building (which may be allowed two times, both before and after moving).
      *
-     * @param worker the active worker during this turn
-     * @return "WON" if the player won, "NEXT" if the game goes on
+     * @param worker the active Worker
+     * @return "winConditionAchieved" if the Player won, "next" if the game goes on, "outOfMoves" if the Worker can't move, "outOfBuilds" if the Worker can't build
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
@@ -90,8 +93,11 @@ public class PrometheusController extends GodController {
     }
 
     /**
-     * Handles the moving phase of the turn. If the player didn't build before moving, normally handles the phase;
-     * otherwise doesn't allow him to move up
+     * Handles the moving phase of the turn. If the Player didn't build before moving, normally handles the phase, otherwise doesn't allow him to move up.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
@@ -110,10 +116,10 @@ public class PrometheusController extends GodController {
     }
 
     /**
-     * Finds all the possible moves that don't require moving up.
+     * Finds all the possible moves that don't require move up.
      *
-     * @param workerPosition    the position of the worker
-     * @return                  all the cells where a worker can move
+     * @param workerPosition the position of the Worker
+     * @return an ArrayList containing all the Cells where a Worker can move
      */
     protected ArrayList<Cell> findPossibleMovesNoUp(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
@@ -125,6 +131,15 @@ public class PrometheusController extends GodController {
         return findLegalMoves(workerPosition, possibleMoves);
     }
 
+    /**
+     * Handles the building phase of a turn, which may be duplicated (before and after moving).
+     * Calls displayBuild with a non-null Card parameter if the Prometheus God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
+     */
+    @Override
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());

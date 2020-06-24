@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * do we need to write a JavaDoc comment for every single class?
+ * The Deck class saves all the Cards available for the Game, and about the 2 or 3 cards effectively picked up and used.
+ * It allows interaction with the Cards, with the getter and setter methods.
  */
 public class Deck {
 
@@ -12,8 +13,7 @@ public class Deck {
     private final ArrayList<Card> pickedCards;
 
     /**
-     * Creates a Deck object, instantiating two ArrayList: one for all the God Cards and one for the cards effectively
-     * used in the current Game.
+     * Deck constructor. Instantiates two ArrayList: one for all the God Cards and one for the cards effectively used in the current Game.
      */
     public Deck() {
         cards = new ArrayList<Card>();
@@ -28,24 +28,24 @@ public class Deck {
     }
 
     /**
-     * @param card adds the God Card received as an argument to the deck
+     * @param card adds the God Card received as an argument to the Deck
      */
     public void addCard(Card card) {
         cards.add(card);
     }
 
     /**
-     * @return an ArrayList of all the God Cards picked up for this game
+     * @return an ArrayList of all the God Cards picked up for this Game
      */
     public ArrayList<Card> getPickedCards() {
         return new ArrayList<Card>(pickedCards);
     }
 
     /**
-     * Adds a Card object to the list of the picked cards to use for the current Game.
+     * Adds a Card object to the list of the picked Cards to use for the current Game.
      *
      * @param card the Card we want to use
-     * @throws IllegalArgumentException if the Card object received as an argument is already part of the picked cards
+     * @throws IllegalArgumentException if the Card object received as an argument is already part of the picked Cards
      */
     public void pickCard(Card card) throws IllegalArgumentException {
         if (pickedCards.contains(card)) throw new IllegalArgumentException();
@@ -53,7 +53,7 @@ public class Deck {
     }
 
     /**
-     * Removes the Card object received as an argument from the deck of the picked cards.
+     * Removes the Card object received as an argument from the Deck of the picked Cards.
      *
      * @param card the Card object we want to remove
      */
@@ -62,11 +62,10 @@ public class Deck {
     }
 
     /**
-     * Randomly picks n Card objects from the deck. Before doing this, checks that the requested cards aren't more than
-     * those available.
+     * Randomly picks n Cards from the Deck. Before doing this, checks that the requested Cards aren't more than those available.
      *
-     * @param n the number of cards to pick from the deck
-     * @throws IndexOutOfBoundsException when trying to pick more cards than those available
+     * @param n the number of Cards to pick from the Deck
+     * @throws IndexOutOfBoundsException when trying to pick more Cards than those available
      */
     public void pickRandom(int n) throws IndexOutOfBoundsException {
         if (n > cards.size()) throw new IndexOutOfBoundsException();
@@ -78,10 +77,10 @@ public class Deck {
     }
 
     /**
-     * Indicates whether some other deck is "equal to" this one.
+     * Indicates whether some other Deck is "equal to" this one.
      *
-     * @param obj   the reference object with which to compare
-     * @return      true if this deck is the same as the obj argument, false otherwise
+     * @param obj the reference object with which to compare
+     * @return true if this deck is the same as the obj argument, false otherwise
      */
     @Override
     public boolean equals(Object obj) {

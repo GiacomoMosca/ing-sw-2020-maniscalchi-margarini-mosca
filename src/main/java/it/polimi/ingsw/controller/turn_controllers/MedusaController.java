@@ -13,18 +13,18 @@ import java.io.IOException;
 public class MedusaController extends GodController {
 
     /**
-     * Creates a Medusa controller for this game.
+     * MedusaController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      */
     public MedusaController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * Sets all the attributes of the card to their actual values.
+     * Sets all the attributes of the God Card Medusa to their actual values.
      *
-     * @return a complete Card
+     * @return the complete Card
      */
     @Override
     public Card generateCard() {
@@ -43,12 +43,15 @@ public class MedusaController extends GodController {
     }
 
     /**
-     * Handles the basic phases of a turn: moving and building.
-     * At the end of the turn, if opponent workers occupy lower neighboring spaces, replaces them all with blocks and
-     * removes them from the game.
+     * Handles the phases of a turn: moving and building.
+     * At the end of the turn, if opponent Workers occupy lower neighboring spaces, replaces them all with blocks and removes them from the game.
+     * Calls displayBuild with a non-null Card parameter if the Medusa God Power was used.
      *
-     * @param worker the active worker during this turn
-     * @return "WON" if the player won, "NEXT" if the game goes on
+     * @param worker the active Worker
+     * @return "winConditionAchieved" if the player won, "next" if the game goes on, "outOfBuilds" if the player can't build
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
