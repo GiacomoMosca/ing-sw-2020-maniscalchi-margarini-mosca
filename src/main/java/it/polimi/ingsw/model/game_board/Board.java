@@ -3,14 +3,15 @@ package it.polimi.ingsw.model.game_board;
 import java.util.ArrayList;
 
 /**
- * do we need to write a JavaDoc comment for every single class?
+ * The Board class keeps information about the 25 Cells composing the Board.
+ * It also allows interaction with this Cells with getter and setter methods.
  */
 public class Board {
 
     private final Cell[][] cells;
 
     /**
-     * Creates a new Board for the game, instantiating an ArrayList of 25 Cell objects.
+     * Board constructor. Creates a new Board for the Game, instantiating an ArrayList of 25 Cells.
      */
     public Board() {
         this.cells = new Cell[5][5];
@@ -20,10 +21,10 @@ public class Board {
     }
 
     /**
-     * @param x the x-coordinate of the requested cell, ie the column
-     * @param y the y-coordinate of the requested cell, ie the row
-     * @return  the requested Cell object
-     * @throws ArrayIndexOutOfBoundsException when the requested coordinates don't identify a cell of the Board
+     * @param x the x-coordinate of the requested Cell, ie the column
+     * @param y the y-coordinate of the requested Cell, ie the row
+     * @return the requested Cell
+     * @throws ArrayIndexOutOfBoundsException when the requested coordinates don't identify a Cell of the Board
      */
     public Cell getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
@@ -31,7 +32,7 @@ public class Board {
     }
 
     /**
-     * @return an ArrayList of Cell objects, containing all the cells of the board of this game
+     * @return an ArrayList of Cells, containing all the Cells of the Board of this Game
      */
     public ArrayList<Cell> getAllCells() {
         ArrayList<Cell> allCells = new ArrayList<Cell>();
@@ -42,10 +43,10 @@ public class Board {
     }
 
     /**
-     * @param cell the Cell object we want to set
-     * @param x    the x-coordinate of the cell
-     * @param y    the y-coordinate of the cell
-     * @throws ArrayIndexOutOfBoundsException when trying to set a cell with coordinates that don't identify a cell of the Board
+     * @param cell the Cell we want to set
+     * @param x    the x-coordinate of the Cell
+     * @param y    the y-coordinate of the Cell
+     * @throws ArrayIndexOutOfBoundsException when trying to set a Cell with coordinates that don't identify a Cell of the Board
      */
     public void setCell(Cell cell, int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
@@ -53,8 +54,8 @@ public class Board {
     }
 
     /**
-     * @param pos   the Cell object indicating the position we want to know the neighbors of
-     * @return      a list of all the cells surrounding the requested one
+     * @param pos the Cell object indicating the position we want to know the neighbors of
+     * @return an ArrayList containing all the Cells surrounding the requested one
      */
     public ArrayList<Cell> getNeighbors(Cell pos) {
         Cell curr;
@@ -75,10 +76,10 @@ public class Board {
     }
 
     /**
-     * Indicates whether some other board is equal to this one.
+     * Indicates whether some other Board is equal to this one.
      *
-     * @param obj   the reference object with which to compare
-     * @return      true if this board is the same as the obj argument, false otherwise.
+     * @param obj the reference object with which to compare
+     * @return true if this board is the same as the obj argument, false otherwise.
      */
     //////////////////////////////////////////////
     // EQUALS DA MODIFICARE !!! (RENDERE GENERICA)

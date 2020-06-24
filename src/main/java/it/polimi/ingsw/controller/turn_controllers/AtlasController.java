@@ -13,18 +13,18 @@ import java.util.ArrayList;
 public class AtlasController extends GodController {
 
     /**
-     * Creates an Atlas controller for this game.
+     * AtlasController constructor.
      *
-     * @param gameController the Game Controller for this game
+     * @param gameController the GameController for this game
      */
     public AtlasController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * Sets all the attributes of the God Card Atlas to their correct values.
+     * Sets all the attributes of the God Card Atlas to their actual values.
      *
-     * @return a complete Card
+     * @return the complete Card
      */
     @Override
     public Card generateCard() {
@@ -42,6 +42,11 @@ public class AtlasController extends GodController {
 
     /**
      * Handles the building phase of the turn, and allows building domes at any level.
+     * Calls displayBuild with a non-null Card parameter if the Atlas God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {

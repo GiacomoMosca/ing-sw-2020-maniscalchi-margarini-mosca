@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class ZeusController extends GodController {
 
     /**
-     * Creates a Zeus controller for this game.
+     * ZeusController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      */
     public ZeusController(GameController gameController) {
         super(gameController);
@@ -40,6 +40,14 @@ public class ZeusController extends GodController {
         return card;
     }
 
+    /**
+     * Handles the building phase of a turn, allowing the Worker to build under itself.
+     * Calls displayBuild with a non-null Card parameter if the Zeus God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
+     */
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
@@ -53,11 +61,10 @@ public class ZeusController extends GodController {
     }
 
     /**
-     * Returns all the cells where a worker can build including its current cell, with the only restrictions due to the
-     * general rules (other workers, domes, building levels).
+     * Returns all the Cells where a Worker can build with the only restrictions due to the general rules (other workers, domes, building levels), including its current position.
      *
-     * @param workerPosition    the position of the worker
-     * @return                  all the cells where a worker can build
+     * @param workerPosition the position of the Worker
+     * @return an ArrayList containing the cells where a Worker can build
      */
     @Override
     public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {

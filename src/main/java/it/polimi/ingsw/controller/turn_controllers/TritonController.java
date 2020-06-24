@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class TritonController extends GodController {
 
     /**
-     * Creates a Triton controller for this game.
+     * TritonController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game.
      */
     public TritonController(GameController gameController) {
         super(gameController);
@@ -24,7 +24,7 @@ public class TritonController extends GodController {
     /**
      * Sets all the attributes of the God Card Triton to their actual values.
      *
-     * @return a complete Card
+     * @return the complete Card
      */
     @Override
     public Card generateCard() {
@@ -41,8 +41,12 @@ public class TritonController extends GodController {
     }
 
     /**
-     * Handles the moving phase of the turn, allowing moving a second time whether the first one was onto a perimeter
-     * space
+     * Handles the moving phase of the turn, allowing moving a second time whether the first one was onto a perimeter space.
+     * Calls displayMove with a non-null Card parameter if the Triton God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {

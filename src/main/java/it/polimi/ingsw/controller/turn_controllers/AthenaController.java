@@ -13,16 +13,16 @@ import java.util.ArrayList;
 public class AthenaController extends GodController {
 
     /**
-     * Creates an Athena controller for this game.
+     * AthenaController constructor.
      *
-     * @param gameController the Game Controller for this game
+     * @param gameController the GameController for this game
      */
     public AthenaController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * Sets all the attributes of the God Card Athena to their actual values
+     * Sets all the attributes of the God Card Athena to their actual values.
      *
      * @return the complete Card
      */
@@ -41,7 +41,12 @@ public class AthenaController extends GodController {
     }
 
     /**
-     * Handles the moving phase of the turn, adding a Modifier if the worker moved up on this turn.
+     * Handles the moving phase of the turn, adding a Modifier if the Worker moved up on this turn.
+     * Calls displayMove with a non-null Card parameter if the Athena God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
@@ -66,12 +71,11 @@ public class AthenaController extends GodController {
     }
 
     /**
-     * gets a list containing all the cells where an opponent worker can move and creates another list, removing from
-     * the previous all the cells that requires to move up.
+     * Applies Athena God Power. Gets an ArrayList containing all the Cells where an opponent Worker can move and creates another ArrayList, removing from the first one all the Cells that require a move up.
      *
-     * @param workerPosition the position of the worker
-     * @param possibleMoves  all the cells where the worker can move, considering only the game restrictions
-     * @return               all the cells where the worker is actually able to build
+     * @param workerPosition the position of the Worker
+     * @param possibleMoves  all the Cells where the Worker can move, considering only the game restrictions
+     * @return an ArrayList containing all the Cells where the Worker is actually able to move
      */
     @Override
     public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {

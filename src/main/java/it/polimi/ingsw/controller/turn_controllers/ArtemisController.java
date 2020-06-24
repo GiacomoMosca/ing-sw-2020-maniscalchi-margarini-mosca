@@ -18,18 +18,18 @@ public class ArtemisController extends GodController {
     private boolean secondMove;
 
     /**
-     * creates an ArtemisController for this Game
+     * ArtemisController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      */
     public ArtemisController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Artemis to their correct values
+     * Sets all the attributes of the God Card Artemis to their correct values.
      *
-     * @return a complete Card
+     * @return the complete Card
      */
     @Override
     public Card generateCard() {
@@ -47,9 +47,13 @@ public class ArtemisController extends GodController {
 
 
     /**
-     * handles the phases of a turn: moving (which is allowed two times, but not going back to the first cell) and building
+     * Handles the phases of a turn: moving (which is allowed two times, but not going back to the first cell) and building.
      *
-     * @return "WON" if the player won, "NEXT" if the game goes on
+     * @param worker the active Worker
+     * @return "winConditionAchieved" if the player won, "next" if the game goes on, "outOfBuilds" if the worker can't build
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
@@ -69,6 +73,14 @@ public class ArtemisController extends GodController {
         return "next";
     }
 
+    /**
+     * Handles the moving phase of the turn. Calls displayMove with a non-null Card parameter if the Artemis God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
+     */
+    @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (secondMove) ? card : null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -84,11 +96,10 @@ public class ArtemisController extends GodController {
     }
 
     /**
-     * returns all the cells where a worker can move, with the only restrictions due to the general rules (other workers, domes, building levels)
-     * and ensures that, if the player uses a second move, his worker won't move back to the cell it started from
+     * Returns all the Cells where a Worker can move, with the only restrictions due to the general rules (other workers, domes, building levels) and ensures that, if the Player uses a second move, his Worker won't move back to the Cell it started from.
      *
-     * @param workerPosition the position of the worker
-     * @return all the cells where a worker can move
+     * @param workerPosition the position of the Worker
+     * @return an ArrayList containing all the Cells where a Worker can move
      */
     @Override
     public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

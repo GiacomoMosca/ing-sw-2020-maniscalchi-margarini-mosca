@@ -8,7 +8,8 @@ import it.polimi.ingsw.model.players.Player;
 import java.util.ArrayList;
 
 /**
- * represents the current state of the game
+ * The Game class that represents the current state of the Game, saving the name of the Game, the Players, the number of players, the Board, the Deck, the active God Power Cards in a turn, the number of the active player in a turn and an eventual winner.
+ * It also allows interaction with these attributes with setter and getter methods.
  */
 public class Game {
 
@@ -22,10 +23,11 @@ public class Game {
     private Player winner;
 
     /**
-     * prepares a new Game
+     * Game constructor. Prepares a new Game, setting all the attributes to their default or actual values.
      *
-     * @param p1  the player who first sign up for the game
-     * @param num the number of players
+     * @param name the name of the Game
+     * @param p1   the player who first enters the Game
+     * @param num  the number of players
      */
     public Game(String name, Player p1, int num) {
         this.name = name;
@@ -44,16 +46,16 @@ public class Game {
     }
 
     /**
-     * @return all the players
+     * @return an ArrayList containing all the players of the Game
      */
     public ArrayList<Player> getPlayers() {
         return new ArrayList<Player>(players);
     }
 
     /**
-     * adds a player to the current Game
+     * Adds a player to the current Game.
      *
-     * @param player the new player
+     * @param player the new Player
      * @throws IndexOutOfBoundsException when trying to add more players than allowed for the current Game
      * @throws IllegalArgumentException  when trying to add a player who already joined the current Game
      */
@@ -92,7 +94,7 @@ public class Game {
     }
 
     /**
-     * sets the number of the active player
+     * Sets the number of the active player.
      *
      * @param i the number to set
      */
@@ -102,7 +104,7 @@ public class Game {
     }
 
     /**
-     * correctly updates the activePlayer counter
+     * Updates the activePlayer counter. It takes a value between 0 and 1 in a two-players game, and among 0, 1 or 2 in a three-players game.
      */
     public void nextPlayer() {
         activePlayer = (activePlayer >= playerNum - 1) ? 0 : activePlayer + 1;
@@ -110,41 +112,41 @@ public class Game {
     }
 
     /**
-     * @return all the active Modifiers
+     * @return all the active Modifiers of the Game
      */
     public ArrayList<Card> getActiveModifiers() {
         return new ArrayList<Card>(activeModifiers);
     }
 
     /**
-     * adds the argument to the list of the active Modifiers
+     * Adds the Card received as an argument to the list of the active Modifiers.
      *
-     * @param modifier the God Card we want to add to the list of the modifiers
+     * @param modifier the God Card to add
      */
     public void addModifier(Card modifier) {
         activeModifiers.add(modifier);
     }
 
     /**
-     * removes the argument from the list of the active Modifiers
+     * Removes the Card received as an argument from the list of the active Modifiers.
      *
-     * @param modifier the God Card we want to remove from the list of the modifiers
+     * @param modifier the God Card to remove
      */
     public void removeModifier(Card modifier) {
         activeModifiers.remove(modifier);
     }
 
     /**
-     * @return the player of the current Game
+     * @return the winner of the current Game
      */
     public Player getWinner() {
         return winner;
     }
 
     /**
-     * sets the winner of the current Game
+     * Sets the Player received as an argument as the winner of the current Game.
      *
-     * @param winner the player to set as the winner of the current Game
+     * @param winner the Player to set as the winner
      */
     public void setWinner(Player winner) {
         this.winner = winner;

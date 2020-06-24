@@ -6,18 +6,18 @@ import it.polimi.ingsw.model.cards.Card;
 public class PanController extends GodController {
 
     /**
-     * creates a Pan controller for this game
+     * PanController constructor.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      */
     public PanController(GameController gameController) {
         super(gameController);
     }
 
     /**
-     * sets all the attributes of the God Card Pan to their correct values
+     * Sets all the attributes of the God Card Pan to their correct values.
      *
-     * @return a complete Card
+     * @return the complete Card
      */
     @Override
     public Card generateCard() {
@@ -34,7 +34,7 @@ public class PanController extends GodController {
     }
 
     /**
-     * @return true if a worker moves up from level two to level three or moves down two or more levels, false otherwise
+     * @return "winConditionAchieved" if the Player won because moved up from the second to the third level, "godConditionAchieved" if the Player won because he achieved his God's win condition,"nope" if the Player didn't win
      */
     @Override
     public String checkWin() {

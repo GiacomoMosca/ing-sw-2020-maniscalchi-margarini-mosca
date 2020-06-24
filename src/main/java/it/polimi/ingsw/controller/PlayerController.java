@@ -18,10 +18,11 @@ public class PlayerController {
     private GodController godController;
 
     /**
-     * creates a PlayerController associating the player and his VirtualView
+     * PlayerController constructor. Associates the Player and his VirtualView.
      *
      * @param player
      * @param client
+     * @param game   the GameController for this Game
      */
     public PlayerController(Player player, VirtualView client, GameController game) {
         this.player = player;
@@ -30,7 +31,7 @@ public class PlayerController {
     }
 
     /**
-     * @return the player associated with this PlayerController
+     * @return the Player associated with this PlayerController
      */
     public Player getPlayer() {
         return player;
@@ -43,6 +44,9 @@ public class PlayerController {
         return client;
     }
 
+    /**
+     * @return the GameController associated with this Game
+     */
     public GameController getGame() {
         return game;
     }
@@ -55,7 +59,7 @@ public class PlayerController {
     }
 
     /**
-     * sets the attribute godController of the player to the GodController passed as an argument
+     * Associates the PlayerController to the correct GodController, ie to the God Power Card associated to the player.
      *
      * @param godController the GodController to associate this PlayerController to
      */
@@ -65,12 +69,11 @@ public class PlayerController {
     }
 
     /**
-     * handles the turn.
-     * checks if there are any workers available: if no worker is available to move, returns "LOST";
-     * if one worker is available sets it as the activeWorker,
-     * if two workers are available lets the player choose which one to move.
+     * Handles the preparation of the turn. Checks if there are any workers available for the active Player: if no Worker is available to move, returns "outOfMoves";
+     * if only one Worker is available to move, sets it as the active Worker; if two Workers are available, lets the player choose which one to move.
+     * In the first case, the active Player will be eliminated. In the second and third cases the player will play his turn.
      *
-     * @return LOST if the player lost, WIN if the player won, NEXT if the game goes on
+     * @return "outOfMoves" if all the active Player's Workers can't move, "godConditionAchieved" if the Player won, "next" if the game goes on
      */
     public String playTurn() throws IOExceptionFromController {
         Worker activeWorker;

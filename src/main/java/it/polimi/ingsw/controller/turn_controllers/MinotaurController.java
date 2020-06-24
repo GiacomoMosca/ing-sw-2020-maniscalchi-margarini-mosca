@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class MinotaurController extends GodController {
 
     /**
-     * Creates a Minotaur controller for this game.
+     * MinotaurController constructor.
      *
-     * @param gameController the Game Controller for this game
+     * @param gameController the GameController for this Game
      */
     public MinotaurController(GameController gameController) {
         super(gameController);
@@ -42,9 +42,12 @@ public class MinotaurController extends GodController {
     }
 
     /**
-     * Handles the moving phase of the turn, allowing pushing away opponent workers. If the player chooses to move to a
-     * cell occupied by an opponent worker, checks if it is unoccupied: if it's free, handles the pushing away of the
-     * opponent worker.
+     * Handles the moving phase of the turn, allowing pushing away opponent Workers. If the Player chooses to move to a cell occupied by an opponent Worker, checks if it is unoccupied: if it's free, handles the pushing away of the opponent worker.
+     * Calls displayMove with a non-null Card parameter if the Minotaur God Power was used.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IOExceptionFromController
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
@@ -83,12 +86,10 @@ public class MinotaurController extends GodController {
     }
 
     /**
-     * Returns all the cells where a worker can move, with the only restrictions due to the general rules (other
-     * workers, domes, building levels). Also allows the worker to move to cells occupied by opponents (if they can be
-     * pushed away).
+     * Returns all the Cells where a Worker can move, with the only restrictions due to the general rules (other workers, domes, building levels). Also allows the Worker to move to cells occupied by opponents (if they can be pushed away).
      *
-     * @param workerPosition the position of the worker
-     * @return               all the cells where a worker can move
+     * @param workerPosition the position of the Worker
+     * @return               an ArrayList containing all the Cells where a Worker can move
      */
     @Override
     public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

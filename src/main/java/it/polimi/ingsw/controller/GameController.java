@@ -27,14 +27,14 @@ public class GameController {
     protected ArrayList<String> colors;
 
     /**
-     * creates a GameController.
-     * Creates the first player (associated with the VirtualView received as an argument),
-     * associating his id and the color "r".
-     * creates a PlayerController for the first player, associating the Player and his VirtualView.
-     * adds the PlayerController.
+     * GameController constructor.
+     * Creates the first Player (associated with the VirtualView received as an argument), associating him his ID and the color "r" (red).
+     * Creates a PlayerController for the first Player, associating the Player and his VirtualView.
+     * Creates the Game.
      *
-     * @param client the VirtualView associated with the first player
-     * @param num    the number of players for the current game
+     * @param client   the VirtualView associated with the first player
+     * @param num      the number of players for the current game
+     * @param gameName the name of the Game
      */
     public GameController(VirtualView client, int num, String gameName) {
         running = new AtomicBoolean(true);
@@ -51,10 +51,16 @@ public class GameController {
         client.setPlayerController(p1Controller);
     }
 
+    /**
+     * @return "true" if the attribute running is true, false otherwise
+     */
     public boolean isRunning() {
         return running.get();
     }
 
+    /**
+     * @return "true" if the attribute setup is true, false otherwise
+     */
     public boolean isSetup() {
         return setup.get();
     }
@@ -66,18 +72,20 @@ public class GameController {
         return game;
     }
 
+    /**
+     * @return an ArrayList containing all the PlayerControllers for this Game
+     */
     public ArrayList<PlayerController> getControllers() {
         return new ArrayList<PlayerController>(playerControllers);
     }
 
     /**
-     * adds a new player to the game.
-     * creates the new player, associating his id (given by the VirtualView) and a color.
-     * creates a PlayerController for the player and associates the player and his VirtualView.
-     * <p>
-     * and the game controller asso
+     * Adds a new Player to the Game.
+     * Creates the new player, associating him his ID and a color ("g" as green for the second player and "b" as blue for the third player).
+     * Creates a PlayerController for the new Player, associating the player and his VirtualView.
      *
-     * @param client
+     * @param client the VirtualView associated with the Player to add
+     * @throws GameEndedException
      */
     public void addPlayer(VirtualView client) throws GameEndedException {
         if (!running.get() || !setup.get()) throw new GameEndedException("game ended");
@@ -98,8 +106,12 @@ public class GameController {
     }
 
     /**
-     * creates a GodController for every God Card, and adds all the cards to the deck.
-     * randomly associates a GodCard to every player, also associating the correct GodController to every PlayerController.
+     * Handles the setting up of the Game:
+     * creating a GodController for each God Card,
+     * adding all the God Cards to the Deck,
+     * picking cards,
+     * choosing the starting player,
+     * placing workers.
      */
     public void gameSetUp() {
         if (!setup.compareAndSet(true, false)) return;
@@ -142,6 +154,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Allows picking Cards from the Deck containing all the 14 God Power Cards.
+     * If the Player who first signed up chooses to randomize the playable God Powers pool, the Cards are randomly picked from the Deck; otherwise, he chooses the Cards to use.
+     * In both cases, the Cards are assigned to the Players by asking them which one they want to use (starting from the player who was the second to sign up).
+     *
+     * @throws IOExceptionFromController
+     */
     private void pickCards() throws IOExceptionFromController {
         Deck deck = game.getDeck();
         try {
@@ -174,6 +193,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Asks to the first Player who signed up who will be the starting player, and then sets it.
+     *
+     * @throws IOExceptionFromController
+     */
     private void chooseStartPlayer() throws IOExceptionFromController {
         try {
             game.setActivePlayer(playerControllers.get(0).getClient().chooseStartingPlayer(players));
@@ -183,7 +207,10 @@ public class GameController {
     }
 
     /**
-     * place the workers of all the players, asking them the localizations and then moving the workers there.
+     * Allows placing all the Workers on the Board.
+     * Asks each Player the starting positions for both his Workers, starting from the Player who was chosen as the first one.
+     *
+     * @throws IOExceptionFromController
      */
     private void placeWorkers() throws IOExceptionFromController {
         ArrayList<Cell> freePositions = game.getBoard().getAllCells();
@@ -210,7 +237,16 @@ public class GameController {
 
 
     /**
-     * plays out the game and handles wins/losses
+     * Before proceeding to the Game, checks if there is any always active God Power.
+     * Then plays out the Game until there's no winner.
+     * Each Player's turn is in the end described by a string:
+     * "next" if the Player properly moved and built and the game goes on;
+     * "outOfMoves" if the Player must be eliminated because ran out of moves for both his Workers;
+     * "outOfBuilds" if the Player must be eliminated because ran out of builds for both his Workers;
+     * "winConditionAchieved" if the Player won because he achieved the win condition;
+     * "godConditionAchieved" if the Player won because he achieved his God win condition;
+     *
+     * @throws IOExceptionFromController
      */
     private void playGame() throws IOExceptionFromController {
         for (Player player : players) {
@@ -249,14 +285,16 @@ public class GameController {
     }
 
     /**
-     * checks if the game has reached the maximum number of players
+     * @return true if the Game has reached the maximum number of players, false otherwise
      */
     public boolean checkPlayersNumber() {
         return game.getPlayers().size() >= game.getPlayerNum();
     }
 
     /**
-     * checks if any player has no workers left and, if so, removes them from the game
+     * For every Player in the Game, checks if he has any Worker able to move. If a Player has no Workers left, eliminates him.
+     *
+     * @throws IOExceptionFromController
      */
     public void checkWorkers() throws IOExceptionFromController {
         for (Player player : players) {
@@ -265,7 +303,11 @@ public class GameController {
     }
 
     /**
-     * checks whether the player who disconnected is currently in the game or not
+     * Checks whether the Player who disconnected is currently in the Game or not.
+     *
+     * @param e the caught exception
+     * @param controller the controller to check
+     * @throws IOExceptionFromController
      */
     public void checkDisconnection(Exception e, PlayerController controller) throws IOExceptionFromController {
         if (controller == null) return;
@@ -276,7 +318,9 @@ public class GameController {
     }
 
     /**
-     * handles the disconnection of a player and eventually terminates the current game
+     * Handles the disconnection of a Player and, after notifying that disconnection, terminates the Game.
+     *
+     * @param controller
      */
     public void handleDisconnection(PlayerController controller) {
         if (!running.get() || controller == null) return;
@@ -290,10 +334,11 @@ public class GameController {
     }
 
     /**
-     * removes a player from the game, then sets the winner if only one player is left
+     * Removes a Player who was eliminated from the Game: removes his workers and the God Power which was eventually always active and notifies him his loss.
+     * If only one Player is left, sets him as the winner. If there are two Players left, notifies them the elimination of the third one.
      *
-     * @param player the losing player
-     * @param reason the reason why the player lost
+     * @param player the Player to eliminate
+     * @param reason the reason why the Player lost
      */
     private void eliminatePlayer(Player player, String reason) throws IOExceptionFromController {
         player.setLost();
@@ -323,6 +368,13 @@ public class GameController {
         broadcastGameInfo(reason);
     }
 
+    /**
+     * Calls the displayBuild method for each Player, so that the build can be displayed on screen.
+     *
+     * @param buildPosition the position of the build
+     * @param godPower      the God Card that eventually allowed this build
+     * @throws IOExceptionFromController
+     */
     public void broadcastBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
@@ -335,7 +387,7 @@ public class GameController {
     }
 
     /**
-     * broadcasts all info associated with the current Game to all players
+     * Broadcasts all the information associated with the current Game to all the Players.
      *
      * @param desc the description associated with this broadcast; can be
      *             <p><ul>
@@ -345,6 +397,7 @@ public class GameController {
      *             <li>turnStart: signals the beginning of a new turn
      *             <li>a notifyLoss description: signals the loss of the first player in a 3 player game
      *             </ul></p>
+     * @throws IOExceptionFromController
      */
     public void broadcastGameInfo(String desc) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
@@ -358,9 +411,10 @@ public class GameController {
     }
 
     /**
-     * broadcasts the message received as an argument to all players
+     * Broadcasts the message received as an argument to all the Players.
      *
      * @param message the message to show
+     * @throws IOExceptionFromController
      */
     public void broadcastMessage(String message) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
@@ -373,6 +427,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Calls the displayMove method for each Player, so that the move can be displayed on screen.
+     *
+     * @param moves    an HashMap containing one or two moves associated with a turn
+     * @param godPower the God Card that eventually allowed this move
+     * @throws IOExceptionFromController
+     */
     public void broadcastMove(HashMap<CellView, CellView> moves, Card godPower) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
@@ -384,6 +445,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Calls the displayPlaceWorker method for each Player, so that the starting positions of the Workers can be displayed on screen.
+     *
+     * @param workerPosition
+     * @throws IOExceptionFromController
+     */
     public void broadcastPlaceWorker(Cell workerPosition) throws IOExceptionFromController {
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
@@ -395,6 +462,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Notifies all the other Players the disconnection of the Player received as an argument.
+     * +     *
+     *
+     * @param player the Player who disconnected
+     */
     public void notifyDisconnection(Player player) {
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
@@ -407,9 +480,9 @@ public class GameController {
     }
 
     /**
-     * sets a player as the winner and notifies all players
+     * Sets the Player received as an argument as the winner (for the reason received as an argument) and notifies the other Players of his victory.
      *
-     * @param player the winning player
+     * @param player the winner
      * @param reason the reason why the player won
      */
     private void setWinner(Player player, String reason) {
@@ -429,7 +502,7 @@ public class GameController {
     }
 
     /**
-     * notifies all players that the game is over and terminates it
+     * Notifies all the Players that the Game is over.
      */
     public void gameOver() {
         if (!running.compareAndSet(true, false)) return;
