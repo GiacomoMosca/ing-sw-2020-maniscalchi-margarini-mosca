@@ -6,9 +6,9 @@
 /* Text */
 
 #title {
-    -fx-font: 40px LillyBelle;
-    -fx-fill: #664d39;
-    -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
+    -fx-font: 60px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }
 
 #enter, #pressedEnter {

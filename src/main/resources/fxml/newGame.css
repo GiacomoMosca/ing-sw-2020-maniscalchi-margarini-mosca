@@ -16,3 +16,9 @@
     -fx-fill: #664d39;
     -fx-effect: innershadow(three-pass-box, black, 4, 0.2, 0, 0);
 }
+
+#centerText {
+    -fx-font: 50px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
+}

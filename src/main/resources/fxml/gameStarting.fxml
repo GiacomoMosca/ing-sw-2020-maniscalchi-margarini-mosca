@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameStarting.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameStartingController">
+    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../assets/graphics/cardSelect_bg.png" />
+    </ImageView>
+    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
+        <Image url="@../assets/graphics/cardSelect_frame.png" />
+    </ImageView>
+    <Text fx:id="title" layoutX="459.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Ready!" textAlignment="CENTER">
+        <font>
+            <Font size="48.0" />
+        </font>
+    </Text>
+    <StackPane layoutY="344.0" prefHeight="100.0" prefWidth="1280.0">
+        <ImageView fx:id="button" fitHeight="150.0" fitWidth="200.0" onMousePressed="#pressed" onMouseReleased="#released" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../assets/buttons/btn_small_green.png" />
+        </ImageView>
+        <ImageView fx:id="buttonPressed" fitHeight="150.0" fitWidth="200.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
+            <Image url="@../assets/buttons/btn_small_green_pressed.png" />
+        </ImageView>
+        <Text fx:id="enter" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter">
+            <StackPane.margin>
+                <Insets top="-12.0" />
+            </StackPane.margin>
+        </Text>
+        <Text fx:id="pressedEnter" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter" visible="false">
+         <StackPane.margin>
+            <Insets top="-7.0" />
+         </StackPane.margin></Text>
+    </StackPane>
+</AnchorPane>

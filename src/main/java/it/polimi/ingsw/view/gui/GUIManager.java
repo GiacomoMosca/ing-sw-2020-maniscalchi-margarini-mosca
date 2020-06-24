@@ -31,6 +31,7 @@ public class GUIManager extends Application {
     private static Scene loginScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
+    private static Scene gameStarting;
 
     private static TitleController startController = null;
     private static LoginController loginController = null;
@@ -39,6 +40,7 @@ public class GUIManager extends Application {
     private static GameLobbyController gameLobbyController = null;
     private static GameSetupController gameSetupController = null;
     private static GameBoardController gameBoardController = null;
+    private static GameStartingController gameStartingController = null;
 
     private static Scene currentScene;
     private static GUI gui;
@@ -106,11 +108,12 @@ public class GUIManager extends Application {
         initGameLobby();
         initNewGame();
         initJoinGame();
+        initGameStarting();
         initGameSetup();
         initGameBoard();
     }
 
-    private void initLogin() {
+    public void initLogin() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
         try {
             Parent root = loader.load();
@@ -153,6 +156,18 @@ public class GUIManager extends Application {
             gameLobbyScene = new Scene(root);
             gameLobbyController = loader.getController();
             gameLobbyController.initialize(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initGameStarting(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gameStarting.fxml"));
+        try {
+            Parent root = loader.load();
+            gameStarting = new Scene(root);
+            gameStartingController = loader.getController();
+            gameStartingController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,6 +241,12 @@ public class GUIManager extends Application {
 
     public void chooseNickname(boolean taken) {
         loginController.chooseNickname();
+        if(taken)
+            loginController.errorMessage("Nickname already taken");
+    }
+
+    public void serverErrorMessage(String message){
+        loginController.errorMessage(message);
     }
 
     // GameLobbyController
@@ -238,6 +259,8 @@ public class GUIManager extends Application {
     public void chooseGameName(boolean taken) {
         initNewGame();
         setScene(newGameScene);
+        if(taken)
+            newGameController.errorMessage("Game name already taken");
     }
 
     public void choosePlayersNumber() {
@@ -248,6 +271,12 @@ public class GUIManager extends Application {
         initJoinGame();
         setScene(joinGameScene);
         joinGameController.chooseGameRoom(gameRooms);
+    }
+
+    // ReadyToStartController
+
+    public void gameStarting(){
+        setScene(gameStarting);
     }
 
     // GameSetupController
