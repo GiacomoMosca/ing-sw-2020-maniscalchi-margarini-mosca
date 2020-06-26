@@ -59,7 +59,7 @@ public class GUI implements UI {
                 connected = true;
             } catch (IOException e) {
                 manager.initLogin();
-                manager.serverErrorMessage("Server unreachable. ");
+                manager.serverErrorMessage("Server unreachable");
                 connected = false;
             }
             if (connected) {
@@ -69,11 +69,11 @@ public class GUI implements UI {
                     connected = true;
                 } catch (IOException e) {
                     manager.initLogin();
-                    manager.serverErrorMessage("Server is down. ");
+                    manager.serverErrorMessage("Server is down");
                     connected = false;
                 } catch (ClassCastException e) {
                     manager.initLogin();
-                    manager.serverErrorMessage("Protocol violation. ");
+                    manager.serverErrorMessage("Protocol violation");
                     connected = false;
                 }
             }
@@ -349,9 +349,8 @@ public class GUI implements UI {
     }
 
     public void notifyGameStarting() {
-        manager.gameStarting();
-        //System.out.println("\nGame is starting! Press ENTER to continue. ");
-        //new Scanner(System.in).nextLine();
+        manager.notifyGameStarting();
+        getBoolean();
         sendBoolean(true);
     }
 

@@ -156,7 +156,7 @@ public abstract class GodController {
      * @return "winConditionAchieved" if the active Player won, "nope" otherwise
      */
     public String checkWin() {
-        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1))
+        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() >= 1))
             return "winConditionAchieved";
         return "nope";
     }

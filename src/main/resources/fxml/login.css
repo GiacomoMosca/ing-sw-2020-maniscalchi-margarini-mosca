@@ -5,14 +5,14 @@
 
 /* Text */
 
-#connectText, #connectTextPressed {
-    -fx-font: 18px LillyBelle;
+#connectText, #connectText_p {
+    -fx-font: 30px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }
 
-#request {
-    -fx-font: 25px LillyBelle;
-    -fx-fill: #664d39;
-    -fx-effect: innershadow(three-pass-box, black, 4, 0.2, 0, 0);
+#titleText {
+    -fx-font: 45px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, #0d3c61, 4, 1.0, 0, 0);
 }

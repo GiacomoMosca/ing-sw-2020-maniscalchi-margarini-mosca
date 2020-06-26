@@ -31,7 +31,7 @@ public class GUIManager extends Application {
     private static Scene loginScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
-    private static Scene gameStarting;
+    private static Scene gameStartingScene;
 
     private static TitleController startController = null;
     private static LoginController loginController = null;
@@ -165,7 +165,7 @@ public class GUIManager extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gameStarting.fxml"));
         try {
             Parent root = loader.load();
-            gameStarting = new Scene(root);
+            gameStartingScene = new Scene(root);
             gameStartingController = loader.getController();
             gameStartingController.initialize(this);
         } catch (IOException e) {
@@ -214,8 +214,6 @@ public class GUIManager extends Application {
     // generic
 
     public void displayMessage(String message) {
-        //setScene(serviceMessageScene);
-        //serviceMessageController.displayMessage(message);
         if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
 
         setBusy(false);
@@ -223,7 +221,7 @@ public class GUIManager extends Application {
 
     public void chooseYesNo(String query) {
         if (currentScene.equals(gameSetupScene)) gameSetupController.chooseYesNo(query);
-        else gameBoardController.chooseYesNo(query);
+        else if (currentScene.equals(gameBoardScene)) gameBoardController.chooseYesNo(query);
     }
 
     // LoginController
@@ -242,7 +240,7 @@ public class GUIManager extends Application {
     public void chooseNickname(boolean taken) {
         loginController.chooseNickname();
         if (taken)
-            loginController.errorMessage("Nickname already taken");
+            loginController.errorMessage("Nickname already taken.");
     }
 
     public void serverErrorMessage(String message) {
@@ -259,8 +257,7 @@ public class GUIManager extends Application {
     public void chooseGameName(boolean taken) {
         initNewGame();
         setScene(newGameScene);
-        if (taken)
-            newGameController.errorMessage("Game name already taken");
+        newGameController.chooseGameName(taken);
     }
 
     public void choosePlayersNumber() {
@@ -275,14 +272,21 @@ public class GUIManager extends Application {
 
     // ReadyToStartController
 
-    public void gameStarting() {
-        setScene(gameStarting);
+    public void notifyGameStarting() {
+        gameStartingController.notifyGameStarting();
     }
 
     // GameSetupController
 
     public void displayGameInfo(GameView game, String desc) {
         switch (desc) {
+            case "playerJoined":
+                if (!currentScene.equals(gameStartingScene)) {
+                    initGameStarting();
+                    setScene(gameStartingScene);
+                }
+                gameStartingController.displayPlayerJoined(game);
+                break;
             case "gameSetup":
                 initGameSetup();
                 setScene(gameSetupScene);

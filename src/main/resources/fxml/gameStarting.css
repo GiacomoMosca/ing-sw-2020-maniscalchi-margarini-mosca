@@ -5,14 +5,26 @@
 
 /* Text */
 
-#title {
-    -fx-font: 60px LillyBelle;
+#titleText {
+    -fx-font: 45px LillyBelle;
     -fx-fill: white;
-    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, #0d3c61, 4, 1.0, 0, 0);
 }
 
-#enter, #pressedEnter {
-    -fx-font: 25px LillyBelle;
+#nicknameTab {
+    -fx-font: 30px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 5, 0.2, 0, 0);
+}
+
+#player1Name, #player2Name, #player3Name {
+    -fx-font: 38px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 5, 0.2, 0, 0);
+}
+
+#confirmText, #confirmText_p {
+    -fx-font: 30px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }

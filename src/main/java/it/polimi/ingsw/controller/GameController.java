@@ -99,7 +99,7 @@ public class GameController {
         playerControllers.add(playerController);
         client.setPlayerController(playerController);
         try {
-            broadcastMessage(client.getId() + " joined the game (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ")");
+            broadcastGameInfo("playerJoined");
         } catch (IOExceptionFromController e) {
             handleDisconnection(e.getController());
         }
@@ -392,7 +392,8 @@ public class GameController {
      *
      * @param desc the description associated with this broadcast; can be
      *             <p><ul>
-     *             <li>gameSetup: sends player info
+     *             <li>playerJoined: sends player info when a new player joins the game
+     *             <li>gameSetup: sends player info after all players have joined
      *             <li>boardSetup: sends player info with god cards
      *             <li>gameStart: signals the end of the setup stage
      *             <li>turnStart: signals the beginning of a new turn

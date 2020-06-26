@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.server;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.PlayerController;
 import it.polimi.ingsw.exceptions.GameEndedException;
+import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.view.VirtualView;
 
@@ -107,7 +108,6 @@ public class Server {
             } catch (InterruptedException e) {
                 //
             } catch (IOException e) {
-                // System.out.println(player.getId() + " rip");
                 removePlayer(player);
                 return;
             }
@@ -127,7 +127,7 @@ public class Server {
     private void newRoom(VirtualView player) throws IOException, InterruptedException {
         String gameName;
         boolean taken = false;
-        while (true) {
+        do {
             gameName = player.chooseGameName(taken);
             synchronized (gameControllers) {
                 taken = false;
@@ -139,14 +139,15 @@ public class Server {
                     }
                 }
             }
-            if (!taken) {
-                int playerNum = player.choosePlayersNumber();
-                GameController gameController = new GameController(player, playerNum, gameName);
-                gameControllers.add(gameController);
-                logger.log("new game " + gameName + " created");
-                player.displayMessage("Waiting for players...");
-                break;
-            }
+        } while (taken);
+        int playerNum = player.choosePlayersNumber();
+        GameController gameController = new GameController(player, playerNum, gameName);
+        gameControllers.add(gameController);
+        logger.log("new game " + gameName + " created");
+        try {
+            gameController.broadcastGameInfo("playerJoined");
+        } catch (IOExceptionFromController e) {
+            gameController.handleDisconnection(e.getController());
         }
     }
 
@@ -175,7 +176,6 @@ public class Server {
                     break;
                 }
             }
-            player.displayMessage("Joining room " + gameController.getGame().getName() + "...");
             logger.log(player.getId() + " joined " + gameController.getGame().getName());
             gameController.addPlayer(player);
             if (gameController.checkPlayersNumber()) {

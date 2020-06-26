@@ -4,34 +4,102 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameStarting.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameStartingController">
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameStarting.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.GameStartingController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_bg.png" />
+        <Image url="@../assets/graphics/mainMenu_bg.png"/>
     </ImageView>
-    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_frame.png" />
+    <ImageView AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@../assets/graphics/nicknameTab.png"/>
     </ImageView>
-    <Text fx:id="title" layoutX="459.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Ready!" textAlignment="CENTER">
-        <font>
-            <Font size="48.0" />
-        </font>
-    </Text>
-    <StackPane layoutY="344.0" prefHeight="100.0" prefWidth="1280.0">
-        <ImageView fx:id="button" fitHeight="150.0" fitWidth="200.0" onMousePressed="#pressed" onMouseReleased="#released" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_small_green.png" />
-        </ImageView>
-        <ImageView fx:id="buttonPressed" fitHeight="150.0" fitWidth="200.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_small_green_pressed.png" />
-        </ImageView>
-        <Text fx:id="enter" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter">
-            <StackPane.margin>
-                <Insets top="-12.0" />
-            </StackPane.margin>
+    <StackPane alignment="CENTER_LEFT" layoutX="100.0" layoutY="30.0" prefHeight="40.0" prefWidth="250.0">
+        <Text fx:id="nicknameTab">
         </Text>
-        <Text fx:id="pressedEnter" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter" visible="false">
-         <StackPane.margin>
-            <Insets top="-7.0" />
-         </StackPane.margin></Text>
     </StackPane>
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Text fx:id="titleText" text="New Game"/>
+        <StackPane alignment="TOP_CENTER">
+            <ImageView fx:id="waitingPlayers3" visible="false">
+                <Image url="@../assets/graphics/waitingPlayers3.png"/>
+            </ImageView>
+            <ImageView fx:id="waitingPlayers2" visible="false">
+                <Image url="@../assets/graphics/waitingPlayers2.png"/>
+            </ImageView>
+            <VBox alignment="TOP_CENTER" maxHeight="298.0" maxWidth="450.0">
+                <StackPane fx:id="player1" visible="false">
+                    <ImageView>
+                        <Image url="@../assets/graphics/playerTab.png"/>
+                    </ImageView>
+                    <StackPane maxHeight="80.0" maxWidth="420.0">
+                        <Text fx:id="player1Name" text="Player 1"/>
+                        <padding>
+                            <Insets left="90.0" right="16.0"/>
+                        </padding>
+                    </StackPane>
+                    <VBox.margin>
+                        <Insets top="15.0"/>
+                    </VBox.margin>
+                </StackPane>
+                <StackPane fx:id="player2" visible="false">
+                    <ImageView>
+                        <Image url="@../assets/graphics/playerTab.png"/>
+                    </ImageView>
+                    <StackPane maxHeight="80.0" maxWidth="420.0">
+                        <Text fx:id="player2Name" text="Player 2"/>
+                        <padding>
+                            <Insets left="90.0" right="16.0"/>
+                        </padding>
+                    </StackPane>
+                    <VBox.margin>
+                        <Insets top="-7.0"/>
+                    </VBox.margin>
+                </StackPane>
+                <StackPane fx:id="player3" visible="false">
+                    <ImageView>
+                        <Image url="@../assets/graphics/playerTab.png"/>
+                    </ImageView>
+                    <StackPane maxHeight="80.0" maxWidth="420.0">
+                        <Text fx:id="player3Name" text="Player 3"/>
+                        <padding>
+                            <Insets left="90.0" right="16.0"/>
+                        </padding>
+                    </StackPane>
+                    <VBox.margin>
+                        <Insets top="-7.0"/>
+                    </VBox.margin>
+                </StackPane>
+            </VBox>
+            <VBox.margin>
+                <Insets top="30.0"/>
+            </VBox.margin>
+        </StackPane>
+        <StackPane>
+            <ImageView fitHeight="65.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../assets/buttons/btn_gray.png"/>
+            </ImageView>
+            <ImageView fx:id="confirmButton" fitHeight="65.0" onMousePressed="#confirmPressed"
+                       onMouseReleased="#confirmReleased" pickOnBounds="true" preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_red.png"/>
+            </ImageView>
+            <ImageView fx:id="confirmButton_p" fitHeight="65.0" mouseTransparent="true" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_red_pressed.png"/>
+            </ImageView>
+            <Text fx:id="confirmText" mouseTransparent="true" text="Waiting...">
+                <StackPane.margin>
+                    <Insets top="-12.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="confirmText_p" mouseTransparent="true" text="Confirm" visible="false">
+                <StackPane.margin>
+                    <Insets top="-6.0"/>
+                </StackPane.margin>
+            </Text>
+            <VBox.margin>
+                <Insets top="20.0"/>
+            </VBox.margin>
+        </StackPane>
+    </VBox>
 </AnchorPane>

@@ -60,12 +60,13 @@ public class ArtemisController extends GodController {
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
         activeWorker = worker;
         startingPosition = worker.getPosition();
+        beginningCell = startingPosition;
         secondMove = false;
-        beginningCell = activeWorker.getPosition();
         movePhase();
         if (!checkWin().equals("nope")) return checkWin();
         secondMove = client.chooseYesNo("Do you want to move again?");
         if (secondMove) {
+            startingPosition = worker.getPosition();
             movePhase();
             if (!checkWin().equals("nope")) return checkWin();
         }

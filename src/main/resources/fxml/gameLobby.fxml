@@ -1,63 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Text?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" pickOnBounds="true" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameLobby.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.GameLobbyController">
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@gameLobby.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.GameLobbyController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_bg.png" />
+        <Image url="@../assets/graphics/mainMenu_bg.png"/>
     </ImageView>
-    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_frame.png" />
+    <ImageView AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@../assets/graphics/nicknameTab.png"/>
     </ImageView>
-    <StackPane layoutY="310.0" prefHeight="100.0" prefWidth="1280.0">
-        <ImageView fx:id="newGameButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#newGamePressed" onMouseReleased="#newGameReleased" pickOnBounds="true" preserveRatio="true">
-            <StackPane.margin>
-                <Insets left="-300.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_red.png" />
-        </ImageView>
-        <ImageView fx:id="newGameButtonPressed" fitHeight="150.0" fitWidth="200.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <StackPane.margin>
-                <Insets left="-300.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_red_pressed.png" />
-        </ImageView>
-        <ImageView fx:id="joinButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#joinPressed" onMouseReleased="#joinReleased" pickOnBounds="true" preserveRatio="true">
-            <StackPane.margin>
-                <Insets right="-300.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_green.png" />
-        </ImageView>
-        <ImageView fx:id="joinButtonPressed" fitHeight="150.0" fitWidth="200.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <StackPane.margin>
-                <Insets right="-300.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_green_pressed.png" />
-        </ImageView>
-        <Text fx:id="newGamePressed" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="New Game" visible="false">
-            <StackPane.margin>
-                <Insets left="-300.0" top="-1.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="newGame" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="New Game">
-            <StackPane.margin>
-                <Insets left="-300.0" top="-6.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="joinGamePressed" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Join Game" visible="false">
-            <StackPane.margin>
-                <Insets right="-300.0" top="-1.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="joinGame" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Join Game">
-            <StackPane.margin>
-                <Insets right="-300.0" top="-6.0" />
-            </StackPane.margin>
+    <StackPane layoutX="100.0" layoutY="30.0" prefWidth="250.0" prefHeight="40.0" alignment="CENTER_LEFT">
+        <Text fx:id="nicknameTab">
         </Text>
     </StackPane>
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <StackPane>
+            <ImageView fx:id="newGameButton" onMousePressed="#newGamePressed"
+                       onMouseReleased="#newGameReleased" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../assets/buttons/btn_red.png"/>
+            </ImageView>
+            <ImageView fx:id="newGameButton_p" mouseTransparent="true" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_red_pressed.png"/>
+            </ImageView>
+            <Text fx:id="newGameText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="New Game">
+                <StackPane.margin>
+                    <Insets top="-16.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="newGameText_p" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="New Game"
+                  visible="false">
+                <StackPane.margin>
+                    <Insets top="-6.0"/>
+                </StackPane.margin>
+            </Text>
+        </StackPane>
+        <StackPane>
+            <ImageView fx:id="joinGameButton" onMousePressed="#joinPressed"
+                       onMouseReleased="#joinReleased" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../assets/buttons/btn_green.png"/>
+            </ImageView>
+            <ImageView fx:id="joinGameButton_p" mouseTransparent="true" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_green_pressed.png"/>
+            </ImageView>
+            <Text fx:id="joinGameText" mouseTransparent="true" text="Join Game">
+                <StackPane.margin>
+                    <Insets top="-16.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="joinGameText_p" mouseTransparent="true" text="Join Game" visible="false">
+                <StackPane.margin>
+                    <Insets top="-6.0"/>
+                </StackPane.margin>
+            </Text>
+            <VBox.margin>
+                <Insets top="40.0"/>
+            </VBox.margin>
+        </StackPane>
+    </VBox>
 </AnchorPane>

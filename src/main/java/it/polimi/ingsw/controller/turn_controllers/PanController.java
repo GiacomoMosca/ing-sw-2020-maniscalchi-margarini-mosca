@@ -39,7 +39,7 @@ public class PanController extends GodController {
      */
     @Override
     public String checkWin() {
-        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() == 1))
+        if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() >= 1))
             return "winConditionAchieved";
         if (startingPosition.getBuildLevel() - activeWorker.getPosition().getBuildLevel() >= 2)
             return "godConditionAchieved";

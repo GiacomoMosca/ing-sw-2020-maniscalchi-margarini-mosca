@@ -3,22 +3,33 @@
     src: url("/assets/fonts/LillyBelle.ttf");
 }
 
-/* Text */
-
-#buttonText, #buttonPressedText {
-    -fx-font: 18px LillyBelle;
-    -fx-fill: white;
-    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+@font-face {
+    font-family: "Minion Pro";
+    src: url('../assets/fonts/MinionPro-Bold.otf');
 }
 
-#text1, #text2 {
-    -fx-font: 25px LillyBelle;
+/* Text */
+
+#titleText {
+    -fx-font: 45px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, #0d3c61, 4, 1.0, 0, 0);
+}
+
+#nicknameTab {
+    -fx-font: 30px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 5, 0.2, 0, 0);
+}
+
+#gameNameText, #playersText {
+    -fx-font: 35px "Minion Pro";
     -fx-fill: #664d39;
     -fx-effect: innershadow(three-pass-box, black, 4, 0.2, 0, 0);
 }
 
-#centerText {
-    -fx-font: 50px LillyBelle;
-    -fx-fill: #664d39;
-    -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
+#confirmText, #confirmText_p {
+    -fx-font: 30px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }

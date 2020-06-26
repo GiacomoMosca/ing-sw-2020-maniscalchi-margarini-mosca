@@ -1,53 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@login.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.LoginController">
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@login.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.LoginController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_bg.png" />
+        <Image url="@../assets/graphics/mainMenu_bg.png"/>
     </ImageView>
-    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_frame.png" />
-    </ImageView>
-    <TextField fx:id="textField" layoutX="560.0" layoutY="345.0" promptText="Server IP">
-        <font>
-            <Font size="14.0" />
-        </font>
-    </TextField>
-    <StackPane layoutX="750.0" layoutY="335.0" prefHeight="50.0" prefWidth="100.0">
-        <ImageView fx:id="connectButton" fitHeight="150.0" fitWidth="130.0" onMousePressed="#pressed" onMouseReleased="#connectReleased" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_green.png" />
-        </ImageView>
-      <ImageView fx:id="grayConnectButton" disable="true" fitHeight="150.0" fitWidth="130.0" layoutX="10.0" layoutY="19.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-         <image>
-            <Image url="@../assets/buttons/btn_gray.png" />
-         </image>
-      </ImageView>
-        <ImageView fx:id="connectButtonPressed" fitHeight="150.0" fitWidth="130.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_green_pressed.png" />
-        </ImageView>
-        <Text fx:id="connectText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Connect">
-            <StackPane.margin>
-                <Insets top="-5.0" />
-            </StackPane.margin>
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Text fx:id="titleText" text="Server IP address:"/>
+        <TextField fx:id="textField" alignment="CENTER" maxWidth="400.0" promptText="Server IP">
+            <font>
+                <Font size="20.0"/>
+            </font>
+            <VBox.margin>
+                <Insets top="20.0"/>
+            </VBox.margin>
+        </TextField>
+        <Text fx:id="error" fill="RED" mouseTransparent="true" text="Error" visible="false">
+            <font>
+                <Font size="18.0"/>
+            </font>
+            <VBox.margin>
+                <Insets top="10.0"/>
+            </VBox.margin>
         </Text>
-        <Text fx:id="connectTextPressed" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Connect" visible="false">
-            <StackPane.margin>
-                <Insets top="-2.0" />
-            </StackPane.margin>
-        </Text>
-    </StackPane>
-    <Text fx:id="request" layoutX="333.0" layoutY="367.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server IP address:" />
-   <Text fx:id="error" fill="RED" layoutX="566.0" layoutY="397.0" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Error" visible="false">
-      <font>
-         <Font size="13.0" />
-      </font>
-   </Text>
+        <StackPane>
+            <ImageView fx:id="connectButton" fitHeight="65.0" onMousePressed="#pressed"
+                       onMouseReleased="#connectReleased" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../assets/buttons/btn_blue.png"/>
+            </ImageView>
+            <ImageView fx:id="grayConnectButton" fitHeight="65.0" disable="true" mouseTransparent="true"
+                       pickOnBounds="true" preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_gray.png"/>
+            </ImageView>
+            <ImageView fx:id="connectButton_p" fitHeight="65.0" mouseTransparent="true" pickOnBounds="true"
+                       preserveRatio="true" visible="false">
+                <Image url="@../assets/buttons/btn_blue_pressed.png"/>
+            </ImageView>
+            <Text fx:id="connectText" mouseTransparent="true" text="Connect">
+                <StackPane.margin>
+                    <Insets top="-12.0"/>
+                </StackPane.margin>
+            </Text>
+            <Text fx:id="connectText_p" mouseTransparent="true" text="Connect" visible="false">
+                <StackPane.margin>
+                    <Insets top="-6.0"/>
+                </StackPane.margin>
+            </Text>
+            <VBox.margin>
+                <Insets top="20.0"/>
+            </VBox.margin>
+        </StackPane>
+    </VBox>
 </AnchorPane>
