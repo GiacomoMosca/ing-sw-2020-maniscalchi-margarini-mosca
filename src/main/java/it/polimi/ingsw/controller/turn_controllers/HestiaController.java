@@ -48,9 +48,9 @@ public class HestiaController extends GodController {
      * Handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimeter space).
      *
      * @return "winConditionAchieved" if the player won, "next" if the game goes on, "outOfBuilds" if the Worker can't build
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {

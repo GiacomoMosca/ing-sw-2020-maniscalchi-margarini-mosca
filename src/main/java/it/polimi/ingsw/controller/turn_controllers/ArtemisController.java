@@ -79,8 +79,8 @@ public class ArtemisController extends GodController {
      * Handles the moving phase of the turn. Calls displayMove with a non-null Card parameter if the Artemis God Power was used.
      *
      * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {

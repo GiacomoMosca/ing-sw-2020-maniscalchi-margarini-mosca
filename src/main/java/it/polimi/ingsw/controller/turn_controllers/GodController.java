@@ -115,9 +115,9 @@ public abstract class GodController {
     /**
      * Handles the moving phase of the turn.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -135,9 +135,9 @@ public abstract class GodController {
     /**
      * Handles the building phase of the turn.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
@@ -252,7 +252,7 @@ public abstract class GodController {
      * @param startPosition the starting position of a move
      * @param endPosition   the final position of a move
      * @param godPower      the God Power Card who allowed this move, eventually null in a basic move
-     * @throws IOExceptionFromController
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     protected void displayMove(CellView startPosition, CellView endPosition, Card godPower) throws IOExceptionFromController {
         HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
@@ -265,11 +265,11 @@ public abstract class GodController {
      * Calls the broadcastMove method so that this double move can be properly displayed on screen.
      *
      * @param startPosition1 the starting position of a move for the first player
-     * @param endPosition1 the final position of a move for the first player
+     * @param endPosition1   the final position of a move for the first player
      * @param startPosition2 the starting position of a move for the second player
-     * @param endPosition2 the final position of a move for the second player
-     * @param godPower the God Power Card who allowed this move
-     * @throws IOExceptionFromController
+     * @param endPosition2   the final position of a move for the second player
+     * @param godPower       the God Power Card who allowed this move
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     protected void displayMove(CellView startPosition1, CellView endPosition1, CellView startPosition2, CellView endPosition2, Card godPower) throws IOExceptionFromController {
         HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
@@ -282,8 +282,8 @@ public abstract class GodController {
      * Calls the broadcastBuild method so that this build can properly be displayed on screen.
      *
      * @param buildPosition the position of the build
-     * @param godPower the God Card that eventually allowed this build
-     * @throws IOExceptionFromController
+     * @param godPower      the God Card that eventually allowed this build
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     protected void displayBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
         gameController.broadcastBuild(buildPosition, godPower);

@@ -47,9 +47,9 @@ public class MinotaurController extends GodController {
      * Handles the moving phase of the turn, allowing pushing away opponent Workers. If the Player chooses to move to a cell occupied by an opponent Worker, checks if it is unoccupied: if it's free, handles the pushing away of the opponent worker.
      * Calls displayMove with a non-null Card parameter if the Minotaur God Power was used.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
@@ -91,7 +91,7 @@ public class MinotaurController extends GodController {
      * Returns all the Cells where a Worker can move, with the only restrictions due to the general rules (other workers, domes, building levels). Also allows the Worker to move to cells occupied by opponents (if they can be pushed away).
      *
      * @param workerPosition the position of the Worker
-     * @return               an ArrayList containing all the Cells where a Worker can move
+     * @return an ArrayList containing all the Cells where a Worker can move
      */
     @Override
     public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {

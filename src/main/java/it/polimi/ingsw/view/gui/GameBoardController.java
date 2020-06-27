@@ -20,10 +20,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//strano messaggio di giocatore eliminato che looppa
-//cose un po' lente: schermate vittoria/sconfitta e animazione nuova God
-
-
 public class GameBoardController {
 
     private final double CELLS_OFFSET = 96.4;
@@ -137,7 +133,13 @@ public class GameBoardController {
 
     public void initInfoPanels() {
         firstPlayerID.setText(playersId.get(0));
+        firstPlayerID.setVisible(true);
+        playerColor_right_red.setVisible(true);
+        playerColor_left_red.setVisible(true);
         secondPlayerID.setText(playersId.get(1));
+        secondPlayerID.setVisible(true);
+        playerColor_left_green.setVisible(true);
+        playerColor_right_green.setVisible(true);
 
         playerHighlights.add(playerHighlight1);
         playerHighlights.add(playerHighlight2);
@@ -173,7 +175,7 @@ public class GameBoardController {
         opaquePanelForThisPlayer.put(playersId.get(1), opaquePanel2);
         infoScreen.setVisible(false);
         winLossScreen.setVisible(false);
-
+        infoBox.setVisible(true);
 
         if (game.getPlayers().size() == 2) {
             playerINFO_2P.setVisible(true);
@@ -181,8 +183,11 @@ public class GameBoardController {
         } else {
             playerINFO_3P.setVisible(true);
             p3.setVisible(true);
+            playerColor_left_blue.setVisible(true);
+            playerColor_right_blue.setVisible(true);
             playerHighlights.add(playerHighlight3);
             thirdPlayerID.setText(playersId.get(2));
+            thirdPlayerID.setVisible(true);
             playerIcon3.setImage(new Image("/assets/gods/playerIcon/icon_" + godCards.get(2).getGod().toLowerCase() + ".png"));
             Tooltip.install(playerIcon3, new Tooltip(
                     "★ " + godCards.get(2).getGod() + "\n" +
@@ -525,7 +530,7 @@ public class GameBoardController {
                 lossReason = player.getId() + "'s worker achieved his god's win condition!";
                 break;
             case "winConditionAchieved":
-                lossReason = player.getId() + "'s worker reached the top level!";         //lunghezza max nome
+                lossReason = player.getId() + "'s worker reached the top level!";
                 break;
             default:
                 break;

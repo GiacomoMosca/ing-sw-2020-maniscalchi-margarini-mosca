@@ -49,9 +49,9 @@ public class MedusaController extends GodController {
      *
      * @param worker the active Worker
      * @return "winConditionAchieved" if the player won, "next" if the game goes on, "outOfBuilds" if the player can't build
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {

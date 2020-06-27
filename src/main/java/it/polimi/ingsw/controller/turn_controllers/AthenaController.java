@@ -45,9 +45,9 @@ public class AthenaController extends GodController {
      * Handles the moving phase of the turn, adding a Modifier if the Worker moved up on this turn.
      * Calls displayMove with a non-null Card parameter if the Athena God Power was used.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {

@@ -18,10 +18,11 @@ public class PlayerController {
     private GodController godController;
 
     /**
-     * PlayerController constructor. Associates the Player and his VirtualView.
+     * PlayerController constructor.
+     * Associates the Player and his VirtualView to their PlayerController.
      *
-     * @param player
-     * @param client
+     * @param player the Player associated with this PlayerController
+     * @param client the VirtualView associated with this PlayerController
      * @param game   the GameController for this Game
      */
     public PlayerController(Player player, VirtualView client, GameController game) {
@@ -74,6 +75,7 @@ public class PlayerController {
      * In the first case, the active Player will be eliminated. In the second and third cases the player will play his turn.
      *
      * @return "outOfMoves" if all the active Player's Workers can't move, "godConditionAchieved" if the Player won, "next" if the game goes on
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public String playTurn() throws IOExceptionFromController {
         Worker activeWorker;

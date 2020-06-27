@@ -45,13 +45,12 @@ public class DemeterController extends GodController {
      * Handles the building phase of the turn, and eventually allows building one additional time, but not on the same space.
      * Calls displayBuild with a non-null Card parameter if the Demeter God Power was used.
      *
-     * @throws NullPointerException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void buildPhase() throws NullPointerException, IOException, InterruptedException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

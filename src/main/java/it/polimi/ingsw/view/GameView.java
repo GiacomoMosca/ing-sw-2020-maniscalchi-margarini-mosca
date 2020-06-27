@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.players.Player;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The GameView class represents a view of the Game class.
+ * It implements serializable so that it can be serialized in the messages that client and server exchange: in this way, the client won't have access to the Model objects.
+ */
 public class GameView implements Serializable {
 
     private final String name;
@@ -16,6 +20,12 @@ public class GameView implements Serializable {
     private final CellView[][] board;
     private final ArrayList<CardView> activeModifiers;
 
+    /**
+     * GameView constructor.
+     * GameView attributes are set to the values of the same attributes of the Game Object received as an argument.
+     *
+     * @param game the Game represented by this GameView
+     */
     public GameView(Game game) {
         name = game.getName();
         playerNum = game.getPlayerNum();
@@ -35,6 +45,17 @@ public class GameView implements Serializable {
         }
     }
 
+    /**
+     * GameView constructor.
+     * GameView attributes are set to the values received as arguments.
+     *
+     * @param name         the name of the Game represented by this GameView
+     * @param playerNum    the number of the Players in the Game represented by this GameView
+     * @param players      the PlayerViews of the Players involved in the Game represented by this GameView
+     * @param activePlayer the number of the active Player
+     * @param board        the Array of CellViews representing the Board in the Game represented by this GameView
+     * @param modifiers    the ArrayList of CardViews representing the modifiers in the  Game represented by this GameView
+     */
     public GameView(String name, int playerNum, ArrayList<PlayerView> players, int activePlayer, CellView[][] board, ArrayList<CardView> modifiers) {
         this.name = name;
         this.playerNum = playerNum;
@@ -44,33 +65,49 @@ public class GameView implements Serializable {
         this.activeModifiers = modifiers;
     }
 
+    /**
+     * @return the name of the Game represented by this GameView
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the number of the Players in the Game represented by this GameView
+     */
     public int getPlayerNum() {
         return playerNum;
     }
 
+    /**
+     * @return an ArrayList containing the PlayerViews of the Players involved in the Game represented by this GameView
+     */
     public ArrayList<PlayerView> getPlayers() {
         return new ArrayList<PlayerView>(players);
     }
 
+    /**
+     * @return the number of the active Player in the Game represented by this GameView
+     */
     public int getActivePlayer() {
         return activePlayer;
     }
 
     /**
-     * @param x the x-coordinate of the requested cell
-     * @param y the y-coordinate of the requested cell
-     * @return the requested cell
-     * @throws ArrayIndexOutOfBoundsException when the requested coordinates don't identify a cell of the Board
+     * @param x the x-coordinate of the requested Cell
+     * @param y the y-coordinate of the requested Cell
+     * @return the CellView representing the requested Cell
+     * @throws ArrayIndexOutOfBoundsException
      */
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
         return board[y][x];
     }
 
+    /**
+     * @param cell the CellView which the x and y-coordinates will be equals to
+     * @throws ArrayIndexOutOfBoundsException
+     */
     public void setCell(CellView cell) throws ArrayIndexOutOfBoundsException {
         int x = cell.getPosX();
         int y = cell.getPosY();
@@ -78,6 +115,9 @@ public class GameView implements Serializable {
         board[x][y] = cell;
     }
 
+    /**
+     * @return an ArrayList containing all the CellViews representing the Board in the Game
+     */
     public ArrayList<CellView> getAllCells() {
         ArrayList<CellView> allCells = new ArrayList<CellView>();
         for (int i = 0; i < 5; i++)
@@ -86,6 +126,9 @@ public class GameView implements Serializable {
         return allCells;
     }
 
+    /**
+     * @return an ArrayList containing the CardViews representing the active God Power Cards in the Game
+     */
     public ArrayList<CardView> getActiveModifiers() {
         return new ArrayList<CardView>(activeModifiers);
     }
