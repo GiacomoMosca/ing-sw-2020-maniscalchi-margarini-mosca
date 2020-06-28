@@ -16,7 +16,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+/**
+ * GUI class allows the client to interact with the server.
+ */
 public class GUI implements UI {
 
     private final AtomicBoolean running;
@@ -31,6 +33,10 @@ public class GUI implements UI {
     private String id;
     private GameView currentGame;
 
+    /**
+     * GUI constructor.
+     * Creates a new GUIManager Object.
+     */
     public GUI() {
         this.running = new AtomicBoolean();
         this.manager = new GUIManager();
@@ -38,9 +44,17 @@ public class GUI implements UI {
         this.id = null;
     }
 
+    /**
+     * Allows GUI to run until the Game is over.
+     * Handles the connection of the client to the server and opens a communication channel between them.
+     * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
+     * Creates a messageQueue where, thanks to the GUIManager, the client's input will be offered.
+     * Creates a serverQueue where the messages from the server will be put after deserialization.
+     * Starts two threads which respectively allows the GUIManager to listen to the client input, and the GUI to listen to the server messages.
+     * Everytime a message from the server is put on the serverQueue, it is parsed to the corresponding action.
+     */
     @Override
     public void run() {
-
         connected = false;
         running.set(true);
         messageQueue = new SynchronousQueue<Object>();
@@ -103,6 +117,11 @@ public class GUI implements UI {
         stop();
     }
 
+    /**
+     * Continuously listens to the server.
+     * When deserializing a message, puts it on the serverQueue so that it can be processed.
+     * If the deserialized message is a Ping from the server, replies with a Pong.
+     */
     public void serverListener() {
         ToClientMessage serverMessage;
         while (running.get()) {
@@ -124,10 +143,16 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Calls the stop method.
+     */
     private void quit() {
         stop();
     }
 
+    /**
+     * If the Game is over, closes the communication channel with the server.
+     */
     public synchronized void stop() {
         if (!running.compareAndSet(true, false)) return;
         try {
@@ -139,6 +164,13 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Allows receiving from the client the IP of the server he wants to connect to.
+     * Calls the getServerIp method on the GUIManager so that it will ask the player to insert the Server IP Address.
+     * The GUIManager will put the client's input on the messageQueue and
+     *
+     * @return the String written by the client
+     */
     public String getServerIp() {
         while (!manager.setBusy(true)) {
             try {
@@ -151,12 +183,24 @@ public class GUI implements UI {
         return getString();
     }
 
+    /**
+     * Allows parsing a message received from the server to the corresponding action to do on the client.
+     *
+     * @param message the ToClientMessage to parse
+     */
     public void parseMessage(ToClientMessage message) {
         message.performAction(this);
     }
 
     // get from queue
 
+    /**
+     * Takes a message previously put on the messageQueue by the GUIManager.
+     * If no exception occurs in taking the message and casting it to a Boolean, that Boolean is returned.
+     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+     *
+     * @return the Boolean taken from the messageQueue
+     */
     public boolean getBoolean() {
         boolean val = false;
         try {
@@ -167,6 +211,13 @@ public class GUI implements UI {
         return val;
     }
 
+    /**
+     * Takes a message previously put on the messageQueue by the GUIManager.
+     * If no exception occurs in taking the message and casting it to an Integer, that Integer is returned.
+     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+     *
+     * @return the Integer taken from the messageQueue
+     */
     public int getInteger() {
         int val = -1;
         try {
@@ -176,6 +227,14 @@ public class GUI implements UI {
         }
         return val;
     }
+
+    /**
+     * Takes a message previously put on the messageQueue by the GUIManager.
+     * If no exception occurs in taking the message and casting it to an ArrayList of Integer, that ArrayList it is returned.
+     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+     *
+     * @return the ArrayList of Integers taken from the messageQueue
+     */
 
     public ArrayList<Integer> getIntegers() {
         ArrayList<Integer> val = null;
@@ -187,6 +246,13 @@ public class GUI implements UI {
         return val;
     }
 
+    /**
+     * Takes a message previously put on the messageQueue by the GUIManager.
+     * If no exception occurs in taking the message and casting it to a String, that String it is returned.
+     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+     *
+     * @return the String taken from the messageQueue
+     */
     public String getString() {
         String val = null;
         try {
@@ -199,6 +265,10 @@ public class GUI implements UI {
 
     // send to server
 
+    /**
+     * Creates a new message (Pong Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+     * If an IOException occurs during serialization, the client is notified the server disconnected.
+     */
     public void pong() {
         try {
             output.writeObject(new Pong(id));
@@ -208,6 +278,12 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Creates a new message (SendBoolean Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+     * If an IOException occurs during serialization, the client is notified the server disconnected.
+     *
+     * @param body the boolean to send to the server in the SendBoolean Message
+     */
     public void sendBoolean(boolean body) {
         try {
             output.writeObject(new SendBoolean(id, body));
@@ -217,6 +293,12 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Creates a new message (SendInteger Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+     * If an IOException occurs during serialization, the client is notified the server disconnected.
+     *
+     * @param body the int to send to the server in the SendInteger Message
+     */
     public void sendInteger(int body) {
         try {
             output.writeObject(new SendInteger(id, body));
@@ -226,6 +308,12 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Creates a new message (SendIntegers Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+     * If an IOException occurs during serialization, the client is notified the server disconnected.
+     *
+     * @param body the ArrayList of Integers to send to the server in the SendIntegers Message
+     */
     public void sendIntegers(ArrayList<Integer> body) {
         try {
             output.writeObject(new SendIntegers(id, body));
@@ -235,6 +323,12 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Creates a new message (SendString Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+     * If an IOException occurs during serialization, the client is notified the server disconnected.
+     *
+     * @param body the String to send to the server in the SendString Message
+     */
     public void sendString(String body) {
         try {
             output.writeObject(new SendString(id, body));
@@ -246,17 +340,39 @@ public class GUI implements UI {
 
     // message functions
 
+    /**
+     * Allows the Player to choose some Cards between those available.
+     * He could be asked to choose the 2 or 3 Cards to be used in a 2 or 3-players Game, or his own Card for the Game.
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param possibleCards an ArrayList containing all the available Cards
+     * @param num           the number of Cards to choose
+     * @param pickedCards   an ArrayList containing all the already picked Cards
+     */
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
         manager.chooseCards(possibleCards, num, pickedCards);
         sendIntegers(getIntegers());
     }
 
+    /**
+     * Allows the Player to choose a Game name (max 12 characters and not duplicated).
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param taken if the previously chosen Game name is already taken, false otherwise
+     */
     public void chooseGameName(boolean taken) {
         manager.chooseGameName(taken);
         String gameRoom = getString();
         sendString(gameRoom);
     }
 
+    /**
+     * Allows the Player to choose a Game room.
+     * The available Game rooms are displayed on screen; the Player can go back to start a new Game, refresh the list or choose a Game room.
+     * Thanks to the GUIManager, the input provided by the client is processed and sent to the Server.
+     *
+     * @param gameRooms an ArrayList of GameViews containing all the Game Rooms
+     */
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
         manager.chooseGameRoom(gameRooms);
         int choice = getInteger();
@@ -274,6 +390,12 @@ public class GUI implements UI {
         sendString(room);
     }
 
+    /**
+     * Allows the Player to choose a nickname (max 12 characters and not duplicated).
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param taken true if the previously chosen nickname is already taken, false otherwise
+     */
     public void chooseNickname(boolean taken) {
         manager.chooseNickname(taken);
         id = getString();
@@ -281,39 +403,80 @@ public class GUI implements UI {
         sendString(null);
     }
 
+    /**
+     * Allows the Player to choose the number of Players (2 or 3) for the Game he is creating.
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     */
     public void choosePlayersNumber() {
         manager.choosePlayersNumber();
         int num = getInteger();
         sendInteger(num);
     }
 
+    /**
+     * Allows the Player to choose a position between those available.
+     * Thanks to the GUIManager, the question and the reason of the choice are displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param positions an ArrayList containing CellViews representing all the available positions
+     * @param desc      the reason of the choice
+     */
     public void choosePosition(ArrayList<CellView> positions, String desc) {
         manager.choosePosition(positions, desc);
         sendInteger(getInteger());
     }
 
+    /**
+     * Allows the Player to choose the starting Player.
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param players an ArrayList of PlayerViews representing all the Players involved in the Game
+     */
     public void chooseStartingPlayer(ArrayList<PlayerView> players) {
         manager.chooseStartingPlayer(players);
         sendInteger(getInteger());
     }
 
+    /**
+     * Allows the Player to choose between starting a new Game or joining an existing one.
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     */
     public void chooseStartJoin() {
         manager.chooseStartJoin();
         int num = getInteger();
         sendBoolean(num == 1);
     }
 
+    /**
+     * Allows the Player to answer to a "yes or no question".
+     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+     *
+     * @param query the "yes or no question" asked to the Player
+     */
     public void chooseYesNo(String query) {
         manager.chooseYesNo(query);
         sendBoolean(getBoolean());
 
     }
 
+    /**
+     * Thanks to the GUIManager, allows displaying the build occurred during a turn.
+     * Updates the current GameView to save the new state of the Game.
+     *
+     * @param buildPosition the CellView representing the position of the building
+     * @param godCard       the CardView representing the God Card which eventually allowed this build
+     */
     public void displayBuild(CellView buildPosition, CardView godCard) {
         manager.displayBuild(buildPosition, godCard);
         currentGame.setCell(buildPosition);
     }
 
+    /**
+     * Thanks to the GUIManager, allows displaying an information about the Game.
+     * Updates the current GameView to save the new state of the Game.
+     *
+     * @param game the GameView representing the current state of the Game
+     * @param desc the information
+     */
     public void displayGameInfo(GameView game, String desc) {
         manager.displayGameInfo(game, desc);
         currentGame = game;
@@ -324,6 +487,13 @@ public class GUI implements UI {
         System.out.println("\n" + message + "(NON STAMPARE)\n");
     }
 
+    /**
+     * Thanks to the GUIManager, allows displaying the move occurred during a turn.
+     * Updates the current GameView to save the new state of the Game.
+     *
+     * @param moves   an HashMap containing pairs of (starting position, final position) for each worker who moved or was forced to move
+     * @param godCard the CardView representing the God Card which eventually allowed this move
+     */
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
         manager.displayMove(moves, godCard);
         moves.forEach((startPosition, endPosition) -> {
@@ -338,27 +508,50 @@ public class GUI implements UI {
         });
     }
 
+    /**
+     * Thanks to the GUIManager, allows displaying the starting position of a Worker.
+     * Updates the current GameView to save the new state of the Game.
+     *
+     * @param position the starting position of a Worker
+     */
     public void displayPlaceWorker(CellView position) {
         manager.displayPlaceWorker(position);
         currentGame.setCell(position);
     }
 
+    /**
+     * Thanks to the GUIManager, allows notifying the disconnection of a Player, by showing a message on screen.
+     *
+     * @param player the PlayerView representing the Player who disconnected
+     */
     public void notifyDisconnection(PlayerView player) {
         manager.notifyDisconnection(player);
         System.out.println("\n" + player.getId() + " has disconnected. ");
     }
 
+    /**
+     * Thanks to the GUIManager, allows notifying the Game is starting, by showing a message on screen.
+     */
     public void notifyGameStarting() {
         manager.notifyGameStarting();
         getBoolean();
         sendBoolean(true);
     }
 
+    /**
+     * Thanks to the GUIManager, allows notifying the Game is over, by showing a message on screen.
+     */
     public void notifyGameOver() {
         manager.notifyGameOver();
         System.out.println("\nGame over! \n\n\n\n\n");
     }
 
+    /**
+     * Thanks to the GUIManager, allows notifying a Player that he lost, by showing a message on screen reporting his loss and the reason of it.
+     *
+     * @param reason the reason of the loss
+     * @param winner the PlayerView representing the Player who eventually won, can be null
+     */
     public void notifyLoss(String reason, PlayerView winner) {
         manager.notifyLoss(reason, winner);
         StringBuilder string = new StringBuilder();
@@ -380,6 +573,11 @@ public class GUI implements UI {
         System.out.println(string);
     }
 
+    /**
+     * Thanks to the GUIManager, allows notifying a Player that he won, by showing on screen a message reporting his victory and the reason of it.
+     *
+     * @param reason the reason of the victory
+     */
     public void notifyWin(String reason) {
         manager.notifyWin(reason);
         //manager.setBusy(false);

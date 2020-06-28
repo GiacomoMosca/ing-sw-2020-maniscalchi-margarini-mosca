@@ -20,6 +20,10 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * GameBoardController class handles the interaction between client and server during the Game.
+ * Allows displaying the current state of the Game Board and all the notifications from the beginning until the end of the Game.
+ */
 public class GameBoardController {
 
     private final double CELLS_OFFSET = 96.4;
@@ -73,10 +77,20 @@ public class GameBoardController {
     private HashMap<String, ImageView> fullImageForThisGod;
     private HashMap<String, StackPane> opaquePanelForThisPlayer;
 
+    /**
+     * @param manager the GUIManager to set the GameBoardController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
+    /**
+     * Creates all the data structure that are needed to handle the displaying of the Game Board.
+     * Saves the nicknames of the players that are participating to the Game and their God Cards.
+     * Calls three methods that will respectively handle the initialization of the Workers, the initialization of the buildings and the initialization of the information panels surrounding the Board.
+     *
+     * @param game the GameView representing the current state of the Game
+     */
     public void initialize(GameView game) {
         Platform.runLater(() -> {
             this.game = game;
@@ -101,6 +115,12 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Handles the initialization of all the ImageViews used to represent red, green and blue workers.
+     * An ArrayList of two ImageViews is used for each color. This ArrayList is put in an HashMap (which key is the Worker's color) to simplify the access to the ImageViews.
+     * If setting up for a 2-players Game, only red and green Workers are added.
+     * If setting up for a 3-players Game, blue Workers are added too.
+     */
     public void initWorkers() {
         ArrayList<ImageView> redWorkers = new ArrayList<>();
         ArrayList<ImageView> greenWorkers = new ArrayList<>();
@@ -120,6 +140,10 @@ public class GameBoardController {
         }
     }
 
+    /**
+     * Handles the initialization of all the ImageViews used to highlight the Board cells when the Player is asked to make a choice.
+     * An ImageView representing the highlight is added over each Board Cell and will be set as visible when needed.
+     */
     public void initBuildings() {
         highlightPane.getChildren().clear();
         for (CellView cell : game.getAllCells()) {
@@ -131,6 +155,18 @@ public class GameBoardController {
         }
     }
 
+    /**
+     * Handles the initialization of all the information panels surrounding the Board, setting as visible:
+     * <p><ul>
+     * <li> Players' nicknames and colors
+     * <li> God Cards icons
+     * </ul></p>
+     * Also prepares
+     * <p><ul>
+     * <li> full ImageViews of the God Cards that will be displayed when a God Power is used
+     * <li> opaque panels to be put on the eliminated player in a 3-players game
+     * </ul></p>
+     */
     public void initInfoPanels() {
         firstPlayerID.setText(playersId.get(0));
         firstPlayerID.setVisible(true);
@@ -209,9 +245,15 @@ public class GameBoardController {
                 sendStartingPlayer(playerHighlights.indexOf(highlight));
             });
         }
-
     }
 
+    /**
+     * Allows displaying the received information on screen or on the Log.
+     * If the information tells about the elimination of a player in a 3-players Game, it is handled.
+     *
+     * @param game the GameView representing the current state of the Game
+     * @param desc the information to display
+     */
     public void displayGameInfo(GameView game, String desc) {
         String text = null;
         switch (desc) {
@@ -251,6 +293,14 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Handles the elimination of a Player in a 3-players Game, removing his Workers from the Board and showing an opaque panel on his nickname.
+     * If the Player receiving the message is the eliminated one, he is notified of his loss.
+     * Otherwise, all the other Players are notified that a player was eliminated.
+     *
+     * @param game the GameView representing the current state of the Game
+     * @param desc the reason the Player was eliminated
+     */
     private void eliminatePlayer(GameView game, String desc) {
         PlayerView eliminatedPlayer = null;
         ArrayList<ImageView> workersToRemove = new ArrayList<>();
@@ -291,10 +341,14 @@ public class GameBoardController {
             workersToRemove.get(1).setVisible(false);
             continueButton.setVisible(true);
             continueText.setVisible(true);
-
         });
     }
 
+    /**
+     * Allows the Player to choose the starting Player.
+     * Sets the Player highlight to visible and waits for his choice.
+     * , when the Player clicks on the one who will start, provides to notice his choice.
+     */
     public void chooseStartingPlayer() {
         Platform.runLater(() -> {
             infoBox.setText("Choose the starting player");
@@ -304,6 +358,11 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * When a Player is asked to choose the starting Player, this method provides sending his choice to the GUIManager, which will process it and send it to the server.
+     *
+     * @param value the Integer corresponding to the starting player
+     */
     public void sendStartingPlayer(Integer value) {
         Platform.runLater(() -> {
             for (ImageView highlight : playerHighlights)
@@ -313,6 +372,13 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Allows choosing a position between all those positions available.
+     * The available positions are highlighted and the reason of the choice is written in the textBox.
+     *
+     * @param positions an ArrayList containing CellViews representing all the available positions
+     * @param desc      the reason of the choice
+     */
     public void choosePosition(ArrayList<CellView> positions, String desc) {
         String text;
         switch (desc) {
@@ -345,6 +411,11 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * When a Player is asked to choose a position between the highlighted ones, this method allows notifying the GUIManager of the choice, which will process it and send it to the server.
+     *
+     * @param cell the selected cell
+     */
     public void sendPosition(HighlightCell cell) {
         int selectedCell = -1;
         for (CellView possibleCell : currentPositions) {
@@ -357,6 +428,12 @@ public class GameBoardController {
         manager.putObject(selectedCell);
     }
 
+    /**
+     * Allows displaying the placing down of Workers on the Board.
+     * The correct worker is set to visible in his starting position.
+     *
+     * @param position the CellView representing the position of the Worker
+     */
     public void displayPlaceWorker(CellView position) {
         Platform.runLater(() -> {
             String workerColor = position.getWorker().getColor();
@@ -367,6 +444,15 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Allows displaying the move of a Worker or of a couple of Workers during a turn.
+     * Writes on the log the starting and the final positions.
+     * Creates a Transition which shows each involved Worker moving from the starting position to the final position.
+     * If the move was allowed thanks to a God Power, shows its images fading before the move is displayed.
+     *
+     * @param moves   an HashMap containing pairs of (starting position, final position) for each worker who moved or was forced to move
+     * @param godCard the CardView representing the God Card which eventually allowed this move
+     */
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" ⮞\t");
@@ -419,6 +505,15 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Allows displaying the build of a Worker during a turn.
+     * Writes on the log the level and the position of the build.
+     * Creates a Transition which shows the new building appearing on its position.
+     * If the build was allowed thanks to a God Power, shows its images fading before the build is displayed
+     *
+     * @param buildPosition the CellView representing the position of the building
+     * @param godCard       the CardView representing the God Card which eventually allowed this move
+     */
     public void displayBuild(CellView buildPosition, CardView godCard) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" ✖\t");
@@ -472,6 +567,13 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Allows creating a new SequentialTransition including the Transition received as argument (which represents a move or a build) and a new FadeTransition showing the involved God Power fading in and out.
+     *
+     * @param transition the starting transition
+     * @param godCard    the CardView representing the God Card involved in the current turn
+     * @return a new SequentialTransition
+     */
     private SequentialTransition addGodSplash(Transition transition, CardView godCard) {
         fullImageForThisGod.get(godCard.getGod()).setVisible(true);
         FadeTransition godFadeIn = new FadeTransition(Duration.seconds(0.3), fullImageForThisGod.get(godCard.getGod()));
@@ -483,6 +585,12 @@ public class GameBoardController {
         return new SequentialTransition(godFadeIn, godFadeOut, transition);
     }
 
+    /**
+     * Allows the Player to answer to the "yes or no question" received as argument.
+     * The question is written in the textBox and two buttons to choose "yes" or "no" are set to visible.
+     *
+     * @param query the "yes or no question" the Player should answer to
+     */
     public void chooseYesNo(String query) {
         Platform.runLater(() -> {
             infoBox.setText(query);
@@ -491,10 +599,17 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Notifies a Player that he lost.
+     * Shows him a defeat screen, reporting that he lost and the reason of his loss.
+     *
+     * @param reason the reason of the loss
+     * @param player the PlayerView representing the Player who eventually won, can be null
+     */
     public void notifyLoss(String reason, PlayerView player) {
         winOrLossScreen.setImage(new Image("/assets/graphics/defeatScreen.png"));
         String lossReason = null;
-        switch (reason) {                                                                   //sono tutti i casi possibili?
+        switch (reason) {
             case "outOfMoves":
                 lossReason = "No legal moves available!";
                 break;
@@ -520,6 +635,12 @@ public class GameBoardController {
         });
     }
 
+    /**
+     * Notifies a Player that he won.
+     * Shows him a victory screen, reporting that he won and the reason of his victory.
+     *
+     * @param reason the reason of the victory
+     */
     public void notifyWin(String reason) {
         winOrLossScreen.setImage(new Image("/assets/graphics/victoryScreen.png"));
         String winReason;
@@ -544,6 +665,17 @@ public class GameBoardController {
         Platform.runLater(() -> {
             infoBox.setText(query);
             manager.setBusy(false);
+        });
+    }
+
+    /**
+     * @param message the String to be written on the Log
+     */
+    private void pushToLog(String message) {
+        Platform.runLater(() -> {
+            log.setText(log.getText() + "\n" + message);
+            log.selectPositionCaret(log.getLength());
+            log.deselect();
         });
     }
 
@@ -649,18 +781,22 @@ public class GameBoardController {
         });
     }
 
-    private void pushToLog(String message) {
-        Platform.runLater(() -> {
-            log.setText(log.getText() + "\n" + message);
-            log.selectPositionCaret(log.getLength());
-            log.deselect();
-        });
-    }
-
+    /**
+     * HighlightCell class extends ImageView and is used to
+     * A property of HighlightCell objects is to react to a MouseEvent (click) and to send the clicked position to the GUIManager.
+     */
     private class HighlightCell extends ImageView {
 
         public int posX, posY;
 
+        /**
+         * HighlightCell constructor.
+         * Sets the posX and posY attributes as the values received as arguments and defines a property.
+         *
+         * @param s the String to associate to this HighlightCell
+         * @param x the x-coordinate of this HighlightCell
+         * @param y the y-coordinate of this HighlightCell
+         */
         public HighlightCell(String s, int x, int y) {
             super(s);
             posX = x;

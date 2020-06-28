@@ -17,6 +17,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * CLI class allows the client to interact with the server.
+ */
 public class CLI implements UI {
 
     private final AtomicBoolean running;
@@ -38,10 +41,10 @@ public class CLI implements UI {
 
     /**
      * Allows CLI to run until the Game is over.
-     * Creates a messageQueue where the input provided by the client will be offered, and a serverQueue where the message from the server will be put after deserialization.
-     * Starts two threads which respectively allows listening to the client input and listening to the server messages.
      * Handles the connection of the client to the server and opens a communication channel between them.
      * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
+     * Creates a messageQueue where the input provided by the client will be offered, and a serverQueue where the messages from the server will be put after deserialization.
+     * Starts two threads which respectively allows listening to the client input and listening to the server messages.
      * Everytime a message from the server is put on the serverQueue, it is parsed to the corresponding action.
      */
     public void run() {
@@ -228,7 +231,7 @@ public class CLI implements UI {
      * Creates a new message (SendBoolean Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
      * If an IOException occurs during serialization, the client is notified the server disconnected.
      *
-     * @param body the boolean to send
+     * @param body the boolean to send to the server in the SendBoolean Message
      */
     public void sendBoolean(boolean body) {
         try {
@@ -243,7 +246,7 @@ public class CLI implements UI {
      * Creates a new message (SendInteger Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
      * If an IOException occurs during serialization, the client is notified the server disconnected.
      *
-     * @param body the int to send
+     * @param body the int to send to the server in the SendInteger Message
      */
     public void sendInteger(int body) {
         try {
@@ -258,7 +261,7 @@ public class CLI implements UI {
      * Creates a new message (SendIntegers Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
      * If an IOException occurs during serialization, the client is notified the server disconnected.
      *
-     * @param body the ArrayList of Integers to send
+     * @param body the ArrayList of Integers to send to the server in the SendIntegers Message
      */
     public void sendIntegers(ArrayList<Integer> body) {
         try {
@@ -273,7 +276,7 @@ public class CLI implements UI {
      * Creates a new message (SendString Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
      * If an IOException occurs during serialization, the client is notified the server disconnected.
      *
-     * @param body the String to send
+     * @param body the String to send to the server in the SendString Message
      */
     public void sendString(String body) {
         try {
@@ -509,6 +512,8 @@ public class CLI implements UI {
     }
 
     /**
+     * Allows displaying the build occurred during a turn, by showing the updated Game Board.
+     *
      * @param buildPosition the CellView representing the position of the building
      * @param godCard       the CardView representing the God Card which eventually allowed this build
      */
@@ -530,9 +535,6 @@ public class CLI implements UI {
         displayBoard();
     }
 
-    /**
-     * @param message
-     */
     public void displayMessage(String message) {
         System.out.println("\n" + message);
     }
@@ -596,7 +598,7 @@ public class CLI implements UI {
      * Allows notifying a Player that he lost, by showing a message on screen reporting his loss and the reason of it.
      *
      * @param reason the reason of the loss
-     * @param winner the Player who eventually won, can be null
+     * @param winner the PlayerView representing the Player who eventually won, can be null
      */
     public void notifyLoss(String reason, PlayerView winner) {
         StringBuilder string = new StringBuilder();

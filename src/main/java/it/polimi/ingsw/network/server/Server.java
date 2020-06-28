@@ -15,6 +15,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Server class allows the Game to start and to be handled.
+ */
 public class Server {
 
     private final AtomicBoolean running;
@@ -24,6 +27,11 @@ public class Server {
     private Logger logger;
 
 
+    /**
+     * Server constructor.
+     *
+     * @param port the port the Server Socket will be connected to
+     */
     public Server(int port) {
         this.running = new AtomicBoolean(true);
         this.port = port;
@@ -31,6 +39,15 @@ public class Server {
         this.players = new ArrayList<VirtualView>();
     }
 
+    /**
+     * Allows:
+     * <p><ul>
+     * <li> creating a new Logger
+     * <li> creating a new ServerSocket at the previously specified port, which will be used to accept the requests of connections from the clients
+     * <li> creating a new Socket instance for each client connecting to the server, establishing the communication channel between that client and the server
+     * <li> starting a new Thread for each client connecting to the server
+     * </ul></p>
+     */
     public void start() {
         try {
             logger = new Logger();
@@ -62,10 +79,21 @@ public class Server {
         }
     }
 
+    /**
+     * Closes the Logger.
+     */
     private void stop() {
         logger.close();
     }
 
+    /**
+     * This method starts on a new Thread for each client connecting to the server.
+     * Creates a new VirtualView for the client, providing the Socket and the associated ObjectInputStream and ObjectOutputStream.
+     * Asks the client to choose his nickname (which can't be duplicated and must be no longer that 12 characters).
+     * Starts a new Thread which will permanently check if the Player is still connected.
+     *
+     * @param client the Socket instance created for this client
+     */
     private void newPlayerWorker(Socket client) {
         logger.log("new connection accepted");
         VirtualView player = null;
@@ -100,6 +128,11 @@ public class Server {
         playerLobby(finalPlayer);
     }
 
+    /**
+     * Continuously suspends the Thread execution for 5 seconds and then checks if the Player is still connected by calling the checkAlive method.
+     *
+     * @param player the VirtualView associated to the Player whose aliveness needs to be checked
+     */
     private void checkAlive(VirtualView player) {
         while (true) {
             try {
@@ -114,6 +147,11 @@ public class Server {
         }
     }
 
+    /**
+     * Handles the choice of the Player to create a new Game or to join an existing one.
+     *
+     * @param player the VirtualView representing the Player who previously connected to the server
+     */
     private void playerLobby(VirtualView player) {
         try {
             boolean newGame = player.chooseStartJoin();
@@ -124,6 +162,15 @@ public class Server {
         }
     }
 
+    /**
+     * Handles the creation of a new Game room.
+     * Asks to the Player to choose the Game name, not allowing duplicates.
+     * When a new Game room is created, creates its GameController.
+     *
+     * @param player the VirtualView representing the Player who is creating the Game room
+     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+     */
     private void newRoom(VirtualView player) throws IOException, InterruptedException {
         String gameName;
         boolean taken = false;
@@ -151,6 +198,19 @@ public class Server {
         }
     }
 
+    /**
+     * Allows supporting a Player to the choice of joining an existing Game. Allows
+     * <p><ul>
+     * <li> going back to the possibility of starting a new Game
+     * <li> refreshing the list of the currently active Game rooms
+     * <li> choosing a Game room to join
+     * </ul></p>
+     * The Game in the Game Room starts when the expected number of participants joined.
+     *
+     * @param player the VirtualView representing the Player who is joining the Game room
+     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+     */
     private void joinRoom(VirtualView player) throws IOException, InterruptedException {
         GameController gameController = null;
         String gameRoom;
@@ -189,17 +249,37 @@ public class Server {
         }
     }
 
+    /**
+     * Notifies all the connected clients that the Game is starting.
+     * Starts a new Thread which will handle the setup and the execution of the Game.
+     *
+     * @param gameController
+     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+     */
     private void startGame(GameController gameController) throws IOException, InterruptedException {
         gameController.getControllers().get(0).getClient().notifyGameStarting();
         logger.log("game " + gameController.getGame().getName() + " started");
         new Thread(() -> gameWorker(gameController)).start();
     }
 
+    /**
+     * Gives control to the gameController, to handle the setup and the execution of the associated Game.
+     * When the Game ends, calls removeGame so that it can be removed from the list of the active Games.
+     *
+     * @param gameController the gameController of the Game
+     */
     private void gameWorker(GameController gameController) {
         gameController.gameSetUp();
         removeGame(gameController);
     }
 
+    /**
+     * When a Game ends, removes the associated gameController from the list of the active gameControllers.
+     * If a Player doesn't disconnect after the Game ends, allows him to start a new Game or joining an existing one by redirecting him to the lobby.
+     *
+     * @param gameController the gameController of the Game to be removed
+     */
     private void removeGame(GameController gameController) {
         if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
         gameControllers.remove(gameController);
@@ -210,6 +290,11 @@ public class Server {
         }
     }
 
+    /**
+     * Removes a Player when he disconnected.
+     *
+     * @param player the VirtualView representing the Player to be removed
+     */
     private void removePlayer(VirtualView player) {
         if (player == null || !players.contains(player)) return;
         if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {

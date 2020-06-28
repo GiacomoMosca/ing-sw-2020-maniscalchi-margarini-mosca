@@ -98,9 +98,7 @@ public interface UI {
      * Allows asking the client to choose a position among those available.
      *
      * @param positions an ArrayList containing CellViews representing all the available positions
-     * @param desc      the reason of this choice, can be
-     *                  -
-     *                  -
+     * @param desc      the reason of this choice
      */
     public void choosePosition(ArrayList<CellView> positions, String desc);
 
@@ -159,7 +157,7 @@ public interface UI {
     /**
      * Allows notifying the client of the disconnection of a Player.
      *
-     * @param player the Player who disconnected
+     * @param player the PlayerView representing the Player who disconnected
      */
     public void notifyDisconnection(PlayerView player);
 
