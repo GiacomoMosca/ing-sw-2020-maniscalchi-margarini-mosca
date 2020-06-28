@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -100,121 +100,137 @@
                    AnchorPane.rightAnchor="-52.0" visible="false">
             <Image url="@../assets/board/activeModifier.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon1" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0" />
-        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <ImageView fx:id="playerIcon1" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="firstPlayerID" text="Loading..." visible="false">
                 <StackPane.margin>
-                    <Insets left="30.0" />
+                    <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
-            <StackPane fx:id="opaquePanel1" prefHeight="150.0" prefWidth="200.0" visible="false" />
+            <StackPane fx:id="opaquePanel1" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <AnchorPane fx:id="p2" layoutX="61.0" layoutY="169.0" prefHeight="75.0" prefWidth="438.0">
         <ImageView fx:id="playerHighlight2" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/board/playerInfo/highlight_player.png" />
+            <Image url="@../assets/board/playerInfo/highlight_player.png"/>
         </ImageView>
-        <ImageView fx:id="playerColor_left_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="0.0">
-            <Image url="@../assets/board/playerInfo/playerColor_left_green.png" />
+        <ImageView fx:id="playerColor_left_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
+                   visible="false" AnchorPane.leftAnchor="0.0">
+            <Image url="@../assets/board/playerInfo/playerColor_left_green.png"/>
         </ImageView>
-        <ImageView fx:id="playerColor_right_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="0.0">
-            <Image url="@../assets/board/playerInfo/playerColor_right_green.png" />
+        <ImageView fx:id="playerColor_right_green" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
+                   visible="false" AnchorPane.rightAnchor="0.0">
+            <Image url="@../assets/board/playerInfo/playerColor_right_green.png"/>
         </ImageView>
-        <ImageView fx:id="activeModifier2" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="-52.0" AnchorPane.topAnchor="5.0">
-            <Image url="@../assets/board/activeModifier.png" />
+        <ImageView fx:id="activeModifier2" pickOnBounds="true" preserveRatio="true" visible="false"
+                   AnchorPane.rightAnchor="-52.0" AnchorPane.topAnchor="5.0">
+            <Image url="@../assets/board/activeModifier.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon2" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0" />
-        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <ImageView fx:id="playerIcon2" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="secondPlayerID" text="Loading..." visible="false">
                 <StackPane.margin>
-                    <Insets left="30.0" />
+                    <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
-            <StackPane fx:id="opaquePanel2" prefHeight="150.0" prefWidth="200.0" visible="false" />
+            <StackPane fx:id="opaquePanel2" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <AnchorPane fx:id="p3" layoutX="61.0" layoutY="248.0" prefHeight="75.0" prefWidth="438.0" visible="false">
         <ImageView fx:id="playerHighlight3" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/board/playerInfo/highlight_player.png" />
+            <Image url="@../assets/board/playerInfo/highlight_player.png"/>
         </ImageView>
-        <ImageView fx:id="playerColor_left_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="0.0">
-            <Image url="@../assets/board/playerInfo/playerColor_left_blue.png" />
+        <ImageView fx:id="playerColor_left_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
+                   visible="false" AnchorPane.leftAnchor="0.0">
+            <Image url="@../assets/board/playerInfo/playerColor_left_blue.png"/>
         </ImageView>
-        <ImageView fx:id="playerColor_right_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="0.0">
-            <Image url="@../assets/board/playerInfo/playerColor_right_blue.png" />
+        <ImageView fx:id="playerColor_right_blue" mouseTransparent="true" pickOnBounds="true" preserveRatio="true"
+                   visible="false" AnchorPane.rightAnchor="0.0">
+            <Image url="@../assets/board/playerInfo/playerColor_right_blue.png"/>
         </ImageView>
-        <ImageView fx:id="activeModifier3" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.rightAnchor="-52.0" AnchorPane.topAnchor="5.0">
-            <Image url="@../assets/board/activeModifier.png" />
+        <ImageView fx:id="activeModifier3" pickOnBounds="true" preserveRatio="true" visible="false"
+                   AnchorPane.rightAnchor="-52.0" AnchorPane.topAnchor="5.0">
+            <Image url="@../assets/board/activeModifier.png"/>
         </ImageView>
-        <ImageView fx:id="playerIcon3" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0" />
-        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <ImageView fx:id="playerIcon3" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <StackPane alignment="CENTER_LEFT" mouseTransparent="true" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <Text fx:id="thirdPlayerID" text="Loading..." visible="false">
                 <StackPane.margin>
-                    <Insets left="30.0" />
+                    <Insets left="30.0"/>
                 </StackPane.margin>
             </Text>
-            <StackPane fx:id="opaquePanel3" prefHeight="150.0" prefWidth="200.0" visible="false" />
+            <StackPane fx:id="opaquePanel3" prefHeight="150.0" prefWidth="200.0" visible="false"/>
         </StackPane>
     </AnchorPane>
     <ImageView fx:id="logButton" layoutX="29.0" layoutY="428.0" onMouseClicked="#logOn">
-        <Image url="@../assets/board/logButton.png" />
+        <Image url="@../assets/board/logButton.png"/>
     </ImageView>
     <ImageView fx:id="logButton_p" layoutX="29.0" layoutY="428.0" onMouseClicked="#logOff" visible="false">
-        <Image url="@../assets/board/logButton_pressed.png" />
+        <Image url="@../assets/board/logButton_pressed.png"/>
     </ImageView>
     <StackPane layoutX="97.0" layoutY="536.0" prefHeight="138.0" prefWidth="367.0">
-        <Text fx:id="infoBox" layoutX="110.0" layoutY="567.0" text="Loading..." textAlignment="CENTER" visible="false" wrappingWidth="340.0">
+        <Text fx:id="infoBox" layoutX="110.0" layoutY="567.0" text="Loading..." textAlignment="CENTER" visible="false"
+              wrappingWidth="340.0">
         </Text>
     </StackPane>
     <StackPane fx:id="yesPane" layoutX="450.0" layoutY="550.0" visible="false">
-        <ImageView fx:id="yesButton" fitHeight="50.0" onMousePressed="#yesPressed" onMouseReleased="#yesReleased" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_small_red.png" />
+        <ImageView fx:id="yesButton" fitHeight="50.0" onMousePressed="#yesPressed" onMouseReleased="#yesReleased"
+                   preserveRatio="true">
+            <Image url="@../assets/buttons/btn_small_red.png"/>
         </ImageView>
         <Text fx:id="yesText" mouseTransparent="true" text="YES">
             <StackPane.margin>
-                <Insets top="-4.0" />
+                <Insets top="-4.0"/>
             </StackPane.margin>
         </Text>
         <ImageView fx:id="yesButton_p" fitHeight="50.0" mouseTransparent="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_small_red_pressed.png" />
+            <Image url="@../assets/buttons/btn_small_red_pressed.png"/>
         </ImageView>
         <Text fx:id="yesText_p" mouseTransparent="true" text="YES" visible="false">
         </Text>
     </StackPane>
     <StackPane fx:id="noPane" layoutX="450.0" layoutY="607.0" visible="false">
-        <ImageView fx:id="noButton" fitHeight="50.0" onMousePressed="#noPressed" onMouseReleased="#noReleased" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_small_red.png" />
+        <ImageView fx:id="noButton" fitHeight="50.0" onMousePressed="#noPressed" onMouseReleased="#noReleased"
+                   preserveRatio="true">
+            <Image url="@../assets/buttons/btn_small_red.png"/>
         </ImageView>
         <Text fx:id="noText" mouseTransparent="true" text="NO">
             <StackPane.margin>
-                <Insets top="-4.0" />
+                <Insets top="-4.0"/>
             </StackPane.margin>
         </Text>
         <ImageView fx:id="noButton_p" fitHeight="50.0" mouseTransparent="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_small_red_pressed.png" />
+            <Image url="@../assets/buttons/btn_small_red_pressed.png"/>
         </ImageView>
         <Text fx:id="noText_p" mouseTransparent="true" text="NO" visible="false">
         </Text>
     </StackPane>
-    <StackPane fx:id="godBox" layoutX="700.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="332.0" prefWidth="417.0">
+    <StackPane fx:id="godBox" layoutX="700.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity"
+               minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="332.0" prefWidth="417.0">
     </StackPane>
-    <TextArea fx:id="log" editable="false" layoutX="123.0" layoutY="394.0" maxHeight="110.0" maxWidth="400.0" prefHeight="110.0" prefWidth="400.0" visible="false">
+    <TextArea fx:id="log" editable="false" layoutX="123.0" layoutY="394.0" maxHeight="110.0" maxWidth="400.0"
+              prefHeight="110.0" prefWidth="400.0" visible="false">
     </TextArea>
     <StackPane fx:id="opaqueBackground" mouseTransparent="true" prefHeight="720.0" prefWidth="1280.0" visible="false">
     </StackPane>
     <StackPane fx:id="infoScreen" prefHeight="720.0" prefWidth="1280.0" visible="false">
-        <ImageView fx:id="continueButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#continueButtonPressed" onMouseReleased="#continueButtonReleased" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="CENTER">
+        <ImageView fx:id="continueButton" fitHeight="150.0" fitWidth="200.0" onMousePressed="#continueButtonPressed"
+                   onMouseReleased="#continueButtonReleased" pickOnBounds="true" preserveRatio="true" visible="false"
+                   StackPane.alignment="CENTER">
             <StackPane.margin>
-                <Insets top="200.0" />
+                <Insets top="200.0"/>
             </StackPane.margin>
-            <Image url="@../assets/buttons/btn_blue.png" />
+            <Image url="@../assets/buttons/btn_blue.png"/>
         </ImageView>
         <ImageView fx:id="continueButton_p" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
                    preserveRatio="true" visible="false">
             <StackPane.margin>
-                <Insets top="200.0" />
+                <Insets top="200.0"/>
             </StackPane.margin>
-            <Image url="@../assets/buttons/btn_blue_pressed.png" />
+            <Image url="@../assets/buttons/btn_blue_pressed.png"/>
         </ImageView>
         <Text fx:id="disconnectionMessage" layoutX="-362.0" layoutY="375.0" mouseTransparent="true" text="Text"
               textAlignment="CENTER" visible="false" wrappingWidth="500.0" x="1000.0"/>
@@ -223,45 +239,48 @@
         <Text fx:id="continueText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Continue" textAlignment="CENTER" visible="false">
             <StackPane.margin>
-                <Insets top="192.0" />
+                <Insets top="192.0"/>
             </StackPane.margin>
         </Text>
         <Text fx:id="continueText_p" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Continue" textAlignment="CENTER" visible="false">
             <StackPane.margin>
-                <Insets top="196.0" />
+                <Insets top="196.0"/>
             </StackPane.margin>
         </Text>
     </StackPane>
     <StackPane fx:id="winLossScreen" prefHeight="720.0" prefWidth="1280.0" visible="false">
-        <ImageView fx:id="winOrLossScreen" fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true" />
+        <ImageView fx:id="winOrLossScreen" fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true"
+                   preserveRatio="true"/>
         <Text fx:id="reasonMessage" wrappingWidth="400.0">
             <StackPane.margin>
-                <Insets top="200.0" />
+                <Insets top="200.0"/>
             </StackPane.margin>
         </Text>
-        <ImageView fx:id="confirmButton" fitHeight="150.0" fitWidth="207.0" onMousePressed="#confirmButtonPressed" onMouseReleased="#confirmButtonReleased" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="confirmButton" fitHeight="150.0" fitWidth="207.0" onMousePressed="#confirmButtonPressed"
+                   onMouseReleased="#confirmButtonReleased" pickOnBounds="true" preserveRatio="true">
             <StackPane.margin>
-                <Insets top="570.0" />
+                <Insets top="570.0"/>
             </StackPane.margin>
-            <Image url="@../assets/buttons/btn_blue.png" />
+            <Image url="@../assets/buttons/btn_blue.png"/>
         </ImageView>
-        <ImageView fx:id="confirmButton_p" fitHeight="150.0" fitWidth="207.0" pickOnBounds="true" preserveRatio="true" visible="false">
+        <ImageView fx:id="confirmButton_p" fitHeight="150.0" fitWidth="207.0" pickOnBounds="true" preserveRatio="true"
+                   visible="false">
             <StackPane.margin>
-                <Insets top="570.0" />
+                <Insets top="570.0"/>
             </StackPane.margin>
-            <Image url="@../assets/buttons/btn_blue_pressed.png" />
+            <Image url="@../assets/buttons/btn_blue_pressed.png"/>
         </ImageView>
         <Text fx:id="confirmText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Continue" textAlignment="CENTER">
             <StackPane.margin>
-                <Insets top="562.0" />
+                <Insets top="562.0"/>
             </StackPane.margin>
         </Text>
         <Text fx:id="confirmText_p" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0"
               text="Continue" textAlignment="CENTER" visible="false">
             <StackPane.margin>
-                <Insets top="566.0" />
+                <Insets top="566.0"/>
             </StackPane.margin>
         </Text>
     </StackPane>
