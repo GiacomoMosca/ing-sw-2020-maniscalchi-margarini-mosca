@@ -51,7 +51,7 @@ public class DemeterController extends GodController {
      * @throws IOExceptionFromController
      */
     @Override
-    public void buildPhase() throws NullPointerException, IOException, InterruptedException, IOExceptionFromController {
+    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

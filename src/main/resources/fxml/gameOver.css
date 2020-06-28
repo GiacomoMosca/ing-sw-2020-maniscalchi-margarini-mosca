@@ -1,0 +1,26 @@
+@font-face {
+    font-family: LillyBelle;
+    src: url("/assets/fonts/LillyBelle.ttf");
+}
+
+#darkBG {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Text */
+
+#confirmText, #confirmText_p {
+    -fx-font: 30px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#titleText {
+    -fx-font: 45px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.5, 0, 0);
+}
+
+#confirmButton {
+    -fx-cursor: hand;
+}

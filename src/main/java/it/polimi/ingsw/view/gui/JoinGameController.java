@@ -18,86 +18,73 @@ public class JoinGameController {
     private GUIManager manager;
 
     @FXML
-    private TableColumn gameName;
+    private TableColumn<?, ?> gameName, createdBy, playersNumber;
     @FXML
-    private TableColumn playersNumber;
+    private TableView<TableItem> gameRoomsList;
     @FXML
-    private TableView gameRoomsList;
+    private Text nicknameTab, titleText;
     @FXML
-    private Text title;
+    private Text refreshText, refreshText_p;
     @FXML
-    private Text refreshButtonText;
+    private Text backText, backText_p;
     @FXML
-    private Text refreshPressedButtonText;
+    private Text confirmText, confirmText_p;
     @FXML
-    private Text backButtonText;
+    private ImageView refreshButton, refreshButton_p;
     @FXML
-    private Text backPressedButtonText;
+    private ImageView backButton, backButton_p;
     @FXML
-    private Text confirmButtonText;
-    @FXML
-    private Text confirmPressedButtonText;
-    @FXML
-    private ImageView refreshButton;
-    @FXML
-    private ImageView refreshButtonPressed;
-    @FXML
-    private ImageView backButton;
-    @FXML
-    private ImageView backButtonPressed;
-    @FXML
-    private ImageView confirmButton;
-    @FXML
-    private ImageView confirmButtonPressed;
+    private ImageView confirmButton, confirmButton_p;
 
 
     public void initialize(GUIManager manager) {
         this.manager = manager;
+        nicknameTab.setText(manager.getId());
     }
 
     public void backButtonPressed() {
         Platform.runLater(() -> {
-            backButtonPressed.setVisible(true);
-            backButtonText.setVisible(false);
-            backPressedButtonText.setVisible(true);
+            backButton_p.setVisible(true);
+            backText.setVisible(false);
+            backText_p.setVisible(true);
         });
     }
 
     public void refreshButtonPressed() {
         Platform.runLater(() -> {
-            refreshButtonPressed.setVisible(true);
-            refreshButtonText.setVisible(false);
-            refreshPressedButtonText.setVisible(true);
+            refreshButton_p.setVisible(true);
+            refreshText.setVisible(false);
+            refreshText_p.setVisible(true);
         });
     }
 
     public void confirmButtonPressed() {
         Platform.runLater(() -> {
-            confirmButtonPressed.setVisible(true);
-            confirmButtonText.setVisible(false);
-            confirmPressedButtonText.setVisible(true);
+            confirmButton_p.setVisible(true);
+            confirmText.setVisible(false);
+            confirmText_p.setVisible(true);
         });
     }
 
     public void backButtonReleased() {
         Platform.runLater(() -> {
             backButton.setDisable(true);
+            backButton_p.setVisible(false);
+            backText_p.setVisible(false);
+            backText.setVisible(true);
+            backButton.setDisable(false);
             manager.putObject(0);
             manager.setBusy(false);
-            backButtonPressed.setVisible(false);
-            backPressedButtonText.setVisible(false);
-            backButtonText.setVisible(true);
-            backButton.setDisable(false);
         });
     }
 
     public void refreshButtonReleased() {
         Platform.runLater(() -> {
+            refreshButton_p.setVisible(false);
+            refreshText_p.setVisible(false);
+            refreshText.setVisible(true);
             manager.putObject(1);
             manager.setBusy(false);
-            refreshButtonPressed.setVisible(false);
-            refreshPressedButtonText.setVisible(false);
-            refreshButtonText.setVisible(true);
         });
     }
 
@@ -111,9 +98,9 @@ public class JoinGameController {
             confirmButton.setDisable(false);
 
         Platform.runLater(() -> {
-            confirmButtonPressed.setVisible(false);
-            confirmPressedButtonText.setVisible(false);
-            confirmButtonText.setVisible(true);
+            confirmButton_p.setVisible(false);
+            confirmText_p.setVisible(false);
+            confirmText.setVisible(true);
         });
     }
 
@@ -124,8 +111,9 @@ public class JoinGameController {
 
         final ObservableList<TableItem> data = FXCollections.observableArrayList(rooms);
 
-        gameName.setCellValueFactory(new PropertyValueFactory<GameView, String>("GameName"));
-        playersNumber.setCellValueFactory(new PropertyValueFactory<GameView, String>("PlayersInRoom"));
+        gameName.setCellValueFactory(new PropertyValueFactory<>("GameName"));
+        createdBy.setCellValueFactory(new PropertyValueFactory<>("CreatedBy"));
+        playersNumber.setCellValueFactory(new PropertyValueFactory<>("Players"));
 
         Platform.runLater(() -> {
             gameRoomsList.setItems(data);

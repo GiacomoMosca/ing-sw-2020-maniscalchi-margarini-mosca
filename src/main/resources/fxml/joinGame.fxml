@@ -5,85 +5,107 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-
-<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@joinGame.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.JoinGameController">
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@joinGame.css"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.gui.JoinGameController">
     <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_bg.png" />
+        <Image url="@../assets/graphics/mainMenu_bg.png"/>
     </ImageView>
-    <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true" preserveRatio="true">
-        <Image url="@../assets/graphics/cardSelect_frame.png" />
+    <ImageView AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@../assets/graphics/nicknameTab.png"/>
     </ImageView>
-    <StackPane layoutX="540.0" layoutY="74.0" prefHeight="80.0" prefWidth="200.0">
-        <Text fx:id="title" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Rooms" />
-    </StackPane>
-    <StackPane layoutX="4.0" layoutY="564.0" prefHeight="60.0" prefWidth="1280.0">
-        <ImageView fx:id="refreshButton" fitHeight="150.0" fitWidth="150.0" onMousePressed="#refreshButtonPressed" onMouseReleased="#refreshButtonReleased" pickOnBounds="true" preserveRatio="true">
-            <StackPane.margin>
-                <Insets left="450.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_small_blue.png" />
-        </ImageView>
-        <ImageView fx:id="refreshButtonPressed" fitHeight="150.0" fitWidth="150.0" layoutX="800.0" layoutY="13.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <StackPane.margin>
-                <Insets left="450.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_small_blue_pressed.png" />
-        </ImageView>
-        <ImageView fx:id="backButton" fitHeight="150.0" fitWidth="150.0" onMousePressed="#backButtonPressed" onMouseReleased="#backButtonReleased" pickOnBounds="true" preserveRatio="true">
-            <StackPane.margin>
-                <Insets right="450.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_small_red.png" />
-        </ImageView>
-        <ImageView fx:id="backButtonPressed" fitHeight="150.0" fitWidth="150.0" layoutX="350.0" layoutY="13.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <StackPane.margin>
-                <Insets right="450.0" />
-            </StackPane.margin>
-            <Image url="@../assets/buttons/btn_small_red_pressed.png" />
-        </ImageView>
-        <ImageView fx:id="confirmButton" fitHeight="150.0" fitWidth="150.0" onMousePressed="#confirmButtonPressed" onMouseReleased="#confirmButtonReleased" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../assets/buttons/btn_small_green.png" />
-        </ImageView>
-        <ImageView fx:id="confirmButtonPressed" fitHeight="150.0" fitWidth="150.0" layoutX="575.0" layoutY="13.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="false">
-            <Image url="@../assets/buttons/btn_small_green_pressed.png" />
-        </ImageView>
-        <Text fx:id="refreshButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Refresh">
-            <StackPane.margin>
-                <Insets left="450.0" top="-14.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="refreshPressedButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Refresh" visible="false">
-            <StackPane.margin>
-                <Insets left="450.0" top="-9.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="backButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Back">
-            <StackPane.margin>
-                <Insets right="450.0" top="-6.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="backPressedButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Back" visible="false">
-            <StackPane.margin>
-                <Insets right="450.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="confirmButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm">
-            <StackPane.margin>
-                <Insets top="-14.0" />
-            </StackPane.margin>
-        </Text>
-        <Text fx:id="confirmPressedButtonText" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" visible="false">
-            <StackPane.margin>
-                <Insets top="-9.0" />
-            </StackPane.margin>
+    <StackPane alignment="CENTER_LEFT" layoutX="100.0" layoutY="30.0" prefHeight="40.0" prefWidth="250.0">
+        <Text fx:id="nicknameTab">
         </Text>
     </StackPane>
-    <StackPane layoutX="302.0" layoutY="144.0" prefHeight="150.0" prefWidth="675.0">
-        <TableView fx:id="gameRoomsList" maxHeight="1.7976931348623157E308" minHeight="-Infinity" prefHeight="405.0" prefWidth="673.0">
-            <columns>
-                <TableColumn fx:id="gameName" prefWidth="535.2000122070312" resizable="false" text="Game name" />
-                <TableColumn fx:id="playersNumber" prefWidth="137.5999755859375" resizable="false" text="Number of players" />
-            </columns>
-        </TableView>
-    </StackPane>
+    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Text fx:id="titleText" text="Game Rooms"/>
+        <StackPane>
+            <TableView fx:id="gameRoomsList" maxHeight="400.0" maxWidth="700.0">
+                <columns>
+                    <TableColumn fx:id="gameName" prefWidth="300.0" resizable="false" sortable="false" text="Room name"/>
+                    <TableColumn fx:id="createdBy" prefWidth="300.0" resizable="false" sortable="false" text="Created by"/>
+                    <TableColumn fx:id="playersNumber" prefWidth="98.0" resizable="false" sortable="false" text="Players"/>
+                </columns>
+                <placeholder>
+                    <Label text="No games available"/>
+                </placeholder>
+            </TableView>
+            <VBox.margin>
+                <Insets top="30.0"/>
+            </VBox.margin>
+        </StackPane>
+        <HBox alignment="CENTER">
+            <StackPane>
+                <ImageView fx:id="refreshButton" fitWidth="150.0" onMousePressed="#refreshButtonPressed"
+                           onMouseReleased="#refreshButtonReleased" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../assets/buttons/btn_small_blue.png"/>
+                </ImageView>
+                <ImageView fx:id="refreshButton_p" fitWidth="150.0" mouseTransparent="true" pickOnBounds="true"
+                           preserveRatio="true" visible="false">
+                    <Image url="@../assets/buttons/btn_small_blue_pressed.png"/>
+                </ImageView>
+                <Text fx:id="refreshText" mouseTransparent="true" text="Refresh">
+                    <StackPane.margin>
+                        <Insets top="-10.0"/>
+                    </StackPane.margin>
+                </Text>
+                <Text fx:id="refreshText_p" mouseTransparent="true" text="Refresh" visible="false">
+                    <StackPane.margin>
+                        <Insets top="-5.0"/>
+                    </StackPane.margin>
+                </Text>
+            </StackPane>
+            <StackPane>
+                <ImageView fx:id="backButton" fitWidth="150.0" onMousePressed="#backButtonPressed"
+                           onMouseReleased="#backButtonReleased" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../assets/buttons/btn_small_red.png"/>
+                </ImageView>
+                <ImageView fx:id="backButton_p" fitWidth="150.0" mouseTransparent="true" pickOnBounds="true"
+                           preserveRatio="true" visible="false">
+                    <Image url="@../assets/buttons/btn_small_red_pressed.png"/>
+                </ImageView>
+                <Text fx:id="backText" mouseTransparent="true" text="Back">
+                    <StackPane.margin>
+                        <Insets top="-10.0"/>
+                    </StackPane.margin>
+                </Text>
+                <Text fx:id="backText_p" mouseTransparent="true" text="Back" visible="false">
+                    <StackPane.margin>
+                        <Insets top="-5.0"/>
+                    </StackPane.margin>
+                </Text>
+                <HBox.margin>
+                    <Insets left="30.0"/>
+                </HBox.margin>
+            </StackPane>
+            <StackPane>
+                <ImageView fx:id="confirmButton" fitWidth="150.0" onMousePressed="#confirmButtonPressed"
+                           onMouseReleased="#confirmButtonReleased" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../assets/buttons/btn_small_green.png"/>
+                </ImageView>
+                <ImageView fx:id="confirmButton_p" fitWidth="150.0" mouseTransparent="true" pickOnBounds="true"
+                           preserveRatio="true" visible="false">
+                    <Image url="@../assets/buttons/btn_small_green_pressed.png"/>
+                </ImageView>
+                <Text fx:id="confirmText" mouseTransparent="true" text="Confirm">
+                    <StackPane.margin>
+                        <Insets top="-10.0"/>
+                    </StackPane.margin>
+                </Text>
+                <Text fx:id="confirmText_p" mouseTransparent="true" text="Confirm" visible="false">
+                    <StackPane.margin>
+                        <Insets top="-5.0"/>
+                    </StackPane.margin>
+                </Text>
+                <HBox.margin>
+                    <Insets left="30.0"/>
+                </HBox.margin>
+            </StackPane>
+            <VBox.margin>
+                <Insets top="40.0"/>
+            </VBox.margin>
+        </HBox>
+    </VBox>
 </AnchorPane>

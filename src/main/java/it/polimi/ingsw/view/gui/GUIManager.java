@@ -25,22 +25,24 @@ public class GUIManager extends Application {
 
     private static Stage stage;
 
-    private static Scene gameLobbyScene;
-    private static Scene gameSetupScene;
-    private static Scene gameBoardScene;
     private static Scene loginScene;
+    private static Scene gameLobbyScene;
     private static Scene newGameScene;
     private static Scene joinGameScene;
     private static Scene gameStartingScene;
+    private static Scene gameSetupScene;
+    private static Scene gameBoardScene;
+    private static Scene gameOverScene;
 
-    private static TitleController startController = null;
+    private static TitleController titleController = null;
     private static LoginController loginController = null;
+    private static GameLobbyController gameLobbyController = null;
     private static NewGameController newGameController = null;
     private static JoinGameController joinGameController = null;
-    private static GameLobbyController gameLobbyController = null;
+    private static GameStartingController gameStartingController = null;
     private static GameSetupController gameSetupController = null;
     private static GameBoardController gameBoardController = null;
-    private static GameStartingController gameStartingController = null;
+    private static GameOverController gameOverController = null;
 
     private static Scene currentScene;
     private static GUI gui;
@@ -92,8 +94,8 @@ public class GUIManager extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/title.fxml"));
         Parent root = loader.load();
         currentScene = new Scene(root, 1280, 720);
-        startController = loader.getController();
-        startController.setManager(this);
+        titleController = loader.getController();
+        titleController.setManager(this);
         stage.setScene(currentScene);
         stage.setResizable(false);
         stage.show();
@@ -111,6 +113,7 @@ public class GUIManager extends Application {
         initGameStarting();
         initGameSetup();
         initGameBoard();
+        initGameOver();
     }
 
     public void initLogin() {
@@ -192,6 +195,18 @@ public class GUIManager extends Application {
             gameBoardScene = new Scene(root);
             gameBoardController = loader.getController();
             gameBoardController.initialize(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initGameOver() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gameOver.fxml"));
+        try {
+            Parent root = loader.load();
+            gameOverScene = new Scene(root);
+            gameOverController = loader.getController();
+            gameOverController.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -341,20 +356,26 @@ public class GUIManager extends Application {
         gameBoardController.displayPlaceWorker(position);
     }
 
-    public void notifyDisconnection(PlayerView player) {
-        gameBoardController.notifyDisconnection(player);
-    }
-
-    public void notifyGameOver() {
-        gameBoardController.notifyGameOver();
-    }
-
     public void notifyLoss(String reason, PlayerView player) {
         gameBoardController.notifyLoss(reason, player);
     }
 
     public void notifyWin(String reason) {
         gameBoardController.notifyWin(reason);
+    }
+
+    // GameOver
+
+    public void notifyDisconnection(PlayerView player) {
+        initGameOver();
+        setScene(gameOverScene);
+        gameOverController.notifyDisconnection(player);
+    }
+
+    public void notifyGameOver() {
+        initGameOver();
+        setScene(gameOverScene);
+        gameOverController.notifyGameOver();
     }
 
 }

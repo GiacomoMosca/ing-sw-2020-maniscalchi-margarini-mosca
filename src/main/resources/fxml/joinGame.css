@@ -3,16 +3,68 @@
     src: url("/assets/fonts/LillyBelle.ttf");
 }
 
+@font-face {
+    font-family: "Minion Pro";
+    src: url('../assets/fonts/MinionPro-Bold.otf');
+}
+
+/* Table */
+
+.table-view, .table-view .column-header-background {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-table-cell-border-color: grey;
+}
+
+.table-view .column-header, .table-row-cell, .table-row-cell:odd {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font: 20px LillyBelle;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+    -fx-padding: 0 0 5px 0;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font: 25px "Minion Pro";
+    -fx-cursor: hand;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font: 25px "Minion Pro";
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-background-color: rgba(37, 96, 162, 0.8);
+    -fx-text-fill: white;
+    -fx-table-cell-border-color: grey;
+}
+
 /* Text */
 
-#refreshPressedButtonText, #refreshButtonText, #backPressedButtonText, #backButtonText, #confirmPressedButtonText, #confirmButtonText {
+#titleText {
+    -fx-font: 45px LillyBelle;
+    -fx-fill: white;
+    -fx-effect: dropshadow(three-pass-box, #0d3c61, 4, 1.0, 0, 0);
+}
+
+#nicknameTab {
+    -fx-font: 30px LillyBelle;
+    -fx-fill: #664d39;
+    -fx-effect: innershadow(three-pass-box, black, 5, 0.2, 0, 0);
+}
+
+#refreshText_p, #refreshText, #backText_p, #backText, #confirmText_p, #confirmText {
     -fx-font: 25px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }
 
-#title {
-    -fx-font: 40px LillyBelle;
-    -fx-fill: #664d39;
-    -fx-effect: innershadow(three-pass-box, black, 7, 0.2, 0, 0);
+#refreshButton, #backButton, #confirmButton {
+    -fx-cursor: hand;
 }

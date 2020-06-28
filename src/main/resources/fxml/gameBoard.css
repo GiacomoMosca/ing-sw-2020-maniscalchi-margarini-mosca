@@ -96,12 +96,12 @@
     -fx-effect: dropshadow(three-pass-box, black, 4, 0.3, 0, 0);
 }
 
-#confirmButtonText, #confirmButtonText_p, #continueButtonText, #continueButtonText_p, #returnToLobbyButtonText, #returnToLobbyButtonText_p {
+#confirmText, #confirmText_p, #continueText, #continueText_p {
     -fx-font: 23px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }
 
-#highlight, #yesButton, #noButton, #logButton, #logButton_p, #confirmButton, #continueButton, #returnToLobbyButton {
+#highlight, #yesButton, #noButton, #logButton, #logButton_p, #confirmButton, #continueButton {
     -fx-cursor: hand;
 }

@@ -33,7 +33,7 @@
                 </HBox.margin>
             </TextField>
             <VBox.margin>
-                <Insets top="40.0"/>
+                <Insets top="30.0"/>
             </VBox.margin>
         </HBox>
         <StackPane>

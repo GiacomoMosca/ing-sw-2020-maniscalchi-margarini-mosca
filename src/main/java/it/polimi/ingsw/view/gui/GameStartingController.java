@@ -81,6 +81,7 @@ public class GameStartingController {
         Platform.runLater(() -> {
             confirmButton.setVisible(true);
             confirmText.setText("Start Game");
+            confirmText_p.setText("Start Game");
         });
     }
 

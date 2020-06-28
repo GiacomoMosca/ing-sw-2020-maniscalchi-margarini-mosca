@@ -60,9 +60,9 @@ public class GameBoardController {
     @FXML
     private StackPane opaquePanel1, opaquePanel2, opaquePanel3, godBox, opaqueBackground, infoScreen, winLossScreen;
     @FXML
-    private ImageView confirmButton, confirmButton_p, continueButton, continueButton_p, returnToLobbyButton, returnToLobbyButton_p;
+    private ImageView confirmButton, confirmButton_p, continueButton, continueButton_p;
     @FXML
-    private Text confirmButtonText, confirmButtonText_p, continueButtonText, continueButtonText_p, returnToLobbyButtonText, returnToLobbyButtonText_p;
+    private Text confirmText, confirmText_p, continueText, continueText_p;
     @FXML
     private ImageView winOrLossScreen;
     private GUIManager manager;
@@ -285,7 +285,7 @@ public class GameBoardController {
             workersToRemove.get(0).setVisible(false);
             workersToRemove.get(1).setVisible(false);
             continueButton.setVisible(true);
-            continueButtonText.setVisible(true);
+            continueText.setVisible(true);
 
         });
     }
@@ -486,28 +486,6 @@ public class GameBoardController {
         });
     }
 
-    public void notifyDisconnection(PlayerView player) {
-        disconnectionMessage.setText(player.getId() + " disconnected !");
-        Platform.runLater(() -> {
-            opaqueBackground.setVisible(true);
-            infoScreen.setVisible(true);
-            disconnectionMessage.setVisible(true);
-            continueButton.setVisible(true);
-            continueButtonText.setVisible(true);
-        });
-    }
-
-    public void notifyGameOver() {
-        gameOverMessage.setText("Game over!");
-        Platform.runLater(() -> {
-            opaqueBackground.setVisible(true);
-            infoScreen.setVisible(true);
-            gameOverMessage.setVisible(true);
-            returnToLobbyButton.setVisible(true);
-            returnToLobbyButtonText.setVisible(true);
-        });
-    }
-
     public void notifyLoss(String reason, PlayerView player) {
         winOrLossScreen.setImage(new Image("/assets/graphics/defeatScreen.png"));
         String lossReason = null;
@@ -609,18 +587,18 @@ public class GameBoardController {
     @FXML
     private void confirmButtonPressed() {
         Platform.runLater(() -> {
-            confirmButtonText.setVisible(false);
+            confirmText.setVisible(false);
             confirmButton_p.setVisible(true);
-            confirmButtonText_p.setVisible(true);
+            confirmText_p.setVisible(true);
         });
     }
 
     @FXML
     private void confirmButtonReleased() {
         Platform.runLater(() -> {
-            confirmButtonText.setVisible(true);
+            confirmText.setVisible(true);
             confirmButton_p.setVisible(false);
-            confirmButtonText_p.setVisible(false);
+            confirmText_p.setVisible(false);
             winLossScreen.setVisible(false);
             manager.setBusy(false);
         });
@@ -630,8 +608,8 @@ public class GameBoardController {
     private void continueButtonPressed() {
         Platform.runLater(() -> {
             continueButton_p.setVisible(true);
-            continueButtonText.setVisible(false);
-            continueButtonText_p.setVisible(true);
+            continueText.setVisible(false);
+            continueText_p.setVisible(true);
         });
     }
 
@@ -639,30 +617,11 @@ public class GameBoardController {
     private void continueButtonReleased() {
         Platform.runLater(() -> {
             continueButton_p.setVisible(false);
-            continueButtonText_p.setVisible(false);
+            continueText_p.setVisible(false);
             infoScreen.setVisible(false);
             disconnectionMessage.setVisible(false);
             eliminationMessage.setVisible(false);
             opaqueBackground.setVisible(false);
-            manager.setBusy(false);
-        });
-    }
-
-    @FXML
-    private void returnToLobbyButtonPressed() {
-        Platform.runLater(() -> {
-            returnToLobbyButton_p.setVisible(true);
-            returnToLobbyButtonText.setVisible(false);
-            returnToLobbyButtonText_p.setVisible(true);
-        });
-    }
-
-    @FXML
-    private void returnToLobbyButtonReleased() {
-        Platform.runLater(() -> {
-            returnToLobbyButton_p.setVisible(false);
-            returnToLobbyButtonText_p.setVisible(false);
-            infoScreen.setVisible(false);
             manager.setBusy(false);
         });
     }

@@ -28,8 +28,16 @@
     -fx-effect: innershadow(three-pass-box, black, 4, 0.2, 0, 0);
 }
 
+#choiceBox {
+    -fx-font-size: 18px;
+}
+
 #confirmText, #confirmText_p {
     -fx-font: 30px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
+}
+
+#confirmButton {
+    -fx-cursor: hand;
 }

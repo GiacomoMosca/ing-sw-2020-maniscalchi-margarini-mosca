@@ -19,7 +19,7 @@
                 <Font size="20.0"/>
             </font>
             <VBox.margin>
-                <Insets top="20.0"/>
+                <Insets top="30.0"/>
             </VBox.margin>
         </TextField>
         <Text fx:id="error" fill="RED" mouseTransparent="true" text="Error" visible="false">

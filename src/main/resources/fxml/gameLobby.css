@@ -16,3 +16,7 @@
     -fx-fill: #664d39;
     -fx-effect: innershadow(three-pass-box, black, 5, 0.2, 0, 0);
 }
+
+#newGameButton, #joinGameButton {
+    -fx-cursor: hand;
+}
