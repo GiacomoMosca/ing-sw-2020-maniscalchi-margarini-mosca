@@ -48,9 +48,9 @@ public class ApolloController extends GodController {
      * Handles the moving phase of the turn, and eventually allows swapping position with opponent Workers: if the Player chooses a move that requires swapping positions, handles this change.
      * Calls displayMove with a non-null Card parameter if the Apollo God Power was used.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {

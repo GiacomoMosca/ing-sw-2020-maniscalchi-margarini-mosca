@@ -46,9 +46,9 @@ public class ZeusController extends GodController {
      * Handles the building phase of a turn, allowing the Worker to build under itself.
      * Calls displayBuild with a non-null Card parameter if the Zeus God Power was used.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
