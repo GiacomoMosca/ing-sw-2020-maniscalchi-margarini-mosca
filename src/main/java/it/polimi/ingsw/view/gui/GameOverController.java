@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 public class GameOverController {
 
     private GUIManager manager;
+    private boolean shuttingDown = false;
 
     @FXML
     private Text titleText;
@@ -38,6 +39,7 @@ public class GameOverController {
             confirmText.setVisible(true);
             confirmText_p.setVisible(false);
             manager.setBusy(false);
+            if (shuttingDown) manager.putObject(true);
         });
     }
 
@@ -54,6 +56,15 @@ public class GameOverController {
             titleText.setText("Game over!");
             confirmText.setText("Return to lobby");
             confirmText_p.setText("Return to lobby");
+        });
+    }
+
+    public void serverClosed() {
+        Platform.runLater(() -> {
+            shuttingDown = true;
+            titleText.setText("Server is down!");
+            confirmText.setText("Quit");
+            confirmText_p.setText("Quit");
         });
     }
 

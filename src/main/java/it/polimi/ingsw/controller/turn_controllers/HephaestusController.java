@@ -60,7 +60,7 @@ public class HephaestusController extends GodController {
             System.out.println(e.getMessage());
         }
         if (buildPosition.getBuildLevel() <= 2) {
-            if (client.chooseYesNo("Do you want to build here again?")) {
+            if (client.chooseYesNo("Do you want to build here twice?")) {
                 godPower = card;
                 try {
                     buildPosition.build();

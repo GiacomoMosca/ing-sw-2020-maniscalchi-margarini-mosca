@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.network.message.to_client.Ping;
+import it.polimi.ingsw.network.message.to_client.ServerClosed;
 import it.polimi.ingsw.network.message.to_client.ToClientMessage;
 import it.polimi.ingsw.network.message.to_server.*;
 import it.polimi.ingsw.view.*;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +26,6 @@ public class GUI implements UI {
     private final AtomicBoolean running;
     private final GUIManager manager;
     private final Object busyLock;
-    private boolean connected;
     private Socket server;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -51,11 +52,11 @@ public class GUI implements UI {
      * Creates a messageQueue where, thanks to the GUIManager, the client's input will be offered.
      * Creates a serverQueue where the messages from the server will be put after deserialization.
      * Starts two threads which respectively allows the GUIManager to listen to the client input, and the GUI to listen to the server messages.
-     * Everytime a message from the server is put on the serverQueue, it is parsed to the corresponding action.
+     * Every time a message from the server is put on the serverQueue, it is parsed to the corresponding action.
      */
     @Override
     public void run() {
-        connected = false;
+        boolean connected;
         running.set(true);
         messageQueue = new SynchronousQueue<Object>();
         currentGame = null;
@@ -100,7 +101,7 @@ public class GUI implements UI {
             try {
                 message = serverQueue.take();
             } catch (InterruptedException e) {
-                System.out.println("Disconnected. ");
+                serverClosed();
                 break;
             }
             synchronized (busyLock) {
@@ -128,9 +129,7 @@ public class GUI implements UI {
             try {
                 serverMessage = (ToClientMessage) input.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                running.compareAndSet(true, false);
-                System.out.println("Disconnected. ");
-                break;
+                serverMessage = new ServerClosed();
             }
             if (serverMessage instanceof Ping) pong();
             else {
@@ -140,21 +139,14 @@ public class GUI implements UI {
                     //
                 }
             }
+            if (serverMessage instanceof ServerClosed) return;
         }
     }
 
     /**
-     * Calls the stop method.
-     */
-    private void quit() {
-        stop();
-    }
-
-    /**
-     * If the Game is over, closes the communication channel with the server.
+     * Closes the communication channel with the server and closes the client.
      */
     public synchronized void stop() {
-        if (!running.compareAndSet(true, false)) return;
         try {
             if (server != null) server.close();
             if (input != null) input.close();
@@ -162,6 +154,7 @@ public class GUI implements UI {
         } catch (IOException e) {
             //
         }
+        Platform.exit();
     }
 
     /**
@@ -273,8 +266,11 @@ public class GUI implements UI {
         try {
             output.writeObject(new Pong(id));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+            try {
+                serverQueue.put(new ServerClosed());
+            } catch (InterruptedException e2) {
+                //
+            }
         }
     }
 
@@ -288,8 +284,11 @@ public class GUI implements UI {
         try {
             output.writeObject(new SendBoolean(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+            try {
+                serverQueue.put(new ServerClosed());
+            } catch (InterruptedException e2) {
+                //
+            }
         }
     }
 
@@ -303,8 +302,11 @@ public class GUI implements UI {
         try {
             output.writeObject(new SendInteger(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+            try {
+                serverQueue.put(new ServerClosed());
+            } catch (InterruptedException e2) {
+                //
+            }
         }
     }
 
@@ -318,8 +320,11 @@ public class GUI implements UI {
         try {
             output.writeObject(new SendIntegers(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+            try {
+                serverQueue.put(new ServerClosed());
+            } catch (InterruptedException e2) {
+                //
+            }
         }
     }
 
@@ -333,8 +338,11 @@ public class GUI implements UI {
         try {
             output.writeObject(new SendString(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
-            stop();
+            try {
+                serverQueue.put(new ServerClosed());
+            } catch (InterruptedException e2) {
+                //
+            }
         }
     }
 
@@ -484,7 +492,6 @@ public class GUI implements UI {
 
     public void displayMessage(String message) {
         manager.displayMessage(message);
-        System.out.println("\n" + message + "(NON STAMPARE)\n");
     }
 
     /**
@@ -526,7 +533,6 @@ public class GUI implements UI {
      */
     public void notifyDisconnection(PlayerView player) {
         manager.notifyDisconnection(player);
-        System.out.println("\n" + player.getId() + " has disconnected. ");
     }
 
     /**
@@ -543,7 +549,6 @@ public class GUI implements UI {
      */
     public void notifyGameOver() {
         manager.notifyGameOver();
-        System.out.println("\nGame over! \n\n\n\n\n");
     }
 
     /**
@@ -554,23 +559,6 @@ public class GUI implements UI {
      */
     public void notifyLoss(String reason, PlayerView winner) {
         manager.notifyLoss(reason, winner);
-        StringBuilder string = new StringBuilder();
-        string.append("You lost! ");
-        if (winner != null) {
-            string.append(winner.getId() + " won!");
-        } else {
-            switch (reason) {
-                case "outOfMoves":
-                    string.append("(No legal moves available)\n");
-                    break;
-                case "outOfWorkers":
-                    string.append("(All workers have been removed from the game)\n");
-                    break;
-                default:
-                    break;
-            }
-        }
-        System.out.println(string);
     }
 
     /**
@@ -580,20 +568,15 @@ public class GUI implements UI {
      */
     public void notifyWin(String reason) {
         manager.notifyWin(reason);
-        //manager.setBusy(false);
-        StringBuilder string = new StringBuilder();
-        string.append("Congratulations! You won! ");
-        switch (reason) {
-            case "winConditionAchieved":
-                string.append("(Win condition achieved)\n");
-                break;
-            case "outOfWorkers":
-                string.append("(All other players were eliminated)\n");
-                break;
-            default:
-                break;
-        }
-        System.out.println(string);
+    }
+
+    /**
+     * Thanks to the GUIManager, allows notifying the the server is down and then closes the client.
+     */
+    public void serverClosed() {
+        manager.serverClosed();
+        getBoolean();
+        stop();
     }
 
 }

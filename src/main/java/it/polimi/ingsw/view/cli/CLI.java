@@ -641,6 +641,10 @@ public class CLI implements UI {
         System.out.println(string);
     }
 
+    public void serverClosed() {
+
+    }
+
     /**
      * Allows displaying the current state of the Game Board on the CLI, using the following notation:
      * <p><ul>

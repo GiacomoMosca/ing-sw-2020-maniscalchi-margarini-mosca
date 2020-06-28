@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -56,17 +57,21 @@ public class GameBoardController {
     @FXML
     private TextArea log;
     @FXML
-    private Text disconnectionMessage, gameOverMessage, eliminationMessage, reasonMessage;
+    private Text eliminationMessage, reasonMessage;
     @FXML
-    private StackPane opaquePanel1, opaquePanel2, opaquePanel3, godBox, opaqueBackground, infoScreen, winLossScreen;
+    private StackPane opaquePanel1, opaquePanel2, opaquePanel3, godBox, opaqueBackground, winLossScreen;
+    @FXML
+    private VBox infoScreen;
     @FXML
     private ImageView confirmButton, confirmButton_p, continueButton, continueButton_p;
     @FXML
     private Text confirmText, confirmText_p, continueText, continueText_p;
     @FXML
     private ImageView winOrLossScreen;
+
     private GUIManager manager;
     private GameView game;
+    private boolean lost;
     private ArrayList<String> playersId;
     private ArrayList<CardView> godCards;
     private ArrayList<ImageView> playerHighlights;
@@ -82,6 +87,7 @@ public class GameBoardController {
      */
     public void initialize(GUIManager manager) {
         this.manager = manager;
+        lost = false;
     }
 
     /**
@@ -311,10 +317,15 @@ public class GameBoardController {
             eliminatedPlayer = player;
             break;
         }
-        if (eliminatedPlayer == null || eliminatedPlayer.getId().equals(manager.getId())) return;
+        if (eliminatedPlayer == null) return;
 
         workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(0));
         workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(1));
+        Platform.runLater(() -> {
+            workersToRemove.get(0).setVisible(false);
+            workersToRemove.get(1).setVisible(false);
+        });
+
         switch (desc) {
             case "outOfMoves":
                 reason = "(No legal moves available)";
@@ -329,16 +340,15 @@ public class GameBoardController {
                 reason = null;
                 break;
         }
+        pushToLog("\n ⚠\t" + eliminatedPlayer.getId() + " lost!\n" + reason);
+        if (eliminatedPlayer.getId().equals(manager.getId())) return;
         eliminationMessage.setText(eliminatedPlayer.getId() + " lost!\n" + reason);
-
         String finalEliminatedPlayer = eliminatedPlayer.getId();
         Platform.runLater(() -> {
             opaqueBackground.setVisible(true);
             infoScreen.setVisible(true);
             opaquePanelForThisPlayer.get(finalEliminatedPlayer).setVisible(true);
             eliminationMessage.setVisible(true);
-            workersToRemove.get(0).setVisible(false);
-            workersToRemove.get(1).setVisible(false);
             continueButton.setVisible(true);
             continueText.setVisible(true);
         });
@@ -607,6 +617,11 @@ public class GameBoardController {
      * @param player the PlayerView representing the Player who eventually won, can be null
      */
     public void notifyLoss(String reason, PlayerView player) {
+        if (lost) {
+            manager.setBusy(false);
+            return;
+        }
+        lost = true;
         winOrLossScreen.setImage(new Image("/assets/graphics/defeatScreen.png"));
         String lossReason = null;
         switch (reason) {
@@ -756,7 +771,6 @@ public class GameBoardController {
             continueButton_p.setVisible(false);
             continueText_p.setVisible(false);
             infoScreen.setVisible(false);
-            disconnectionMessage.setVisible(false);
             eliminationMessage.setVisible(false);
             opaqueBackground.setVisible(false);
             manager.setBusy(false);
@@ -802,6 +816,7 @@ public class GameBoardController {
             posX = x;
             posY = y;
             setOnMouseClicked(t -> {
+                infoBox.setText("Waiting...");
                 for (CellView cell : currentPositions)
                     highlightForThisCell.get(cell.getPosX() * 10 + cell.getPosY()).setVisible(false);
                 new Thread(() -> sendPosition(this)).start();

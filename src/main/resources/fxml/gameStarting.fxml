@@ -30,7 +30,7 @@
             <VBox alignment="TOP_CENTER" maxHeight="298.0" maxWidth="450.0">
                 <StackPane fx:id="player1" visible="false">
                     <ImageView>
-                        <Image url="@../assets/graphics/playerTab.png"/>
+                        <Image url="@../assets/graphics/playerTab1.png"/>
                     </ImageView>
                     <StackPane maxHeight="80.0" maxWidth="420.0">
                         <Text fx:id="player1Name" text="Player 1"/>
@@ -44,7 +44,7 @@
                 </StackPane>
                 <StackPane fx:id="player2" visible="false">
                     <ImageView>
-                        <Image url="@../assets/graphics/playerTab.png"/>
+                        <Image url="@../assets/graphics/playerTab2.png"/>
                     </ImageView>
                     <StackPane maxHeight="80.0" maxWidth="420.0">
                         <Text fx:id="player2Name" text="Player 2"/>
@@ -58,7 +58,7 @@
                 </StackPane>
                 <StackPane fx:id="player3" visible="false">
                     <ImageView>
-                        <Image url="@../assets/graphics/playerTab.png"/>
+                        <Image url="@../assets/graphics/playerTab3.png"/>
                     </ImageView>
                     <StackPane maxHeight="80.0" maxWidth="420.0">
                         <Text fx:id="player3Name" text="Player 3"/>

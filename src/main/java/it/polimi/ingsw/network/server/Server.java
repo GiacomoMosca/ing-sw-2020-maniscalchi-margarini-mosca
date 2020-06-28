@@ -24,6 +24,7 @@ public class Server {
     private final int port;
     private final ArrayList<GameController> gameControllers;
     private final ArrayList<VirtualView> players;
+    private ServerSocket socket;
     private Logger logger;
 
 
@@ -57,7 +58,6 @@ public class Server {
             System.exit(1);
             return;
         }
-        ServerSocket socket;
         try {
             socket = new ServerSocket(port);
         } catch (IOException e) {
@@ -77,13 +77,26 @@ public class Server {
                 //
             }
         }
+        stop();
     }
 
     /**
-     * Closes the Logger.
+     * Closes the logger, notifies all players that the server is closing and closes the socket.
      */
     private void stop() {
         logger.close();
+        for (VirtualView player : players) {
+            try {
+                player.serverClosed();
+            } catch (IOException e) {
+                // no need to handle disconnection, server is closing
+            }
+        }
+        try {
+            socket.close();
+        } catch (IOException e) {
+            //
+        }
     }
 
     /**

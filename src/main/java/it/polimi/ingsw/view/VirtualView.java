@@ -522,4 +522,14 @@ public class VirtualView {
         output.writeObject(new NotifyGameOver());
     }
 
+    /**
+     * Sends a message to the client, in order to notify him that the server is closing.
+     * Creates a new Message (NotifyGameOver Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+     *
+     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     */
+    public void serverClosed() throws IOException {
+        output.writeObject(new ServerClosed());
+    }
+
 }

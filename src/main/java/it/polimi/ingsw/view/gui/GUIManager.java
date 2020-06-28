@@ -311,7 +311,7 @@ public class GUIManager extends Application {
 
     public void displayMessage(String message) {
         if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
-
+        // deprecated for other instances
         setBusy(false);
     }
 
@@ -578,6 +578,16 @@ public class GUIManager extends Application {
         initGameOver();
         setScene(gameOverScene);
         gameOverController.notifyGameOver();
+    }
+
+    /**
+     * Notifies a Player that the server is down.
+     * The gameOverController will handle this notification.
+     */
+    public void serverClosed() {
+        initGameOver();
+        setScene(gameOverScene);
+        gameOverController.serverClosed();
     }
 
 }

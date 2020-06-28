@@ -186,4 +186,9 @@ public interface UI {
      */
     public void notifyWin(String reason);
 
+    /**
+     * Allows notifying the client that the server is down.
+     */
+    public void serverClosed();
+
 }
