@@ -46,7 +46,7 @@ public class ApolloControllerTest {
         genericController = new GodControllerConcrete(fakeGameController);
         fakeVirtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
 
-        Player player2 = new Player(fakeVirtualView2.getId(), "color");
+        Player player2 = new Player(fakeVirtualView2.getId()+"2", "color");
         PlayerController playerController = new PlayerController(player2, fakeVirtualView2, fakeGameController);
         fakeGameController.getGame().addPlayer(player2);
 
@@ -74,7 +74,9 @@ public class ApolloControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Apollo",
                 "God of Music",
-                "Your Move: Your Worker may move into an opponent Worker’s space (using normal movement rules) and force their Worker to the space yours just vacated (swapping their positions).",
+                "Your Move: Your Worker may move into an opponent Worker’s space " +
+                        "\n(using normal movement rules) and force their Worker to the space " +
+                        "\nyours just vacated (swapping their positions).",
                 1,
                 false,
                 apolloController);
