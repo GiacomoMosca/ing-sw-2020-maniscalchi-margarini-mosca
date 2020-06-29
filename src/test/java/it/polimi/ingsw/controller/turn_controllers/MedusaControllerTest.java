@@ -46,7 +46,9 @@ public class MedusaControllerTest<MedudsaController> {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Medusa",
                 "Petrifying Gorgon",
-                "End of Your Turn: If any of your opponent’s Workers occupy lower neighboring spaces, replace them all with blocks and remove them from the game.",
+                "End of Your Turn: If any of your opponent’s Workers occupy " +
+                        "\nlower neighboring spaces, replace them all with blocks and " +
+                        "\nremove them from the game.",
                 2,
                 false,
                 medusaController);

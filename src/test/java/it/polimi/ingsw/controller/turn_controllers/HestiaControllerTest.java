@@ -44,7 +44,8 @@ public class HestiaControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Hestia",
                 "Goddess of Hearth and Home",
-                "Your Build: Your Worker may build one additional time. The additional build cannot be on a perimeter space.",
+                "Your Build: Your Worker may build one additional time. " +
+                        "\nThe additional build cannot be on a perimeter space.",
                 2,
                 false,
                 hestiaController);

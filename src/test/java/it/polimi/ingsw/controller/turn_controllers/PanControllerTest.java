@@ -44,7 +44,8 @@ public class PanControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Pan",
                 "God of the Wild",
-                "Win Condition: You also win if your Worker moves down two or more levels.",
+                "Win Condition: You also win if your Worker moves down two " +
+                        "\nor more levels.",
                 1,
                 false,
                 panController);

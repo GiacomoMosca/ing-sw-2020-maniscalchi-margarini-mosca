@@ -44,7 +44,8 @@ public class PrometheusControllerTest {
     public void generateCard() {
         Card testCard = new Card("Prometheus",
                 "Titan Benefactor of Mankind",
-                "Your Turn: If your Worker does not move up, it may build both before and after moving.",
+                "Your Turn: If your Worker does not move up, it may build both " +
+                        "\nbefore and after moving.",
                 1,
                 false,
                 prometheusController);

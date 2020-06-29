@@ -84,7 +84,9 @@ public class MinotaurControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Minotaur",
                 "Bull-headed Monster",
-                "Your Move: Your Worker may move into an opponent Worker’s space (using normal movement rules), if the next space in the same direction is unoccupied. Their Worker is forced into that space (regardless of its level).",
+                "Your Move: Your Worker may move into an opponent Worker’s space " +
+                        "\n(using normal movement rules), if the next space in the same direction is " +
+                        "\nunoccupied. Their Worker is forced into that space (regardless of its level).",
                 1,
                 false,
                 minotaurController);

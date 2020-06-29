@@ -44,7 +44,8 @@ public class HephaestusControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Hephaestus",
                 "God of Blacksmiths",
-                "Your Build: Your Worker may build one additional block (not dome) on top of your first block.",
+                "Your Build: Your Worker may build one additional block (not dome) " +
+                        "\non top of your first block.",
                 1,
                 false,
                 hephaestusController);

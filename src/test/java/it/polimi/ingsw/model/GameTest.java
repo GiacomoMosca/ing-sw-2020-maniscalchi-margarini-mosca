@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Board;
 import it.polimi.ingsw.model.players.Player;
-import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.view.FakeVirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class GameTest {
         player2 = new Player("Luigi", "Verde");
         player3 = new Player("Gian", "Cachi");
         game = new Game("Test", player1, 3);
-        gamecontroller = new GameController(new VirtualView(socket, objectInputStream, objectOutputStream), 3, "Test");
+        gamecontroller = new GameController(new FakeVirtualView(socket, objectInputStream, objectOutputStream), 3, "Test");
         godcontroller1 = new GodControllerConcrete(gamecontroller);
         godcontroller2 = new GodControllerConcrete(gamecontroller);
         modifier1 = new Card("dio1", "a", "b", 1, false, godcontroller1);
