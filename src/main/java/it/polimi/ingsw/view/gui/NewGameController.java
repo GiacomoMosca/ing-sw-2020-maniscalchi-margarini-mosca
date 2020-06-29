@@ -10,6 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+/**
+ * NewGameController class handles the interaction between client and server during the creation of a new Game.
+ */
 public class NewGameController {
 
     private GUIManager manager;
@@ -32,6 +35,9 @@ public class NewGameController {
     @FXML
     private Text confirmText, confirmText_p;
 
+    /**
+     * @param manager the GUIManager to set the JoinGameController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
         choosingName = false;
@@ -39,6 +45,9 @@ public class NewGameController {
         confirmButton.setDisable(true);
     }
 
+    /**
+     * Handles the pressing of the Confirm button.
+     */
     public void confirmPressed() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(true);
@@ -47,6 +56,11 @@ public class NewGameController {
         });
     }
 
+    /**
+     * Handles the releasing of the Confirm button.
+     * When the Player inserts a valid Game name in the TextBox, notices the GUIManager that the Confirm button was clicked, putting the input on the messageQueue.
+     * Until the inserted Game name is not valid, an error message appears and it's not possible to continue.
+     */
     public void confirmReleased() {
         confirmButton.setDisable(true);
         if (choosingName) {
@@ -83,6 +97,11 @@ public class NewGameController {
         }
     }
 
+    /**
+     * Allows the Player to choose a Game name, eventually informing him that the previously chosen Game name is already taken.
+     *
+     * @param taken true if the previously chosen nickname is already taken, false otherwise
+     */
     public void chooseGameName(boolean taken) {
         choosingName = true;
         if (taken) errorMessage("Name already taken.");
@@ -92,6 +111,10 @@ public class NewGameController {
         });
     }
 
+    /**
+     * Allows the Player to choose a number of Players (2 or 3) for the Game he is creating.
+     * When the Player made his choice, he can click on the Start button to start the new Game.
+     */
     public void choosePlayersNumber() {
         choosingName = false;
         ObservableList<String> availableChoices = FXCollections.observableArrayList("2", "3");
@@ -105,6 +128,13 @@ public class NewGameController {
         });
     }
 
+    /**
+     * Allows displaying an error message when the inserted Game name is not valid:
+     * • it's longer than 12 characters
+     * • it's already taken
+     *
+     * @param message the String describing the error message
+     */
     public void errorMessage(String message) {
         Platform.runLater(() -> {
             gameNameField.clear();

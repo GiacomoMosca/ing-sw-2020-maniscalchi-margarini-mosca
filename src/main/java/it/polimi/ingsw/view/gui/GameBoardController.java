@@ -162,16 +162,13 @@ public class GameBoardController {
     }
 
     /**
+     *
      * Handles the initialization of all the information panels surrounding the Board, setting as visible:
-     * <p><ul>
-     * <li> Players' nicknames and colors
-     * <li> God Cards icons
-     * </ul></p>
+     * • Players' nicknames and colors
+     * • God Cards icons
      * Also prepares
-     * <p><ul>
-     * <li> full ImageViews of the God Cards that will be displayed when a God Power is used
-     * <li> opaque panels to be put on the eliminated player in a 3-players game
-     * </ul></p>
+     * • full ImageViews of the God Cards that will be displayed when a God Power is used
+     * • opaque panels to be put on the eliminated player in a 3-players game
      */
     public void initInfoPanels() {
         firstPlayerID.setText(playersId.get(0));
@@ -357,7 +354,7 @@ public class GameBoardController {
     /**
      * Allows the Player to choose the starting Player.
      * Sets the Player highlight to visible and waits for his choice.
-     * , when the Player clicks on the one who will start, provides to notice his choice.
+     * When the Player clicks on the one who will start, provides to notice his choice.
      */
     public void chooseStartingPlayer() {
         Platform.runLater(() -> {

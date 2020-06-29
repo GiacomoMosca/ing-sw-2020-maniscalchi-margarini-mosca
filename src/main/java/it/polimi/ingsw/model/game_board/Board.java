@@ -81,9 +81,6 @@ public class Board {
      * @param obj the reference object with which to compare
      * @return true if this board is the same as the obj argument, false otherwise.
      */
-    //////////////////////////////////////////////
-    // EQUALS DA MODIFICARE !!! (RENDERE GENERICA)
-    //////////////////////////////////////////////
     @Override
     public boolean equals(Object obj) {
 

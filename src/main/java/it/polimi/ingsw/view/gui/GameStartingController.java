@@ -10,6 +10,9 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
+/**
+ * GameStartingController class handles the interaction between client and server during the phase of waiting for Players to join a Game.
+ */
 public class GameStartingController {
 
     private GUIManager manager;
@@ -27,11 +30,17 @@ public class GameStartingController {
     @FXML
     private Text confirmText, confirmText_p;
 
+    /**
+     * @param manager the GUIManager to set the GameLobbyController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
         nicknameTab.setText(manager.getId());
     }
 
+    /**
+     * Handles the pressing of the Confirm button.
+     */
     public void confirmPressed() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(true);
@@ -40,6 +49,10 @@ public class GameStartingController {
         });
     }
 
+    /**
+     * Handles the releasing of the Confirm button.
+     * Notices the GUIManager that the Confirm button was clicked, putting this input on the messageQueue.
+     */
     public void confirmReleased() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(false);
@@ -50,6 +63,11 @@ public class GameStartingController {
         });
     }
 
+    /**
+     * Handles the displaying of the Players in the Game room, and informs the Player that he must wait for the other Players to join until the Game can start.
+     *
+     * @param game the GameView representing the current state of the Game
+     */
     public void displayPlayerJoined(GameView game) {
         String gameName = game.getName();
         int playerNum = game.getPlayerNum();
@@ -77,6 +95,9 @@ public class GameStartingController {
         });
     }
 
+    /**
+     * When the expected number of Players joined, allows the Player to click on the StartGame button so that the Game can start.
+     */
     public void notifyGameStarting() {
         Platform.runLater(() -> {
             confirmButton.setVisible(true);

@@ -13,7 +13,7 @@ public class ClientGUI {
     /**
      * Creates a new GUI.
      *
-     * @param args
+     * @param args no arguments
      */
     public static void main(String[] args) {
         userInterface = new GUI();

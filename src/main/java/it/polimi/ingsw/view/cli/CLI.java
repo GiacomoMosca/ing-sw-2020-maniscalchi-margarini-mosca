@@ -563,6 +563,11 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * Allows displaying a message received from the server.
+     *
+     * @param message the message to display
+     */
     public void displayMessage(String message) {
         System.out.println("\n" + message);
     }
@@ -692,16 +697,14 @@ public class CLI implements UI {
 
     /**
      * Allows displaying the current state of the Game Board on the CLI, using the following notation:
-     * <p><ul>
-     * <li> " " if the cell is unoccupied
-     * <li> "X" if the cell has a Dome
-     * <li> "1" if the cell is at building level 1
-     * <li> "2" if the cell is at building level 2
-     * <li> "3" if the cell is at building level 3
-     * <li> "r" if the cell is occupied by a red Worker
-     * <li> "g" if the cell is occupied by a green Worker
-     * <li> "b" if the cell is occupied by a blue Worker
-     * </ul></p>
+     * • " " if the cell is unoccupied
+     * • "X"  if the cell has a Dome
+     * • "1" if the cell is at building level 1
+     * • "2" if the cell is at building level 2
+     * • "3" if the cell is at building level 3
+     * • "r" if the cell is occupied by a red Worker
+     * • "g" if the cell is occupied by a green Worker
+     * • "b" if the cell is occupied by a blue Worker
      */
     private void displayBoard() {
         clear();

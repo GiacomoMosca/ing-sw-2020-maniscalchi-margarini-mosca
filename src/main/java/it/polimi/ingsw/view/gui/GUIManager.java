@@ -63,7 +63,7 @@ public class GUIManager extends Application {
     /**
      * Sets the gui static attribute of the GUIManager as the GUI received as argument.
      *
-     * @param gui
+     * @param gui the GUI to set the gui attribute to
      */
     public void setGUI(GUI gui) {
         GUIManager.gui = gui;
@@ -127,7 +127,7 @@ public class GUIManager extends Application {
      * Sets the stage attribute as the primaryStage received as argument; all the scenes will be set on this stage.
      * Sets the title of the stage, his size, his FXML Controller and other attributes.
      *
-     * @param primaryStage
+     * @param primaryStage the primary Stage
      * @throws Exception when an exception occurs while loading the Parent using the FXMLLoader
      */
     @Override
@@ -309,6 +309,11 @@ public class GUIManager extends Application {
     // generic
 
 
+    /**
+     * Allows the player to display a message received from the server.
+     *
+     * @param message the message sent
+     */
     public void displayMessage(String message) {
         if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
         // deprecated for other instances
@@ -560,7 +565,6 @@ public class GUIManager extends Application {
     /**
      * Notifies a Player that another Player disconnected.
      * The gameOverController will handle this notification.
-     *
      *
      * @param player the PlayerView representing the Player who disconnected
      */

@@ -42,12 +42,10 @@ public class Server {
 
     /**
      * Allows:
-     * <p><ul>
-     * <li> creating a new Logger
-     * <li> creating a new ServerSocket at the previously specified port, which will be used to accept the requests of connections from the clients
-     * <li> creating a new Socket instance for each client connecting to the server, establishing the communication channel between that client and the server
-     * <li> starting a new Thread for each client connecting to the server
-     * </ul></p>
+     * • creating a new Logger
+     * • creating a new ServerSocket at the previously specified port, which will be used to accept the requests of connections from the clients
+     * • creating a new Socket instance for each client connecting to the server, establishing the communication channel between that client and the server
+     * • starting a new Thread for each client connecting to the server
      */
     public void start() {
         try {
@@ -215,11 +213,9 @@ public class Server {
 
     /**
      * Allows supporting a Player to the choice of joining an existing Game. Allows
-     * <p><ul>
-     * <li> going back to the possibility of starting a new Game
-     * <li> refreshing the list of the currently active Game rooms
-     * <li> choosing a Game room to join
-     * </ul></p>
+     * • going back to the possibility of starting a new Game
+     * • refreshing the list of the currently active Game rooms
+     * • choosing a Game room to join
      * The Game in the Game Room starts when the expected number of participants joined.
      *
      * @param player the VirtualView representing the Player who is joining the Game room
@@ -268,7 +264,7 @@ public class Server {
      * Notifies all the connected clients that the Game is starting.
      * Starts a new Thread which will handle the setup and the execution of the Game.
      *
-     * @param gameController
+     * @param gameController the GameController for this Game
      * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
      * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
      */

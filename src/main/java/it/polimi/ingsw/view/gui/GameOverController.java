@@ -7,6 +7,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
+/**
+ * GameOverController class handles the interaction between client and server during the ending phase of the Game.
+ */
 public class GameOverController {
 
     private GUIManager manager;
@@ -21,10 +24,16 @@ public class GameOverController {
     @FXML
     private Text confirmText, confirmText_p;
 
+    /**
+     * @param manager the GUIManager to set the GameLobbyController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
+    /**
+     * Handles the pressing of the Confirm button.
+     */
     public void confirmPressed() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(true);
@@ -33,6 +42,10 @@ public class GameOverController {
         });
     }
 
+    /**
+     * Handles the releasing of the Confirm button.
+     * Notices the GUIManager that the Confirm button was clicked, putting this input on the messageQueue.
+     */
     public void confirmReleased() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(false);
@@ -43,6 +56,9 @@ public class GameOverController {
         });
     }
 
+    /**
+     * @param player the PlayerView representing the Player who disconnected
+     */
     public void notifyDisconnection(PlayerView player) {
         Platform.runLater(() -> {
             titleText.setText(player.getId() + " disconnected!");
@@ -51,6 +67,9 @@ public class GameOverController {
         });
     }
 
+    /**
+     * Allows notifying a Player the Game is  over, giving him  the possibility to return to Lobby for playing again.
+     */
     public void notifyGameOver() {
         Platform.runLater(() -> {
             titleText.setText("Game over!");
@@ -59,6 +78,9 @@ public class GameOverController {
         });
     }
 
+    /**
+     * Notifies a Player that the server is down. Allows him to quit.
+     */
     public void serverClosed() {
         Platform.runLater(() -> {
             shuttingDown = true;

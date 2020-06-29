@@ -51,7 +51,8 @@ public class ArtemisControllerTest {
     public void generateCard_noInputGiven_shouldReturnTheGodCard() {
         Card testCard = new Card("Artemis",
                 "Goddess of the Hunt",
-                "Your Move: Your Worker may move one additional time, but not back to the space it started on.",
+                "Your Move: Your Worker may move one additional time, " +
+                        "\nbut not back to the space it started on.",
                 1,
                 false,
                 artemisController);

@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
-import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.view.FakeVirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class DeckTest {
 
     @Before
     public void setUp() {
-        gamecontroller = new GameController(new VirtualView(socket, objectInputStream, objectOutputStream), 2, "Test");
+        gamecontroller = new GameController(new FakeVirtualView(socket, objectInputStream, objectOutputStream), 2, "Test");
         gc1 = new GodControllerConcrete(gamecontroller);
         gc2 = new GodControllerConcrete(gamecontroller);
         card1 = new Card("god1", "title1", "description1", 1, true, gc1);

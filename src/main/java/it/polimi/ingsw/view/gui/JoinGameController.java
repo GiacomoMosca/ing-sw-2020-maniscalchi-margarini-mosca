@@ -13,6 +13,12 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
+/**
+ * JoinGameController class handles the interaction between client and server during the phase of joining an existing Game, allows:
+ * • giving a look at the list of the existing Games
+ * • choosing a Game room to join
+ * • going back to create a new Game room
+ */
 public class JoinGameController {
 
     private GUIManager manager;
@@ -37,11 +43,17 @@ public class JoinGameController {
     private ImageView confirmButton, confirmButton_p;
 
 
+    /**
+     * @param manager the GUIManager to set the JoinGameController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
         nicknameTab.setText(manager.getId());
     }
 
+    /**
+     * Handles the pressing of the Back button.
+     */
     public void backButtonPressed() {
         Platform.runLater(() -> {
             backButton_p.setVisible(true);
@@ -50,6 +62,9 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the pressing of the Refresh button.
+     */
     public void refreshButtonPressed() {
         Platform.runLater(() -> {
             refreshButton_p.setVisible(true);
@@ -58,6 +73,9 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the pressing of the Confirm button.
+     */
     public void confirmButtonPressed() {
         Platform.runLater(() -> {
             confirmButton_p.setVisible(true);
@@ -66,6 +84,10 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the releasing of the Back button.
+     * Notices the GUIManager that the Back button was clicked, putting this input on the messageQueue.
+     */
     public void backButtonReleased() {
         Platform.runLater(() -> {
             backButton.setDisable(true);
@@ -78,6 +100,10 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the releasing of the Refresh button.
+     * Notices the GUIManager that the Refresh button was clicked, putting this input on the messageQueue.
+     */
     public void refreshButtonReleased() {
         Platform.runLater(() -> {
             refreshButton_p.setVisible(false);
@@ -88,6 +114,10 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the releasing of the Confirm button.
+     * Notices the GUIManager that the Confirm button was clicked, putting the input representing the chosen Game Room on the messageQueue.
+     */
     public void confirmButtonReleased() {
         confirmButton.setDisable(true);
         int choice = gameRoomsList.getSelectionModel().getSelectedIndex();
@@ -104,6 +134,14 @@ public class JoinGameController {
         });
     }
 
+    /**
+     * Handles the creation of a table containing all the currently active Game rooms, showing:
+     * • the Game name
+     * • the creator of the Game room
+     * • the number of Players currently active in the Game room
+     *
+     * @param gameRooms an ArrayList containing all the Game Rooms currently active
+     */
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
         ArrayList<TableItem> rooms = new ArrayList<TableItem>();
         for (GameView gameView : gameRooms)

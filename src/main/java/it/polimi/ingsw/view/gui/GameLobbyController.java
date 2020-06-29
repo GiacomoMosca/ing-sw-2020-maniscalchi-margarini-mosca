@@ -5,6 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+/**
+ * GameLobbyController class handles the interaction between client and server during the choice of starting a new Game or joining an existing one.
+ */
 public class GameLobbyController {
 
     private GUIManager manager;
@@ -20,11 +23,17 @@ public class GameLobbyController {
     @FXML
     private Text newGameText, newGameText_p;
 
+    /**
+     * @param manager the GUIManager to set the GameLobbyController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
         nicknameTab.setText(manager.getId());
     }
 
+    /**
+     * Handles the pressing of the JoinGame button.
+     */
     public void joinPressed() {
         Platform.runLater(() -> {
             joinGameButton_p.setVisible(true);
@@ -33,6 +42,10 @@ public class GameLobbyController {
         });
     }
 
+    /**
+     * Handles the releasing of the JoinGame button.
+     * Notices the GUIManager that the JoinGame button was clicked, putting this input on the messageQueue.
+     */
     public void joinReleased() {
         Platform.runLater(() -> {
             joinGameText.setDisable(true);
@@ -44,6 +57,9 @@ public class GameLobbyController {
         });
     }
 
+    /**
+     * Handles the pressing of the NewGame button.
+     */
     public void newGamePressed() {
         Platform.runLater(() -> {
             newGameButton_p.setVisible(true);
@@ -52,6 +68,10 @@ public class GameLobbyController {
         });
     }
 
+    /**
+     * Handles the releasing of the NewGame button.
+     * Notices the GUIManager that the NewGame button was clicked, putting this input on the messageQueue.
+     */
     public void newGameReleased() {
         Platform.runLater(() -> {
             newGameText.setDisable(true);

@@ -273,13 +273,11 @@ public class GameController {
      * Before proceeding to the Game, checks if there is any always active God Power.
      * Then plays out the Game until there's no winner.
      * Each Player's turn is in the end described by a string:
-     * <p><ul>
-     * <li> "next" if the Player properly moved and built and the game goes on;
-     * <li> "outOfMoves" if the Player must be eliminated because ran out of moves for both his Workers;
-     * <li> "outOfBuilds" if the Player must be eliminated because ran out of builds for both his Workers;
-     * <li> "winConditionAchieved" if the Player won because he achieved the win condition;
-     * <li> "godConditionAchieved" if the Player won because he achieved his God win condition;
-     * </ul></p>
+     * • "next" if the Player properly moved and built and the game goes on;
+     * • "outOfMoves" if the Player must be eliminated because ran out of moves for both his Workers;
+     * • "outOfBuilds" if the Player must be eliminated because ran out of builds for both his Workers;
+     * • "winConditionAchieved" if the Player won because he achieved the win condition;
+     * • "godConditionAchieved" if the Player won because he achieved his God win condition;
      *
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -356,7 +354,7 @@ public class GameController {
     /**
      * Handles the disconnection of a Player and, after notifying that disconnection, terminates the Game.
      *
-     * @param controller
+     * @param controller the PlayerController associated to the Player who disconnected
      */
     public void handleDisconnection(PlayerController controller) {
         if (!running.get() || controller == null) return;
@@ -375,6 +373,7 @@ public class GameController {
      *
      * @param player the Player to eliminate
      * @param reason the reason why the Player lost
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController is thrown
      */
     private void eliminatePlayer(Player player, String reason) throws IOExceptionFromController {
         player.setLost();
@@ -426,14 +425,12 @@ public class GameController {
      * Broadcasts all the information associated with the current Game to all the Players.
      *
      * @param desc the description associated with this broadcast; can be
-     *             <p><ul>
-     *             <li>playerJoined: sends player info when a new player joins the game
-     *             <li>gameSetup: sends player info after all players have joined
-     *             <li>boardSetup: sends player info with god cards
-     *             <li>gameStart: signals the end of the setup stage
-     *             <li>turnStart: signals the beginning of a new turn
-     *             <li>a notifyLoss description: signals the loss of the first player in a 3 player game
-     *             </ul></p>
+     *             • playerJoined: sends player info when a new player joins the game
+     *             • gameSetup: sends player info after all players have joined
+     *             • boardSetup: sends player info with god cards
+     *             • gameStart: signals the end of the setup stage
+     *             • turnStart: signals the beginning of a new turn
+     *             • a notifyLoss description: signals the loss of the first player in a 3 player game
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public void broadcastGameInfo(String desc) throws IOExceptionFromController {

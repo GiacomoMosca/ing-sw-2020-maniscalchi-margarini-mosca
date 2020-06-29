@@ -100,7 +100,11 @@ public abstract class GodController {
     /**
      * Handles the basic phases of a turn: moving and building.
      *
+     * @param worker the active Worker during this turn
      * @return "godConditionAchieved" if the Player won, "next" if the game goes on
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
      */
     public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
         activeWorker = worker;
