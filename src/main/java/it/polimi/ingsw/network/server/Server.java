@@ -201,6 +201,7 @@ public class Server {
         } while (taken);
         int playerNum = player.choosePlayersNumber();
         GameController gameController = new GameController(player, playerNum, gameName);
+        gameController.setLogger(logger);
         gameControllers.add(gameController);
         logger.log("new game " + gameName + " created");
         try {
