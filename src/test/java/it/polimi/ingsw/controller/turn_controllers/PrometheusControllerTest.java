@@ -200,5 +200,9 @@ public class PrometheusControllerTest {
             game.getBoard().getCell(2, 2).setBuildLevel(1);
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }

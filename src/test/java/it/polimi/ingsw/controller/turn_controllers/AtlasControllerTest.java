@@ -131,5 +131,10 @@ public class AtlasControllerTest {
             game.getBoard().getCell(0, 0).setBuildLevel(1);
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
+
     }
 }

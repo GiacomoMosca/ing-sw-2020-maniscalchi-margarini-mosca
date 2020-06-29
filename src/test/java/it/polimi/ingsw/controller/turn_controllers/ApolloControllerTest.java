@@ -3,7 +3,6 @@ package it.polimi.ingsw.controller.turn_controllers;
 import it.polimi.ingsw.controller.FakeGameController;
 import it.polimi.ingsw.controller.PlayerController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
-import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
@@ -14,7 +13,6 @@ import it.polimi.ingsw.view.VirtualView;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -145,7 +143,7 @@ public class ApolloControllerTest {
         fakeGameController.getGame().getPlayers().get(0).addWorker(worker);
         apolloController.activeWorker = worker;
         fakeGameController.getGame().getBoard().getCell(1, 1).buildDome();
-
+        System.out.println();
         apolloController.movePhase();
     }
 
@@ -191,5 +189,9 @@ public class ApolloControllerTest {
             game.getBoard().getCell(3, 3).setBuildLevel(1);
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }

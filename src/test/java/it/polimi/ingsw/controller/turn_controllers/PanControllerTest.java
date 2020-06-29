@@ -117,5 +117,9 @@ public class PanControllerTest {
             }
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }
