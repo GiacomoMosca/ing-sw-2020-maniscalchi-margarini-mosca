@@ -97,7 +97,7 @@ public class GameView implements Serializable {
      * @param x the x-coordinate of the requested Cell
      * @param y the y-coordinate of the requested Cell
      * @return the CellView representing the requested Cell
-     * @throws ArrayIndexOutOfBoundsException
+     * @throws ArrayIndexOutOfBoundsException when index out of Array length
      */
     public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
         if (x < 0 || x >= 5 || y < 0 || y >= 5) throw new ArrayIndexOutOfBoundsException();
@@ -106,7 +106,7 @@ public class GameView implements Serializable {
 
     /**
      * @param cell the CellView which the x and y-coordinates will be equals to
-     * @throws ArrayIndexOutOfBoundsException
+     * @throws ArrayIndexOutOfBoundsException when index out of Array length
      */
     public void setCell(CellView cell) throws ArrayIndexOutOfBoundsException {
         int x = cell.getPosX();

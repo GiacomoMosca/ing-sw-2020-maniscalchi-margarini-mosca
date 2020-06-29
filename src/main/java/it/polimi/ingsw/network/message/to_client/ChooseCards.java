@@ -21,11 +21,9 @@ public class ChooseCards extends ToClientMessage {
      *
      * @param possibleCards an ArrayList containing all the Cards to choose among
      * @param num           the number of Cards to pick, can be
-     *                      <p><ul>
-     *                      <li> 1 if the player is asked to choose his own card for the Game among the pickedCards
-     *                      <li> 2 if the player is asked to choose the 2 cards to use for a 2-players Game
-     *                      <li> 3 if the player is asked to choose the 3 cards to use for a 3-players Game
-     *                      </ul></p>
+     *                      • 1 if the player is asked to choose his own card for the Game among the pickedCards
+     *                      • 2 if the player is asked to choose the 2 cards to use for a 2-players Game
+     *                      • 3 if the player is asked to choose the 3 cards to use for a 3-players Game
      * @param pickedCards   an ArrayList containing the picked Cards, needed when num has the value 1
      */
     public ChooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {

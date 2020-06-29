@@ -95,9 +95,9 @@ public class PrometheusController extends GodController {
     /**
      * Handles the moving phase of the turn. If the Player didn't build before moving, normally handles the phase, otherwise doesn't allow him to move up.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
@@ -135,9 +135,9 @@ public class PrometheusController extends GodController {
      * Handles the building phase of a turn, which may be duplicated (before and after moving).
      * Calls displayBuild with a non-null Card parameter if the Prometheus God Power was used.
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOExceptionFromController
+     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
     public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {

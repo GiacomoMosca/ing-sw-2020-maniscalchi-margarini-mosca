@@ -13,7 +13,7 @@ public class ClientCLI {
     /**
      * Creates a new CLI.
      *
-     * @param args
+     * @param args no arguments
      */
     public static void main(String[] args) {
         userInterface = new CLI();

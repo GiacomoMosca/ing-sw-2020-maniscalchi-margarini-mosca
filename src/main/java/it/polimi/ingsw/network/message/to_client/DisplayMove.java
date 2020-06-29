@@ -20,10 +20,8 @@ public class DisplayMove extends ToClientMessage {
      * Sets the attributes to the values received as arguments.
      *
      * @param moves   an HashMap containing:
-     *                <p><ul>
-     *                <li> a pair of CellViews if only one Worker moved;
-     *                <li> two pairs of CellViews if two Workers moved (in this case the godPower parameter mustn't be null: this kind of double move is only allowed thanks to a God Power).
-     *                </ul></p>
+     *                • a pair of CellViews if only one Worker moved;
+     *                • two pairs of CellViews if two Workers moved (in this case the godPower parameter mustn't be null: this kind of double move is only allowed thanks to a God Power).
      * @param godCard the CardView representing the God Power which eventually allowed this build
      */
     public DisplayMove(HashMap<CellView, CellView> moves, CardView godCard) {

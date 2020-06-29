@@ -6,6 +6,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+/**
+ * LoginController class handles the interaction between client and server during the login phase of a Player.
+ */
 public class LoginController {
 
     private GUIManager manager;
@@ -23,10 +26,16 @@ public class LoginController {
     @FXML
     private Text error;
 
+    /**
+     * @param manager the GUIManager to set the JoinGameController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
     }
 
+    /**
+     * Handles the pressing of the Connect button.
+     */
     public void pressed() {
         Platform.runLater(() -> {
             textField.editableProperty().setValue(false);
@@ -36,6 +45,10 @@ public class LoginController {
         });
     }
 
+    /**
+     * Handles the releasing of the Connect button.
+     * Notices the GUIManager that the Connect button was clicked, putting the input inserted in the TextBox (Server IP address) on the messageQueue.
+     */
     public void connectReleased() {
         Platform.runLater(() -> {
             connectButton_p.setVisible(false);
@@ -56,6 +69,11 @@ public class LoginController {
             connectButton.setDisable(false);
     }
 
+    /**
+     * Handles the releasing of the Choose button.
+     * When the Player inserts a valid nickname in the TextBox, notices the GUIManager that the Choose button was clicked, putting the input on the messageQueue.
+     * Until the inserted nickname is not valid, an error message appears and it's not possible to continue.
+     */
     public void chooseReleased() {
         Platform.runLater(() -> {
             connectButton_p.setVisible(false);
@@ -78,6 +96,10 @@ public class LoginController {
             connectButton.setDisable(false);
     }
 
+    /**
+     * Allows the Player to choose his nickname.
+     * Sets an empty textBox as visible, and allows clicking on a Connect button when a valid nickname is inserted.
+     */
     public void chooseNickname() {
         Platform.runLater(() -> {
             grayConnectButton.setVisible(false);
@@ -93,6 +115,13 @@ public class LoginController {
         });
     }
 
+    /**
+     * Allows displaying an error message:
+     * • when the inserted server IP address is not valid
+     * • when the inserted nickname is not valid
+     *
+     * @param message the String describing the error message
+     */
     public void errorMessage(String message) {
         textField.clear();
         textField.editableProperty().setValue(true);

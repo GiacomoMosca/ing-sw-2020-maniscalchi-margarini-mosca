@@ -15,13 +15,11 @@ public class NotifyWin extends ToClientMessage {
      * Calls the super constructor so that the msgId is set to "notify win".
      *
      * @param reason a String, can be:
-     *               <p><ul>
-     *               <li> "godConditionAchieved", if the Player won by achieving his God's win condition
-     *               <li> "winConditionAchieved",  if the Player won by achieving the normal win condition
-     *               <li> "outOfWorkers",  if the Player won because the only Player left was eliminated (he ran out of Workers)
-     *               <li> "outOfMoves", if the Player won because the only Player left was eliminated (he ran out of moves)
-     *               <li> "outOfBuilds", if the Player won because the only Player left was eliminated (he ran out of builds)
-     *               </ul></p>
+     *               • "godConditionAchieved", if the Player won by achieving his God's win condition
+     *               • "winConditionAchieved",  if the Player won by achieving the normal win condition
+     *               • "outOfWorkers",  if the Player won because the only Player left was eliminated (he ran out of Workers)
+     *               • "outOfMoves", if the Player won because the only Player left was eliminated (he ran out of moves)
+     *               • "outOfBuilds", if the Player won because the only Player left was eliminated (he ran out of builds)
      */
     public NotifyWin(String reason) {
         super("notify win");

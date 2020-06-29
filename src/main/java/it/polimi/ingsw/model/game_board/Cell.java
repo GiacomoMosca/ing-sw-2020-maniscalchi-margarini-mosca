@@ -60,7 +60,7 @@ public class Cell {
     /**
      * Builds a level (in a range from 1 to 3) or a dome on the Cell.
      *
-     * @throws IllegalStateException when it's not possible to build on this Cell
+     * @throws IllegalBuildException when it's not possible to build on this Cell
      */
     public void build() throws IllegalBuildException {
         if (hasDome)
@@ -93,7 +93,7 @@ public class Cell {
     /**
      * Sets the Cell as an occupied space (by the worker received as an argument).
      *
-     * @param worker
+     * @param worker the Worker to set on this Cell
      */
     public void setWorker(Worker worker) {
         this.worker = worker;

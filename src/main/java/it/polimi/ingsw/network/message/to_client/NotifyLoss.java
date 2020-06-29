@@ -16,18 +16,14 @@ public class NotifyLoss extends ToClientMessage {
      * Calls the super constructor so that the msgId is set to "notify loss".
      *
      * @param reason a String describing the reason of the loss, can be
-     *               <p><ul>
-     *               <li> "outOfWorkers" if the Player lost because he ran out of Workers
-     *               <li> "outOfMoves" if the Player lost because he ran out of moves
-     *               <li> "outOfBuilds" if the Player lost because he ran out of builds
-     *               <li> "godConditionAchieved" if the Player lost because another Worker achieved his God's win condition
-     *               <li> "winConditionAchieved" if the Player lost because another Worker achieved the normal win condition
-     *               </ul></p>
+     *               • "outOfWorkers" if the Player lost because he ran out of Workers
+     *               • "outOfMoves" if the Player lost because he ran out of moves
+     *               • "outOfBuilds" if the Player lost because he ran out of builds
+     *               • "godConditionAchieved" if the Player lost because another Worker achieved his God's win condition
+     *               • "winConditionAchieved" if the Player lost because another Worker achieved the normal win condition
      * @param winner can be
-     *               <p><ul>
-     *               <li> null if the Player lost because he ran out of Workers, moves or builds
-     *               <li> not null if the Player lost because another Player won
-     *               </ul></p>
+     *               • null if the Player lost because he ran out of Workers, moves or builds
+     *               • not null if the Player lost because another Player won
      */
     public NotifyLoss(String reason, PlayerView winner) {
         super("notify loss");

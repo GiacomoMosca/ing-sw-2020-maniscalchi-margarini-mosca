@@ -17,6 +17,7 @@ public class Worker {
      * Worker constructor. Sets the player received as an argument as the actual owner of this Worker.
      *
      * @param owner the Player who owns the Worker
+     * @param num the number identifying this Worker (0 or 1)
      */
     public Worker(Player owner, int num) {
         this.owner = owner;
@@ -48,7 +49,7 @@ public class Worker {
     /**
      * Sets the Cell received as an argument as the Cell where the Worker is located.
      *
-     * @param position
+     * @param position the Cell to set this Worker on
      */
     public void setPosition(Cell position) {
         position.setWorker(this);
@@ -60,7 +61,7 @@ public class Worker {
      * Before doing this, checks if the desired position is vacant so that it can be occupied.
      *
      * @param position the Cell representing the new position of the Worker
-     * @throws IllegalArgumentException when trying to move the Worker to a Cell with a dome or a Cell occupied by another Worker
+     * @throws IllegalMoveException when trying to move the Worker to a Cell with a dome or a Cell occupied by another Worker
      */
     public void move(Cell position) throws IllegalMoveException {
         if (position.isDomed())

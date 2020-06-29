@@ -54,7 +54,7 @@ public class Player {
     /**
      * Sets the God Card received as an argument as the God Card associated with the Player.
      *
-     * @param godCard
+     * @param godCard the God Card to set
      */
     public void setGodCard(Card godCard) {
         this.godCard = godCard;

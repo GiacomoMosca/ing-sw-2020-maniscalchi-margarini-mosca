@@ -13,6 +13,10 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
+/**
+ * GameSetupController class handles the interaction between client and server during the phase of choosing the God Cards to use for the Game.
+ * The Player can choose to randomize the playable God Cards pool, or to choose the God Cards that will be used in the Game.
+ */
 public class GameSetupController {
 
     private GUIManager manager = new GUIManager();
@@ -38,11 +42,17 @@ public class GameSetupController {
     private ArrayList<String> choices;
     private int choicesNum;
 
+    /**
+     * @param manager the GUIManager to set the JoinGameController manager attribute to
+     */
     public void initialize(GUIManager manager) {
         this.manager = manager;
         setDefaultValues();
     }
 
+    /**
+     * Prepares the scene.
+     */
     public void setDefaultValues() {
         cover.setVisible(true);
         chooseYesNoBox.setVisible(false);
@@ -115,6 +125,11 @@ public class GameSetupController {
         manager.putObject(ints);
     }
 
+    /**
+     * Allows the Player to choose between randomizing the playable God Cards pool or selecting the God Cards to use.
+     *
+     * @param query the "yes or no question" the Player should answer to
+     */
     public void chooseYesNo(String query) {
         Platform.runLater(() -> {
             cover.setVisible(false);
@@ -124,6 +139,9 @@ public class GameSetupController {
         });
     }
 
+    /**
+     * Allows preparing the scene for the choiche of the Cards.
+     */
     public void displayGameInfo() {
         Platform.runLater(() -> {
             setDefaultValues();
@@ -131,6 +149,13 @@ public class GameSetupController {
         });
     }
 
+    /**
+     * Allows the Player to choose his own Card between those available to pick.
+     * When he selected his Card, he will be able to click on the Confirm button.
+     *
+     * @param possibleCards an ArrayList containing all the God names associated to the available Cards
+     * @param pickedCards   an ArrayList containing all the God names associated to the already picked Cards
+     */
     public void chooseMyCard(ArrayList<String> possibleCards, ArrayList<String> pickedCards) {
         this.possibleCards = possibleCards;
         choices = new ArrayList<String>();
@@ -155,6 +180,14 @@ public class GameSetupController {
         });
     }
 
+    /**
+     * Allows the Player to choose a specified number of Cards between those available.
+     * The Player can scroll through all Cards to select the 2 or 3 Cards to use for the Game.
+     * When he selected the expected number of cards, he will be able to click on the Confirm button.
+     *
+     * @param possibleCards an ArrayList containing all the God names associated to the available Cards
+     * @param num           the number of cards to choose
+     */
     public void chooseAllCards(ArrayList<String> possibleCards, int num) {
         this.possibleCards = possibleCards;
         choices = new ArrayList<String>();
@@ -179,6 +212,11 @@ public class GameSetupController {
         });
     }
 
+    /**
+     * GodImageView class is used to represent each God Card as an ImageView with an associated boolean attribute telling if the Card was clicked or not.
+     * It is possible to select a Card and then unselect it.
+     * All the Cards are associated to a String (ie the God name), and all the God names associated to the selected Cards are put in an ArrayList.
+     */
     public class GodImageView extends ImageView {
 
         private final String card;

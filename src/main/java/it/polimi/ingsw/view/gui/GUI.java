@@ -490,6 +490,11 @@ public class GUI implements UI {
         currentGame = game;
     }
 
+    /**
+     * Thanks to the GUIManager, allows displaying a message from the server.
+     *
+     * @param message the message to display
+     */
     public void displayMessage(String message) {
         manager.displayMessage(message);
     }

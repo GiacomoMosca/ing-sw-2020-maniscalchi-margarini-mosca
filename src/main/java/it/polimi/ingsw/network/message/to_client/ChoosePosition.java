@@ -20,13 +20,11 @@ public class ChoosePosition extends ToClientMessage {
      *
      * @param positions an ArrayList containing all the positions the client can choose among
      * @param desc      the reason why he has to make this choice, can be
-     *                  <p><ul>
-     *                  <li> "start1", if the Player is asked to choose the starting position for his first Worker
-     *                  <li> "start2", if the Player is asked to choose the starting position for his second Worker
-     *                  <li> "worker", if the Player is asked to choose the Worker to use
-     *                  <li> "move", if the Player is asked to choose the position to move to
-     *                  <li> "build", if the Player is asked to choose the position to build in
-     *                  </ul></p>
+     *                  • "start1", if the Player is asked to choose the starting position for his first Worker
+     *                  • "start2", if the Player is asked to choose the starting position for his second Worker
+     *                  • "worker", if the Player is asked to choose the Worker to use
+     *                  • "move", if the Player is asked to choose the position to move to
+     *                  • "build", if the Player is asked to choose the position to build in
      */
     public ChoosePosition(ArrayList<CellView> positions, String desc) {
         super("choose position");
