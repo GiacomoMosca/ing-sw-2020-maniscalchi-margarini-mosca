@@ -31,6 +31,7 @@ public class CLI implements UI {
     private String id;
     private GameView currentGame;
     private boolean playing;
+    private boolean lost;
 
     /**
      * CLI constructor.
@@ -548,6 +549,7 @@ public class CLI implements UI {
             case "gameSetup":
                 clear();
                 playing = false;
+                lost = false;
                 break;
             case "gameStart":
                 playing = true;
@@ -636,6 +638,8 @@ public class CLI implements UI {
      * @param winner the PlayerView representing the Player who eventually won, can be null
      */
     public void notifyLoss(String reason, PlayerView winner) {
+        if (lost) return;
+        lost = true;
         clear();
         StringBuilder string = new StringBuilder();
         string.append("You lost! ");

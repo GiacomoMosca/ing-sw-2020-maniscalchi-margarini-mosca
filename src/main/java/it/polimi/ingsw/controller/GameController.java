@@ -522,7 +522,7 @@ public class GameController {
     private void setWinner(Player player, String reason) {
         game.setWinner(player);
         for (PlayerController controller : playerControllers) {
-            if (controller == null || controller.getPlayer().hasLost()) continue;
+            if (controller == null) continue;
             try {
                 if (controller.getPlayer().equals(player)) {
                     controller.getClient().notifyWin(reason);
