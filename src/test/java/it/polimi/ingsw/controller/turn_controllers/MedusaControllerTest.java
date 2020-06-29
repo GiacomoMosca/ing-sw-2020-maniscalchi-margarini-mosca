@@ -172,5 +172,9 @@ public class MedusaControllerTest<MedudsaController> {
             game.getBoard().getCell(2, 2).buildDome();
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }

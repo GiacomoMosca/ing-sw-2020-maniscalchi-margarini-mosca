@@ -104,5 +104,9 @@ public class LimusControllerTest {
             game.getBoard().getCell(3, 3).setBuildLevel(1);
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }

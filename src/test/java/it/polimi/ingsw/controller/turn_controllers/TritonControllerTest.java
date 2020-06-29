@@ -188,5 +188,9 @@ public class TritonControllerTest {
 
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
     }
 }

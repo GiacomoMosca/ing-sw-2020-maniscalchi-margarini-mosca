@@ -136,5 +136,10 @@ public class AthenaControllerTest {
             game.getBoard().getCell(0, 0).setBuildLevel(2);
         }
 
+        @Override
+        public void logError(String message) {
+            //
+        }
+
     }
 }
