@@ -21,19 +21,17 @@ import java.net.Socket;
 import static org.junit.Assert.*;
 
 public class GameControllerTest {
-    private FakeVirtualView virtualView1, virtualView2, virtualView3;
-    private Socket socket1, socket2, socket3;
-    private ObjectInputStream objectInputStream1, objectInputStream2, objectInputStream3;
-    private ObjectOutputStream objectOutputStream1, objectOutputStream2, objectOutputStream3;
+    private FakeVirtualView virtualView1, virtualView2, virtualView3, virtualView4;
+    private Socket socket1, socket2, socket3,socket4;
+    private ObjectInputStream objectInputStream1, objectInputStream2, objectInputStream3, objectInputStream4;
+    private ObjectOutputStream objectOutputStream1, objectOutputStream2, objectOutputStream3, objectOutputStream4;
     private GameController gameController;
     private FakePlayerController playerController1, playerController2;
     private Player player1, player2;
-    private LimusController limusController;
-    private ApolloController apolloController;
     private Game game;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         virtualView1 = new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
         virtualView2 = new FakeVirtualView(socket2,objectInputStream2,objectOutputStream2);
         gameController = new GameController(virtualView1, 3, "Test");
@@ -43,17 +41,16 @@ public class GameControllerTest {
         playerController2 = new FakePlayerController(player2,virtualView2,gameController);
         virtualView1.setPlayerController(playerController1);
         virtualView2.setPlayerController(playerController2);
-        gameController.game.addPlayer(player1);
+        game = new Game("test",player1,3);
+        gameController.game = game;
         gameController.game.addPlayer(player2);
         gameController.playerControllers.remove(0);
         gameController.playerControllers.add(playerController1);
         gameController.playerControllers.add(playerController2);
-        game = new Game("test",player1,3);
-        gameController.game = game;
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test
@@ -84,33 +81,34 @@ public class GameControllerTest {
     @Test
     public void GetControllers_noInputGiven_shouldReturnPlayerControllers() {
         assertEquals(gameController.getControllers().get(0).getPlayer(), gameController.getGame().getPlayers().get(0));
+        assertEquals(gameController.getControllers().get(1).getPlayer(), gameController.getGame().getPlayers().get(1));
     }
 
     @Test
     public void addPlayer_virtualViewGiven_shouldAddThePlayer() {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
 
-        assertEquals(gameController.getControllers().get(1).getPlayer(), gameController.getGame().getPlayers().get(1));
-        assertEquals(gameController.getControllers().get(1).getClient(),virtualView2);
+        assertEquals(gameController.getControllers().get(2).getPlayer(), gameController.getGame().getPlayers().get(2));
+        assertEquals(gameController.getControllers().get(2).getClient(),virtualView3);
     }
 
     @Test (expected = GameEndedException.class)
     public void addPlayer_virtualViewGiven_shouldGenerateException() throws GameEndedException {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException e) {
             //
         }
         gameController.gameSetUp();
-        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
+        virtualView4 = new FakeVirtualView(socket4, objectInputStream4, objectOutputStream4);
         try {
-            gameController.addPlayer(virtualView3);
+            gameController.addPlayer(virtualView4);
         } catch (NullPointerException e) {
             //
         }
@@ -118,9 +116,9 @@ public class GameControllerTest {
 
     @Test
     public void GameSetUp_noInputGiven_shouldSetUpTheGame() {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
@@ -135,32 +133,49 @@ public class GameControllerTest {
                 false,
                 gameController.getGame().getDeck().getCards().get(0).getController()
         );
-        Card artemis = new Card(
-                "Artemis",
-                "Goddess of the Hunt",
-                "Your Move: Your Worker may move one additional time, " +
-                        "\nbut not back to the space it started on.",
+        Card athena = new Card(
+                "Athena",
+                "Goddess of Wisdom",
+                "Opponent’s Turn: If one of your Workers moved up on your " +
+                        "\nlast turn, opponent Workers cannot move up this turn.",
                 1,
                 false,
-                gameController.getGame().getDeck().getCards().get(1).getController()
+                gameController.getGame().getDeck().getCards().get(2).getController()
         );
-        assertEquals(gameController.getControllers().get(0).getPlayer().getGodCard(),artemis);
+
+        Card limus = new Card(
+                "Limus",
+                "Goddess of Famine",
+                "Opponent’s Turn: Opponent Workers cannot build on spaces neighboring " +
+                        "\nyour Workers, unless building a dome to create a Complete Tower.",
+                2,
+                true,
+                gameController.getGame().getDeck().getCards().get(7).getController()
+        );
+
+        assertEquals(gameController.getControllers().get(0).getPlayer().getGodCard(),limus);
         assertEquals(gameController.getControllers().get(1).getPlayer().getGodCard(),apollo);
+        assertEquals(gameController.getControllers().get(2).getPlayer().getGodCard(),athena);
         assertEquals(gameController.getGame().getPlayers().get(gameController.getGame().getActivePlayer()),gameController.getControllers().get(1).getPlayer());
-        assertEquals(gameController.getGame().getBoard().getCell(2,2),gameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
-        assertEquals(gameController.getGame().getBoard().getCell(2,3),gameController.getGame().getPlayers().get(0).getWorkers().get(1).getPosition());
+
+        assertEquals(gameController.getGame().getBoard().getCell(2,4),gameController.getGame().getPlayers().get(0).getWorkers().get(0).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(3,0),gameController.getGame().getPlayers().get(0).getWorkers().get(1).getPosition());
         assertEquals(gameController.getGame().getBoard().getCell(2,0),gameController.getGame().getPlayers().get(1).getWorkers().get(0).getPosition());
         assertEquals(gameController.getGame().getBoard().getCell(2,1),gameController.getGame().getPlayers().get(1).getWorkers().get(1).getPosition());
-        //Alternatively
-        assertEquals(gameController.getGame().getBoard().getCell(2,2),gameController.getControllers().get(0).getPlayer().getWorkers().get(0).getPosition());
-        assertEquals(gameController.getGame().getBoard().getCell(2,3),gameController.getControllers().get(0).getPlayer().getWorkers().get(1).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(2,2),gameController.getGame().getPlayers().get(2).getWorkers().get(0).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(2,3),gameController.getGame().getPlayers().get(2).getWorkers().get(1).getPosition());
+
+        assertEquals(gameController.getGame().getBoard().getCell(2,4),gameController.getControllers().get(0).getPlayer().getWorkers().get(0).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(3,0),gameController.getControllers().get(0).getPlayer().getWorkers().get(1).getPosition());
         assertEquals(gameController.getGame().getBoard().getCell(2,0),gameController.getControllers().get(1).getPlayer().getWorkers().get(0).getPosition());
         assertEquals(gameController.getGame().getBoard().getCell(2,1),gameController.getControllers().get(1).getPlayer().getWorkers().get(1).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(2,2),gameController.getControllers().get(2).getPlayer().getWorkers().get(0).getPosition());
+        assertEquals(gameController.getGame().getBoard().getCell(2,3),gameController.getControllers().get(2).getPlayer().getWorkers().get(1).getPosition());
     }
 
     @Test
     public void CheckPlayersNumber_noInputGiven_shouldReturnIfThePresetPlayersNumberIsReached() {
-        assertEquals(gameController.getGame().getPlayers().size(), gameController.getControllers().size()); //Extra
+        assertEquals(gameController.getGame().getPlayers().size(), gameController.getControllers().size());
         assertFalse(gameController.checkPlayersNumber());
         virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
@@ -173,9 +188,9 @@ public class GameControllerTest {
 
     @Test
     public void CheckWorkers_noInputGiven_shouldEliminateOutOfWorkersPlayers() {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
@@ -192,9 +207,9 @@ public class GameControllerTest {
 
     @Test
     public void CheckDisconnection_ExceptionAndPlayerControllerGiven_shouldSetNullPlayerControllerIfPlayerLost() {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
@@ -211,9 +226,9 @@ public class GameControllerTest {
 
     @Test(expected = IOExceptionFromController.class)
     public void CheckDisconnection_noInputGiven_shouldGenerateException() throws IOExceptionFromController {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
@@ -231,13 +246,14 @@ public class GameControllerTest {
 
     @Test
     public void HandleDisconnection_playerControllerGiven_shouldRemovePlayerController() {
-        virtualView2 = new FakeVirtualView(socket2, objectInputStream2, objectOutputStream2);
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
         try {
-            gameController.addPlayer(virtualView2);
+            gameController.addPlayer(virtualView3);
         } catch (NullPointerException | GameEndedException e) {
             //
         }
         gameController.gameSetUp();
+        revOemag();
         gameController.handleDisconnection(gameController.getControllers().get(0));
         assertEquals(gameController.getControllers().get(0).getClient(),virtualView2);
     }
@@ -279,6 +295,15 @@ public class GameControllerTest {
         assertFalse(gameController.isRunning());
         assertNull(virtualView1.getPlayerController());
         assertNull(virtualView2.getPlayerController());
+    }
+
+    public void revOemag (){
+        gameController.running.compareAndSet(false, true);
+        int i=0;
+        for (PlayerController controller : gameController.playerControllers) {
+            controller.getClient().setPlayerController(gameController.getControllers().get(i));
+            i++;
+        }
     }
 
 }

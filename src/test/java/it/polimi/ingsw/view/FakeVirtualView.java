@@ -10,6 +10,7 @@ import it.polimi.ingsw.network.message.to_server.SendInteger;
 import it.polimi.ingsw.network.message.to_server.SendIntegers;
 import it.polimi.ingsw.network.message.to_server.ToServerMessage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,7 +43,10 @@ public class FakeVirtualView extends VirtualView {
 
     @Override
     public boolean chooseYesNo(String query) {
-        return false;
+        if(query.equals("Do you want to randomize the playable God Powers pool?"))
+            return false;
+        else
+            return true;
     }
 
     @Override
@@ -123,7 +127,19 @@ public class FakeVirtualView extends VirtualView {
     @Override
     public ArrayList<Card> chooseCards(ArrayList<Card> possibleCards, int num, ArrayList<Card> pickedCards) throws IOException, InterruptedException {
         ArrayList<Integer> choices = new ArrayList<>();
-        choices.add(0);
+        if(num==3){
+            choices.add(0);
+            choices.add(2);
+            choices.add(7);
+        }
+        else
+            if(num==2) {
+                choices.add(0);
+                choices.add(2);
+            }
+            else
+                choices.add(0);
+
         ArrayList<Card> chosenCards = new ArrayList<Card>();
         for (int i : choices) {
             chosenCards.add(possibleCards.get(i));

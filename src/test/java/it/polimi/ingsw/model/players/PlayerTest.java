@@ -5,7 +5,7 @@ import it.polimi.ingsw.controller.turn_controllers.GodController;
 import it.polimi.ingsw.controller.turn_controllers.GodControllerConcrete;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.view.FakeVirtualView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class PlayerTest {
     @Before
     public void setUp() {
         game = new Game("Test", player, 1);
-        gameController = new GameController(new VirtualView(socket, objectInputStream, objectOutputStream), 2, "Test");
+        gameController = new GameController(new FakeVirtualView(socket, objectInputStream, objectOutputStream), 2, "Test");
         godcontroller = new GodControllerConcrete(gameController);
         player = new Player("Eni", "Red");
         card = new Card("a", "b", "c", 1, false, godcontroller);
