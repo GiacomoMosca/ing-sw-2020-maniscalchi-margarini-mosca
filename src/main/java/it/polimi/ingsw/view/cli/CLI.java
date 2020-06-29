@@ -30,6 +30,7 @@ public class CLI implements UI {
     private SynchronousQueue<String> messageQueue;
     private String id;
     private GameView currentGame;
+    private boolean playing;
 
     /**
      * CLI constructor.
@@ -45,7 +46,7 @@ public class CLI implements UI {
      * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
      * Creates a messageQueue where the input provided by the client will be offered, and a serverQueue where the messages from the server will be put after deserialization.
      * Starts two threads which respectively allows listening to the client input and listening to the server messages.
-     * Everytime a message from the server is put on the serverQueue, it is parsed to the corresponding action.
+     * Every time a message from the server is put on the serverQueue, it is parsed to the corresponding action.
      */
     public void run() {
         running.set(true);
@@ -53,6 +54,11 @@ public class CLI implements UI {
         messageQueue = new SynchronousQueue<String>();
         new Thread(this::inputListener).start();
 
+        System.out.println("============================================================\n" +
+                "                         Santorini\n" +
+                "============================================================\n" +
+                "a game by Luca Maniscalchi, Rebecca Margarini, Giacomo Mosca\n\n\n"
+        );
         String ip = getServerIp();
         server = new Socket();
         try {
@@ -84,7 +90,7 @@ public class CLI implements UI {
             try {
                 message = serverQueue.take();
             } catch (InterruptedException e) {
-                System.out.println("Disconnected. ");
+                System.out.println("\nDisconnected. ");
                 break;
             }
             parseMessage(message);
@@ -99,12 +105,6 @@ public class CLI implements UI {
         Scanner scanner = new Scanner(System.in);
         while (running.get()) {
             String input = scanner.nextLine();
-            switch (input) {
-                // more commands go here
-                case "/quit":
-                    quit();
-                    break;
-            }
             messageQueue.offer(input);
         }
     }
@@ -121,7 +121,7 @@ public class CLI implements UI {
                 serverMessage = (ToClientMessage) input.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 running.compareAndSet(true, false);
-                System.out.println("Disconnected. ");
+                System.out.println("\nDisconnected. ");
                 break;
             }
             if (serverMessage instanceof Ping) pong();
@@ -158,6 +158,13 @@ public class CLI implements UI {
     }
 
     /**
+     * Clears the console by printing empty lines.
+     */
+    private void clear() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
+    /**
      * Allows receiving from the client the IP of the server he wants to connect to.
      * Prints to the command line the request and then calls getString so that the input written by the client can be read and returned.
      *
@@ -190,9 +197,9 @@ public class CLI implements UI {
             try {
                 return Integer.parseInt(messageQueue.take());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. ");
+                System.out.println("\nInvalid input. ");
             } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
+                System.out.println("\nError getting input. ");
             }
         }
     }
@@ -209,7 +216,7 @@ public class CLI implements UI {
             try {
                 return messageQueue.take();
             } catch (InterruptedException e) {
-                System.out.println("Error getting input. \n");
+                System.out.println("\nError getting input. ");
             }
         }
     }
@@ -222,7 +229,7 @@ public class CLI implements UI {
         try {
             output.writeObject(new Pong(id));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
+            System.out.println("\nDisconnected. ");
             stop();
         }
     }
@@ -237,7 +244,7 @@ public class CLI implements UI {
         try {
             output.writeObject(new SendBoolean(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
+            System.out.println("\nDisconnected. ");
             stop();
         }
     }
@@ -252,7 +259,7 @@ public class CLI implements UI {
         try {
             output.writeObject(new SendInteger(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
+            System.out.println("\nDisconnected. ");
             stop();
         }
     }
@@ -267,7 +274,7 @@ public class CLI implements UI {
         try {
             output.writeObject(new SendIntegers(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
+            System.out.println("\nDisconnected. ");
             stop();
         }
     }
@@ -282,7 +289,7 @@ public class CLI implements UI {
         try {
             output.writeObject(new SendString(id, body));
         } catch (IOException e) {
-            System.out.println("Disconnected. ");
+            System.out.println("\nDisconnected. ");
             stop();
         }
     }
@@ -313,7 +320,7 @@ public class CLI implements UI {
         for (int i = 0; i < num; i++) {
             int choice = getInt();
             while (choice < 0 || choice >= possibleCards.size() || choices.contains(choice)) {
-                System.out.println("Invalid input. ");
+                System.out.println("\nInvalid input. ");
                 choice = getInt();
             }
             System.out.println("Picked " + possibleCards.get(choice).getGod());
@@ -330,7 +337,10 @@ public class CLI implements UI {
      */
     public void chooseGameName(boolean taken) {
         if (taken) System.out.println("\nName already taken. ");
-        else System.out.println("\nChoose a name for your game room: ");
+        else {
+            clear();
+            System.out.println("\nChoose a name for your game room: ");
+        }
         String gameRoom;
         while (true) {
             gameRoom = getString();
@@ -348,6 +358,7 @@ public class CLI implements UI {
      * @param gameRooms an ArrayList of GameViews containing all the Game Rooms
      */
     public void chooseGameRoom(ArrayList<GameView> gameRooms) {
+        clear();
         StringBuilder string = new StringBuilder();
         string.append("\n0: Back ");
         string.append("\n1: Refresh list \n");
@@ -363,7 +374,7 @@ public class CLI implements UI {
         System.out.println(string);
         int choice = getInt();
         while (choice < 0 || choice > i) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             choice = getInt();
         }
         String room;
@@ -391,7 +402,7 @@ public class CLI implements UI {
         else System.out.println("\nChoose your nickname: ");
         while (true) {
             id = getString();
-            if (id.length() > 12) System.out.println("Invalid input (max 12 characters). ");
+            if (id.length() > 12) System.out.println("\nInvalid input (max 12 characters). ");
             else break;
         }
         sendString(null);
@@ -405,7 +416,7 @@ public class CLI implements UI {
         System.out.println("\nSetting up a new game! Choose the number of players (2 or 3):");
         int num = getInt();
         while (num < 2 || num > 3) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             num = getInt();
         }
         sendInteger(num);
@@ -452,7 +463,7 @@ public class CLI implements UI {
         System.out.println(string);
         int choice = getInt();
         while (choice < 0 || choice >= positions.size()) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             choice = getInt();
         }
         sendInteger(choice);
@@ -474,7 +485,7 @@ public class CLI implements UI {
         System.out.println(string);
         int choice = getInt();
         while (choice < 0 || choice >= players.size()) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             choice = getInt();
         }
         sendInteger(choice);
@@ -485,10 +496,11 @@ public class CLI implements UI {
      * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
      */
     public void chooseStartJoin() {
+        clear();
         System.out.println("\n1: Start a new game \n2: Join a game ");
         int num = getInt();
         while (num < 1 || num > 2) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             num = getInt();
         }
         sendBoolean(num == 1);
@@ -504,7 +516,7 @@ public class CLI implements UI {
         System.out.println("\n" + query + " (y/n) ");
         String choice = getString();
         while (!choice.equals("y") && !choice.equals("n")) {
-            System.out.println("Invalid input. ");
+            System.out.println("\nInvalid input. ");
             choice = getString();
         }
         boolean res = choice.equals("y");
@@ -530,9 +542,25 @@ public class CLI implements UI {
      */
     public void displayGameInfo(GameView game, String desc) {
         currentGame = game;
-        // TO DO: check if game is ok?
-        // TO DO: display player info? description?
-        displayBoard();
+        switch (desc) {
+            case "playerJoined":
+                break;
+            case "gameSetup":
+                clear();
+                playing = false;
+                break;
+            case "gameStart":
+                playing = true;
+                displayBoard();
+                break;
+            case "outOfMoves":
+            case "outOfBuilds":
+            case "outOfWorkers":
+                eliminatePlayer(desc);
+            default:
+                displayBoard();
+                break;
+        }
     }
 
     public void displayMessage(String message) {
@@ -575,6 +603,7 @@ public class CLI implements UI {
      * @param player the PlayerView representing the Player who disconnected
      */
     public void notifyDisconnection(PlayerView player) {
+        clear();
         System.out.println("\n" + player.getId() + " has disconnected. ");
     }
 
@@ -582,7 +611,8 @@ public class CLI implements UI {
      * Allows notifying the Game is over, by showing a message on screen.
      */
     public void notifyGameOver() {
-        System.out.println("\nGame over! \n\n\n\n\n");
+        System.out.println("\nGame over! Press ENTER to continue. ");
+        getString();
     }
 
     /**
@@ -601,23 +631,32 @@ public class CLI implements UI {
      * @param winner the PlayerView representing the Player who eventually won, can be null
      */
     public void notifyLoss(String reason, PlayerView winner) {
+        clear();
         StringBuilder string = new StringBuilder();
         string.append("You lost! ");
-        if (winner != null) {
-            string.append(winner.getId() + " won!");
-        } else {
-            switch (reason) {
-                case "outOfMoves":
-                    string.append("(No legal moves available)\n");
-                    break;
-                case "outOfWorkers":
-                    string.append("(All workers have been removed from the game)\n");
-                    break;
-                default:
-                    break;
-            }
+        string.append("(");
+        switch (reason) {
+            case "outOfMoves":
+                string.append("No legal moves available");
+                break;
+            case "outOfWorkers":
+                string.append("All your workers were removed from the game");
+                break;
+            case "outOfBuilds":
+                string.append("No legal builds available");
+                break;
+            case "godConditionAchieved":
+                string.append(winner.getId() + "'s worker achieved their god's win condition");
+                break;
+            case "winConditionAchieved":
+                string.append(winner.getId() + "'s worker reached the top level");
+                break;
+            default:
+                break;
         }
+        string.append(")\nPress ENTER to continue. ");
         System.out.println(string);
+        getString();
     }
 
     /**
@@ -626,30 +665,36 @@ public class CLI implements UI {
      * @param reason the reason of the victory
      */
     public void notifyWin(String reason) {
+        clear();
         StringBuilder string = new StringBuilder();
-        string.append("Congratulations! You won! ");
+        string.append("You won! ");
+        string.append("(");
         switch (reason) {
-            case "winConditionAchieved":
-                string.append("(Win condition achieved)\n");
+            case "godConditionAchieved":
+                string.append("You achieved your god's win condition");
                 break;
-            case "outOfWorkers":
-                string.append("(All other players were eliminated)\n");
+            case "winConditionAchieved":
+                string.append("You reached the top level");
                 break;
             default:
-                break;
+                string.append("All other players were eliminated");
         }
+        string.append(")\nPress ENTER to continue. ");
         System.out.println(string);
+        getString();
     }
 
     public void serverClosed() {
-
+        clear();
+        System.out.println("\nDisconnected from the server (server is down)");
+        stop();
     }
 
     /**
      * Allows displaying the current state of the Game Board on the CLI, using the following notation:
      * <p><ul>
      * <li> " " if the cell is unoccupied
-     * <li> "X"  if the cell has a Dome
+     * <li> "X" if the cell has a Dome
      * <li> "1" if the cell is at building level 1
      * <li> "2" if the cell is at building level 2
      * <li> "3" if the cell is at building level 3
@@ -659,9 +704,22 @@ public class CLI implements UI {
      * </ul></p>
      */
     private void displayBoard() {
+        clear();
         StringBuilder string = new StringBuilder();
-        string.append("\n    0  1  2  3  4 ");
-        string.append("\n");
+        string.append("==========\n");
+        if (playing) string.append(currentGame.getPlayers().get(currentGame.getActivePlayer()).getId() + "'s turn");
+        else string.append("Game setup");
+        string.append("\n==========\n");
+        for (int i = 0; i < currentGame.getPlayerNum(); i++) {
+            PlayerView player = currentGame.getPlayers().get(i);
+            string.append("\n");
+            string.append(player.getColor() + ": ");
+            if (player.hasLost()) string.append("[LOST] ");
+            string.append(player.getId());
+            string.append(" - ");
+            string.append(player.getGodCard().getGod());
+        }
+        string.append("\n\n    0  1  2  3  4 \n");
         for (int i = 0; i < 5; i++) {
             string.append("  ----------------");
             string.append("\n");
@@ -680,6 +738,34 @@ public class CLI implements UI {
         string.append("  ----------------");
         string.append("\n");
         System.out.println(string);
+    }
+
+    private void eliminatePlayer(String reason) {
+        String eliminatedPlayer = null;
+        for (PlayerView player : currentGame.getPlayers()) {
+            if (!player.hasLost()) continue;
+            eliminatedPlayer = player.getId();
+            break;
+        }
+        if (eliminatedPlayer == null || eliminatedPlayer.equals(id)) return;
+        clear();
+        StringBuilder string = new StringBuilder();
+        string.append(eliminatedPlayer + " lost! ");
+        string.append("(");
+        switch (reason) {
+            case "outOfMoves":
+                string.append("No legal moves available");
+                break;
+            case "outOfWorkers":
+                string.append("All their workers were removed from the game");
+                break;
+            case "outOfBuilds":
+                string.append("No legal builds available");
+                break;
+        }
+        string.append(")\nPress ENTER to continue. ");
+        System.out.println(string);
+        getString();
     }
 
 }

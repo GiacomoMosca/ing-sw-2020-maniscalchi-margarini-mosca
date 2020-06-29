@@ -73,7 +73,7 @@ public class ApolloController extends GodController {
             try {
                 activeWorker.move(movePosition);
             } catch (IllegalMoveException e) {
-                System.out.println(e.getMessage());
+                gameController.logError(e.getMessage());
             }
         }
         if (godPower) displayMove(startView, endView, endView, startView, card);

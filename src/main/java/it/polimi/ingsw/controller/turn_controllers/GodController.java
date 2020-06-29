@@ -127,7 +127,7 @@ public abstract class GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayMove(startView, endView, null);
     }
@@ -145,7 +145,7 @@ public abstract class GodController {
         try {
             buildPosition.build();
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayBuild(new CellView(buildPosition), null);
     }

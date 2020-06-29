@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.network.server.Logger;
 import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.VirtualView;
 
@@ -21,6 +22,7 @@ public class GameController {
 
     protected final AtomicBoolean running;
     protected final AtomicBoolean setup;
+    protected Logger logger;
     protected Game game;
     protected ArrayList<PlayerController> playerControllers;
     protected ArrayList<Player> players;
@@ -66,6 +68,33 @@ public class GameController {
     }
 
     /**
+     * Sets the Logger associated with the server.
+     *
+     * @param logger the Logger to set
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Adds the Game's name at the beginning of the given message and logs it to the Logger.
+     *
+     * @param message the message to log
+     */
+    public void log(String message) {
+        logger.log("[" + game.getName() + "] " + message);
+    }
+
+    /**
+     * Adds the Game's name at the beginning of the given message and logs it to the Logger as an error message.
+     *
+     * @param message the error message to log
+     */
+    public void logError(String message) {
+        logger.logError("[" + game.getName() + "] " + message);
+    }
+
+    /**
      * @return the current Game
      */
     public Game getGame() {
@@ -90,7 +119,7 @@ public class GameController {
     public void addPlayer(VirtualView client) throws GameEndedException {
         if (!running.get() || !setup.get()) throw new GameEndedException("game ended");
         if (playerControllers.size() >= game.getPlayerNum()) {
-            System.out.println("ERROR: too many players");
+            logError("too many players");
             return;
         }
         Player player = new Player(client.getId(), colors.get(playerControllers.size()));
@@ -100,6 +129,7 @@ public class GameController {
         client.setPlayerController(playerController);
         try {
             broadcastGameInfo("playerJoined");
+            broadcastMessage(client.getId() + " joined! (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ") ");
         } catch (IOExceptionFromController e) {
             handleDisconnection(e.getController());
         }
@@ -140,8 +170,9 @@ public class GameController {
         players = game.getPlayers();
 
         try {
-            broadcastMessage("Game started!");
             broadcastGameInfo("gameSetup");
+            broadcastMessage("Game started!");
+            broadcastMessage("Picking cards...");
             pickCards();
             broadcastGameInfo("boardSetup");
             chooseStartPlayer();
@@ -166,6 +197,7 @@ public class GameController {
         try {
             if (playerControllers.get(0).getClient().chooseYesNo("Do you want to randomize the playable God Powers pool?")) {
                 deck.pickRandom(game.getPlayerNum());
+                playerControllers.get(0).getClient().displayMessage("Picking cards...");
             } else {
                 ArrayList<Card> choices = playerControllers.get(0).getClient().chooseCards(deck.getCards(), game.getPlayerNum(), null);
                 for (Card card : choices) {
@@ -190,6 +222,7 @@ public class GameController {
             players.get(j).setGodCard(chosenCard);
             playerControllers.get(j).setGodController(chosenCard.getController());
             broadcastMessage((players.get(j).getId() + " is " + chosenCard.getGod() + " (" + players.get(j).getColor() + ")\n"));
+            broadcastMessage("Picking cards...");
         }
     }
 
@@ -280,7 +313,7 @@ public class GameController {
                     setWinner(currentPlayer, result);
                     break;
                 default:
-                    System.out.println("ERROR: invalid turn");
+                    logError("invalid turn");
                     break;
             }
         }
@@ -492,7 +525,7 @@ public class GameController {
     private void setWinner(Player player, String reason) {
         game.setWinner(player);
         for (PlayerController controller : playerControllers) {
-            if (controller == null) continue;
+            if (controller == null || controller.getPlayer().hasLost()) continue;
             try {
                 if (controller.getPlayer().equals(player)) {
                     controller.getClient().notifyWin(reason);

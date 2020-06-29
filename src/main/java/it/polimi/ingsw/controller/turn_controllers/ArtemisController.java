@@ -92,7 +92,7 @@ public class ArtemisController extends GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayMove(startView, endView, godPower);
     }

@@ -62,7 +62,7 @@ public class GameOverController {
     public void serverClosed() {
         Platform.runLater(() -> {
             shuttingDown = true;
-            titleText.setText("Server is down!");
+            titleText.setText("Disconnected from the server\n(server is down)");
             confirmText.setText("Quit");
             confirmText_p.setText("Quit");
         });

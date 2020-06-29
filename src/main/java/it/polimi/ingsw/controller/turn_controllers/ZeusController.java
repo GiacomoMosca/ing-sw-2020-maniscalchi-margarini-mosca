@@ -56,7 +56,7 @@ public class ZeusController extends GodController {
         try {
             buildPosition.build();
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         Card godPower = (buildPosition.getPosX() == activeWorker.getPosition().getPosX() && buildPosition.getPosY() == activeWorker.getPosition().getPosY()) ? card : null;
         displayBuild(new CellView(buildPosition), godPower);

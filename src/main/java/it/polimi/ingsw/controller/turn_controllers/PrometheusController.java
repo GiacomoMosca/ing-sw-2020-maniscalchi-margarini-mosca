@@ -110,7 +110,7 @@ public class PrometheusController extends GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayMove(startView, endView, null);
     }
@@ -147,7 +147,7 @@ public class PrometheusController extends GodController {
         try {
             buildPosition.build();
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayBuild(new CellView(buildPosition), godPower);
     }

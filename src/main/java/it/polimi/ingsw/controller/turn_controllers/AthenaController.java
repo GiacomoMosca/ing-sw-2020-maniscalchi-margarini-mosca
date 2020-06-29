@@ -60,7 +60,7 @@ public class AthenaController extends GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println("ERROR: illegal move");
+            gameController.logError(e.getMessage());
         }
         // + limit opponent's movements if worker moved up
         if (movePosition.getBuildLevel() > oldPosition.getBuildLevel()) {

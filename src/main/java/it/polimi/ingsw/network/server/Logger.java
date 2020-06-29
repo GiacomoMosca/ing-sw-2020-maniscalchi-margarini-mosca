@@ -58,7 +58,7 @@ public class Logger {
      * Allows writing on the log.txt file.
      * Takes the string received as an argument and writes it on the log.txt file, adding LocalDateTime information and the ERROR message.
      *
-     * @param s
+     * @param s the String to write
      */
     public void logError(String s) {
         StringBuilder string = new StringBuilder();

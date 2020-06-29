@@ -635,7 +635,7 @@ public class GameBoardController {
                 lossReason = "No legal builds available!";
                 break;
             case "godConditionAchieved":
-                lossReason = player.getId() + "'s worker achieved his god's win condition!";
+                lossReason = player.getId() + "'s worker achieved their god's win condition!";
                 break;
             case "winConditionAchieved":
                 lossReason = player.getId() + "'s worker reached the top level!";

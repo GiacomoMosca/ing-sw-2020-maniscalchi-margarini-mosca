@@ -73,7 +73,7 @@ public class MinotaurController extends GodController {
             try {
                 pushedWorker.move(nextCell);
             } catch (IllegalMoveException e) {
-                System.out.println(e.getMessage());
+                gameController.logError(e.getMessage());
                 return;
             }
             //
@@ -81,7 +81,7 @@ public class MinotaurController extends GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         if (godPower) displayMove(startView, endView, startView2, endView2, card);
         else displayMove(startView, endView, null);

@@ -58,7 +58,7 @@ public class TritonController extends GodController {
         try {
             activeWorker.move(movePosition);
         } catch (IllegalMoveException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayMove(startView, endView, null);
 
@@ -71,7 +71,7 @@ public class TritonController extends GodController {
                 try {
                     activeWorker.move(movePosition);
                 } catch (IllegalMoveException e) {
-                    System.out.println(e.getMessage());
+                    gameController.logError(e.getMessage());
                     return;
                 }
             } else return;

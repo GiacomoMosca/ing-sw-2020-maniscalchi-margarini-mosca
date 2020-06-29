@@ -56,7 +56,7 @@ public class DemeterController extends GodController {
         try {
             buildPosition.build();
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayBuild(new CellView(buildPosition), null);
         possibleBuilds.remove(buildPosition);
@@ -65,7 +65,7 @@ public class DemeterController extends GodController {
             try {
                 buildPosition.build();
             } catch (IllegalBuildException e) {
-                System.out.println(e.getMessage());
+                gameController.logError(e.getMessage());
             }
             displayBuild(new CellView(buildPosition), card);
         }

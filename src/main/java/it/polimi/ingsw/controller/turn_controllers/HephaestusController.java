@@ -57,7 +57,7 @@ public class HephaestusController extends GodController {
         try {
             buildPosition.build();
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         if (buildPosition.getBuildLevel() <= 2) {
             if (client.chooseYesNo("Do you want to build here twice?")) {
@@ -65,7 +65,7 @@ public class HephaestusController extends GodController {
                 try {
                     buildPosition.build();
                 } catch (IllegalBuildException e) {
-                    System.out.println(e.getMessage());
+                    gameController.logError(e.getMessage());
                 }
             }
         }

@@ -93,7 +93,7 @@ public class Cell {
     /**
      * Sets the Cell as an occupied space (by the worker received as an argument).
      *
-     * @param worker
+     * @param worker the Worker to put in the Cell
      */
     public void setWorker(Worker worker) {
         this.worker = worker;

@@ -62,7 +62,7 @@ public class AtlasController extends GodController {
                 buildPosition.build();
             }
         } catch (IllegalBuildException e) {
-            System.out.println(e.getMessage());
+            gameController.logError(e.getMessage());
         }
         displayBuild(new CellView(buildPosition), godPower);
     }

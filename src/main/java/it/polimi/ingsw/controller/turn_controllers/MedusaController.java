@@ -66,7 +66,7 @@ public class MedusaController extends GodController {
                 try {
                     cell.build();
                 } catch (IllegalBuildException e) {
-                    System.out.println(e.getMessage());
+                    gameController.logError(e.getMessage());
                 }
                 CellView cellView = new CellView(cell);
                 cell.getWorker().getOwner().removeWorker(cell.getWorker());

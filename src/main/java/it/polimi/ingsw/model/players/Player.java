@@ -12,8 +12,8 @@ public class Player {
 
     private final String id;
     private final String color;
+    private final ArrayList<Worker> workers;
     private Card godCard;
-    private ArrayList<Worker> workers;
     private boolean hasLost;
 
     /**
@@ -54,7 +54,7 @@ public class Player {
     /**
      * Sets the God Card received as an argument as the God Card associated with the Player.
      *
-     * @param godCard
+     * @param godCard the God Card to set
      */
     public void setGodCard(Card godCard) {
         this.godCard = godCard;

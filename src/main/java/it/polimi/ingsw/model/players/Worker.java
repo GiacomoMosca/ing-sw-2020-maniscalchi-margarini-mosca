@@ -48,7 +48,7 @@ public class Worker {
     /**
      * Sets the Cell received as an argument as the Cell where the Worker is located.
      *
-     * @param position
+     * @param position the Cell representing the new position of the Worker
      */
     public void setPosition(Cell position) {
         position.setWorker(this);

@@ -84,6 +84,7 @@ public class Server {
      * Closes the logger, notifies all players that the server is closing and closes the socket.
      */
     private void stop() {
+        logger.log("stopped");
         logger.close();
         for (VirtualView player : players) {
             try {
@@ -206,6 +207,7 @@ public class Server {
         logger.log("new game " + gameName + " created");
         try {
             gameController.broadcastGameInfo("playerJoined");
+            player.displayMessage("Waiting for players...");
         } catch (IOExceptionFromController e) {
             gameController.handleDisconnection(e.getController());
         }

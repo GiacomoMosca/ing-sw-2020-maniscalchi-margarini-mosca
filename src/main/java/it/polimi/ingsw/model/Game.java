@@ -94,7 +94,7 @@ public class Game {
     }
 
     /**
-     * Sets the number of the active player.
+     * Sets the number of the active players.
      *
      * @param i the number to set
      */
