@@ -8,7 +8,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 /**
- * GameOverController class handles the interaction between client and server during the ending phase of the Game.
+ * Handles the interaction between client and server during the ending phase of the Game.
  */
 public class GameOverController {
 

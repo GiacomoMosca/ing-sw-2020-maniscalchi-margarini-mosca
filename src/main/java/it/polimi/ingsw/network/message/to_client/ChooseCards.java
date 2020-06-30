@@ -6,7 +6,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.ArrayList;
 
 /**
- * The ChooseCards message is used to send a message from the server to a client, to ask him to choose among some cards.
+ * Message sent from the server to a client to ask him to choose among some cards.
  */
 public class ChooseCards extends ToClientMessage {
 
@@ -20,10 +20,12 @@ public class ChooseCards extends ToClientMessage {
      * Sets all the attributes as the values received as arguments.
      *
      * @param possibleCards an ArrayList containing all the Cards to choose among
-     * @param num           the number of Cards to pick, can be
-     *                      • 1 if the player is asked to choose his own card for the Game among the pickedCards
-     *                      • 2 if the player is asked to choose the 2 cards to use for a 2-players Game
-     *                      • 3 if the player is asked to choose the 3 cards to use for a 3-players Game
+     * @param num           the number of Cards to pick, can be:
+     *                      <ul>
+     *                          <li>1 if the player is asked to choose his own card for the Game among the pickedCards;
+     *                          <li>2 if the player is asked to choose the 2 cards to use for a 2-players Game;
+     *                          <li>3 if the player is asked to choose the 3 cards to use for a 3-players Game.
+     *                      </ul>
      * @param pickedCards   an ArrayList containing the picked Cards, needed when num has the value 1
      */
     public ChooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {

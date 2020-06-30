@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.message.to_server;
 
 /**
- * The SendBoolean class is used to send a Boolean from a client to the server.
+ * Message sent from a client to the server to send a boolean.
  */
 public class SendBoolean extends ToServerMessage {
 

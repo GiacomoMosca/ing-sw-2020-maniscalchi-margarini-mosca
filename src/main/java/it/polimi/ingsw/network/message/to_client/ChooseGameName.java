@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ChooseGameName message is used to send a message from the server to a client, to ask him to choose the name of the Game.
+ * Message sent from the server to a client to ask him to choose the name of the Game.
  */
 public class ChooseGameName extends ToClientMessage {
 

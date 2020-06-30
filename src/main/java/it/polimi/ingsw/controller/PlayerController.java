@@ -9,7 +9,9 @@ import it.polimi.ingsw.view.VirtualView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Controls a specific Player's turn.
+ */
 public class PlayerController {
 
     private final Player player;
@@ -19,7 +21,7 @@ public class PlayerController {
 
     /**
      * PlayerController constructor.
-     * Associates the Player and his VirtualView to their PlayerController.
+     * Associates the Player and his VirtualView to his PlayerController.
      *
      * @param player the Player associated with this PlayerController
      * @param client the VirtualView associated with this PlayerController
@@ -70,11 +72,12 @@ public class PlayerController {
     }
 
     /**
-     * Handles the preparation of the turn. Checks if there are any workers available for the active Player: if no Worker is available to move, returns "outOfMoves";
-     * if only one Worker is available to move, sets it as the active Worker; if two Workers are available, lets the player choose which one to move.
-     * In the first case, the active Player will be eliminated. In the second and third cases the player will play his turn.
+     * Handles the preparation of the turn.
+     * Checks if there are any workers available for the active Player: if no Worker can perform a legal move, returns
+     * "outOfMoves" and the active Player will then be eliminated.
+     * If at least one Worker can perform a legal move, the Player chooses his active worker and then plays out his turn.
      *
-     * @return "outOfMoves" if all the active Player's Workers can't move, "godConditionAchieved" if the Player won, "next" if the game goes on
+     * @return  "outOfMoves" if all the active Player's Workers can't move or the turn's final result if the turn was played out regularly.
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public String playTurn() throws IOExceptionFromController {

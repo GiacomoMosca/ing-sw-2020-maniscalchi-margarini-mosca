@@ -4,7 +4,7 @@ import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The DisplayPlaceWorker message is used to send a message from the server to a client, to notify him the placing of a Worker on the Game Board.
+ * Message sent from the server to a client to display a new Worker being placed.
  */
 public class DisplayPlaceWorker extends ToClientMessage {
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * The Deck class saves all the Cards available for the Game, and about the 2 or 3 cards effectively picked up and used.
- * It allows interaction with the Cards, with the getter and setter methods.
+ * Describes all the Cards available for the Game and the 2 or 3 cards effectively picked up and used.
+ * Cards can be picked manually or at random.
  */
 public class Deck {
 

@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 /**
- * LoginController class handles the interaction between client and server during the login phase of a Player.
+ * Handles the interaction between client and server during the login phase of a Player.
  */
 public class LoginController {
 
@@ -117,8 +117,10 @@ public class LoginController {
 
     /**
      * Allows displaying an error message:
-     * • when the inserted server IP address is not valid
-     * • when the inserted nickname is not valid
+     * <ul>
+     *     <li>when the inserted server IP address is not valid;
+     *     <li>when the inserted nickname is not valid.
+     * </ul>
      *
      * @param message the String describing the error message
      */

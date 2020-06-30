@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 /**
- * NewGameController class handles the interaction between client and server during the creation of a new Game.
+ * Handles the interaction between client and server during the creation of a new Game.
  */
 public class NewGameController {
 
@@ -129,9 +129,11 @@ public class NewGameController {
     }
 
     /**
-     * Allows displaying an error message when the inserted Game name is not valid:
-     * • it's longer than 12 characters
-     * • it's already taken
+     * Allows displaying an error message when the inserted Game name is not valid, because:
+     * <ul>
+     *     <li>it's longer than 12 characters;
+     *     <li>it's already taken.
+     * </ul>
      *
      * @param message the String describing the error message
      */

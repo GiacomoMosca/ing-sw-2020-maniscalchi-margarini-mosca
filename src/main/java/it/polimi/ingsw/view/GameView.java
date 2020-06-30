@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * The GameView class represents a view of the Game class.
- * It implements serializable so that it can be serialized in the messages that client and server exchange: in this way, the client won't have access to the Model objects.
+ * Represents a view of the Game class to the client.
+ * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won't have access to the Model objects.
  */
 public class GameView implements Serializable {
 

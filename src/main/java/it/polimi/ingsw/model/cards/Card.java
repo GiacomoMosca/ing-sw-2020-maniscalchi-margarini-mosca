@@ -3,8 +3,9 @@ package it.polimi.ingsw.model.cards;
 import it.polimi.ingsw.controller.turn_controllers.GodController;
 
 /**
- * The Card class keeps all the information about a Card: the name of the God associated with it, the title, the description, the set it belongs to, if the card is associated with an always active Modifier, the Controller associated with the Card.
- * It also allows interaction with the Card attributes with getter and setter methods.
+ * Describes a specific God Card.
+ * Stores the name, title and description of its God and the set it belongs to.
+ * Contains a reference to the Controller associated with the Card and information about its modifiers if present.
  */
 public class Card {
 

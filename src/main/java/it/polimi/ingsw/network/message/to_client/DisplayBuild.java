@@ -7,7 +7,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.HashMap;
 
 /**
- * The DisplayBuild message is used to send a message from the server to a client, to notify him a new build occurred.
+ * Message sent from the server to a client to display a new build.
  */
 public class DisplayBuild extends ToClientMessage {
 

@@ -1,8 +1,7 @@
 package it.polimi.ingsw.network.message.to_server;
 
 /**
- * The Pong class is used to send a Pong from a client to notify to the server that he is active.
- * Generally a Pong is a reply to a Ping sent by the server.
+ * Ping reply sent from a client to the server.
  */
 public class Pong extends ToServerMessage {
 

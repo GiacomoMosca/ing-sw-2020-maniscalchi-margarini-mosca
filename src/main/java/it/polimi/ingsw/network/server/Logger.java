@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * The Logger class allows writing information on a log.txt file.
+ * Writes server information and error messages to a log.txt file.
  */
 public class Logger {
 

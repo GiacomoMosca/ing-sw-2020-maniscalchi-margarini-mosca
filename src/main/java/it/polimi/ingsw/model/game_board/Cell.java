@@ -4,8 +4,8 @@ import it.polimi.ingsw.exceptions.IllegalBuildException;
 import it.polimi.ingsw.model.players.Worker;
 
 /**
- * The Cell class keeps information about each one of the 25 Cells composing the Board, such as the x and y-coordinates, the building level, if the cell has a dome, the worker eventually standing on the Cell.
- * It also allows interaction with the Cell with getter and setter methods.
+ * Describes the state of each of the 25 Cells composing the Board.
+ * Stores the x and y-coordinates, the build level, if the cell has a dome and the Worker standing on the Cell if present.
  */
 public class Cell {
 

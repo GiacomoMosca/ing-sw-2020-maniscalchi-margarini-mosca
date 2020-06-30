@@ -1,10 +1,9 @@
 package it.polimi.ingsw.network.message.to_client;
 
-import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The NotifyWin message is used to send a message from the server to a client, to notify a Player he won.
+ * Message sent from the server to a client to notify him that he won the current Game.
  */
 public class NotifyWin extends ToClientMessage {
 
@@ -14,12 +13,14 @@ public class NotifyWin extends ToClientMessage {
      * NotifyWin constructor.
      * Calls the super constructor so that the msgId is set to "notify win".
      *
-     * @param reason a String, can be:
-     *               • "godConditionAchieved", if the Player won by achieving his God's win condition
-     *               • "winConditionAchieved",  if the Player won by achieving the normal win condition
-     *               • "outOfWorkers",  if the Player won because the only Player left was eliminated (he ran out of Workers)
-     *               • "outOfMoves", if the Player won because the only Player left was eliminated (he ran out of moves)
-     *               • "outOfBuilds", if the Player won because the only Player left was eliminated (he ran out of builds)
+     * @param reason a String describing the reason of the win, can be:
+     *               <ul>
+     *                      <li>"godConditionAchieved" if the Player won by achieving his God's win condition;
+     *                      <li>"winConditionAchieved" if the Player won by achieving the normal win condition;
+     *                      <li>"outOfWorkers" if the Player won because the only Player left ran out of Workers;
+     *                      <li>"outOfMoves"  if the Player won because the only Player left ran out of moves;
+     *                      <li>"outOfBuilds" if the Player won because the only Player left  ran out of builds.
+     *               </ul>
      */
     public NotifyWin(String reason) {
         super("notify win");

@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_server;
 import it.polimi.ingsw.network.message.Message;
 
 /**
- * The ToServerMessage class extends the abstract Message class. It's used to send messages from a client to the server.
+ * Abstract class that represents a generic message sent from a client to the server.
  */
 public class ToServerMessage extends Message {
 

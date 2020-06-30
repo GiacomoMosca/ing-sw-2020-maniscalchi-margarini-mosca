@@ -19,7 +19,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * GUI class allows the client to interact with the server.
+ * Graphical User Interface for the Client.
  */
 public class GUI implements UI {
 

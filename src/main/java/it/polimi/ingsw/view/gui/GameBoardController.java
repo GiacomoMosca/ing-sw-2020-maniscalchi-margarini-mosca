@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * GameBoardController class handles the interaction between client and server during the Game.
+ * Handles the interaction between client and server during the Game.
  * Allows displaying the current state of the Game Board and all the notifications from the beginning until the end of the Game.
  */
 public class GameBoardController {
@@ -162,13 +162,9 @@ public class GameBoardController {
     }
 
     /**
-     *
-     * Handles the initialization of all the information panels surrounding the Board, setting as visible:
-     * • Players' nicknames and colors
-     * • God Cards icons
-     * Also prepares
-     * • full ImageViews of the God Cards that will be displayed when a God Power is used
-     * • opaque panels to be put on the eliminated player in a 3-players game
+     * Handles the initialization of all the information panels surrounding the Board, setting as visible the Players' nicknames, colors and God Cards icons.
+     * Prepares full ImageViews of the God Cards that will be displayed when a God Power is used.
+     * In a 3-player game, prepares opaque panels that will hide a Player when they're eliminated.
      */
     public void initInfoPanels() {
         firstPlayerID.setText(playersId.get(0));
@@ -318,9 +314,11 @@ public class GameBoardController {
 
         workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(0));
         workersToRemove.add(workersForThisColor.get(eliminatedPlayer.getColor()).get(1));
+        String finalEliminatedPlayer = eliminatedPlayer.getId();
         Platform.runLater(() -> {
             workersToRemove.get(0).setVisible(false);
             workersToRemove.get(1).setVisible(false);
+            opaquePanelForThisPlayer.get(finalEliminatedPlayer).setVisible(true);
         });
 
         switch (desc) {
@@ -337,14 +335,13 @@ public class GameBoardController {
                 reason = null;
                 break;
         }
-        pushToLog("\n ⚠\t" + eliminatedPlayer.getId() + " lost!\n" + reason);
-        if (eliminatedPlayer.getId().equals(manager.getId())) return;
-        eliminationMessage.setText(eliminatedPlayer.getId() + " lost!\n" + reason);
-        String finalEliminatedPlayer = eliminatedPlayer.getId();
+        pushToLog("\n ⚠\t" + finalEliminatedPlayer + " lost!\n" + reason);
+
+        if (finalEliminatedPlayer.equals(manager.getId())) return;
+        eliminationMessage.setText(finalEliminatedPlayer + " lost!\n" + reason);
         Platform.runLater(() -> {
             opaqueBackground.setVisible(true);
             infoScreen.setVisible(true);
-            opaquePanelForThisPlayer.get(finalEliminatedPlayer).setVisible(true);
             eliminationMessage.setVisible(true);
             continueButton.setVisible(true);
             continueText.setVisible(true);

@@ -4,7 +4,7 @@ import it.polimi.ingsw.view.UI;
 import it.polimi.ingsw.view.cli.CLI;
 
 /**
- * The ClientCLI class represents a client interacting using the Command Line Interface.
+ * Starts a Client using the Command Line Interface.
  */
 public class ClientCLI {
 

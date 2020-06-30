@@ -19,8 +19,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * GUIManager class supports GUI class in managing the messages exchanges between server and client.
- * GUIManager class extends Application, the entry point for JavaFX applications, so that GUI can be started thanks to launch() method.
+ * Manager for the GUI class.
+ * Extends Application, the entry point for JavaFX applications, so that a GUI can be started through the launch() method.
  */
 public class GUIManager extends Application {
 

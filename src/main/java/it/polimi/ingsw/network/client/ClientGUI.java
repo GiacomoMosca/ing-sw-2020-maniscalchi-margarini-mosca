@@ -4,7 +4,7 @@ import it.polimi.ingsw.view.UI;
 import it.polimi.ingsw.view.gui.GUI;
 
 /**
- * The ClientGUI class represents a client interacting using the Graphical User Interface.
+ * Starts a Client using the Graphical User Interface.
  */
 public class ClientGUI {
 

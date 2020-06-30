@@ -14,10 +14,13 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 /**
- * JoinGameController class handles the interaction between client and server during the phase of joining an existing Game, allows:
- * • giving a look at the list of the existing Games
- * • choosing a Game room to join
- * • going back to create a new Game room
+ * Handles the interaction between client and server during the phase of joining an existing Game.
+ * Allows:
+ * <ul>
+ *     <li>choosing a Game room to join;
+ *     <li>refreshing the list of the existing Games;
+ *     <li>going back to the previous screen.
+ * </ul>
  */
 public class JoinGameController {
 
@@ -136,9 +139,11 @@ public class JoinGameController {
 
     /**
      * Handles the creation of a table containing all the currently active Game rooms, showing:
-     * • the Game name
-     * • the creator of the Game room
-     * • the number of Players currently active in the Game room
+     * <ul>
+     *     <li>the Game name;
+     *     <li>the creator of the Game room;
+     *     <li>the number of Players who already joined the Game room and the total number of Players required.
+     * </ul>
      *
      * @param gameRooms an ArrayList containing all the Game Rooms currently active
      */

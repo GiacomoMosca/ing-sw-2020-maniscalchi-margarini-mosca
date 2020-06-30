@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 /**
- * GameLobbyController class handles the interaction between client and server during the choice of starting a new Game or joining an existing one.
+ * Handles the interaction between client and server during the choice of starting a new Game or joining an existing one.
  */
 public class GameLobbyController {
 

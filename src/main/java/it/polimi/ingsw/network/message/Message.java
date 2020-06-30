@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message;
 import java.io.Serializable;
 
 /**
- * The Message abstract class allows communication between client and server.
+ * Abstract class that represents information shared between client and server.
  * It describes the basic structure of a message and implements Serializable to allow the serialization of the message on the communication channel.
  */
 public abstract class Message implements Serializable {

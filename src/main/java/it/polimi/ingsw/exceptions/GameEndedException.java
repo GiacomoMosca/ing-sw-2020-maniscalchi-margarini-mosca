@@ -1,7 +1,7 @@
 package it.polimi.ingsw.exceptions;
 
 /**
- * The GameEndedException is thrown when the Game is unexpectedly ended.
+ * Thrown when the Game is ended unexpectedly.
  */
 public class GameEndedException extends Exception {
 

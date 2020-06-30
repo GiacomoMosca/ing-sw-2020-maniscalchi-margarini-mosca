@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The UI interface represents the User Interface, which is implemented by the GUI and the CLI.
+ * Represents the Client's User Interface, which is implemented by the GUI and the CLI.
  * It contains methods which allows the parsing of the messages from the server to the client,
  * methods which allows sending messages from the client to the server,
  * methods which allows to perform on the client the action requested by the message received by the server

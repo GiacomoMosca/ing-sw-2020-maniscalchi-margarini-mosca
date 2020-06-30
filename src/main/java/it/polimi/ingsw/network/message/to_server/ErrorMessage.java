@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.message.to_server;
 
 /**
- * The ErrorMessage class is used to send an error message from a client to the server.
+ * Error message sent from a client to the server.
  */
 public class ErrorMessage extends ToServerMessage {
 

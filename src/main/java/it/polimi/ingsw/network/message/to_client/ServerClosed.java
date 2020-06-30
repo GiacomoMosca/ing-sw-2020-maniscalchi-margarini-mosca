@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The NotifyDisconnection message is used to notify users that the server is currently down.
+ * Message sent from the server to a client to notify him that the server has closed.
  */
 public class ServerClosed extends ToClientMessage {
 

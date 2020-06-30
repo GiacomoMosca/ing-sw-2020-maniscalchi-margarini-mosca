@@ -4,7 +4,7 @@ import it.polimi.ingsw.view.PlayerView;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The NotifyLoss message is used to send a message from the server to a client, to notify a Player he lost.
+ * Message sent from the server to a client to notify him that he lost the current Game.
  */
 public class NotifyLoss extends ToClientMessage {
 
@@ -15,15 +15,15 @@ public class NotifyLoss extends ToClientMessage {
      * NotifyLoss constructor.
      * Calls the super constructor so that the msgId is set to "notify loss".
      *
-     * @param reason a String describing the reason of the loss, can be
-     *               • "outOfWorkers" if the Player lost because he ran out of Workers
-     *               • "outOfMoves" if the Player lost because he ran out of moves
-     *               • "outOfBuilds" if the Player lost because he ran out of builds
-     *               • "godConditionAchieved" if the Player lost because another Worker achieved his God's win condition
-     *               • "winConditionAchieved" if the Player lost because another Worker achieved the normal win condition
-     * @param winner can be
-     *               • null if the Player lost because he ran out of Workers, moves or builds
-     *               • not null if the Player lost because another Player won
+     * @param reason a String describing the reason of the loss, can be:
+     *               <ul>
+     *                      <li>"outOfWorkers" if the Player lost because he ran out of Workers;
+     *                      <li>"outOfMoves" if the Player lost because he ran out of moves;
+     *                      <li>"outOfBuilds" if the Player lost because he ran out of builds;
+     *                      <li>"godConditionAchieved" if the Player lost because another Worker achieved his God's win condition;
+     *                      <li>"winConditionAchieved" if the Player lost because another Worker achieved the normal win condition;
+     *               </ul>
+     * @param winner the PlayerView of the winning Player if the winner achieved a win condition, null otherwise
      */
     public NotifyLoss(String reason, PlayerView winner) {
         super("notify loss");

@@ -3,7 +3,7 @@ package it.polimi.ingsw.exceptions;
 import it.polimi.ingsw.controller.PlayerController;
 
 /**
- * The IOExceptionFromController is an IOException with a reference to the PlayerController it was generated from.
+ * Extends IOException to include a reference to the PlayerController it was generated from.
  */
 public class IOExceptionFromController extends Exception {
 

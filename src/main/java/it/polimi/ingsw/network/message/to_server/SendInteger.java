@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.message.to_server;
 
 /**
- * The SendInteger class is used to send an Integer from a client to the server.
+ * Message sent from a client to the server to send an integer.
  */
 public class SendInteger extends ToServerMessage {
 

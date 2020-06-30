@@ -4,7 +4,7 @@ import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The DisplayGameInfo message is used to send a message from the server to a client, to notify him an information about the Game.
+ * Message sent from the server to a client to display new information about the current Game.
  */
 public class DisplayGameInfo extends ToClientMessage {
 

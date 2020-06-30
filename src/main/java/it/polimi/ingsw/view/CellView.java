@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.game_board.Cell;
 import java.io.Serializable;
 
 /**
- * The CellView class represents a view of the Cell class.
- * It implements serializable so that it can be serialized in the messages that client and server exchange: in this way, the client won't have access to the Model objects.
+ * Represents a view of the Cell class to the Client.
+ * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won't have access to the Model objects.
  */
 public class CellView implements Serializable {
 

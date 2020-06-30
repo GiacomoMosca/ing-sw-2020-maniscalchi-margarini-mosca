@@ -3,6 +3,9 @@ package it.polimi.ingsw.controller.turn_controllers;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.cards.Card;
 
+/**
+ * Extension of the GodController class that modifies the turn according to Pan's God Power.
+ */
 public class PanController extends GodController {
 
     /**

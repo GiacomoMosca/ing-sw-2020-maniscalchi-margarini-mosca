@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.cards.Card;
 import java.util.ArrayList;
 
 /**
- * The Player class saves information about a player: his ID, his color, the God Card he is associated with, his Workers, the information about his eventual loss.
- * It also allows interaction with these attributes with setter and getter methods.
+ * Describes the state of a Player within a specific Game.
+ * Stores his ID, his color, the God Card he is associated with, his Workers, the information about his eventual loss.
  */
 public class Player {
 

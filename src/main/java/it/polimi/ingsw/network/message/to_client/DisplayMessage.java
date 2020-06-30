@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The DisplayMessage message is used to send a message from the server to a client, to notify him a message from the server.
+ * Message sent from the server to a client to display a message from the server.
  */
 public class DisplayMessage extends ToClientMessage {
 

@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.players.Player;
 import java.io.Serializable;
 
 /**
- * The PLayerView class represents a view of the Player class.
- * It implements serializable so that it can be serialized in the messages that client and server exchange: in this way, the client won't have access to the Model objects.
+ * Represents a view of the Player class to the Client.
+ * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won't have access to the Model objects.
  */
 public class PlayerView implements Serializable {
 

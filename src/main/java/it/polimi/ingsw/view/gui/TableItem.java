@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.gui;
 import it.polimi.ingsw.view.GameView;
 
 /**
- * TableItem class allows creating an Item for the Table containing information about the active Game rooms.
+ * Represents an item for the Table containing information about the active Game rooms.
  */
 public class TableItem {
     private String gameName;

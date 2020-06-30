@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 /**
- * GameSetupController class handles the interaction between client and server during the phase of choosing the God Cards to use for the Game.
+ * Handles the interaction between client and server during the phase of choosing the God Cards to use for the Game.
  * The Player can choose to randomize the playable God Cards pool, or to choose the God Cards that will be used in the Game.
  */
 public class GameSetupController {

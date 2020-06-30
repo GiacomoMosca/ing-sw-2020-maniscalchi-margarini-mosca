@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.game_board;
 import java.util.ArrayList;
 
 /**
- * The Board class keeps information about the 25 Cells composing the Board.
- * It also allows interaction with this Cells with getter and setter methods.
+ * Stores information about the 25 Cells that make up the Board.
+ * Can return information about specific cells or their neighbors.
  */
 public class Board {
 

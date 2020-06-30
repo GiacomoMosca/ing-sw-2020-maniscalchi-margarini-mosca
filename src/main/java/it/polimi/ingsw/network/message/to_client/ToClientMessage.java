@@ -4,7 +4,7 @@ import it.polimi.ingsw.network.message.Message;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ToClientMessage class extends the abstract Message class. It's used to send messages from the server to a client.
+ * Abstract class that represents a generic message sent from the server to a client.
  */
 public abstract class ToClientMessage extends Message {
 

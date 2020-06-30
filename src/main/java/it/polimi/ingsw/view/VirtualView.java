@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * The VirtualView class handles the serialization of messages from server to client and the deserialization of messages from client to server.
- * There's a VirtualView object for each client.
+ * Handles the serialization of messages from server to client and the deserialization of messages from client to server.
+ * Each Client is associated to a specific VirtualView.
  */
 public class VirtualView {
 
@@ -37,10 +37,12 @@ public class VirtualView {
     /**
      * VirtualView constructor.
      * This constructor:
-     * • sets the attributes to the values received as arguments or their default values
-     * • creates a messageQueue where the messages from the associated client to the server will be put
-     * • creates a pingQueue
-     * • creates a Thread to continuously listen to the associated client, deserializing his messages
+     * <ul>
+     *     <li>sets the attributes to the values received as arguments or their default values;
+     *     <li>creates a messageQueue where the messages from the associated client to the server will be placed;
+     *     <li>creates a pingQueue;
+     *     <li>creates a Thread to continuously listen to the associated client, deserializing his messages;
+     * </ul>
      *
      * @param socket the socket associated with the client
      * @param input  the ObjectInputStream associated with the socket
@@ -472,11 +474,13 @@ public class VirtualView {
      * Creates a new Message (NotifyLoss Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
      *
      * @param reason the reason he lost, can be:
-     *               • "outOfWorkers" if the Player lost because he ran out of Workers
-     *               • "outOfMoves" if the Player lost because he ran out of moves
-     *               • "outOfBuilds" if the Player lost because he ran out of builds
-     *               • "godConditionAchieved" if the Player lost because another Worker achieved his God's win condition
-     *               • "winConditionAchieved" if the Player lost because another Worker achieved the normal win condition
+     *               <ul>
+     *                  <li>"outOfWorkers" if the Player lost because he ran out of Workers;
+     *                  <li>"outOfMoves" if the Player lost because he ran out of moves;
+     *                  <li>"outOfBuilds" if the Player lost because he ran out of builds;
+     *                  <li>"godConditionAchieved" if the Player lost because another Worker achieved his God's win condition;
+     *                  <li>"winConditionAchieved" if the Player lost because another Worker achieved the normal win condition.
+     *               </ul>
      * @param winner null if the Player lost by his own, not null if the Player lost because another Player won
      * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
      */
@@ -490,11 +494,13 @@ public class VirtualView {
      * Creates a new Message (NotifyWin Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
      *
      * @param reason the reason of his victory, can be
-     *               • "godConditionAchieved", if the Player won by achieving his God's win condition
-     *               • "winConditionAchieved",  if the Player won by achieving the normal win condition
-     *               • "outOfWorkers",  if the Player won because the only Player left was eliminated (he ran out of Workers)
-     *               • "outOfMoves", if the Player won because the only Player left was eliminated (he ran out of moves)
-     *               • "outOfBuilds", if the Player won because the only Player left was eliminated (he ran out of builds)
+     *               <ul>
+     *                  <li>"godConditionAchieved" if the Player won by achieving his God's specific win condition;
+     *                  <li>"winConditionAchieved" if the Player won by achieving the normal win condition;
+     *                  <li>"outOfWorkers" if the Player won because the only Player left ran out of Workers;
+     *                  <li>"outOfMoves", if the Player won because the only Player left ran out of moves;
+     *                  <li>"outOfBuilds", if the Player won because the only Player left he ran out of builds.
+     *               </ul>
      * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
      */
     public void notifyWin(String reason) throws IOException {

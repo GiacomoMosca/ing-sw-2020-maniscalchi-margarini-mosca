@@ -6,7 +6,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.ArrayList;
 
 /**
- * The ChoosePosition message is used to send a message from the server to a client, to ask him to choose a position between those available.
+ * Message sent from the server to a client to ask him to choose a position between those available.
  */
 public class ChoosePosition extends ToClientMessage {
 
@@ -18,13 +18,15 @@ public class ChoosePosition extends ToClientMessage {
      * Calls the super constructor so that the msgId is set to "choose position".
      * Sets the attributes to the values received as arguments.
      *
-     * @param positions an ArrayList containing all the positions the client can choose among
-     * @param desc      the reason why he has to make this choice, can be
-     *                  • "start1", if the Player is asked to choose the starting position for his first Worker
-     *                  • "start2", if the Player is asked to choose the starting position for his second Worker
-     *                  • "worker", if the Player is asked to choose the Worker to use
-     *                  • "move", if the Player is asked to choose the position to move to
-     *                  • "build", if the Player is asked to choose the position to build in
+     * @param positions an ArrayList containing all the positions the client can choose from
+     * @param desc      the reason why he has to make this choice, can be:
+     *                  <ul>
+     *                          <li>"start1" if the Player is asked to choose the starting position for his first Worker;
+     *                          <li>"start2" if the Player is asked to choose the starting position for his second Worker;
+     *                          <li>"worker" if the Player is asked to choose the Worker to use;
+     *                          <li>"move" if the Player is asked to choose the position to move to;
+     *                          <li>"build" if the Player is asked to choose the position to build in.
+     *                  </ul>
      */
     public ChoosePosition(ArrayList<CellView> positions, String desc) {
         super("choose position");

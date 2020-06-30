@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ChooseYesNo message is used to send a message from the server to a client, to ask him to choose a position between those available.
+ * Message sent from the server to a client to ask him to choose a position between those available.
  */
 public class ChooseYesNo extends ToClientMessage {
 

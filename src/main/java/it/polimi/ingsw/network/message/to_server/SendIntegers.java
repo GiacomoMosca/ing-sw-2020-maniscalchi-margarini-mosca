@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_server;
 import java.util.ArrayList;
 
 /**
- * The SendIntegers class is used to send an ArrayList of Integers from a client to the server.
+ * Message sent from a client to the server to send an ArrayList of Integers.
  */
 public class SendIntegers extends ToServerMessage {
 

@@ -10,6 +10,9 @@ import it.polimi.ingsw.view.CellView;
 
 import java.io.IOException;
 
+/**
+ * Extension of the GodController class that modifies the turn according to Medusa's God Power.
+ */
 public class MedusaController extends GodController {
 
     /**

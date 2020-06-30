@@ -6,7 +6,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.ArrayList;
 
 /**
- * The ChooseStartingPlayer message is used to send a message from the server to a client, to ask him to choose the starting Player.
+ * Message sent from the server to a client to ask him to choose the starting Player.
  */
 public class ChooseStartingPlayer extends ToClientMessage {
 

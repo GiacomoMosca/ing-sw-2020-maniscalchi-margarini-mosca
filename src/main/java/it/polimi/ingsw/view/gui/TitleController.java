@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 /**
- * TitleController class allows to start playing the Game.
+ * Handles the starting screen of the game.
  */
 public class TitleController {
     private GUIManager manager;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.exceptions;
 
 /**
- * The IllegalBuildException is caught or thrown when a Player tries to build a level on a domed Cell.
+ * Thrown when a Player tries to build on a domed Cell.
  */
 public class IllegalBuildException extends Exception {
 

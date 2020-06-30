@@ -6,7 +6,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.ArrayList;
 
 /**
- * The ChooseGameRoom message is used to send a message from the server to a client, to ask him to choose the Game room to play in.
+ * Message sent from the server to a client to ask him to choose the Game room to play in.
  */
 public class ChooseGameRoom extends ToClientMessage {
 

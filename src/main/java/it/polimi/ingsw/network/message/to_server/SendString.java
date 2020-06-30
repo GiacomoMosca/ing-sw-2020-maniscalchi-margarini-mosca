@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.message.to_server;
 
 /**
- * The SendString class is used to send a String from a client to the server.
+ * Message sent from a client to the server to send a String.
  */
 public class SendString extends ToServerMessage {
 

@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The GodController abstract class. All the GodController implementing the 14 God Powers of the Game extends this class:
- * Apollo, Artemis, Athena, Atlas, Demeter, Hephaestus, Hestia, Limus, Medusa, Minotaur, Pan, Prometheus, Triton, Zeus.
+ * Template for all the God specific turn controllers. Handles how the different phases of each turn play out.
  */
 public abstract class GodController {
 

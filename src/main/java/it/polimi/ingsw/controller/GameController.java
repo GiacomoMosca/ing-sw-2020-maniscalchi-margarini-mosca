@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Creates, sets up and plays out a specific Game, handling player connections and disconnections.
+ */
 public class GameController {
 
     protected final AtomicBoolean running;
@@ -30,7 +33,7 @@ public class GameController {
 
     /**
      * GameController constructor.
-     * Creates the first Player (associated with the VirtualView received as an argument), associating him his ID and the color "r" (red).
+     * Creates the first Player (associated with the VirtualView received as an argument), associating his ID and the color "r" (red).
      * Creates a PlayerController for the first Player, associating the Player and his VirtualView.
      * Creates the Game.
      *
@@ -110,8 +113,8 @@ public class GameController {
 
     /**
      * Adds a new Player to the Game.
-     * Creates the new player, associating him his ID and a color ("g" as green for the second player and "b" as blue for the third player).
-     * Creates a PlayerController for the new Player, associating the player and his VirtualView.
+     * Creates the new Player, associating his ID and a color ("g" as green for the second player and "b" as blue for the third player).
+     * Creates a PlayerController for the new Player, associating the Player and his VirtualView.
      *
      * @param client the VirtualView associated with the Player to add
      * @throws GameEndedException when the Game is unexpectedly ended
@@ -136,12 +139,8 @@ public class GameController {
     }
 
     /**
-     * Handles the setting up of the Game:
-     * creating a GodController for each God Card,
-     * adding all the God Cards to the Deck,
-     * picking cards,
-     * choosing the starting player,
-     * placing workers.
+     * Handles the setup phase of the Game: creates a GodController for each God Card, adds all the God Cards to the Deck,
+     * picks the Cards for the Game, chooses the starting player and places the workers.
      */
     public void gameSetUp() {
         if (!setup.compareAndSet(true, false)) return;
@@ -187,8 +186,9 @@ public class GameController {
 
     /**
      * Allows picking Cards from the Deck containing all the 14 God Power Cards.
-     * If the Player who first signed up chooses to randomize the playable God Powers pool, the Cards are randomly picked from the Deck; otherwise, he chooses the Cards to use.
-     * In both cases, the Cards are assigned to the Players by asking them which one they want to use (starting from the player who was the second to sign up).
+     * If the Player who first signed up chooses to randomize the playable God Powers pool, the Cards are randomly picked
+     * from the Deck; otherwise, he chooses the Cards to use. In both cases, the Cards are assigned to the Players by
+     * asking him which one they want to use (starting from the player who was the second to sign up).
      *
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -227,7 +227,7 @@ public class GameController {
     }
 
     /**
-     * Asks to the first Player who signed up who will be the starting player, and then sets it.
+     * Asks the first Player who signed up who will be the starting player, and then sets it.
      *
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -270,14 +270,17 @@ public class GameController {
 
 
     /**
-     * Before proceeding to the Game, checks if there is any always active God Power.
-     * Then plays out the Game until there's no winner.
+     * Before proceeding to the Game, checks if there any any always active God Powers.
+     * Then plays out the Game until a winner is found.
      * Each Player's turn is in the end described by a string:
-     * • "next" if the Player properly moved and built and the game goes on;
-     * • "outOfMoves" if the Player must be eliminated because ran out of moves for both his Workers;
-     * • "outOfBuilds" if the Player must be eliminated because ran out of builds for both his Workers;
-     * • "winConditionAchieved" if the Player won because he achieved the win condition;
-     * • "godConditionAchieved" if the Player won because he achieved his God win condition;
+     * <ul>
+     *      <li>"next" if the Player properly moved and built and the game goes on;
+     *      <li>"outOfMoves" if the Player lost because he can't perform a legal move;
+     *      <li>"outOfBuilds" if the Player lost because he can't perform a legal build;
+     *      <li>"outOfWorkers" if the Player lost because both his Workers were removed from the game;
+     *      <li>"winConditionAchieved" if the Player won because one of his Workers reached level 3;
+     *      <li>"godConditionAchieved" if the Player won because he achieved his God specific win condition.
+     * </ul>
      *
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -326,7 +329,7 @@ public class GameController {
     }
 
     /**
-     * For every Player in the Game, checks if he has any Worker able to move. If a Player has no Workers left, eliminates him.
+     * For every Player in the Game, checks if any of his Workers are able to move. If a Player has no Workers left, eliminates him.
      *
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -339,7 +342,7 @@ public class GameController {
     /**
      * Checks whether the Player who disconnected is currently in the Game or not.
      *
-     * @param e          the caught exception
+     * @param e          the caught disconnection exception
      * @param controller the controller to check
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
@@ -368,8 +371,8 @@ public class GameController {
     }
 
     /**
-     * Removes a Player who was eliminated from the Game: removes his workers and the God Power which was eventually always active and notifies him his loss.
-     * If only one Player is left, sets him as the winner. If there are two Players left, notifies them the elimination of the third one.
+     * Removes a Player who was eliminated from the Game: removes his Workers and his God's active modifier (if present), then notifies him of his loss.
+     * If only one Player is left, sets him as the winner. If there are two Players left, notifies them of the elimination of the third one.
      *
      * @param player the Player to eliminate
      * @param reason the reason why the Player lost
@@ -425,12 +428,14 @@ public class GameController {
      * Broadcasts all the information associated with the current Game to all the Players.
      *
      * @param desc the description associated with this broadcast; can be
-     *             • playerJoined: sends player info when a new player joins the game
-     *             • gameSetup: sends player info after all players have joined
-     *             • boardSetup: sends player info with god cards
-     *             • gameStart: signals the end of the setup stage
-     *             • turnStart: signals the beginning of a new turn
-     *             • a notifyLoss description: signals the loss of the first player in a 3 player game
+     *             <ul>
+     *                  <li>"playerJoined": sends Player info when a new Player joins the game;
+     *                  <li>"gameSetup": sends Player info after all Players have joined;
+     *                  <li>"boardSetup": sends Player info with their respective God Cards;
+     *                  <li>"gameStart": signals the end of the setup stage;
+     *                  <li>"turnStart": signals the beginning of a new turn;
+     *                  <li>a notifyLoss description: signals the loss of a Player in a 3 Player game.
+     *             </ul>
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     public void broadcastGameInfo(String desc) throws IOExceptionFromController {
@@ -497,7 +502,7 @@ public class GameController {
     }
 
     /**
-     * Notifies to all the other Players the disconnection of the Player received as an argument.
+     * Notifies all Players of the disconnection of the Player received as an argument.
      *
      * @param player the Player who disconnected
      */
@@ -514,7 +519,7 @@ public class GameController {
 
     /**
      * Sets the Player received as an argument as the winner (for the reason received as an argument).
-     * Notifies each Player of his victory or of his loss.
+     * Notifies each Player of his victory or loss.
      *
      * @param player the winner
      * @param reason the reason why the player won

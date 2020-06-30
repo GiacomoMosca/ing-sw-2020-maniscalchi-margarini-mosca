@@ -4,8 +4,8 @@ import it.polimi.ingsw.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.game_board.Cell;
 
 /**
- * The Worker class saves information about a Worker: his owner (a Player), the number which identifies him, the Cell representing his position.
- * It also allows interaction with these attributes with setter and getter methods.
+ * Describes a Player's Worker within a specific Game.
+ * Stores a reference to its owner (a Player), the number which identifies it, the Cell representing its position.
  */
 public class Worker {
 

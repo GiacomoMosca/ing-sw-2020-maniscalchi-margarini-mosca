@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller.turn_controllers;
 
-
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.IOExceptionFromController;
 import it.polimi.ingsw.exceptions.IllegalMoveException;
@@ -12,6 +11,9 @@ import it.polimi.ingsw.view.CellView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Extension of the GodController class that modifies the turn according to Artemis's God Power.
+ */
 public class ArtemisController extends GodController {
 
     private Cell beginningCell;

@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 /**
- * GameStartingController class handles the interaction between client and server during the phase of waiting for Players to join a Game.
+ * Handles the interaction between client and server during the phase of waiting for Players to join a Game.
  */
 public class GameStartingController {
 

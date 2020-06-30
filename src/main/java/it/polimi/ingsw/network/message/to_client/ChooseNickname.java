@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ChooseNickname message is used to send a message from the server to a client, to ask him to choose his nickname.
+ * Message sent from the server to a client to ask him to choose his nickname.
  */
 public class ChooseNickname extends ToClientMessage {
 

@@ -97,7 +97,7 @@
 }
 
 #confirmText, #confirmText_p, #continueText, #continueText_p {
-    -fx-font: 23px LillyBelle;
+    -fx-font: 30px LillyBelle;
     -fx-fill: white;
     -fx-effect: dropshadow(three-pass-box, black, 5, 0.3, 0, 0);
 }

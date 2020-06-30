@@ -7,7 +7,7 @@ import it.polimi.ingsw.view.UI;
 import java.util.HashMap;
 
 /**
- * The DisplayMove message is used to send a message from the server to a client, to notify him a new move occurred.
+ * Message sent from the server to a client to display a new move.
  */
 public class DisplayMove extends ToClientMessage {
 
@@ -19,9 +19,11 @@ public class DisplayMove extends ToClientMessage {
      * Calls the super constructor so that the msgId is set to "display move".
      * Sets the attributes to the values received as arguments.
      *
-     * @param moves   an HashMap containing:
-     *                • a pair of CellViews if only one Worker moved;
-     *                • two pairs of CellViews if two Workers moved (in this case the godPower parameter mustn't be null: this kind of double move is only allowed thanks to a God Power).
+     * @param moves   a HashMap containing:
+     *                <ul>
+     *                      <li>a pair of CellViews if only one Worker moved;
+     *                      <li>two pairs of CellViews if two Workers moved (only allowed thanks to a God Power: godCard will not be null).
+     *                </ul>
      * @param godCard the CardView representing the God Power which eventually allowed this build
      */
     public DisplayMove(HashMap<CellView, CellView> moves, CardView godCard) {

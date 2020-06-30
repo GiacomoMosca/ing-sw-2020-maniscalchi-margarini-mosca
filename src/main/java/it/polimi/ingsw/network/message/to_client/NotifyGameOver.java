@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The NotifyGameOver message is used to send a message from the server to a client, to notify him the Game is over.
+ * Message sent from the server to a client to notify him that the current Game is over.
  */
 public class NotifyGameOver extends ToClientMessage {
 

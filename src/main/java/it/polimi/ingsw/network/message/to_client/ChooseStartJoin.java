@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ChooseStartJoin message is used to send a message from the server to a client, to ask him to choose between starting a new Game or joining an existing one.
+ * Message sent from the server to a client to ask him to choose between starting a new Game or joining an existing one.
  */
 public class ChooseStartJoin extends ToClientMessage {
 

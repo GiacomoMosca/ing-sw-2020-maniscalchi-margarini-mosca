@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The ChoosePlayersNumber message is used to send a message from the server to a client, to ask him to choose the number of players for the Game.
+ * Message sent from the server to a client to ask him to choose the number of players for the Game.
  */
 public class ChoosePlayersNumber extends ToClientMessage {
 

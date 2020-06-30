@@ -8,8 +8,9 @@ import it.polimi.ingsw.model.players.Player;
 import java.util.ArrayList;
 
 /**
- * The Game class that represents the current state of the Game, saving the name of the Game, the Players, the number of players, the Board, the Deck, the active God Power Cards in a turn, the number of the active player in a turn and an eventual winner.
- * It also allows interaction with these attributes with setter and getter methods.
+ * Describes the current state of the Game.
+ * Stores the name of the Game, the number of players, references to its Players, Board and Deck, the active God Power Cards
+ * in a turn, the number of the turn player and an eventual winner.
  */
 public class Game {
 

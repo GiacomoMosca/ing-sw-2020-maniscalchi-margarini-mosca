@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.players.Worker;
 import java.io.Serializable;
 
 /**
- * The WorkerView class represents a view of the Worker class.
- * It implements serializable so that it can be serialized in the messages that client and server exchange: in this way, the client won't have access to the Model objects.
+ * Represents a view of the Worker class to the Client.
+ * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won't have access to the Model objects.
  */
 public class WorkerView implements Serializable {
 

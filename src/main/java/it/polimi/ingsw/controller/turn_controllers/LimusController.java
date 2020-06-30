@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.game_board.Cell;
 
 import java.util.ArrayList;
 
+/**
+ * Extension of the GodController class that modifies the turn according to Limus's God Power.
+ */
 public class LimusController extends GodController {
 
     /**

@@ -107,7 +107,7 @@
         </ImageView>
         <Text fx:id="confirmText" mouseTransparent="true" text="Confirm">
             <StackPane.margin>
-                <Insets top="-8.0"/>
+                <Insets top="-12.0"/>
             </StackPane.margin>
         </Text>
         <ImageView fx:id="confirmButton_p" mouseTransparent="true" preserveRatio="true" fitHeight="75.0"
@@ -115,6 +115,9 @@
             <Image url="@../assets/buttons/btn_red_pressed.png"/>
         </ImageView>
         <Text fx:id="confirmText_p" mouseTransparent="true" text="Confirm" visible="false">
+            <StackPane.margin>
+                <Insets top="-4.0"/>
+            </StackPane.margin>
         </Text>
     </StackPane>
     <AnchorPane fx:id="cover" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

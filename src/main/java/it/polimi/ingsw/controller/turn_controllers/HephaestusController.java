@@ -10,6 +10,9 @@ import it.polimi.ingsw.view.CellView;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Extension of the GodController class that modifies the turn according to Hephaestus's God Power.
+ */
 public class HephaestusController extends GodController {
 
     /**

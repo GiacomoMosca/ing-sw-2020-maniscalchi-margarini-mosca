@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Server class allows the Game to start and to be handled.
+ * Server instance that handles games and connections with players.
  */
 public class Server {
 
@@ -41,11 +41,13 @@ public class Server {
     }
 
     /**
-     * Allows:
-     * • creating a new Logger
-     * • creating a new ServerSocket at the previously specified port, which will be used to accept the requests of connections from the clients
-     * • creating a new Socket instance for each client connecting to the server, establishing the communication channel between that client and the server
-     * • starting a new Thread for each client connecting to the server
+     * Starts the server by:
+     * <ul>
+     *     <li>creating a new Logger;
+     *     <li>creating a new ServerSocket at the previously specified port, which will be used to accept the requests of connections from the clients;
+     *     <li>creating a new Socket instance for each client connecting to the server, establishing the communication channel between that client and the server;
+     *     <li>starting a new Thread for each client connecting to the server.
+     * </ul>
      */
     public void start() {
         try {
@@ -213,10 +215,12 @@ public class Server {
     }
 
     /**
-     * Allows supporting a Player to the choice of joining an existing Game. Allows
-     * • going back to the possibility of starting a new Game
-     * • refreshing the list of the currently active Game rooms
-     * • choosing a Game room to join
+     * Allows a Player to join an existing Game. The Player can:
+     * <ul>
+     *     <li>choose a Game room to join;
+     *     <li>refresh the list of the currently active Game rooms;
+     *     <li>go back to the previous screen.
+     * </ul>
      * The Game in the Game Room starts when the expected number of participants joined.
      *
      * @param player the VirtualView representing the Player who is joining the Game room

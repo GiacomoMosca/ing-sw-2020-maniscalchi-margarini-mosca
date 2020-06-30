@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The Ping message is used to send a message from the server to a client, to receive an answer from that client to prove he is still active.
+ * Ping message sent from the server to a client.
  */
 public class Ping extends ToClientMessage {
 

@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.message.to_client;
 import it.polimi.ingsw.view.UI;
 
 /**
- * The NotifyDisconnection message is used to send a message from the server to a client, to notify him the disconnection of a Player.
+ * Message sent from the server to a client to notify him about the disconnection of a Player.
  */
 public class NotifyGameStarting extends ToClientMessage {
 
