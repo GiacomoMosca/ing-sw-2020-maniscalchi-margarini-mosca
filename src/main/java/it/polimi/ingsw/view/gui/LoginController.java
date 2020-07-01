@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
+import it.polimi.ingsw.model.players.Player;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -128,10 +129,12 @@ public class LoginController {
      * @param message the String describing the error message
      */
     public void errorMessage(String message) {
-        textField.clear();
-        textField.editableProperty().setValue(true);
-        error.setText(message);
-        error.setVisible(true);
-        connectButton.setDisable(false);
+        Platform.runLater(() -> {
+            textField.clear();
+            textField.editableProperty().setValue(true);
+            error.setText(message);
+            error.setVisible(true);
+            connectButton.setDisable(false);
+        });
     }
 }
