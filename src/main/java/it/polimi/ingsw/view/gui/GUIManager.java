@@ -24,33 +24,105 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class GUIManager extends Application {
 
+    /**
+     * Set to <code>false</code> only when the GUI is ready to switch to the next instruction.
+     */
     private final static AtomicBoolean busy = new AtomicBoolean(true);
+    /**
+     * Lock that allows only one message at a time to be processed by the GUI.
+     */
     private final static Object busyLock = new Object();
 
+    /**
+     * The main stage.
+     */
     private static Stage stage;
 
+    /**
+     * The scene used by the Login screen.
+     */
     private static Scene loginScene;
+    /**
+     * The scene used by the Game Lobby screen.
+     */
     private static Scene gameLobbyScene;
+    /**
+     * The scene used by the New Game screen.
+     */
     private static Scene newGameScene;
+    /**
+     * The scene used by the Join Game screen.
+     */
     private static Scene joinGameScene;
+    /**
+     * The scene used by the Game Starting screen.
+     */
     private static Scene gameStartingScene;
+    /**
+     * The scene used by the Game Setup screen.
+     */
     private static Scene gameSetupScene;
+    /**
+     * The scene used by the Game Board screen.
+     */
     private static Scene gameBoardScene;
+    /**
+     * The scene used by the Game Over screen.
+     */
     private static Scene gameOverScene;
 
+    /**
+     * The controller for the Title screen.
+     */
     private static TitleController titleController = null;
+    /**
+     * The controller for the Login screen.
+     */
     private static LoginController loginController = null;
+    /**
+     * The controller for the Game Lobby screen.
+     */
     private static GameLobbyController gameLobbyController = null;
+    /**
+     * The controller for the New Game screen.
+     */
     private static NewGameController newGameController = null;
+    /**
+     * The controller for the Join Game screen.
+     */
     private static JoinGameController joinGameController = null;
+    /**
+     * The controller for the Game Starting screen.
+     */
     private static GameStartingController gameStartingController = null;
+    /**
+     * The controller for the Game Setup screen.
+     */
     private static GameSetupController gameSetupController = null;
+    /**
+     * The controller for the Game Board screen.
+     */
     private static GameBoardController gameBoardController = null;
+    /**
+     * The controller for the Game Over screen.
+     */
     private static GameOverController gameOverController = null;
 
+    /**
+     * The currently active scene.
+     */
     private static Scene currentScene;
+    /**
+     * The main GUI instance.
+     */
     private static GUI gui;
+    /**
+     * Internal queue for inputs from the user.
+     */
     private static SynchronousQueue<Object> messageQueue;
+    /**
+     * The nickname chosen by the user.
+     */
     private String id;
 
     /**

@@ -23,15 +23,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class GUI implements UI {
 
+    /**
+     * Set to <code>true</code> on start and <code>false</code> on stop.
+     */
     private final AtomicBoolean running;
+    /**
+     * The manager for this GUI instance.
+     */
     private final GUIManager manager;
+    /**
+     * Lock that allows only one message at a time to be processed by the GUI.
+     */
     private final Object busyLock;
+    /**
+     * Socket for server communications.
+     */
     private Socket server;
+    /**
+     * InputStream for inputs from the server.
+     */
     private ObjectInputStream input;
+    /**
+     * OutputStream for outputs to the server.
+     */
     private ObjectOutputStream output;
+    /**
+     * Queue for all incoming messages from the server.
+     */
     private LinkedBlockingQueue<ToClientMessage> serverQueue;
+    /**
+     * Internal queue for inputs from the user.
+     */
     private SynchronousQueue<Object> messageQueue;
+    /**
+     * The nickname chosen by the user.
+     */
     private String id;
+    /**
+     * The GameView that represents the current state of the Game.
+     */
     private GameView currentGame;
 
     /**

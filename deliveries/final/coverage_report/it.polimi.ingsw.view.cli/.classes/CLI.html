@@ -1,0 +1,863 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CLI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CLI (it.polimi.ingsw.view.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CLI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 330)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view.cli;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.network.message.to_client.Ping;
+<i>4</i>&nbsp;import it.polimi.ingsw.network.message.to_client.ToClientMessage;
+<i>5</i>&nbsp;import it.polimi.ingsw.network.message.to_server.*;
+<i>6</i>&nbsp;import it.polimi.ingsw.view.*;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.io.ObjectInputStream;
+<i>10</i>&nbsp;import java.io.ObjectOutputStream;
+<i>11</i>&nbsp;import java.net.InetSocketAddress;
+<i>12</i>&nbsp;import java.net.Socket;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.HashMap;
+<i>15</i>&nbsp;import java.util.Scanner;
+<i>16</i>&nbsp;import java.util.concurrent.LinkedBlockingQueue;
+<i>17</i>&nbsp;import java.util.concurrent.SynchronousQueue;
+<i>18</i>&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * Command Line Interface for the Client.
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;public class CLI implements UI {
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    private final AtomicBoolean running;
+<i>26</i>&nbsp;    private Socket server;
+<i>27</i>&nbsp;    private ObjectInputStream input;
+<i>28</i>&nbsp;    private ObjectOutputStream output;
+<i>29</i>&nbsp;    private LinkedBlockingQueue&lt;ToClientMessage&gt; serverQueue;
+<i>30</i>&nbsp;    private SynchronousQueue&lt;String&gt; messageQueue;
+<i>31</i>&nbsp;    private String id;
+<i>32</i>&nbsp;    private GameView currentGame;
+<i>33</i>&nbsp;    private boolean playing;
+<i>34</i>&nbsp;    private boolean lost;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * CLI constructor.
+<i>38</i>&nbsp;     */
+<b class="nc"><i>39</i>&nbsp;    public CLI() {</b>
+<b class="nc"><i>40</i>&nbsp;        this.running = new AtomicBoolean();</b>
+<b class="nc"><i>41</i>&nbsp;        this.id = null;</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     * Allows CLI to run until the Game is over.
+<i>46</i>&nbsp;     * Handles the connection of the client to the server and opens a communication channel between them.
+<i>47</i>&nbsp;     * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
+<i>48</i>&nbsp;     * Creates a messageQueue where the input provided by the client will be offered, and a serverQueue where the messages from the server will be put after deserialization.
+<i>49</i>&nbsp;     * Starts two threads which respectively allows listening to the client input and listening to the server messages.
+<i>50</i>&nbsp;     * Every time a message from the server is put on the serverQueue, it is parsed to the corresponding action.
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    public void run() {
+<b class="nc"><i>53</i>&nbsp;        running.set(true);</b>
+<b class="nc"><i>54</i>&nbsp;        currentGame = null;</b>
+<b class="nc"><i>55</i>&nbsp;        messageQueue = new SynchronousQueue&lt;String&gt;();</b>
+<b class="nc"><i>56</i>&nbsp;        new Thread(this::inputListener).start();</b>
+<i>57</i>&nbsp;
+<b class="nc"><i>58</i>&nbsp;        System.out.println(&quot;============================================================\n&quot; +</b>
+<i>59</i>&nbsp;                &quot;                         Santorini\n&quot; +
+<i>60</i>&nbsp;                &quot;============================================================\n&quot; +
+<i>61</i>&nbsp;                &quot;a game by Luca Maniscalchi, Rebecca Margarini, Giacomo Mosca\n\n\n&quot;
+<i>62</i>&nbsp;        );
+<b class="nc"><i>63</i>&nbsp;        String ip = getServerIp();</b>
+<b class="nc"><i>64</i>&nbsp;        server = new Socket();</b>
+<i>65</i>&nbsp;        try {
+<b class="nc"><i>66</i>&nbsp;            server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);</b>
+<b class="nc"><i>67</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>68</i>&nbsp;            System.out.println(&quot;Server unreachable. &quot;);</b>
+<b class="nc"><i>69</i>&nbsp;            stop();</b>
+<i>70</i>&nbsp;            return;
+<b class="nc"><i>71</i>&nbsp;        }</b>
+<b class="nc"><i>72</i>&nbsp;        System.out.println(&quot;Connected! &quot;);</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        try {
+<b class="nc"><i>75</i>&nbsp;            output = new ObjectOutputStream(server.getOutputStream());</b>
+<b class="nc"><i>76</i>&nbsp;            input = new ObjectInputStream(server.getInputStream());</b>
+<b class="nc"><i>77</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>78</i>&nbsp;            System.out.println(&quot;Server is down. &quot;);</b>
+<b class="nc"><i>79</i>&nbsp;            stop();</b>
+<i>80</i>&nbsp;            return;
+<b class="nc"><i>81</i>&nbsp;        } catch (ClassCastException e) {</b>
+<b class="nc"><i>82</i>&nbsp;            System.out.println(&quot;Protocol violation. &quot;);</b>
+<b class="nc"><i>83</i>&nbsp;            stop();</b>
+<i>84</i>&nbsp;            return;
+<b class="nc"><i>85</i>&nbsp;        }</b>
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        serverQueue = new LinkedBlockingQueue&lt;ToClientMessage&gt;();</b>
+<b class="nc"><i>88</i>&nbsp;        new Thread(this::serverListener).start();</b>
+<i>89</i>&nbsp;        ToClientMessage message;
+<b class="nc"><i>90</i>&nbsp;        while (running.get()) {</b>
+<i>91</i>&nbsp;            try {
+<b class="nc"><i>92</i>&nbsp;                message = serverQueue.take();</b>
+<b class="nc"><i>93</i>&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc"><i>94</i>&nbsp;                System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>95</i>&nbsp;                break;</b>
+<b class="nc"><i>96</i>&nbsp;            }</b>
+<b class="nc"><i>97</i>&nbsp;            parseMessage(message);</b>
+<i>98</i>&nbsp;        }
+<b class="nc"><i>99</i>&nbsp;        stop();</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Permanently listens to the client, taking its input from the command line and offering it on the messageQueue so that it can be processed and sent to the server.
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    private void inputListener() {
+<b class="nc"><i>106</i>&nbsp;        Scanner scanner = new Scanner(System.in);</b>
+<b class="nc"><i>107</i>&nbsp;        while (running.get()) {</b>
+<b class="nc"><i>108</i>&nbsp;            String input = scanner.nextLine();</b>
+<b class="nc"><i>109</i>&nbsp;            messageQueue.offer(input);</b>
+<b class="nc"><i>110</i>&nbsp;        }</b>
+<i>111</i>&nbsp;    }
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    /**
+<i>114</i>&nbsp;     * Continuously listens to the server.
+<i>115</i>&nbsp;     * When deserializing a message, puts it on the serverQueue so that it can be processed.
+<i>116</i>&nbsp;     * If the deserialized message is a Ping from the server, replies with a Pong.
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    public void serverListener() {
+<i>119</i>&nbsp;        ToClientMessage serverMessage;
+<b class="nc"><i>120</i>&nbsp;        while (running.get()) {</b>
+<i>121</i>&nbsp;            try {
+<b class="nc"><i>122</i>&nbsp;                serverMessage = (ToClientMessage) input.readObject();</b>
+<b class="nc"><i>123</i>&nbsp;            } catch (IOException | ClassNotFoundException e) {</b>
+<b class="nc"><i>124</i>&nbsp;                running.compareAndSet(true, false);</b>
+<b class="nc"><i>125</i>&nbsp;                System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>126</i>&nbsp;                break;</b>
+<b class="nc"><i>127</i>&nbsp;            }</b>
+<b class="nc"><i>128</i>&nbsp;            if (serverMessage instanceof Ping) pong();</b>
+<i>129</i>&nbsp;            else {
+<i>130</i>&nbsp;                try {
+<b class="nc"><i>131</i>&nbsp;                    serverQueue.put(serverMessage);</b>
+<b class="nc"><i>132</i>&nbsp;                } catch (InterruptedException e) {</b>
+<i>133</i>&nbsp;                    //
+<b class="nc"><i>134</i>&nbsp;                }</b>
+<i>135</i>&nbsp;            }
+<i>136</i>&nbsp;        }
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    /**
+<i>140</i>&nbsp;     * Calls the stop method.
+<i>141</i>&nbsp;     */
+<i>142</i>&nbsp;    private void quit() {
+<b class="nc"><i>143</i>&nbsp;        stop();</b>
+<i>144</i>&nbsp;    }
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;    /**
+<i>147</i>&nbsp;     * If the Game is over, closes the communication channel with the server.
+<i>148</i>&nbsp;     */
+<i>149</i>&nbsp;    public synchronized void stop() {
+<b class="nc"><i>150</i>&nbsp;        if (!running.compareAndSet(true, false)) return;</b>
+<b class="nc"><i>151</i>&nbsp;        System.out.println(&quot;\nPress ENTER to quit. &quot;);</b>
+<i>152</i>&nbsp;        try {
+<b class="nc"><i>153</i>&nbsp;            if (server != null) server.close();</b>
+<b class="nc"><i>154</i>&nbsp;            if (input != null) input.close();</b>
+<b class="nc"><i>155</i>&nbsp;            if (output != null) output.close();</b>
+<b class="nc"><i>156</i>&nbsp;        } catch (IOException e) {</b>
+<i>157</i>&nbsp;            //
+<b class="nc"><i>158</i>&nbsp;        }</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * Clears the console by printing empty lines.
+<i>163</i>&nbsp;     */
+<i>164</i>&nbsp;    private void clear() {
+<b class="nc"><i>165</i>&nbsp;        System.out.println(&quot;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n&quot;);</b>
+<i>166</i>&nbsp;    }
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    /**
+<i>169</i>&nbsp;     * Allows receiving from the client the IP of the server he wants to connect to.
+<i>170</i>&nbsp;     * Prints to the command line the request and then calls getString so that the input written by the client can be read and returned.
+<i>171</i>&nbsp;     *
+<i>172</i>&nbsp;     * @return the String written by the client
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    public String getServerIp() {
+<b class="nc"><i>175</i>&nbsp;        System.out.println(&quot;\nServer IP address: &quot;);</b>
+<b class="nc"><i>176</i>&nbsp;        return getString();</b>
+<i>177</i>&nbsp;    }
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;    /**
+<i>180</i>&nbsp;     * Allows parsing a message received from the server to the corresponding action to do on the client.
+<i>181</i>&nbsp;     *
+<i>182</i>&nbsp;     * @param message the ToClientMessage to parse
+<i>183</i>&nbsp;     */
+<i>184</i>&nbsp;    public void parseMessage(ToClientMessage message) {
+<b class="nc"><i>185</i>&nbsp;        message.performAction(this);</b>
+<i>186</i>&nbsp;    }
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;    /**
+<i>189</i>&nbsp;     * Takes a message previously put on the messageQueue.
+<i>190</i>&nbsp;     * If no exception occurs in the parsing of the message to an Integer, that Integer is returned.
+<i>191</i>&nbsp;     * If a NumberFormatException occurs during parsing, the client is notified he wrote an invalid input.
+<i>192</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>193</i>&nbsp;     *
+<i>194</i>&nbsp;     * @return the Integer taken from the messageQueue
+<i>195</i>&nbsp;     */
+<i>196</i>&nbsp;    private int getInt() {
+<i>197</i>&nbsp;        while (true) {
+<i>198</i>&nbsp;            try {
+<b class="nc"><i>199</i>&nbsp;                return Integer.parseInt(messageQueue.take());</b>
+<b class="nc"><i>200</i>&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc"><i>201</i>&nbsp;                System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>202</i>&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc"><i>203</i>&nbsp;                System.out.println(&quot;\nError getting input. &quot;);</b>
+<b class="nc"><i>204</i>&nbsp;            }</b>
+<i>205</i>&nbsp;        }
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /**
+<i>209</i>&nbsp;     * Takes a message previously put on the messageQueue.
+<i>210</i>&nbsp;     * If no exception occurs in taking the message, it is returned.
+<i>211</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>212</i>&nbsp;     *
+<i>213</i>&nbsp;     * @return the String taken from the messageQueue
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    private String getString() {
+<i>216</i>&nbsp;        while (true) {
+<i>217</i>&nbsp;            try {
+<b class="nc"><i>218</i>&nbsp;                return messageQueue.take();</b>
+<b class="nc"><i>219</i>&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc"><i>220</i>&nbsp;                System.out.println(&quot;\nError getting input. &quot;);</b>
+<b class="nc"><i>221</i>&nbsp;            }</b>
+<i>222</i>&nbsp;        }
+<i>223</i>&nbsp;    }
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    /**
+<i>226</i>&nbsp;     * Creates a new message (Pong Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>227</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>228</i>&nbsp;     */
+<i>229</i>&nbsp;    public void pong() {
+<i>230</i>&nbsp;        try {
+<b class="nc"><i>231</i>&nbsp;            output.writeObject(new Pong(id));</b>
+<b class="nc"><i>232</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>233</i>&nbsp;            System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>234</i>&nbsp;            stop();</b>
+<b class="nc"><i>235</i>&nbsp;        }</b>
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    /**
+<i>239</i>&nbsp;     * Creates a new message (SendBoolean Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>240</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>241</i>&nbsp;     *
+<i>242</i>&nbsp;     * @param body the boolean to send to the server in the SendBoolean Message
+<i>243</i>&nbsp;     */
+<i>244</i>&nbsp;    public void sendBoolean(boolean body) {
+<i>245</i>&nbsp;        try {
+<b class="nc"><i>246</i>&nbsp;            output.writeObject(new SendBoolean(id, body));</b>
+<b class="nc"><i>247</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>248</i>&nbsp;            System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>249</i>&nbsp;            stop();</b>
+<b class="nc"><i>250</i>&nbsp;        }</b>
+<i>251</i>&nbsp;    }
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    /**
+<i>254</i>&nbsp;     * Creates a new message (SendInteger Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>255</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>256</i>&nbsp;     *
+<i>257</i>&nbsp;     * @param body the int to send to the server in the SendInteger Message
+<i>258</i>&nbsp;     */
+<i>259</i>&nbsp;    public void sendInteger(int body) {
+<i>260</i>&nbsp;        try {
+<b class="nc"><i>261</i>&nbsp;            output.writeObject(new SendInteger(id, body));</b>
+<b class="nc"><i>262</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>263</i>&nbsp;            System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>264</i>&nbsp;            stop();</b>
+<b class="nc"><i>265</i>&nbsp;        }</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    /**
+<i>269</i>&nbsp;     * Creates a new message (SendIntegers Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>270</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>271</i>&nbsp;     *
+<i>272</i>&nbsp;     * @param body the ArrayList of Integers to send to the server in the SendIntegers Message
+<i>273</i>&nbsp;     */
+<i>274</i>&nbsp;    public void sendIntegers(ArrayList&lt;Integer&gt; body) {
+<i>275</i>&nbsp;        try {
+<b class="nc"><i>276</i>&nbsp;            output.writeObject(new SendIntegers(id, body));</b>
+<b class="nc"><i>277</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>278</i>&nbsp;            System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>279</i>&nbsp;            stop();</b>
+<b class="nc"><i>280</i>&nbsp;        }</b>
+<i>281</i>&nbsp;    }
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    /**
+<i>284</i>&nbsp;     * Creates a new message (SendString Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>285</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>286</i>&nbsp;     *
+<i>287</i>&nbsp;     * @param body the String to send to the server in the SendString Message
+<i>288</i>&nbsp;     */
+<i>289</i>&nbsp;    public void sendString(String body) {
+<i>290</i>&nbsp;        try {
+<b class="nc"><i>291</i>&nbsp;            output.writeObject(new SendString(id, body));</b>
+<b class="nc"><i>292</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>293</i>&nbsp;            System.out.println(&quot;\nDisconnected. &quot;);</b>
+<b class="nc"><i>294</i>&nbsp;            stop();</b>
+<b class="nc"><i>295</i>&nbsp;        }</b>
+<i>296</i>&nbsp;    }
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;    /**
+<i>299</i>&nbsp;     * Allows the Player to choose some Cards between those available.
+<i>300</i>&nbsp;     * He could be asked to choose the 2 or 3 Cards to be used in a 2 or 3-players Game, or his own Card for the Game.
+<i>301</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>302</i>&nbsp;     *
+<i>303</i>&nbsp;     * @param possibleCards an ArrayList containing all the available Cards
+<i>304</i>&nbsp;     * @param num           the number of Cards to choose
+<i>305</i>&nbsp;     * @param pickedCards   an ArrayList containing all the already picked Cards
+<i>306</i>&nbsp;     */
+<i>307</i>&nbsp;    public void chooseCards(ArrayList&lt;CardView&gt; possibleCards, int num, ArrayList&lt;CardView&gt; pickedCards) {
+<b class="nc"><i>308</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>309</i>&nbsp;        if (num &gt; 1) string.append(&quot;\nChoose the &quot; + num + &quot; God Powers that will be used for this game: \n&quot;);</b>
+<b class="nc"><i>310</i>&nbsp;        else string.append(&quot;\nPick your God Power: \n&quot;);</b>
+<b class="nc"><i>311</i>&nbsp;        for (int i = 0; i &lt; possibleCards.size(); i++) {</b>
+<b class="nc"><i>312</i>&nbsp;            string.append(i + &quot;: &quot;);</b>
+<b class="nc"><i>313</i>&nbsp;            string.append(possibleCards.get(i).getGod() + &quot;\n&quot;);</b>
+<i>314</i>&nbsp;        }
+<b class="nc"><i>315</i>&nbsp;        if (pickedCards != null) for (CardView pickedCard : pickedCards) {</b>
+<b class="nc"><i>316</i>&nbsp;            string.append(&quot;X: &quot;);</b>
+<b class="nc"><i>317</i>&nbsp;            string.append(pickedCard.getGod() + &quot;\n&quot;);</b>
+<b class="nc"><i>318</i>&nbsp;        }</b>
+<b class="nc"><i>319</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>320</i>&nbsp;        ArrayList&lt;Integer&gt; choices = new ArrayList&lt;Integer&gt;();</b>
+<b class="nc"><i>321</i>&nbsp;        for (int i = 0; i &lt; num; i++) {</b>
+<b class="nc"><i>322</i>&nbsp;            int choice = getInt();</b>
+<b class="nc"><i>323</i>&nbsp;            while (choice &lt; 0 || choice &gt;= possibleCards.size() || choices.contains(choice)) {</b>
+<b class="nc"><i>324</i>&nbsp;                System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>325</i>&nbsp;                choice = getInt();</b>
+<i>326</i>&nbsp;            }
+<b class="nc"><i>327</i>&nbsp;            System.out.println(&quot;Picked &quot; + possibleCards.get(choice).getGod());</b>
+<b class="nc"><i>328</i>&nbsp;            choices.add(choice);</b>
+<i>329</i>&nbsp;        }
+<b class="nc"><i>330</i>&nbsp;        sendIntegers(choices);</b>
+<i>331</i>&nbsp;    }
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;    /**
+<i>334</i>&nbsp;     * Allows the Player to choose a Game name (max 12 characters and not duplicated).
+<i>335</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>336</i>&nbsp;     *
+<i>337</i>&nbsp;     * @param taken if the previously chosen Game name is already taken, false otherwise
+<i>338</i>&nbsp;     */
+<i>339</i>&nbsp;    public void chooseGameName(boolean taken) {
+<b class="nc"><i>340</i>&nbsp;        if (taken) System.out.println(&quot;\nName already taken. &quot;);</b>
+<i>341</i>&nbsp;        else {
+<b class="nc"><i>342</i>&nbsp;            clear();</b>
+<b class="nc"><i>343</i>&nbsp;            System.out.println(&quot;\nChoose a name for your game room: &quot;);</b>
+<i>344</i>&nbsp;        }
+<i>345</i>&nbsp;        String gameRoom;
+<i>346</i>&nbsp;        while (true) {
+<b class="nc"><i>347</i>&nbsp;            gameRoom = getString();</b>
+<b class="nc"><i>348</i>&nbsp;            if (gameRoom.length() &gt; 12) System.out.println(&quot;Invalid input (max 12 characters). &quot;);</b>
+<i>349</i>&nbsp;            else break;
+<i>350</i>&nbsp;        }
+<b class="nc"><i>351</i>&nbsp;        sendString(gameRoom);</b>
+<i>352</i>&nbsp;    }
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    /**
+<i>355</i>&nbsp;     * Allows the Player to choose a Game room.
+<i>356</i>&nbsp;     * The available Game rooms are displayed on screen; the Player can go back to start a new Game, refresh the list or choose a Game room.
+<i>357</i>&nbsp;     * The input provided by the client is processed and sent to the Server.
+<i>358</i>&nbsp;     *
+<i>359</i>&nbsp;     * @param gameRooms an ArrayList of GameViews containing all the Game Rooms
+<i>360</i>&nbsp;     */
+<i>361</i>&nbsp;    public void chooseGameRoom(ArrayList&lt;GameView&gt; gameRooms) {
+<b class="nc"><i>362</i>&nbsp;        clear();</b>
+<b class="nc"><i>363</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>364</i>&nbsp;        string.append(&quot;\n0: Back &quot;);</b>
+<b class="nc"><i>365</i>&nbsp;        string.append(&quot;\n1: Refresh list \n&quot;);</b>
+<b class="nc"><i>366</i>&nbsp;        string.append(&quot;\nGame rooms: &quot;);</b>
+<b class="nc"><i>367</i>&nbsp;        int i = 1;</b>
+<b class="nc"><i>368</i>&nbsp;        for (GameView game : gameRooms) {</b>
+<b class="nc"><i>369</i>&nbsp;            i++;</b>
+<b class="nc"><i>370</i>&nbsp;            string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>371</i>&nbsp;            string.append(i + &quot;: &quot;);</b>
+<b class="nc"><i>372</i>&nbsp;            string.append(game.getName());</b>
+<b class="nc"><i>373</i>&nbsp;            string.append(&quot; (&quot; + game.getPlayers().size() + &quot;/&quot; + game.getPlayerNum() + &quot;) &quot;);</b>
+<b class="nc"><i>374</i>&nbsp;        }</b>
+<b class="nc"><i>375</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>376</i>&nbsp;        int choice = getInt();</b>
+<b class="nc"><i>377</i>&nbsp;        while (choice &lt; 0 || choice &gt; i) {</b>
+<b class="nc"><i>378</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>379</i>&nbsp;            choice = getInt();</b>
+<i>380</i>&nbsp;        }
+<i>381</i>&nbsp;        String room;
+<b class="nc"><i>382</i>&nbsp;        switch (choice) {</b>
+<i>383</i>&nbsp;            case 0:
+<b class="nc"><i>384</i>&nbsp;                room = &quot;/back&quot;;</b>
+<b class="nc"><i>385</i>&nbsp;                break;</b>
+<i>386</i>&nbsp;            case 1:
+<b class="nc"><i>387</i>&nbsp;                room = &quot;/refresh&quot;;</b>
+<b class="nc"><i>388</i>&nbsp;                break;</b>
+<i>389</i>&nbsp;            default:
+<b class="nc"><i>390</i>&nbsp;                room = gameRooms.get(choice - 2).getName();</b>
+<i>391</i>&nbsp;        }
+<b class="nc"><i>392</i>&nbsp;        sendString(room);</b>
+<i>393</i>&nbsp;    }
+<i>394</i>&nbsp;
+<i>395</i>&nbsp;    /**
+<i>396</i>&nbsp;     * Allows the Player to choose a nickname (max 12 characters and not duplicated).
+<i>397</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>398</i>&nbsp;     *
+<i>399</i>&nbsp;     * @param taken true if the previously chosen nickname is already taken, false otherwise
+<i>400</i>&nbsp;     */
+<i>401</i>&nbsp;    public void chooseNickname(boolean taken) {
+<b class="nc"><i>402</i>&nbsp;        if (taken) System.out.println(&quot;\nNickname already taken. &quot;);</b>
+<b class="nc"><i>403</i>&nbsp;        else System.out.println(&quot;\nChoose your nickname: &quot;);</b>
+<i>404</i>&nbsp;        while (true) {
+<b class="nc"><i>405</i>&nbsp;            id = getString();</b>
+<b class="nc"><i>406</i>&nbsp;            if (id.length() &gt; 12) System.out.println(&quot;\nInvalid input (max 12 characters). &quot;);</b>
+<i>407</i>&nbsp;            else break;
+<i>408</i>&nbsp;        }
+<b class="nc"><i>409</i>&nbsp;        sendString(null);</b>
+<i>410</i>&nbsp;    }
+<i>411</i>&nbsp;
+<i>412</i>&nbsp;    /**
+<i>413</i>&nbsp;     * Allows the Player to choose the number of Players (2 or 3) for the Game he is creating.
+<i>414</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>415</i>&nbsp;     */
+<i>416</i>&nbsp;    public void choosePlayersNumber() {
+<b class="nc"><i>417</i>&nbsp;        System.out.println(&quot;\nSetting up a new game! Choose the number of players (2 or 3):&quot;);</b>
+<b class="nc"><i>418</i>&nbsp;        int num = getInt();</b>
+<b class="nc"><i>419</i>&nbsp;        while (num &lt; 2 || num &gt; 3) {</b>
+<b class="nc"><i>420</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>421</i>&nbsp;            num = getInt();</b>
+<i>422</i>&nbsp;        }
+<b class="nc"><i>423</i>&nbsp;        sendInteger(num);</b>
+<i>424</i>&nbsp;    }
+<i>425</i>&nbsp;
+<i>426</i>&nbsp;    /**
+<i>427</i>&nbsp;     * Allows the Player to choose a position between those available.
+<i>428</i>&nbsp;     * The question and the reason of the choice are displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>429</i>&nbsp;     *
+<i>430</i>&nbsp;     * @param positions an ArrayList containing CellViews representing all the available positions
+<i>431</i>&nbsp;     * @param desc      the reason of the choice
+<i>432</i>&nbsp;     */
+<i>433</i>&nbsp;    public void choosePosition(ArrayList&lt;CellView&gt; positions, String desc) {
+<b class="nc"><i>434</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>435</i>&nbsp;        string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>436</i>&nbsp;        switch (desc) {</b>
+<i>437</i>&nbsp;            case &quot;start1&quot;:
+<b class="nc"><i>438</i>&nbsp;                string.append(&quot;(Worker 1) Choose the starting position for your worker:&quot;);</b>
+<b class="nc"><i>439</i>&nbsp;                break;</b>
+<i>440</i>&nbsp;            case &quot;start2&quot;:
+<b class="nc"><i>441</i>&nbsp;                string.append(&quot;(Worker 2) Choose the starting position for your worker:&quot;);</b>
+<b class="nc"><i>442</i>&nbsp;                break;</b>
+<i>443</i>&nbsp;            case &quot;worker&quot;:
+<b class="nc"><i>444</i>&nbsp;                string.append(&quot;Choose a worker:&quot;);</b>
+<b class="nc"><i>445</i>&nbsp;                break;</b>
+<i>446</i>&nbsp;            case &quot;move&quot;:
+<b class="nc"><i>447</i>&nbsp;                string.append(&quot;Choose a position to move to:&quot;);</b>
+<b class="nc"><i>448</i>&nbsp;                break;</b>
+<i>449</i>&nbsp;            case &quot;build&quot;:
+<b class="nc"><i>450</i>&nbsp;                string.append(&quot;Choose a position to build in:&quot;);</b>
+<i>451</i>&nbsp;                break;
+<i>452</i>&nbsp;        }
+<b class="nc"><i>453</i>&nbsp;        string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>454</i>&nbsp;        for (int i = 0; i &lt; positions.size(); i++) {</b>
+<b class="nc"><i>455</i>&nbsp;            CellView cell = positions.get(i);</b>
+<b class="nc"><i>456</i>&nbsp;            if (i &gt; 0) {</b>
+<b class="nc"><i>457</i>&nbsp;                string.append(&quot;, &quot;);</b>
+<b class="nc"><i>458</i>&nbsp;                if (i % 5 == 0) string.append(&quot;\n&quot;);</b>
+<i>459</i>&nbsp;            }
+<b class="nc"><i>460</i>&nbsp;            string.append(i + &quot;: &quot;);</b>
+<b class="nc"><i>461</i>&nbsp;            string.append(&quot;[&quot; + cell.getPosX() + &quot;, &quot; + cell.getPosY() + &quot;]&quot;);</b>
+<i>462</i>&nbsp;        }
+<b class="nc"><i>463</i>&nbsp;        string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>464</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>465</i>&nbsp;        int choice = getInt();</b>
+<b class="nc"><i>466</i>&nbsp;        while (choice &lt; 0 || choice &gt;= positions.size()) {</b>
+<b class="nc"><i>467</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>468</i>&nbsp;            choice = getInt();</b>
+<i>469</i>&nbsp;        }
+<b class="nc"><i>470</i>&nbsp;        sendInteger(choice);</b>
+<i>471</i>&nbsp;    }
+<i>472</i>&nbsp;
+<i>473</i>&nbsp;    /**
+<i>474</i>&nbsp;     * Allows the Player to choose the starting Player.
+<i>475</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>476</i>&nbsp;     *
+<i>477</i>&nbsp;     * @param players an ArrayList of PlayerViews representing all the Players involved in the Game
+<i>478</i>&nbsp;     */
+<i>479</i>&nbsp;    public void chooseStartingPlayer(ArrayList&lt;PlayerView&gt; players) {
+<b class="nc"><i>480</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>481</i>&nbsp;        string.append(&quot;\nChoose the starting player: \n&quot;);</b>
+<b class="nc"><i>482</i>&nbsp;        for (int i = 0; i &lt; players.size(); i++) {</b>
+<b class="nc"><i>483</i>&nbsp;            string.append(i + &quot;: &quot;);</b>
+<b class="nc"><i>484</i>&nbsp;            string.append(players.get(i).getId() + &quot;\n&quot;);</b>
+<i>485</i>&nbsp;        }
+<b class="nc"><i>486</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>487</i>&nbsp;        int choice = getInt();</b>
+<b class="nc"><i>488</i>&nbsp;        while (choice &lt; 0 || choice &gt;= players.size()) {</b>
+<b class="nc"><i>489</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>490</i>&nbsp;            choice = getInt();</b>
+<i>491</i>&nbsp;        }
+<b class="nc"><i>492</i>&nbsp;        sendInteger(choice);</b>
+<i>493</i>&nbsp;    }
+<i>494</i>&nbsp;
+<i>495</i>&nbsp;    /**
+<i>496</i>&nbsp;     * Allows the Player to choose between starting a new Game or joining an existing one.
+<i>497</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>498</i>&nbsp;     */
+<i>499</i>&nbsp;    public void chooseStartJoin() {
+<b class="nc"><i>500</i>&nbsp;        clear();</b>
+<b class="nc"><i>501</i>&nbsp;        System.out.println(&quot;\n1: Start a new game \n2: Join a game &quot;);</b>
+<b class="nc"><i>502</i>&nbsp;        int num = getInt();</b>
+<b class="nc"><i>503</i>&nbsp;        while (num &lt; 1 || num &gt; 2) {</b>
+<b class="nc"><i>504</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>505</i>&nbsp;            num = getInt();</b>
+<i>506</i>&nbsp;        }
+<b class="nc"><i>507</i>&nbsp;        sendBoolean(num == 1);</b>
+<i>508</i>&nbsp;    }
+<i>509</i>&nbsp;
+<i>510</i>&nbsp;    /**
+<i>511</i>&nbsp;     * Allows the Player to answer to a &quot;yes or no question&quot;.
+<i>512</i>&nbsp;     * The question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>513</i>&nbsp;     *
+<i>514</i>&nbsp;     * @param query the &quot;yes or no question&quot; asked to the Player
+<i>515</i>&nbsp;     */
+<i>516</i>&nbsp;    public void chooseYesNo(String query) {
+<b class="nc"><i>517</i>&nbsp;        System.out.println(&quot;\n&quot; + query + &quot; (y/n) &quot;);</b>
+<b class="nc"><i>518</i>&nbsp;        String choice = getString();</b>
+<b class="nc"><i>519</i>&nbsp;        while (!choice.equals(&quot;y&quot;) &amp;&amp; !choice.equals(&quot;n&quot;)) {</b>
+<b class="nc"><i>520</i>&nbsp;            System.out.println(&quot;\nInvalid input. &quot;);</b>
+<b class="nc"><i>521</i>&nbsp;            choice = getString();</b>
+<i>522</i>&nbsp;        }
+<b class="nc"><i>523</i>&nbsp;        boolean res = choice.equals(&quot;y&quot;);</b>
+<b class="nc"><i>524</i>&nbsp;        sendBoolean(res);</b>
+<i>525</i>&nbsp;    }
+<i>526</i>&nbsp;
+<i>527</i>&nbsp;    /**
+<i>528</i>&nbsp;     * Allows displaying the build occurred during a turn, by showing the updated Game Board.
+<i>529</i>&nbsp;     *
+<i>530</i>&nbsp;     * @param buildPosition the CellView representing the position of the building
+<i>531</i>&nbsp;     * @param godCard       the CardView representing the God Card which eventually allowed this build
+<i>532</i>&nbsp;     */
+<i>533</i>&nbsp;    public void displayBuild(CellView buildPosition, CardView godCard) {
+<b class="nc"><i>534</i>&nbsp;        currentGame.setCell(buildPosition);</b>
+<b class="nc"><i>535</i>&nbsp;        displayBoard();</b>
+<i>536</i>&nbsp;    }
+<i>537</i>&nbsp;
+<i>538</i>&nbsp;    /**
+<i>539</i>&nbsp;     * Allows displaying an information about the Game, by showing a message on screen.
+<i>540</i>&nbsp;     *
+<i>541</i>&nbsp;     * @param game the GameView representing the current state of the Game
+<i>542</i>&nbsp;     * @param desc the String describing the information to show
+<i>543</i>&nbsp;     */
+<i>544</i>&nbsp;    public void displayGameInfo(GameView game, String desc) {
+<b class="nc"><i>545</i>&nbsp;        currentGame = game;</b>
+<b class="nc"><i>546</i>&nbsp;        switch (desc) {</b>
+<i>547</i>&nbsp;            case &quot;playerJoined&quot;:
+<b class="nc"><i>548</i>&nbsp;                break;</b>
+<i>549</i>&nbsp;            case &quot;gameSetup&quot;:
+<b class="nc"><i>550</i>&nbsp;                clear();</b>
+<b class="nc"><i>551</i>&nbsp;                playing = false;</b>
+<b class="nc"><i>552</i>&nbsp;                lost = false;</b>
+<b class="nc"><i>553</i>&nbsp;                break;</b>
+<i>554</i>&nbsp;            case &quot;gameStart&quot;:
+<b class="nc"><i>555</i>&nbsp;                playing = true;</b>
+<b class="nc"><i>556</i>&nbsp;                displayBoard();</b>
+<b class="nc"><i>557</i>&nbsp;                break;</b>
+<i>558</i>&nbsp;            case &quot;outOfMoves&quot;:
+<i>559</i>&nbsp;            case &quot;outOfBuilds&quot;:
+<i>560</i>&nbsp;            case &quot;outOfWorkers&quot;:
+<b class="nc"><i>561</i>&nbsp;                eliminatePlayer(desc);</b>
+<i>562</i>&nbsp;            default:
+<b class="nc"><i>563</i>&nbsp;                displayBoard();</b>
+<i>564</i>&nbsp;                break;
+<i>565</i>&nbsp;        }
+<i>566</i>&nbsp;    }
+<i>567</i>&nbsp;
+<i>568</i>&nbsp;    /**
+<i>569</i>&nbsp;     * Allows displaying a message received from the server.
+<i>570</i>&nbsp;     *
+<i>571</i>&nbsp;     * @param message the message to display
+<i>572</i>&nbsp;     */
+<i>573</i>&nbsp;    public void displayMessage(String message) {
+<b class="nc"><i>574</i>&nbsp;        System.out.println(&quot;\n&quot; + message);</b>
+<i>575</i>&nbsp;    }
+<i>576</i>&nbsp;
+<i>577</i>&nbsp;    /**
+<i>578</i>&nbsp;     * Allows displaying the move occurred during a turn, by showing the updated Game Board.
+<i>579</i>&nbsp;     *
+<i>580</i>&nbsp;     * @param moves   an HashMap containing pairs of (starting position, final position) for each worker who moved or was forced to move
+<i>581</i>&nbsp;     * @param godCard the CardView representing the God Card which eventually allowed this move
+<i>582</i>&nbsp;     */
+<i>583</i>&nbsp;    public void displayMove(HashMap&lt;CellView, CellView&gt; moves, CardView godCard) {
+<b class="nc"><i>584</i>&nbsp;        moves.forEach((startPosition, endPosition) -&gt; {</b>
+<b class="nc"><i>585</i>&nbsp;            CellView newStart = new CellView(</b>
+<b class="nc"><i>586</i>&nbsp;                    startPosition.getPosX(), startPosition.getPosY(), startPosition.getBuildLevel(), startPosition.isDomed(), null</b>
+<i>587</i>&nbsp;            );
+<b class="nc"><i>588</i>&nbsp;            currentGame.setCell(newStart);</b>
+<b class="nc"><i>589</i>&nbsp;            CellView newEnd = new CellView(</b>
+<b class="nc"><i>590</i>&nbsp;                    endPosition.getPosX(), endPosition.getPosY(), endPosition.getBuildLevel(), endPosition.isDomed(), startPosition.getWorker()</b>
+<i>591</i>&nbsp;            );
+<b class="nc"><i>592</i>&nbsp;            currentGame.setCell(newEnd);</b>
+<i>593</i>&nbsp;        });
+<b class="nc"><i>594</i>&nbsp;        displayBoard();</b>
+<i>595</i>&nbsp;    }
+<i>596</i>&nbsp;
+<i>597</i>&nbsp;    /**
+<i>598</i>&nbsp;     * Allows displaying the starting position of a Worker, by showing the updated Game Board.
+<i>599</i>&nbsp;     *
+<i>600</i>&nbsp;     * @param position the starting position of a Worker
+<i>601</i>&nbsp;     */
+<i>602</i>&nbsp;    public void displayPlaceWorker(CellView position) {
+<b class="nc"><i>603</i>&nbsp;        currentGame.setCell(position);</b>
+<b class="nc"><i>604</i>&nbsp;        displayBoard();</b>
+<i>605</i>&nbsp;    }
+<i>606</i>&nbsp;
+<i>607</i>&nbsp;    /**
+<i>608</i>&nbsp;     * Allows notifying the disconnection of a Player, by showing a message on screen.
+<i>609</i>&nbsp;     *
+<i>610</i>&nbsp;     * @param player the PlayerView representing the Player who disconnected
+<i>611</i>&nbsp;     */
+<i>612</i>&nbsp;    public void notifyDisconnection(PlayerView player) {
+<b class="nc"><i>613</i>&nbsp;        clear();</b>
+<b class="nc"><i>614</i>&nbsp;        System.out.println(&quot;\n&quot; + player.getId() + &quot; has disconnected. &quot;);</b>
+<i>615</i>&nbsp;    }
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;    /**
+<i>618</i>&nbsp;     * Allows notifying the Game is over, by showing a message on screen.
+<i>619</i>&nbsp;     */
+<i>620</i>&nbsp;    public void notifyGameOver() {
+<b class="nc"><i>621</i>&nbsp;        System.out.println(&quot;\nGame over! Press ENTER to continue. &quot;);</b>
+<b class="nc"><i>622</i>&nbsp;        getString();</b>
+<i>623</i>&nbsp;    }
+<i>624</i>&nbsp;
+<i>625</i>&nbsp;    /**
+<i>626</i>&nbsp;     * Allows notifying the Game is starting, by showing a message on screen.
+<i>627</i>&nbsp;     */
+<i>628</i>&nbsp;    public void notifyGameStarting() {
+<b class="nc"><i>629</i>&nbsp;        System.out.println(&quot;\nGame is starting! Press ENTER to continue. &quot;);</b>
+<b class="nc"><i>630</i>&nbsp;        getString();</b>
+<b class="nc"><i>631</i>&nbsp;        sendBoolean(true);</b>
+<i>632</i>&nbsp;    }
+<i>633</i>&nbsp;
+<i>634</i>&nbsp;    /**
+<i>635</i>&nbsp;     * Allows notifying a Player that he lost, by showing a message on screen reporting his loss and the reason of it.
+<i>636</i>&nbsp;     *
+<i>637</i>&nbsp;     * @param reason the reason of the loss
+<i>638</i>&nbsp;     * @param winner the PlayerView representing the Player who eventually won, can be null
+<i>639</i>&nbsp;     */
+<i>640</i>&nbsp;    public void notifyLoss(String reason, PlayerView winner) {
+<b class="nc"><i>641</i>&nbsp;        if (lost) return;</b>
+<b class="nc"><i>642</i>&nbsp;        lost = true;</b>
+<b class="nc"><i>643</i>&nbsp;        clear();</b>
+<b class="nc"><i>644</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>645</i>&nbsp;        string.append(&quot;You lost! &quot;);</b>
+<b class="nc"><i>646</i>&nbsp;        string.append(&quot;(&quot;);</b>
+<b class="nc"><i>647</i>&nbsp;        switch (reason) {</b>
+<i>648</i>&nbsp;            case &quot;outOfMoves&quot;:
+<b class="nc"><i>649</i>&nbsp;                string.append(&quot;No legal moves available&quot;);</b>
+<b class="nc"><i>650</i>&nbsp;                break;</b>
+<i>651</i>&nbsp;            case &quot;outOfWorkers&quot;:
+<b class="nc"><i>652</i>&nbsp;                string.append(&quot;All your workers were removed from the game&quot;);</b>
+<b class="nc"><i>653</i>&nbsp;                break;</b>
+<i>654</i>&nbsp;            case &quot;outOfBuilds&quot;:
+<b class="nc"><i>655</i>&nbsp;                string.append(&quot;No legal builds available&quot;);</b>
+<b class="nc"><i>656</i>&nbsp;                break;</b>
+<i>657</i>&nbsp;            case &quot;godConditionAchieved&quot;:
+<b class="nc"><i>658</i>&nbsp;                string.append(winner.getId() + &quot;&#39;s worker achieved their god&#39;s win condition&quot;);</b>
+<b class="nc"><i>659</i>&nbsp;                break;</b>
+<i>660</i>&nbsp;            case &quot;winConditionAchieved&quot;:
+<b class="nc"><i>661</i>&nbsp;                string.append(winner.getId() + &quot;&#39;s worker reached the top level&quot;);</b>
+<b class="nc"><i>662</i>&nbsp;                break;</b>
+<i>663</i>&nbsp;            default:
+<i>664</i>&nbsp;                break;
+<i>665</i>&nbsp;        }
+<b class="nc"><i>666</i>&nbsp;        string.append(&quot;)\nPress ENTER to continue. &quot;);</b>
+<b class="nc"><i>667</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>668</i>&nbsp;        getString();</b>
+<i>669</i>&nbsp;    }
+<i>670</i>&nbsp;
+<i>671</i>&nbsp;    /**
+<i>672</i>&nbsp;     * Allows notifying a Player that he won, by showing on screen a message reporting his victory and the reason of it.
+<i>673</i>&nbsp;     *
+<i>674</i>&nbsp;     * @param reason the reason of the victory
+<i>675</i>&nbsp;     */
+<i>676</i>&nbsp;    public void notifyWin(String reason) {
+<b class="nc"><i>677</i>&nbsp;        clear();</b>
+<b class="nc"><i>678</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>679</i>&nbsp;        string.append(&quot;You won! &quot;);</b>
+<b class="nc"><i>680</i>&nbsp;        string.append(&quot;(&quot;);</b>
+<b class="nc"><i>681</i>&nbsp;        switch (reason) {</b>
+<i>682</i>&nbsp;            case &quot;godConditionAchieved&quot;:
+<b class="nc"><i>683</i>&nbsp;                string.append(&quot;You achieved your god&#39;s win condition&quot;);</b>
+<b class="nc"><i>684</i>&nbsp;                break;</b>
+<i>685</i>&nbsp;            case &quot;winConditionAchieved&quot;:
+<b class="nc"><i>686</i>&nbsp;                string.append(&quot;You reached the top level&quot;);</b>
+<b class="nc"><i>687</i>&nbsp;                break;</b>
+<i>688</i>&nbsp;            default:
+<b class="nc"><i>689</i>&nbsp;                string.append(&quot;All other players were eliminated&quot;);</b>
+<i>690</i>&nbsp;        }
+<b class="nc"><i>691</i>&nbsp;        string.append(&quot;)\nPress ENTER to continue. &quot;);</b>
+<b class="nc"><i>692</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>693</i>&nbsp;        getString();</b>
+<i>694</i>&nbsp;    }
+<i>695</i>&nbsp;
+<i>696</i>&nbsp;    public void serverClosed() {
+<b class="nc"><i>697</i>&nbsp;        clear();</b>
+<b class="nc"><i>698</i>&nbsp;        System.out.println(&quot;\nDisconnected from the server (server is down)&quot;);</b>
+<b class="nc"><i>699</i>&nbsp;        stop();</b>
+<i>700</i>&nbsp;    }
+<i>701</i>&nbsp;
+<i>702</i>&nbsp;    /**
+<i>703</i>&nbsp;     * Allows displaying the current state of the Game Board on the CLI, using the following notation:
+<i>704</i>&nbsp;     * &lt;ul&gt;
+<i>705</i>&nbsp;     *     &lt;li&gt;&quot; &quot; if the cell is empty;
+<i>706</i>&nbsp;     *     &lt;li&gt;&quot;X&quot; if the cell has a Dome;
+<i>707</i>&nbsp;     *     &lt;li&gt;&quot;1&quot; if the cell is at building level 1;
+<i>708</i>&nbsp;     *     &lt;li&gt;&quot;2&quot; if the cell is at building level 2;
+<i>709</i>&nbsp;     *     &lt;li&gt;&quot;3&quot; if the cell is at building level 3;
+<i>710</i>&nbsp;     *     &lt;li&gt;&quot;r&quot; if the cell is occupied by a red Worker;
+<i>711</i>&nbsp;     *     &lt;li&gt;&quot;g&quot; if the cell is occupied by a green Worker;
+<i>712</i>&nbsp;     *     &lt;li&gt;&quot;b&quot; if the cell is occupied by a blue Worker;
+<i>713</i>&nbsp;     * &lt;/ul&gt;
+<i>714</i>&nbsp;     */
+<i>715</i>&nbsp;    private void displayBoard() {
+<b class="nc"><i>716</i>&nbsp;        clear();</b>
+<b class="nc"><i>717</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>718</i>&nbsp;        string.append(&quot;==========\n&quot;);</b>
+<b class="nc"><i>719</i>&nbsp;        if (playing) string.append(currentGame.getPlayers().get(currentGame.getActivePlayer()).getId() + &quot;&#39;s turn&quot;);</b>
+<b class="nc"><i>720</i>&nbsp;        else string.append(&quot;Game setup&quot;);</b>
+<b class="nc"><i>721</i>&nbsp;        string.append(&quot;\n==========\n&quot;);</b>
+<b class="nc"><i>722</i>&nbsp;        for (int i = 0; i &lt; currentGame.getPlayerNum(); i++) {</b>
+<b class="nc"><i>723</i>&nbsp;            PlayerView player = currentGame.getPlayers().get(i);</b>
+<b class="nc"><i>724</i>&nbsp;            string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>725</i>&nbsp;            string.append(player.getColor() + &quot;: &quot;);</b>
+<b class="nc"><i>726</i>&nbsp;            if (player.hasLost()) string.append(&quot;[LOST] &quot;);</b>
+<b class="nc"><i>727</i>&nbsp;            string.append(player.getId());</b>
+<b class="nc"><i>728</i>&nbsp;            string.append(&quot; - &quot;);</b>
+<b class="nc"><i>729</i>&nbsp;            string.append(player.getGodCard().getGod());</b>
+<i>730</i>&nbsp;        }
+<b class="nc"><i>731</i>&nbsp;        string.append(&quot;\n\n    0  1  2  3  4 \n&quot;);</b>
+<b class="nc"><i>732</i>&nbsp;        for (int i = 0; i &lt; 5; i++) {</b>
+<b class="nc"><i>733</i>&nbsp;            string.append(&quot;  ----------------&quot;);</b>
+<b class="nc"><i>734</i>&nbsp;            string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>735</i>&nbsp;            string.append(i + &quot; &quot;);</b>
+<b class="nc"><i>736</i>&nbsp;            for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>737</i>&nbsp;                CellView cell = currentGame.getCell(i, j);</b>
+<b class="nc"><i>738</i>&nbsp;                string.append(&quot;|&quot;);</b>
+<b class="nc"><i>739</i>&nbsp;                if (cell.isDomed()) string.append(&quot;X&quot;);</b>
+<b class="nc"><i>740</i>&nbsp;                else string.append(cell.getBuildLevel() == 0 ? &quot; &quot; : cell.getBuildLevel());</b>
+<b class="nc"><i>741</i>&nbsp;                if (cell.hasWorker()) string.append(cell.getWorker().getColor());</b>
+<b class="nc"><i>742</i>&nbsp;                else string.append(&quot; &quot;);</b>
+<i>743</i>&nbsp;            }
+<b class="nc"><i>744</i>&nbsp;            string.append(&quot;|&quot;);</b>
+<b class="nc"><i>745</i>&nbsp;            string.append(&quot;\n&quot;);</b>
+<i>746</i>&nbsp;        }
+<b class="nc"><i>747</i>&nbsp;        string.append(&quot;  ----------------&quot;);</b>
+<b class="nc"><i>748</i>&nbsp;        string.append(&quot;\n&quot;);</b>
+<b class="nc"><i>749</i>&nbsp;        System.out.println(string);</b>
+<i>750</i>&nbsp;    }
+<i>751</i>&nbsp;
+<i>752</i>&nbsp;    private void eliminatePlayer(String reason) {
+<b class="nc"><i>753</i>&nbsp;        String eliminatedPlayer = null;</b>
+<b class="nc"><i>754</i>&nbsp;        for (PlayerView player : currentGame.getPlayers()) {</b>
+<b class="nc"><i>755</i>&nbsp;            if (!player.hasLost()) continue;</b>
+<b class="nc"><i>756</i>&nbsp;            eliminatedPlayer = player.getId();</b>
+<b class="nc"><i>757</i>&nbsp;            break;</b>
+<i>758</i>&nbsp;        }
+<b class="nc"><i>759</i>&nbsp;        if (eliminatedPlayer == null || eliminatedPlayer.equals(id)) return;</b>
+<b class="nc"><i>760</i>&nbsp;        clear();</b>
+<b class="nc"><i>761</i>&nbsp;        StringBuilder string = new StringBuilder();</b>
+<b class="nc"><i>762</i>&nbsp;        string.append(eliminatedPlayer + &quot; lost! &quot;);</b>
+<b class="nc"><i>763</i>&nbsp;        string.append(&quot;(&quot;);</b>
+<b class="nc"><i>764</i>&nbsp;        switch (reason) {</b>
+<i>765</i>&nbsp;            case &quot;outOfMoves&quot;:
+<b class="nc"><i>766</i>&nbsp;                string.append(&quot;No legal moves available&quot;);</b>
+<b class="nc"><i>767</i>&nbsp;                break;</b>
+<i>768</i>&nbsp;            case &quot;outOfWorkers&quot;:
+<b class="nc"><i>769</i>&nbsp;                string.append(&quot;All their workers were removed from the game&quot;);</b>
+<b class="nc"><i>770</i>&nbsp;                break;</b>
+<i>771</i>&nbsp;            case &quot;outOfBuilds&quot;:
+<b class="nc"><i>772</i>&nbsp;                string.append(&quot;No legal builds available&quot;);</b>
+<i>773</i>&nbsp;                break;
+<i>774</i>&nbsp;        }
+<b class="nc"><i>775</i>&nbsp;        string.append(&quot;)\nPress ENTER to continue. &quot;);</b>
+<b class="nc"><i>776</i>&nbsp;        System.out.println(string);</b>
+<b class="nc"><i>777</i>&nbsp;        getString();</b>
+<i>778</i>&nbsp;    }
+<i>779</i>&nbsp;
+<i>780</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-01 22:33</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AthenaController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.turn_controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AthenaController (it.polimi.ingsw.controller.turn_controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AthenaController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/ 26)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.turn_controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.exceptions.IOExceptionFromController;
+<i>5</i>&nbsp;import it.polimi.ingsw.exceptions.IllegalMoveException;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>8</i>&nbsp;import it.polimi.ingsw.view.CellView;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.io.IOException;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * Extension of the GodController class that modifies the turn according to Athena&#39;s God Power.
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public class AthenaController extends GodController {
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * AthenaController constructor.
+<i>20</i>&nbsp;     *
+<i>21</i>&nbsp;     * @param gameController the GameController for this game
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public AthenaController(GameController gameController) {
+<b class="fc"><i>24</i>&nbsp;        super(gameController);</b>
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Sets all the attributes of the God Card Athena to their actual values.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @return the complete Card
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    public Card generateCard() {
+<b class="fc"><i>34</i>&nbsp;        Card card = new Card(</b>
+<i>35</i>&nbsp;                &quot;Athena&quot;,
+<i>36</i>&nbsp;                &quot;Goddess of Wisdom&quot;,
+<i>37</i>&nbsp;                &quot;Opponent’s Turn: If one of your Workers moved up on your &quot; +
+<i>38</i>&nbsp;                        &quot;\nlast turn, opponent Workers cannot move up this turn.&quot;,
+<i>39</i>&nbsp;                1,
+<i>40</i>&nbsp;                false,
+<i>41</i>&nbsp;                this
+<i>42</i>&nbsp;        );
+<b class="fc"><i>43</i>&nbsp;        this.card = card;</b>
+<b class="fc"><i>44</i>&nbsp;        return card;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Handles the moving phase of the turn, adding a Modifier if the Worker moved up on this turn.
+<i>49</i>&nbsp;     * Calls displayMove with a non-null Card parameter if the Athena God Power was used.
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>52</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>53</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>57</i>&nbsp;        Card godPower = null;</b>
+<b class="fc"><i>58</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves = findPossibleMoves(activeWorker.getPosition());</b>
+<b class="fc"><i>59</i>&nbsp;        Cell oldPosition = activeWorker.getPosition();</b>
+<b class="fc"><i>60</i>&nbsp;        Cell movePosition = client.chooseMovePosition(possibleMoves);</b>
+<b class="fc"><i>61</i>&nbsp;        CellView startView = new CellView(oldPosition);</b>
+<b class="fc"><i>62</i>&nbsp;        CellView endView = new CellView(movePosition);</b>
+<i>63</i>&nbsp;        try {
+<b class="fc"><i>64</i>&nbsp;            activeWorker.move(movePosition);</b>
+<b class="fc"><i>65</i>&nbsp;        } catch (IllegalMoveException e) {</b>
+<b class="fc"><i>66</i>&nbsp;            gameController.logError(e.getMessage());</b>
+<b class="fc"><i>67</i>&nbsp;        }</b>
+<i>68</i>&nbsp;        // + limit opponent&#39;s movements if worker moved up
+<b class="fc"><i>69</i>&nbsp;        if (movePosition.getBuildLevel() &gt; oldPosition.getBuildLevel()) {</b>
+<b class="fc"><i>70</i>&nbsp;            godPower = card;</b>
+<b class="fc"><i>71</i>&nbsp;            game.addModifier(card);</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;        //
+<b class="fc"><i>74</i>&nbsp;        displayMove(startView, endView, godPower);</b>
+<b class="fc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Applies Athena God Power. Gets an ArrayList containing all the Cells where an opponent Worker can move and creates another ArrayList, removing from the first one all the Cells that require a move up.
+<i>79</i>&nbsp;     *
+<i>80</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>81</i>&nbsp;     * @param possibleMoves  all the Cells where the Worker can move, considering only the game restrictions
+<i>82</i>&nbsp;     * @return an ArrayList containing all the Cells where the Worker is actually able to move
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    @Override
+<i>85</i>&nbsp;    public ArrayList&lt;Cell&gt; limitMoves(Cell workerPosition, ArrayList&lt;Cell&gt; possibleMoves) {
+<i>86</i>&nbsp;        // + opponents can&#39;t move up if modifier is active
+<b class="fc"><i>87</i>&nbsp;        ArrayList&lt;Cell&gt; limitedMoves = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>88</i>&nbsp;        for (Cell cell : possibleMoves) {</b>
+<b class="fc"><i>89</i>&nbsp;            if (cell.getBuildLevel() &lt;= workerPosition.getBuildLevel())</b>
+<b class="fc"><i>90</i>&nbsp;                limitedMoves.add(cell);</b>
+<b class="fc"><i>91</i>&nbsp;        }</b>
+<b class="fc"><i>92</i>&nbsp;        return limitedMoves;</b>
+<i>93</i>&nbsp;        //
+<i>94</i>&nbsp;    }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-01 22:33</div>
+</div>
+</body>
+</html>

@@ -10,8 +10,17 @@ import java.io.Serializable;
  */
 public class CardView implements Serializable {
 
+    /**
+     * The God's name.
+     */
     private final String god;
+    /**
+     * The God's title.
+     */
     private final String title;
+    /**
+     * The God Power's description.
+     */
     private final String description;
 
     /**

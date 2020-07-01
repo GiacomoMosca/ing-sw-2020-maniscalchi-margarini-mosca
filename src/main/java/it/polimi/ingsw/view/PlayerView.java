@@ -10,9 +10,21 @@ import java.io.Serializable;
  */
 public class PlayerView implements Serializable {
 
+    /**
+     * The Player's nickname.
+     */
     private final String id;
+    /**
+     * The Player's color.
+     */
     private final String color;
+    /**
+     * The God Card chosen by the Player.
+     */
     private final CardView godCard;
+    /**
+     * Set to <code>true</code> when the Player has lost.
+     */
     private final boolean hasLost;
 
     /**

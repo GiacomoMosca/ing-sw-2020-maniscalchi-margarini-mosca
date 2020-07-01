@@ -11,6 +11,9 @@ import javafx.scene.text.Text;
  */
 public class LoginController {
 
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
 
     @FXML

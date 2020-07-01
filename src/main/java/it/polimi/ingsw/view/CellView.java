@@ -10,10 +10,25 @@ import java.io.Serializable;
  */
 public class CellView implements Serializable {
 
+    /**
+     * The cell's X coordinate.
+     */
     private final int posX;
+    /**
+     * The cell's Y coordinate.
+     */
     private final int posY;
+    /**
+     * The current build level.
+     */
     private final int buildLevel;
+    /**
+     * Set to <code>true</code> if the cell has a Dome.
+     */
     private final boolean hasDome;
+    /**
+     * The Worker currently on the cell if present.
+     */
     private final WorkerView worker;
 
     /**

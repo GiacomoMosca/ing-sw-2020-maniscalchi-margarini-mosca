@@ -10,8 +10,17 @@ import java.io.Serializable;
  */
 public class WorkerView implements Serializable {
 
+    /**
+     * The Worker's owner.
+     */
     private final PlayerView player;
+    /**
+     * The Worker's color.
+     */
     private final String color;
+    /**
+     * The Worker's number (1 or 2).
+     */
     private final int num;
 
     /**

@@ -19,7 +19,10 @@ import java.util.ArrayList;
  */
 public class GameSetupController {
 
-    private GUIManager manager = new GUIManager();
+    /**
+     * The manager for this GUI instance.
+     */
+    private GUIManager manager;
 
     @FXML
     private AnchorPane cover;
@@ -38,8 +41,17 @@ public class GameSetupController {
     @FXML
     private ImageView yesButton, yesButton_p, noButton, noButton_p, confirmButton, confirmButton_p;
 
+    /**
+     * List of cards to pick from sent by the server.
+     */
     private ArrayList<String> possibleCards;
+    /**
+     * List of cards chosen by the user.
+     */
     private ArrayList<String> choices;
+    /**
+     * Number of cards to choose.
+     */
     private int choicesNum;
 
     /**
@@ -213,7 +225,7 @@ public class GameSetupController {
     }
 
     /**
-     * GodImageView class is used to represent each God Card as an ImageView with an associated boolean attribute telling if the Card was clicked or not.
+     * Represents each God Card as an ImageView with an associated boolean attribute telling if the Card was clicked or not.
      * It is possible to select a Card and then unselect it.
      * All the Cards are associated to a String (ie the God name), and all the God names associated to the selected Cards are put in an ArrayList.
      */

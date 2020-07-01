@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HestiaController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.turn_controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HestiaController (it.polimi.ingsw.controller.turn_controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HestiaController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.1%
+  </span>
+  <span class="absValue">
+    (34/ 35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.turn_controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.exceptions.IOExceptionFromController;
+<i>5</i>&nbsp;import it.polimi.ingsw.exceptions.IllegalBuildException;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.players.Worker;
+<i>9</i>&nbsp;import it.polimi.ingsw.view.CellView;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * Extension of the GodController class that modifies the turn according to Hestia&#39;s God Power.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;public class HestiaController extends GodController {
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    private boolean buildAgain;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * HestiaController constructor.
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param gameController the GameController for this Game
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    public HestiaController(GameController gameController) {
+<b class="fc"><i>27</i>&nbsp;        super(gameController);</b>
+<b class="fc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Sets all the attributes of the God Card Hestia to their actual values.
+<i>32</i>&nbsp;     *
+<i>33</i>&nbsp;     * @return the complete Card
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    public Card generateCard() {
+<b class="fc"><i>37</i>&nbsp;        Card card = new Card(</b>
+<i>38</i>&nbsp;                &quot;Hestia&quot;,
+<i>39</i>&nbsp;                &quot;Goddess of Hearth and Home&quot;,
+<i>40</i>&nbsp;                &quot;Your Build: Your Worker may build one additional time. &quot; +
+<i>41</i>&nbsp;                        &quot;\nThe additional build cannot be on a perimeter space.&quot;,
+<i>42</i>&nbsp;                2,
+<i>43</i>&nbsp;                false,
+<i>44</i>&nbsp;                this
+<i>45</i>&nbsp;        );
+<b class="fc"><i>46</i>&nbsp;        this.card = card;</b>
+<b class="fc"><i>47</i>&nbsp;        return card;</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * Handles the phases of a turn: moving and building (which is allowed two times, but not building again on a perimeter space).
+<i>52</i>&nbsp;     *
+<i>53</i>&nbsp;     * @return &quot;winConditionAchieved&quot; if the player won, &quot;next&quot; if the game goes on, &quot;outOfBuilds&quot; if the Worker can&#39;t build
+<i>54</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>55</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>56</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>57</i>&nbsp;     */
+<i>58</i>&nbsp;    @Override
+<i>59</i>&nbsp;    public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>60</i>&nbsp;        buildAgain = false;</b>
+<b class="fc"><i>61</i>&nbsp;        activeWorker = worker;</b>
+<b class="fc"><i>62</i>&nbsp;        startingPosition = worker.getPosition();</b>
+<b class="fc"><i>63</i>&nbsp;        movePhase();</b>
+<b class="fc"><i>64</i>&nbsp;        if (!checkWin().equals(&quot;nope&quot;)) return checkWin();</b>
+<b class="fc"><i>65</i>&nbsp;        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return &quot;outOfBuilds&quot;;</b>
+<b class="fc"><i>66</i>&nbsp;        buildPhase();</b>
+<b class="fc"><i>67</i>&nbsp;        buildAgain = true;</b>
+<b class="fc"><i>68</i>&nbsp;        if (findPossibleBuilds(activeWorker.getPosition()).size() &gt; 0) {</b>
+<b class="fc"><i>69</i>&nbsp;            if (client.chooseYesNo(&quot;Do you want to build again?&quot;))</b>
+<b class="fc"><i>70</i>&nbsp;                buildPhase();</b>
+<i>71</i>&nbsp;        }
+<b class="fc"><i>72</i>&nbsp;        return &quot;next&quot;;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * Handles the building phase of the turn, which may be duplicated: the Player can build two times, but the second build cannot be on a perimeter space.
+<i>77</i>&nbsp;     * Calls displayBuild with a non-null Card parameter if the Hestia God Power was used.
+<i>78</i>&nbsp;     *
+<i>79</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>80</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>81</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>82</i>&nbsp;     */
+<i>83</i>&nbsp;    @Override
+<i>84</i>&nbsp;    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>85</i>&nbsp;        Card godPower = (buildAgain) ? card : null;</b>
+<b class="fc"><i>86</i>&nbsp;        ArrayList&lt;Cell&gt; possibleBuilds = findPossibleBuilds(activeWorker.getPosition());</b>
+<b class="fc"><i>87</i>&nbsp;        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);</b>
+<i>88</i>&nbsp;        try {
+<b class="fc"><i>89</i>&nbsp;            buildPosition.build();</b>
+<b class="fc"><i>90</i>&nbsp;        } catch (IllegalBuildException e) {</b>
+<b class="fc"><i>91</i>&nbsp;            gameController.logError(e.getMessage());</b>
+<b class="fc"><i>92</i>&nbsp;        }</b>
+<b class="fc"><i>93</i>&nbsp;        displayBuild(new CellView(buildPosition), godPower);</b>
+<b class="fc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /**
+<i>98</i>&nbsp;     * Returns all the Cells where a worker can build, with the only restrictions due to the general rules (other workers and domes), and allows the second build.
+<i>99</i>&nbsp;     *
+<i>100</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>101</i>&nbsp;     * @return all the Cells where a Worker can build
+<i>102</i>&nbsp;     */
+<i>103</i>&nbsp;    @Override
+<i>104</i>&nbsp;    public ArrayList&lt;Cell&gt; findPossibleBuilds(Cell workerPosition) {
+<b class="fc"><i>105</i>&nbsp;        ArrayList&lt;Cell&gt; neighbors = board.getNeighbors(workerPosition);</b>
+<b class="fc"><i>106</i>&nbsp;        ArrayList&lt;Cell&gt; possibleBuilds = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>107</i>&nbsp;        for (Cell cell : neighbors) {</b>
+<b class="fc"><i>108</i>&nbsp;            if (buildAgain &amp;&amp; (cell.getPosX() == 0 || cell.getPosY() == 0 || cell.getPosX() == 4 || cell.getPosY() == 4))</b>
+<b class="nc"><i>109</i>&nbsp;                continue;</b>
+<b class="fc"><i>110</i>&nbsp;            if (!cell.hasWorker() &amp;&amp; !cell.isDomed())</b>
+<b class="fc"><i>111</i>&nbsp;                possibleBuilds.add(cell);</b>
+<b class="fc"><i>112</i>&nbsp;        }</b>
+<b class="fc"><i>113</i>&nbsp;        return findLegalBuilds(workerPosition, possibleBuilds);</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-01 22:33</div>
+</div>
+</body>
+</html>

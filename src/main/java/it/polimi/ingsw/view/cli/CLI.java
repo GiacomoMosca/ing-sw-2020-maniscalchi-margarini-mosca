@@ -22,15 +22,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CLI implements UI {
 
+    /**
+     * Set to <code>true</code> on start and <code>false</code> on stop.
+     */
     private final AtomicBoolean running;
+    /**
+     * Socket for server communications.
+     */
     private Socket server;
+    /**
+     * InputStream for inputs from the server.
+     */
     private ObjectInputStream input;
+    /**
+     * OutputStream for outputs to the server.
+     */
     private ObjectOutputStream output;
+    /**
+     * Queue for all incoming messages from the server.
+     */
     private LinkedBlockingQueue<ToClientMessage> serverQueue;
+    /**
+     * Internal queue for direct inputs from the user.
+     */
     private SynchronousQueue<String> messageQueue;
+    /**
+     * The nickname chosen by the user.
+     */
     private String id;
+    /**
+     * The GameView that represents the current state of the Game.
+     */
     private GameView currentGame;
+    /**
+     * Set to <code>true</code> when the Game's setup phase is over.
+     */
     private boolean playing;
+    /**
+     * Set to <code>true</code> when user has lost in a 3-player game.
+     */
     private boolean lost;
 
     /**
@@ -44,7 +74,7 @@ public class CLI implements UI {
     /**
      * Allows CLI to run until the Game is over.
      * Handles the connection of the client to the server and opens a communication channel between them.
-     * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
+     * If an IOException or a ClassCastException occur while opening that channel, the CLI stops.
      * Creates a messageQueue where the input provided by the client will be offered, and a serverQueue where the messages from the server will be put after deserialization.
      * Starts two threads which respectively allows listening to the client input and listening to the server messages.
      * Every time a message from the server is put on the serverQueue, it is parsed to the corresponding action.
