@@ -15,8 +15,10 @@ import javafx.scene.text.Text;
  */
 public class NewGameController {
 
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
-    private boolean choosingName;
 
     @FXML
     private Text nicknameTab, titleText;
@@ -34,6 +36,11 @@ public class NewGameController {
     private ImageView confirmButton, confirmButton_p;
     @FXML
     private Text confirmText, confirmText_p;
+
+    /**
+     * Set to <code>true</code> when the server asks the user to choose a nickname.
+     */
+    private boolean choosingName;
 
     /**
      * @param manager the GUIManager to set the JoinGameController manager attribute to

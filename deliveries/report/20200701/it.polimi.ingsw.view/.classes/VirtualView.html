@@ -1,0 +1,625 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: VirtualView</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: VirtualView (it.polimi.ingsw.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">VirtualView</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.8%
+  </span>
+  <span class="absValue">
+    (3/ 34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.5%
+  </span>
+  <span class="absValue">
+    (13/ 137)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.PlayerController;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.Game;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.players.Worker;
+<i>9</i>&nbsp;import it.polimi.ingsw.network.message.to_client.*;
+<i>10</i>&nbsp;import it.polimi.ingsw.network.message.to_server.*;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.io.IOException;
+<i>13</i>&nbsp;import java.io.ObjectInputStream;
+<i>14</i>&nbsp;import java.io.ObjectOutputStream;
+<i>15</i>&nbsp;import java.net.Socket;
+<i>16</i>&nbsp;import java.util.ArrayList;
+<i>17</i>&nbsp;import java.util.HashMap;
+<i>18</i>&nbsp;import java.util.concurrent.SynchronousQueue;
+<i>19</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>20</i>&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;/**
+<i>23</i>&nbsp; * Handles the serialization of messages from server to client and the deserialization of messages from client to server.
+<i>24</i>&nbsp; * Each Client is associated to a specific VirtualView.
+<i>25</i>&nbsp; */
+<i>26</i>&nbsp;public class VirtualView {
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    private final AtomicBoolean alive;
+<i>29</i>&nbsp;    private final Socket socket;
+<i>30</i>&nbsp;    private final SynchronousQueue&lt;ToServerMessage&gt; messageQueue;
+<i>31</i>&nbsp;    private final SynchronousQueue&lt;ToServerMessage&gt; pingQueue;
+<i>32</i>&nbsp;    private ObjectInputStream input;
+<i>33</i>&nbsp;    private ObjectOutputStream output;
+<i>34</i>&nbsp;    private String id;
+<i>35</i>&nbsp;    private PlayerController playerController;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * VirtualView constructor.
+<i>39</i>&nbsp;     * This constructor:
+<i>40</i>&nbsp;     * &lt;ul&gt;
+<i>41</i>&nbsp;     *     &lt;li&gt;sets the attributes to the values received as arguments or their default values;
+<i>42</i>&nbsp;     *     &lt;li&gt;creates a messageQueue where the messages from the associated client to the server will be placed;
+<i>43</i>&nbsp;     *     &lt;li&gt;creates a pingQueue;
+<i>44</i>&nbsp;     *     &lt;li&gt;creates a Thread to continuously listen to the associated client, deserializing his messages;
+<i>45</i>&nbsp;     * &lt;/ul&gt;
+<i>46</i>&nbsp;     *
+<i>47</i>&nbsp;     * @param socket the socket associated with the client
+<i>48</i>&nbsp;     * @param input  the ObjectInputStream associated with the socket
+<i>49</i>&nbsp;     * @param output the ObjectOutputStream associated with the socket
+<i>50</i>&nbsp;     */
+<b class="fc"><i>51</i>&nbsp;    public VirtualView(Socket socket, ObjectInputStream input, ObjectOutputStream output) {</b>
+<b class="fc"><i>52</i>&nbsp;        this.alive = new AtomicBoolean(true);</b>
+<b class="fc"><i>53</i>&nbsp;        this.socket = socket;</b>
+<b class="fc"><i>54</i>&nbsp;        this.input = input;</b>
+<b class="fc"><i>55</i>&nbsp;        this.messageQueue = new SynchronousQueue&lt;ToServerMessage&gt;();</b>
+<b class="fc"><i>56</i>&nbsp;        this.pingQueue = new SynchronousQueue&lt;ToServerMessage&gt;();</b>
+<b class="fc"><i>57</i>&nbsp;        this.output = output;</b>
+<b class="fc"><i>58</i>&nbsp;        this.playerController = null;</b>
+<b class="fc"><i>59</i>&nbsp;        new Thread(this::clientListener).start();</b>
+<b class="fc"><i>60</i>&nbsp;    }</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * Allows resetting the ObjectInputStream and ObjectOutputStream associated to the communication on the client socket.
+<i>64</i>&nbsp;     *
+<i>65</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public void resetStreams() throws IOException {
+<b class="nc"><i>68</i>&nbsp;        input = new ObjectInputStream(socket.getInputStream());</b>
+<b class="nc"><i>69</i>&nbsp;        output = new ObjectOutputStream(socket.getOutputStream());</b>
+<b class="nc"><i>70</i>&nbsp;    }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * @return the socket, ie the communication channel between server and the client associated with this VirtualView
+<i>74</i>&nbsp;     */
+<i>75</i>&nbsp;    public Socket getSocket() {
+<b class="nc"><i>76</i>&nbsp;        return socket;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * @return the ID of the Player associated with this VirtualView
+<i>81</i>&nbsp;     */
+<i>82</i>&nbsp;    public String getId() {
+<b class="nc"><i>83</i>&nbsp;        return id;</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    /**
+<i>87</i>&nbsp;     * Sets the id attribute to the String received as an argument (ie the ID of the Player associated with this VirtualView).
+<i>88</i>&nbsp;     *
+<i>89</i>&nbsp;     * @param id the ID of the Player
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    public void setId(String id) {
+<b class="nc"><i>92</i>&nbsp;        this.id = id;</b>
+<b class="nc"><i>93</i>&nbsp;    }</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * @return the PlayerController associated with this VirtualView
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public PlayerController getPlayerController() {
+<b class="fc"><i>99</i>&nbsp;        return playerController;</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Sets the playerController attribute to the PlayerController Object received as an argument.
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @param playerController the PlayerController of the Player associated with this VirtualView
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public void setPlayerController(PlayerController playerController) {
+<b class="fc"><i>108</i>&nbsp;        this.playerController = playerController;</b>
+<b class="fc"><i>109</i>&nbsp;    }</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    /**
+<i>112</i>&nbsp;     * @return true is the Player associated with this VirtualView is still in the Game, false otherwise
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    public boolean isInGame() {
+<b class="nc"><i>115</i>&nbsp;        return (playerController != null);</b>
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    /**
+<i>119</i>&nbsp;     * For all the time the VirtualView is active, this method allows listening to the associated client and deserializing the messages wrote by the client on the communication channel.
+<i>120</i>&nbsp;     * If the message is a Pong, offers it on the pingQueue; if the message is a message from the client to the server, offers it on the messageQueue.
+<i>121</i>&nbsp;     */
+<i>122</i>&nbsp;    public void clientListener() {
+<i>123</i>&nbsp;        ToServerMessage clientMessage;
+<b class="nc"><i>124</i>&nbsp;        while (alive.get()) {</b>
+<i>125</i>&nbsp;            try {
+<b class="nc"><i>126</i>&nbsp;                clientMessage = (ToServerMessage) input.readObject();</b>
+<b class="nc"><i>127</i>&nbsp;            } catch (IOException | ClassNotFoundException e) {</b>
+<b class="nc"><i>128</i>&nbsp;                alive.compareAndSet(true, false);</b>
+<b class="nc"><i>129</i>&nbsp;                messageQueue.offer(new ErrorMessage(&quot;disconnected&quot;));</b>
+<b class="nc"><i>130</i>&nbsp;                break;</b>
+<b class="nc"><i>131</i>&nbsp;            }</b>
+<b class="nc"><i>132</i>&nbsp;            if (clientMessage instanceof Pong) pingQueue.offer(clientMessage);</b>
+<b class="nc"><i>133</i>&nbsp;            else messageQueue.offer(clientMessage);</b>
+<i>134</i>&nbsp;        }
+<b class="nc"><i>135</i>&nbsp;    }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    /**
+<i>138</i>&nbsp;     * Allows taking from the messageQueue a message previously sent by the client to the server.
+<i>139</i>&nbsp;     *
+<i>140</i>&nbsp;     * @return the message taken from the messageQueue
+<i>141</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>142</i>&nbsp;     */
+<i>143</i>&nbsp;    public ToServerMessage takeInput() throws InterruptedException {
+<b class="nc"><i>144</i>&nbsp;        ToServerMessage input = messageQueue.take();</b>
+<b class="nc"><i>145</i>&nbsp;        if (input instanceof ErrorMessage) throw new InterruptedException(&quot;disconnected&quot;);</b>
+<b class="nc"><i>146</i>&nbsp;        return input;</b>
+<i>147</i>&nbsp;    }
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;    /**
+<i>150</i>&nbsp;     * Allows the server to check whether a client is still active or not.
+<i>151</i>&nbsp;     * Makes an attempt to send a Ping and to receive a Pong as a reply; if it fails, tries again.
+<i>152</i>&nbsp;     * If it fails again, throws an IOException described by a &quot;time out&quot; message.
+<i>153</i>&nbsp;     *
+<i>154</i>&nbsp;     * @throws IOException when the second attempt to receive a Pong fails
+<i>155</i>&nbsp;     */
+<i>156</i>&nbsp;    public void checkAlive() throws IOException {
+<b class="nc"><i>157</i>&nbsp;        int attempts = 0;</b>
+<b class="nc"><i>158</i>&nbsp;        while (attempts &lt; 2) {</b>
+<b class="nc"><i>159</i>&nbsp;            output.writeObject(new Ping());</b>
+<i>160</i>&nbsp;            try {
+<b class="nc"><i>161</i>&nbsp;                pingQueue.poll(5, TimeUnit.SECONDS);</b>
+<b class="nc"><i>162</i>&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc"><i>163</i>&nbsp;                attempts++;</b>
+<b class="nc"><i>164</i>&nbsp;                continue;</b>
+<b class="nc"><i>165</i>&nbsp;            }</b>
+<i>166</i>&nbsp;            break;
+<i>167</i>&nbsp;        }
+<b class="nc"><i>168</i>&nbsp;        if (attempts &gt;= 2 || !alive.get()) throw new IOException(&quot;timed out&quot;);</b>
+<b class="nc"><i>169</i>&nbsp;    }</b>
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * Sends a message to the client, asking him to choose some Cards among those available.
+<i>173</i>&nbsp;     * Creates a new Message (ChooseCards Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>174</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue, selects the Cards that the client chose and returns them in an ArrayList.
+<i>175</i>&nbsp;     *
+<i>176</i>&nbsp;     * @param possibleCards an ArrayList containing all the available Cards
+<i>177</i>&nbsp;     * @param num           the number of Cards to pick
+<i>178</i>&nbsp;     * @param pickedCards   an ArrayList containing all the already picked Cards
+<i>179</i>&nbsp;     * @return an ArrayList containing the chosen Cards
+<i>180</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>181</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>182</i>&nbsp;     */
+<i>183</i>&nbsp;    public ArrayList&lt;Card&gt; chooseCards(ArrayList&lt;Card&gt; possibleCards, int num, ArrayList&lt;Card&gt; pickedCards) throws IOException, InterruptedException {
+<b class="nc"><i>184</i>&nbsp;        ArrayList&lt;CardView&gt; possibleCardsView = new ArrayList&lt;CardView&gt;();</b>
+<b class="nc"><i>185</i>&nbsp;        for (Card card : possibleCards) {</b>
+<b class="nc"><i>186</i>&nbsp;            possibleCardsView.add(new CardView(card));</b>
+<b class="nc"><i>187</i>&nbsp;        }</b>
+<b class="nc"><i>188</i>&nbsp;        ArrayList&lt;CardView&gt; pickedCardsView = new ArrayList&lt;CardView&gt;();</b>
+<b class="nc"><i>189</i>&nbsp;        if (pickedCards == null) pickedCardsView = null;</b>
+<i>190</i>&nbsp;        else {
+<b class="nc"><i>191</i>&nbsp;            for (Card card : pickedCards) {</b>
+<b class="nc"><i>192</i>&nbsp;                pickedCardsView.add(new CardView(card));</b>
+<b class="nc"><i>193</i>&nbsp;            }</b>
+<i>194</i>&nbsp;        }
+<b class="nc"><i>195</i>&nbsp;        output.writeObject(new ChooseCards(possibleCardsView, num, pickedCardsView));</b>
+<b class="nc"><i>196</i>&nbsp;        ArrayList&lt;Integer&gt; choices = ((SendIntegers) takeInput()).getBody();</b>
+<b class="nc"><i>197</i>&nbsp;        ArrayList&lt;Card&gt; chosenCards = new ArrayList&lt;Card&gt;();</b>
+<b class="nc"><i>198</i>&nbsp;        for (int i : choices) {</b>
+<b class="nc"><i>199</i>&nbsp;            chosenCards.add(possibleCards.get(i));</b>
+<b class="nc"><i>200</i>&nbsp;        }</b>
+<b class="nc"><i>201</i>&nbsp;        return chosenCards;</b>
+<i>202</i>&nbsp;    }
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    /**
+<i>205</i>&nbsp;     * Sends a message to the client, asking the name for the Game he is creating.
+<i>206</i>&nbsp;     * Creates a new Message (ChooseGameName Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>207</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>208</i>&nbsp;     *
+<i>209</i>&nbsp;     * @param taken true if the previously chosen Game name is already taken, false otherwise
+<i>210</i>&nbsp;     * @return the Game name chosen by the client
+<i>211</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>212</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>213</i>&nbsp;     */
+<i>214</i>&nbsp;    public String chooseGameName(boolean taken) throws IOException, InterruptedException {
+<b class="nc"><i>215</i>&nbsp;        output.writeObject(new ChooseGameName(taken));</b>
+<b class="nc"><i>216</i>&nbsp;        return ((SendString) takeInput()).getBody();</b>
+<i>217</i>&nbsp;    }
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    /**
+<i>220</i>&nbsp;     * Sends a message to the client, asking him to choose which Game room to join to.
+<i>221</i>&nbsp;     * Creates a new Message (ChooseGameRoom Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>222</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>223</i>&nbsp;     *
+<i>224</i>&nbsp;     * @param gameRooms the Game rooms actually available to play
+<i>225</i>&nbsp;     * @return the Game room chosen by the client
+<i>226</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>227</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>228</i>&nbsp;     */
+<i>229</i>&nbsp;    public String chooseGameRoom(ArrayList&lt;Game&gt; gameRooms) throws IOException, InterruptedException {
+<b class="nc"><i>230</i>&nbsp;        ArrayList&lt;GameView&gt; gameRoomsView = new ArrayList&lt;GameView&gt;();</b>
+<b class="nc"><i>231</i>&nbsp;        for (Game game : gameRooms) {</b>
+<b class="nc"><i>232</i>&nbsp;            gameRoomsView.add(new GameView(game));</b>
+<b class="nc"><i>233</i>&nbsp;        }</b>
+<b class="nc"><i>234</i>&nbsp;        output.writeObject(new ChooseGameRoom(gameRoomsView));</b>
+<b class="nc"><i>235</i>&nbsp;        return ((SendString) takeInput()).getBody();</b>
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    /**
+<i>239</i>&nbsp;     * Sends a message to the client, asking his nickname.
+<i>240</i>&nbsp;     * Creates a new Message (ChooseNickname Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>241</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>242</i>&nbsp;     *
+<i>243</i>&nbsp;     * @param taken true if the previously chosen nickname is already taken, false otherwise
+<i>244</i>&nbsp;     * @return the nickname chosen by the client
+<i>245</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>246</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>247</i>&nbsp;     */
+<i>248</i>&nbsp;    public String chooseNickname(boolean taken) throws IOException, InterruptedException {
+<b class="nc"><i>249</i>&nbsp;        output.writeObject(new ChooseNickname(taken));</b>
+<b class="nc"><i>250</i>&nbsp;        id = ((SendString) takeInput()).getSender();</b>
+<b class="nc"><i>251</i>&nbsp;        return id;</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;    /**
+<i>255</i>&nbsp;     * Sends a message to the client, asking the number of players for the Game.
+<i>256</i>&nbsp;     * Creates a new Message (ChoosePlayersNumber Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>257</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>258</i>&nbsp;     *
+<i>259</i>&nbsp;     * @return the number of players chosen by the client for the Game
+<i>260</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>261</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>262</i>&nbsp;     */
+<i>263</i>&nbsp;    public int choosePlayersNumber() throws IOException, InterruptedException {
+<b class="nc"><i>264</i>&nbsp;        output.writeObject(new ChoosePlayersNumber());</b>
+<b class="nc"><i>265</i>&nbsp;        return ((SendInteger) takeInput()).getBody();</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    /**
+<i>269</i>&nbsp;     * Sends a message to the client, asking him the starting position for his Worker.
+<i>270</i>&nbsp;     * Creates a new Message (ChoosePosition Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>271</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>272</i>&nbsp;     *
+<i>273</i>&nbsp;     * @param possiblePositions an ArrayList containing all the positions the client can choose among
+<i>274</i>&nbsp;     * @param num               the number of the Worker the client has to choose the position of
+<i>275</i>&nbsp;     * @return the chosen position
+<i>276</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>277</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>278</i>&nbsp;     */
+<i>279</i>&nbsp;    public Cell chooseStartPosition(ArrayList&lt;Cell&gt; possiblePositions, int num) throws IOException, InterruptedException {
+<b class="nc"><i>280</i>&nbsp;        ArrayList&lt;CellView&gt; positions = new ArrayList&lt;CellView&gt;();</b>
+<b class="nc"><i>281</i>&nbsp;        for (Cell cell : possiblePositions) {</b>
+<b class="nc"><i>282</i>&nbsp;            positions.add(new CellView(cell));</b>
+<b class="nc"><i>283</i>&nbsp;        }</b>
+<b class="nc"><i>284</i>&nbsp;        String desc = &quot;start&quot; + num;</b>
+<b class="nc"><i>285</i>&nbsp;        output.writeObject(new ChoosePosition(positions, desc));</b>
+<b class="nc"><i>286</i>&nbsp;        return possiblePositions.get(((SendInteger) takeInput()).getBody());</b>
+<i>287</i>&nbsp;    }
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;    /**
+<i>290</i>&nbsp;     * Sends a message to the client, asking him the Worker he wants to use during the current turn.
+<i>291</i>&nbsp;     * Creates a new Message (ChooseWorker Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>292</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>293</i>&nbsp;     *
+<i>294</i>&nbsp;     * @param workers an ArrayList containing the available workers
+<i>295</i>&nbsp;     * @return the chosen Worker
+<i>296</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>297</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>298</i>&nbsp;     */
+<i>299</i>&nbsp;    public Worker chooseWorker(ArrayList&lt;Worker&gt; workers) throws IOException, InterruptedException {
+<b class="nc"><i>300</i>&nbsp;        ArrayList&lt;CellView&gt; positions = new ArrayList&lt;CellView&gt;();</b>
+<b class="nc"><i>301</i>&nbsp;        for (Worker worker : workers) {</b>
+<b class="nc"><i>302</i>&nbsp;            positions.add(new CellView(worker.getPosition()));</b>
+<b class="nc"><i>303</i>&nbsp;        }</b>
+<b class="nc"><i>304</i>&nbsp;        output.writeObject(new ChoosePosition(positions, &quot;worker&quot;));</b>
+<b class="nc"><i>305</i>&nbsp;        return workers.get(((SendInteger) takeInput()).getBody());</b>
+<i>306</i>&nbsp;    }
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    /**
+<i>309</i>&nbsp;     * Sends a message to the client, asking him the position he wants to move his Worker to during the current turn.
+<i>310</i>&nbsp;     * Creates a new Message (ChoosePosition Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>311</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>312</i>&nbsp;     *
+<i>313</i>&nbsp;     * @param possibleMoves an ArrayList containing all the positions the client can choose among
+<i>314</i>&nbsp;     * @return the chosen position
+<i>315</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>316</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>317</i>&nbsp;     */
+<i>318</i>&nbsp;    public Cell chooseMovePosition(ArrayList&lt;Cell&gt; possibleMoves) throws IOException, InterruptedException {
+<b class="nc"><i>319</i>&nbsp;        ArrayList&lt;CellView&gt; positions = new ArrayList&lt;CellView&gt;();</b>
+<b class="nc"><i>320</i>&nbsp;        for (Cell cell : possibleMoves) {</b>
+<b class="nc"><i>321</i>&nbsp;            positions.add(new CellView(cell));</b>
+<b class="nc"><i>322</i>&nbsp;        }</b>
+<b class="nc"><i>323</i>&nbsp;        output.writeObject(new ChoosePosition(positions, &quot;move&quot;));</b>
+<b class="nc"><i>324</i>&nbsp;        return possibleMoves.get(((SendInteger) takeInput()).getBody());</b>
+<i>325</i>&nbsp;    }
+<i>326</i>&nbsp;
+<i>327</i>&nbsp;    /**
+<i>328</i>&nbsp;     * Sends a message to the client, asking him the position he wants his Worker to build in during the current turn.
+<i>329</i>&nbsp;     * Creates a new Message (ChoosePosition Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>330</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>331</i>&nbsp;     *
+<i>332</i>&nbsp;     * @param possibleBuilds an ArrayList containing all the positions the client can choose among
+<i>333</i>&nbsp;     * @return the chosen position
+<i>334</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>335</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>336</i>&nbsp;     */
+<i>337</i>&nbsp;    public Cell chooseBuildPosition(ArrayList&lt;Cell&gt; possibleBuilds) throws IOException, InterruptedException {
+<b class="nc"><i>338</i>&nbsp;        ArrayList&lt;CellView&gt; positions = new ArrayList&lt;CellView&gt;();</b>
+<b class="nc"><i>339</i>&nbsp;        for (Cell cell : possibleBuilds) {</b>
+<b class="nc"><i>340</i>&nbsp;            positions.add(new CellView(cell));</b>
+<b class="nc"><i>341</i>&nbsp;        }</b>
+<b class="nc"><i>342</i>&nbsp;        output.writeObject(new ChoosePosition(positions, &quot;build&quot;));</b>
+<b class="nc"><i>343</i>&nbsp;        return possibleBuilds.get(((SendInteger) takeInput()).getBody());</b>
+<i>344</i>&nbsp;    }
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;    /**
+<i>347</i>&nbsp;     * Sends a message to the client, asking him which player should start playing.
+<i>348</i>&nbsp;     * Creates a new Message (ChooseStartingPlayer Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>349</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>350</i>&nbsp;     *
+<i>351</i>&nbsp;     * @param players an ArrayList containing all the players to choose among
+<i>352</i>&nbsp;     * @return the number associated to the chosen player
+<i>353</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>354</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>355</i>&nbsp;     */
+<i>356</i>&nbsp;    public int chooseStartingPlayer(ArrayList&lt;Player&gt; players) throws IOException, InterruptedException {
+<b class="nc"><i>357</i>&nbsp;        ArrayList&lt;PlayerView&gt; playerViews = new ArrayList&lt;PlayerView&gt;();</b>
+<b class="nc"><i>358</i>&nbsp;        for (Player player : players) {</b>
+<b class="nc"><i>359</i>&nbsp;            playerViews.add(new PlayerView(player));</b>
+<b class="nc"><i>360</i>&nbsp;        }</b>
+<b class="nc"><i>361</i>&nbsp;        output.writeObject(new ChooseStartingPlayer(playerViews));</b>
+<b class="nc"><i>362</i>&nbsp;        return ((SendInteger) takeInput()).getBody();</b>
+<i>363</i>&nbsp;    }
+<i>364</i>&nbsp;
+<i>365</i>&nbsp;    /**
+<i>366</i>&nbsp;     * Sends a message to the client, asking him to choose between starting a new Game or joining an existing one.
+<i>367</i>&nbsp;     * Creates a new Message (ChooseStartJoin Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>368</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>369</i>&nbsp;     *
+<i>370</i>&nbsp;     * @return true if the client chose to start a new Game, false if the client chose to join an existing one
+<i>371</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>372</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>373</i>&nbsp;     */
+<i>374</i>&nbsp;    public boolean chooseStartJoin() throws IOException, InterruptedException {
+<b class="nc"><i>375</i>&nbsp;        output.writeObject(new ChooseStartJoin());</b>
+<b class="nc"><i>376</i>&nbsp;        return ((SendBoolean) takeInput()).getBody();</b>
+<i>377</i>&nbsp;    }
+<i>378</i>&nbsp;
+<i>379</i>&nbsp;    /**
+<i>380</i>&nbsp;     * Sends a message to the client, asking him to answer to a &quot;yes or no&quot; question.
+<i>381</i>&nbsp;     * Creates a new Message (ChooseYesNo Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>382</i>&nbsp;     * Takes the client&#39;s answer from the messageQueue and returns it.
+<i>383</i>&nbsp;     *
+<i>384</i>&nbsp;     * @param query the question the client should answer to
+<i>385</i>&nbsp;     * @return true if the client answered &quot;yes&quot;, false if he answered &quot;no&quot;
+<i>386</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>387</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>388</i>&nbsp;     */
+<i>389</i>&nbsp;    public boolean chooseYesNo(String query) throws IOException, InterruptedException {
+<b class="nc"><i>390</i>&nbsp;        output.writeObject(new ChooseYesNo(query));</b>
+<b class="nc"><i>391</i>&nbsp;        return ((SendBoolean) takeInput()).getBody();</b>
+<i>392</i>&nbsp;    }
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    /**
+<i>395</i>&nbsp;     * Sends a message to the client, in order to notify him of a new build.
+<i>396</i>&nbsp;     * Creates a new Message (DisplayBuild Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>397</i>&nbsp;     *
+<i>398</i>&nbsp;     * @param buildPosition the position of the new building
+<i>399</i>&nbsp;     * @param godPower      the Card associated to the God Power that eventually allowed this build
+<i>400</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>401</i>&nbsp;     */
+<i>402</i>&nbsp;    public void displayBuild(CellView buildPosition, Card godPower) throws IOException {
+<b class="nc"><i>403</i>&nbsp;        CardView godView = (godPower == null) ? null : new CardView(godPower);</b>
+<b class="nc"><i>404</i>&nbsp;        output.writeObject(new DisplayBuild(buildPosition, godView));</b>
+<b class="nc"><i>405</i>&nbsp;    }</b>
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;    /**
+<i>408</i>&nbsp;     * Sends a message to the client, in order to notify him an information.
+<i>409</i>&nbsp;     * Creates a new Message (DisplayGameInfo Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>410</i>&nbsp;     *
+<i>411</i>&nbsp;     * @param game the current situation of the Game
+<i>412</i>&nbsp;     * @param desc the information
+<i>413</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>414</i>&nbsp;     */
+<i>415</i>&nbsp;    public void displayGameInfo(Game game, String desc) throws IOException {
+<b class="nc"><i>416</i>&nbsp;        GameView gameView = new GameView(game);</b>
+<b class="nc"><i>417</i>&nbsp;        output.writeObject(new DisplayGameInfo(gameView, desc));</b>
+<b class="nc"><i>418</i>&nbsp;    }</b>
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;
+<i>421</i>&nbsp;    /**
+<i>422</i>&nbsp;     * Sends a message to the client, in order to notify him an information.
+<i>423</i>&nbsp;     * Creates a new Message (DisplayMessage Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>424</i>&nbsp;     *
+<i>425</i>&nbsp;     * @param message the String describing the message to sent
+<i>426</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>427</i>&nbsp;     */
+<i>428</i>&nbsp;    public void displayMessage(String message) throws IOException {
+<b class="nc"><i>429</i>&nbsp;        output.writeObject(new DisplayMessage(message));</b>
+<b class="nc"><i>430</i>&nbsp;    }</b>
+<i>431</i>&nbsp;
+<i>432</i>&nbsp;    /**
+<i>433</i>&nbsp;     * Sends a message to the client, in order to notify him of a new move.
+<i>434</i>&nbsp;     * Creates a new Message (DisplayMove Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>435</i>&nbsp;     * The HashMap received as an argument will contain:
+<i>436</i>&nbsp;     * - a pair of positions if only one Worker moved;
+<i>437</i>&nbsp;     * - two pairs of positions if two Workers moved (in this case the godPower parameter mustn&#39;t be null: this kind of double move is only allowed thanks to a God Power).
+<i>438</i>&nbsp;     *
+<i>439</i>&nbsp;     * @param moves    an HashMap containing the starting position and the final position of each Worker who moved.
+<i>440</i>&nbsp;     * @param godPower the Card associated to the God Power that eventually allowed this move
+<i>441</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>442</i>&nbsp;     */
+<i>443</i>&nbsp;    public void displayMove(HashMap&lt;CellView, CellView&gt; moves, Card godPower) throws IOException {
+<b class="nc"><i>444</i>&nbsp;        CardView godView = (godPower == null) ? null : new CardView(godPower);</b>
+<b class="nc"><i>445</i>&nbsp;        output.writeObject(new DisplayMove(moves, godView));</b>
+<b class="nc"><i>446</i>&nbsp;    }</b>
+<i>447</i>&nbsp;
+<i>448</i>&nbsp;    /**
+<i>449</i>&nbsp;     * Sends a message to the client, in order to notify him the placing of a Worker.
+<i>450</i>&nbsp;     * Creates a new Message (DisplayPlaceWorker Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>451</i>&nbsp;     *
+<i>452</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>453</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>454</i>&nbsp;     */
+<i>455</i>&nbsp;    public void displayPlaceWorker(Cell workerPosition) throws IOException {
+<b class="nc"><i>456</i>&nbsp;        CellView cellView = new CellView(workerPosition);</b>
+<b class="nc"><i>457</i>&nbsp;        output.writeObject(new DisplayPlaceWorker(cellView));</b>
+<b class="nc"><i>458</i>&nbsp;    }</b>
+<i>459</i>&nbsp;
+<i>460</i>&nbsp;    /**
+<i>461</i>&nbsp;     * Sends a message to the client, in order to notify him the Game is starting.
+<i>462</i>&nbsp;     * Creates a new Message (NotifyGameStarting Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>463</i>&nbsp;     *
+<i>464</i>&nbsp;     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>465</i>&nbsp;     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>466</i>&nbsp;     */
+<i>467</i>&nbsp;    public void notifyGameStarting() throws IOException, InterruptedException {
+<b class="nc"><i>468</i>&nbsp;        output.writeObject(new NotifyGameStarting());</b>
+<b class="nc"><i>469</i>&nbsp;        takeInput();</b>
+<b class="nc"><i>470</i>&nbsp;    }</b>
+<i>471</i>&nbsp;
+<i>472</i>&nbsp;    /**
+<i>473</i>&nbsp;     * Sends a message to the client, in order to notify him his loss.
+<i>474</i>&nbsp;     * Creates a new Message (NotifyLoss Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>475</i>&nbsp;     *
+<i>476</i>&nbsp;     * @param reason the reason he lost, can be:
+<i>477</i>&nbsp;     *               &lt;ul&gt;
+<i>478</i>&nbsp;     *                  &lt;li&gt;&quot;outOfWorkers&quot; if the Player lost because he ran out of Workers;
+<i>479</i>&nbsp;     *                  &lt;li&gt;&quot;outOfMoves&quot; if the Player lost because he ran out of moves;
+<i>480</i>&nbsp;     *                  &lt;li&gt;&quot;outOfBuilds&quot; if the Player lost because he ran out of builds;
+<i>481</i>&nbsp;     *                  &lt;li&gt;&quot;godConditionAchieved&quot; if the Player lost because another Worker achieved his God&#39;s win condition;
+<i>482</i>&nbsp;     *                  &lt;li&gt;&quot;winConditionAchieved&quot; if the Player lost because another Worker achieved the normal win condition.
+<i>483</i>&nbsp;     *               &lt;/ul&gt;
+<i>484</i>&nbsp;     * @param winner null if the Player lost by his own, not null if the Player lost because another Player won
+<i>485</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>486</i>&nbsp;     */
+<i>487</i>&nbsp;    public void notifyLoss(String reason, Player winner) throws IOException {
+<b class="nc"><i>488</i>&nbsp;        PlayerView winnerView = (winner == null) ? null : new PlayerView(winner);</b>
+<b class="nc"><i>489</i>&nbsp;        output.writeObject(new NotifyLoss(reason, winnerView));</b>
+<b class="nc"><i>490</i>&nbsp;    }</b>
+<i>491</i>&nbsp;
+<i>492</i>&nbsp;    /**
+<i>493</i>&nbsp;     * Sends a message to the client, in order to notify him his victory.
+<i>494</i>&nbsp;     * Creates a new Message (NotifyWin Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>495</i>&nbsp;     *
+<i>496</i>&nbsp;     * @param reason the reason of his victory, can be
+<i>497</i>&nbsp;     *               &lt;ul&gt;
+<i>498</i>&nbsp;     *                  &lt;li&gt;&quot;godConditionAchieved&quot; if the Player won by achieving his God&#39;s specific win condition;
+<i>499</i>&nbsp;     *                  &lt;li&gt;&quot;winConditionAchieved&quot; if the Player won by achieving the normal win condition;
+<i>500</i>&nbsp;     *                  &lt;li&gt;&quot;outOfWorkers&quot; if the Player won because the only Player left ran out of Workers;
+<i>501</i>&nbsp;     *                  &lt;li&gt;&quot;outOfMoves&quot;, if the Player won because the only Player left ran out of moves;
+<i>502</i>&nbsp;     *                  &lt;li&gt;&quot;outOfBuilds&quot;, if the Player won because the only Player left he ran out of builds.
+<i>503</i>&nbsp;     *               &lt;/ul&gt;
+<i>504</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>505</i>&nbsp;     */
+<i>506</i>&nbsp;    public void notifyWin(String reason) throws IOException {
+<b class="nc"><i>507</i>&nbsp;        output.writeObject(new NotifyWin(reason));</b>
+<b class="nc"><i>508</i>&nbsp;    }</b>
+<i>509</i>&nbsp;
+<i>510</i>&nbsp;    /**
+<i>511</i>&nbsp;     * Sends a message to the client, in order to notify him that a Player disconnected.
+<i>512</i>&nbsp;     * Creates a new Message (NotifyDisconnection Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>513</i>&nbsp;     *
+<i>514</i>&nbsp;     * @param player the client who disconnected
+<i>515</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>516</i>&nbsp;     */
+<i>517</i>&nbsp;    public void notifyDisconnection(Player player) throws IOException {
+<b class="nc"><i>518</i>&nbsp;        PlayerView playerView = new PlayerView(player);</b>
+<b class="nc"><i>519</i>&nbsp;        output.writeObject(new NotifyDisconnection(playerView));</b>
+<b class="nc"><i>520</i>&nbsp;    }</b>
+<i>521</i>&nbsp;
+<i>522</i>&nbsp;    /**
+<i>523</i>&nbsp;     * Sends a message to the client, in order to notify him the Game is over.
+<i>524</i>&nbsp;     * Creates a new Message (NotifyGameOver Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>525</i>&nbsp;     *
+<i>526</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>527</i>&nbsp;     */
+<i>528</i>&nbsp;    public void notifyGameOver() throws IOException {
+<b class="nc"><i>529</i>&nbsp;        output.writeObject(new NotifyGameOver());</b>
+<b class="nc"><i>530</i>&nbsp;    }</b>
+<i>531</i>&nbsp;
+<i>532</i>&nbsp;    /**
+<i>533</i>&nbsp;     * Sends a message to the client, in order to notify him that the server is closing.
+<i>534</i>&nbsp;     * Creates a new Message (NotifyGameOver Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the client.
+<i>535</i>&nbsp;     *
+<i>536</i>&nbsp;     * @throws IOException when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>537</i>&nbsp;     */
+<i>538</i>&nbsp;    public void serverClosed() throws IOException {
+<b class="nc"><i>539</i>&nbsp;        output.writeObject(new ServerClosed());</b>
+<b class="nc"><i>540</i>&nbsp;    }</b>
+<i>541</i>&nbsp;
+<i>542</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-01 22:33</div>
+</div>
+</body>
+</html>

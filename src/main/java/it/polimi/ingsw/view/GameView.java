@@ -13,11 +13,29 @@ import java.util.ArrayList;
  */
 public class GameView implements Serializable {
 
+    /**
+     * The Game's name.
+     */
     private final String name;
+    /**
+     * The Game's player number (2 or 3).
+     */
     private final int playerNum;
+    /**
+     * List of Players who joined the Game.
+     */
     private final ArrayList<PlayerView> players;
+    /**
+     * The number of the turn's active Player.
+     */
     private final int activePlayer;
+    /**
+     * The cells that make up the Game's board.
+     */
     private final CellView[][] board;
+    /**
+     * List of Cards with a modifier that's currently active.
+     */
     private final ArrayList<CardView> activeModifiers;
 
     /**

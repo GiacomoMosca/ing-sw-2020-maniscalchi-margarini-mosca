@@ -6,8 +6,18 @@ import it.polimi.ingsw.view.GameView;
  * Represents an item for the Table containing information about the active Game rooms.
  */
 public class TableItem {
+
+    /**
+     * The Game name.
+     */
     private String gameName;
+    /**
+     * The ID of the Game's creator.
+     */
     private String createdBy;
+    /**
+     * The number of players currently in the Game out of the total number of players required.
+     */
     private String players;
 
     /**
@@ -16,7 +26,7 @@ public class TableItem {
     public TableItem(GameView gameView) {
         this.gameName = gameView.getName();
         this.createdBy = gameView.getPlayers().get(0).getId();
-        this.players = String.valueOf(gameView.getPlayers().size()) + "/" + String.valueOf(gameView.getPlayerNum());
+        this.players = gameView.getPlayers().size() + "/" + gameView.getPlayerNum();
     }
 
     /**

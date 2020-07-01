@@ -25,13 +25,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class VirtualView {
 
+    /**
+     * Set to <code>false</code> when the client is disconnected.
+     */
     private final AtomicBoolean alive;
+    /**
+     * Socket for client communications.
+     */
     private final Socket socket;
+    /**
+     * Queue for all incoming messages from the client.
+     */
     private final SynchronousQueue<ToServerMessage> messageQueue;
+    /**
+     * Queue for all incoming ping responses from the client.
+     */
     private final SynchronousQueue<ToServerMessage> pingQueue;
+    /**
+     * InputStream for inputs from the client.
+     */
     private ObjectInputStream input;
+    /**
+     * OutputStream for outputs to the client.
+     */
     private ObjectOutputStream output;
+    /**
+     * The nickname chosen by the user.
+     */
     private String id;
+    /**
+     * The controller associated with the client.
+     */
     private PlayerController playerController;
 
     /**

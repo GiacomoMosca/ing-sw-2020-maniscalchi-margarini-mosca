@@ -28,6 +28,12 @@ import java.util.HashMap;
 public class GameBoardController {
 
     private final double CELLS_OFFSET = 96.4;
+
+    /**
+     * The manager for this GUI instance.
+     */
+    private GUIManager manager;
+
     @FXML
     private AnchorPane p1, p2, p3;
     @FXML
@@ -69,17 +75,49 @@ public class GameBoardController {
     @FXML
     private ImageView winOrLossScreen;
 
-    private GUIManager manager;
+    /**
+     * The GameView that represents the current state of the Game.
+     */
     private GameView game;
+    /**
+     * Set to <code>true</code> when user has lost in a 3-player game.
+     */
     private boolean lost;
+    /**
+     * List of IDs for all the players in the game.
+     */
     private ArrayList<String> playersId;
+    /**
+     * List of CardViews for all God Cards in the game.
+     */
     private ArrayList<CardView> godCards;
+    /**
+     * Highlights used to select the starting player.
+     */
     private ArrayList<ImageView> playerHighlights;
+    /**
+     * Icons used to show active modifiers.
+     */
     private ArrayList<ImageView> modifiers;
+    /**
+     * List of possible positions sent by the server.
+     */
     private ArrayList<CellView> currentPositions;
+    /**
+     * Map of highlights for all cells on the board.
+     */
     private HashMap<Integer, HighlightCell> highlightForThisCell;
+    /**
+     * Map of Worker icons for each color.
+     */
     private HashMap<String, ArrayList<ImageView>> workersForThisColor;
+    /**
+     * Map of God Power splash images.
+     */
     private HashMap<String, ImageView> fullImageForThisGod;
+    /**
+     * Overlays used to obscure an eliminated player.
+     */
     private HashMap<String, StackPane> opaquePanelForThisPlayer;
 
     /**
@@ -790,8 +828,8 @@ public class GameBoardController {
     }
 
     /**
-     * HighlightCell class extends ImageView and is used to
-     * A property of HighlightCell objects is to react to a MouseEvent (click) and to send the clicked position to the GUIManager.
+     * Represents a clickable highlight on the board.
+     * Extends ImageView to store the coordinates of the highlighted cell and to react to a MouseClicked event.
      */
     private class HighlightCell extends ImageView {
 

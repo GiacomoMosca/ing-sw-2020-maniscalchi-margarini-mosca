@@ -10,6 +10,9 @@ import javafx.scene.text.Text;
  */
 public class GameLobbyController {
 
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
 
     @FXML

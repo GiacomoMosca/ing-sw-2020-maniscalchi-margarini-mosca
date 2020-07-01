@@ -12,7 +12,13 @@ import javafx.scene.text.Text;
  */
 public class GameOverController {
 
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
+    /**
+     * Set to <code>true</code> when closing the client.
+     */
     private boolean shuttingDown = false;
 
     @FXML
@@ -44,7 +50,7 @@ public class GameOverController {
 
     /**
      * Handles the releasing of the Confirm button.
-     * Notices the GUIManager that the Confirm button was clicked, putting this input on the messageQueue.
+     * Notifies the GUIManager that the Confirm button was clicked, putting this input on the messageQueue.
      */
     public void confirmReleased() {
         Platform.runLater(() -> {

@@ -10,6 +10,10 @@ import javafx.scene.text.Text;
  * Handles the starting screen of the game.
  */
 public class TitleController {
+
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
 
     @FXML

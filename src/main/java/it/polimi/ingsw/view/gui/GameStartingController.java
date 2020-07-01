@@ -15,6 +15,9 @@ import java.util.ArrayList;
  */
 public class GameStartingController {
 
+    /**
+     * The manager for this GUI instance.
+     */
     private GUIManager manager;
 
     @FXML
