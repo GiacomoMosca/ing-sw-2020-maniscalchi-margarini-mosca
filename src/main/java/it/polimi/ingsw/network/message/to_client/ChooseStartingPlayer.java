@@ -10,6 +10,9 @@ import java.util.ArrayList;
  */
 public class ChooseStartingPlayer extends ToClientMessage {
 
+    /**
+     * The list of all the Players to choose among.
+     */
     protected ArrayList<PlayerView> players;
 
     /**

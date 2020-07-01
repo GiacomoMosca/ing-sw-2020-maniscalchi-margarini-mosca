@@ -23,12 +23,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class GameController {
 
+    /**
+     * Specifies if the game is running.
+     */
     protected final AtomicBoolean running;
+    /**
+     * Specifies if the game is in the setup phase.
+     */
     protected final AtomicBoolean setup;
+    /**
+     * The logger associated to the game.
+     */
     protected Logger logger;
+    /**
+     * The associated game.
+     */
     protected Game game;
+    /**
+     * The list of players controllers.
+     */
     protected ArrayList<PlayerController> playerControllers;
+    /**
+     * The list of players.
+     */
     protected ArrayList<Player> players;
+    /**
+     * The list of possible players colors.
+     */
     protected ArrayList<String> colors;
 
     /**

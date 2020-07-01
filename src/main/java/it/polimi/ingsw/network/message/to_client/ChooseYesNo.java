@@ -7,6 +7,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class ChooseYesNo extends ToClientMessage {
 
+    /**
+     * The question to ask to the client.
+     */
     protected String query;
 
     /**

@@ -8,6 +8,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class NotifyDisconnection extends ToClientMessage {
 
+    /**
+     * The PlayerView representing the Player who disconnected.
+     */
     protected PlayerView player;
 
     /**

@@ -8,7 +8,13 @@ import it.polimi.ingsw.view.UI;
  */
 public class DisplayGameInfo extends ToClientMessage {
 
+    /**
+     * The GameView representing the current state of the Game.
+     */
     protected GameView game;
+    /**
+     * The String describing the information sent with this DisplayGameInfo message.
+     */
     protected String desc;
 
     /**

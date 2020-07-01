@@ -8,7 +8,13 @@ import it.polimi.ingsw.view.UI;
  */
 public class NotifyLoss extends ToClientMessage {
 
+    /**
+     * The reason of the loss.
+     */
     protected String reason;
+    /**
+     * The PlayerView of the winning Player.
+     */
     protected PlayerView winner;
 
     /**

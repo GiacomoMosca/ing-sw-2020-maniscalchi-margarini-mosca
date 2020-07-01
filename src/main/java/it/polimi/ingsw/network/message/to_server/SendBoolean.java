@@ -5,6 +5,9 @@ package it.polimi.ingsw.network.message.to_server;
  */
 public class SendBoolean extends ToServerMessage {
 
+    /**
+     * The body of the message.
+     */
     protected boolean body;
 
     /**

@@ -7,6 +7,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class NotifyWin extends ToClientMessage {
 
+    /**
+     * The reason of the win.
+     */
     protected String reason;
 
     /**

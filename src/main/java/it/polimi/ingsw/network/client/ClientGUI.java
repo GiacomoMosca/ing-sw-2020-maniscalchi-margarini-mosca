@@ -8,6 +8,9 @@ import it.polimi.ingsw.view.gui.GUI;
  */
 public class ClientGUI {
 
+    /**
+     * The client-side user interface.
+     */
     private static UI userInterface;
 
     /**

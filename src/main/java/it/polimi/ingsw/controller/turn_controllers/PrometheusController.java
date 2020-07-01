@@ -17,6 +17,9 @@ import java.util.ArrayList;
  */
 public class PrometheusController extends GodController {
 
+    /**
+     * Specifies if the player wants to build before moving.
+     */
     private boolean wantBuildBefore;
 
     /**

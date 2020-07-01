@@ -7,6 +7,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class ChooseGameName extends ToClientMessage {
 
+    /**
+     * Specifies if the chosen game name has already been taken.
+     */
     protected boolean taken;
 
     /**

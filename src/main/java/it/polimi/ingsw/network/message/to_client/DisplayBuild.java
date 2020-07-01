@@ -11,7 +11,13 @@ import java.util.HashMap;
  */
 public class DisplayBuild extends ToClientMessage {
 
+    /**
+     * The CellView representing the position of the build to show.
+     */
     protected CellView buildPosition;
+    /**
+     * The CardView representing the God Power which eventually allowed this build.
+     */
     protected CardView godCard;
 
     /**

@@ -22,13 +22,37 @@ import java.util.HashMap;
  */
 public abstract class GodController {
 
+    /**
+     * The associated game controller.
+     */
     protected final GameController gameController;
+    /**
+     * The current game.
+     */
     protected final Game game;
+    /**
+     * The board of the game.
+     */
     protected final Board board;
+    /**
+     * The list of players.
+     */
     public Player player;
+    /**
+     * The player's selected worker.
+     */
     public Worker activeWorker;
+    /**
+     * The player's card.
+     */
     protected Card card;
+    /**
+     * The server-side interface with the client.
+     */
     protected VirtualView client;
+    /**
+     * The starting position of the worker.
+     */
     protected Cell startingPosition;
 
     /**

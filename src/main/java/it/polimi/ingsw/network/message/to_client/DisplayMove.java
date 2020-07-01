@@ -11,7 +11,13 @@ import java.util.HashMap;
  */
 public class DisplayMove extends ToClientMessage {
 
+    /**
+     * A Hash Map containing a pair (if only one Worker moved) or two pairs (if two Workers moved) of CellViews.
+     */
     protected HashMap<CellView, CellView> moves;
+    /**
+     * The CardView representing the God Power which eventually allowed this build
+     */
     protected CardView godCard;
 
     /**

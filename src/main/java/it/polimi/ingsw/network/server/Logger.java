@@ -10,6 +10,9 @@ import java.time.temporal.ChronoUnit;
  */
 public class Logger {
 
+    /**
+     * The log writer.
+     */
     private final FileWriter fileWriter;
 
     /**

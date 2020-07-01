@@ -7,6 +7,9 @@ import java.util.ArrayList;
  */
 public class SendIntegers extends ToServerMessage {
 
+    /**
+     * The body of the message.
+     */
     protected ArrayList<Integer> body;
 
     /**

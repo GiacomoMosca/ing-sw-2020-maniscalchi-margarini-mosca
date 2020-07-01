@@ -7,6 +7,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class DisplayMessage extends ToClientMessage {
 
+    /**
+     * The message sent.
+     */
     protected String message;
 
     /**

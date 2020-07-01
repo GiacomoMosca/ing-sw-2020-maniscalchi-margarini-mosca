@@ -20,11 +20,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Server {
 
+    /**
+     * Specifies if the server is running.
+     */
     private final AtomicBoolean running;
+    /**
+     * The port on which the server is listening for a connection.
+     */
     private final int port;
+    /**
+     * The list of the games controllers.
+     */
     private final ArrayList<GameController> gameControllers;
+    /**
+     * The list of the server-side interfaces with the clients.
+     */
     private final ArrayList<VirtualView> players;
+    /**
+     * The server socket.
+     */
     private ServerSocket socket;
+    /**
+     * The server logger.
+     */
     private Logger logger;
 
 

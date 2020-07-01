@@ -10,8 +10,17 @@ import java.util.ArrayList;
  */
 public class ChooseCards extends ToClientMessage {
 
+    /**
+     * The list of all the Cards to choose among.
+     */
     protected ArrayList<CardView> possibleCards;
+    /**
+     * The number of Cards to pick.
+     */
     protected int num;
+    /**
+     * The list of the picked Cards.
+     */
     protected ArrayList<CardView> pickedCards;
 
     /**

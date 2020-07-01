@@ -8,6 +8,9 @@ import java.io.Serializable;
  */
 public abstract class Message implements Serializable {
 
+    /**
+     * The message ID.
+     */
     protected String msgId;
 
     /**

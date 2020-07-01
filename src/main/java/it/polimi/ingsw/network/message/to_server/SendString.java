@@ -5,6 +5,9 @@ package it.polimi.ingsw.network.message.to_server;
  */
 public class SendString extends ToServerMessage {
 
+    /**
+     * The body of the message.
+     */
     protected String body;
 
     /**

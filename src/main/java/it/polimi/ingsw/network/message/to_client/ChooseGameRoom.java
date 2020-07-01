@@ -10,6 +10,9 @@ import java.util.ArrayList;
  */
 public class ChooseGameRoom extends ToClientMessage {
 
+    /**
+     * The list of all the currently active Game rooms.
+     */
     protected ArrayList<GameView> games;
 
     /**

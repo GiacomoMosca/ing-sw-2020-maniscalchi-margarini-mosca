@@ -7,6 +7,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class ChooseNickname extends ToClientMessage {
 
+    /**
+     * Specifies if the chosen nickname has already been taken.
+     */
     protected boolean taken;
 
     /**

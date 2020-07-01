@@ -16,6 +16,9 @@ import java.util.ArrayList;
  */
 public class HestiaController extends GodController {
 
+    /**
+     * Specifies if the player wants to perform one additional build.
+     */
     private boolean buildAgain;
 
     /**

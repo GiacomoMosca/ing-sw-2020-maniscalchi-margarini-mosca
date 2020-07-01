@@ -10,7 +10,13 @@ import java.util.ArrayList;
  */
 public class ChoosePosition extends ToClientMessage {
 
+    /**
+     * The list of all the positions the client can choose from.
+     */
     protected ArrayList<CellView> positions;
+    /**
+     * The reason why he has to make this choice.
+     */
     protected String desc;
 
     /**

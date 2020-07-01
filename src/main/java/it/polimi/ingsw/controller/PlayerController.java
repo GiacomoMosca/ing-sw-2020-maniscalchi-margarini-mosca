@@ -14,9 +14,21 @@ import java.util.ArrayList;
  */
 public class PlayerController {
 
+    /**
+     * The associated player.
+     */
     private final Player player;
+    /**
+     * The server-side interface with the client.
+     */
     private final VirtualView client;
+    /**
+     * The associated game controller.
+     */
     private final GameController game;
+    /**
+     * The associated god controller.
+     */
     private GodController godController;
 
     /**

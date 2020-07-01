@@ -16,7 +16,13 @@ import java.util.ArrayList;
  */
 public class ArtemisController extends GodController {
 
+    /**
+     * The starting position of the selected worker.
+     */
     private Cell beginningCell;
+    /**
+     * Specifies if the player wants to perform one additional move.
+     */
     private boolean secondMove;
 
     /**

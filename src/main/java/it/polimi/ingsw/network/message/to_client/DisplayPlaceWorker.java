@@ -8,6 +8,9 @@ import it.polimi.ingsw.view.UI;
  */
 public class DisplayPlaceWorker extends ToClientMessage {
 
+    /**
+     * The CellView representing the starting position of a Worker.
+     */
     protected CellView position;
 
     /**
