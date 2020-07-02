@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChoosePosition</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.network.message.to_client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChoosePosition (it.polimi.ingsw.network.message.to_client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChoosePosition</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.network.message.to_client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.CellView;
+<i>4</i>&nbsp;import it.polimi.ingsw.view.UI;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Message sent from the server to a client to ask him to choose a position between those available.
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class ChoosePosition extends ToClientMessage {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * The list of all the positions the client can choose from.
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    protected ArrayList&lt;CellView&gt; positions;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * The reason why he has to make this choice.
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    protected String desc;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * ChoosePosition constructor.
+<i>24</i>&nbsp;     * Calls the super constructor so that the msgId is set to &quot;choose position&quot;.
+<i>25</i>&nbsp;     * Sets the attributes to the values received as arguments.
+<i>26</i>&nbsp;     *
+<i>27</i>&nbsp;     * @param positions an ArrayList containing all the positions the client can choose from
+<i>28</i>&nbsp;     * @param desc      the reason why he has to make this choice, can be:
+<i>29</i>&nbsp;     *                  &lt;ul&gt;
+<i>30</i>&nbsp;     *                          &lt;li&gt;&quot;start1&quot; if the Player is asked to choose the starting position for his first Worker;
+<i>31</i>&nbsp;     *                          &lt;li&gt;&quot;start2&quot; if the Player is asked to choose the starting position for his second Worker;
+<i>32</i>&nbsp;     *                          &lt;li&gt;&quot;worker&quot; if the Player is asked to choose the Worker to use;
+<i>33</i>&nbsp;     *                          &lt;li&gt;&quot;move&quot; if the Player is asked to choose the position to move to;
+<i>34</i>&nbsp;     *                          &lt;li&gt;&quot;build&quot; if the Player is asked to choose the position to build in.
+<i>35</i>&nbsp;     *                  &lt;/ul&gt;
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    public ChoosePosition(ArrayList&lt;CellView&gt; positions, String desc) {
+<b class="nc"><i>38</i>&nbsp;        super(&quot;choose position&quot;);</b>
+<b class="nc"><i>39</i>&nbsp;        this.positions = positions;</b>
+<b class="nc"><i>40</i>&nbsp;        this.desc = desc;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * When called, this method invokes the right method on the client who received this message to perform the action requested by the message.
+<i>45</i>&nbsp;     * In this case, the client will be asked to choose the position between those available.
+<i>46</i>&nbsp;     *
+<i>47</i>&nbsp;     * @param client the User Interface representing the client this message is sent to
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public void performAction(UI client) {
+<b class="nc"><i>51</i>&nbsp;        client.choosePosition(positions, desc);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NotifyLoss</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.network.message.to_client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NotifyLoss (it.polimi.ingsw.network.message.to_client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NotifyLoss</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.network.message.to_client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.PlayerView;
+<i>4</i>&nbsp;import it.polimi.ingsw.view.UI;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * Message sent from the server to a client to notify him that he lost the current Game.
+<i>8</i>&nbsp; */
+<i>9</i>&nbsp;public class NotifyLoss extends ToClientMessage {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    /**
+<i>12</i>&nbsp;     * The reason of the loss.
+<i>13</i>&nbsp;     */
+<i>14</i>&nbsp;    protected String reason;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * The PlayerView of the winning Player.
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    protected PlayerView winner;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * NotifyLoss constructor.
+<i>22</i>&nbsp;     * Calls the super constructor so that the msgId is set to &quot;notify loss&quot;.
+<i>23</i>&nbsp;     *
+<i>24</i>&nbsp;     * @param reason a String describing the reason of the loss, can be:
+<i>25</i>&nbsp;     *               &lt;ul&gt;
+<i>26</i>&nbsp;     *                      &lt;li&gt;&quot;outOfWorkers&quot; if the Player lost because he ran out of Workers;
+<i>27</i>&nbsp;     *                      &lt;li&gt;&quot;outOfMoves&quot; if the Player lost because he ran out of moves;
+<i>28</i>&nbsp;     *                      &lt;li&gt;&quot;outOfBuilds&quot; if the Player lost because he ran out of builds;
+<i>29</i>&nbsp;     *                      &lt;li&gt;&quot;godConditionAchieved&quot; if the Player lost because another Worker achieved his God&#39;s win condition;
+<i>30</i>&nbsp;     *                      &lt;li&gt;&quot;winConditionAchieved&quot; if the Player lost because another Worker achieved the normal win condition;
+<i>31</i>&nbsp;     *               &lt;/ul&gt;
+<i>32</i>&nbsp;     * @param winner the PlayerView of the winning Player if the winner achieved a win condition, null otherwise
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    public NotifyLoss(String reason, PlayerView winner) {
+<b class="nc"><i>35</i>&nbsp;        super(&quot;notify loss&quot;);</b>
+<b class="nc"><i>36</i>&nbsp;        this.reason = reason;</b>
+<b class="nc"><i>37</i>&nbsp;        this.winner = winner;</b>
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * When called, this method invokes the right method on the client who received this message to perform the action requested by the message.
+<i>42</i>&nbsp;     * In this case, the client will display on screen a notification informing that he lost.
+<i>43</i>&nbsp;     *
+<i>44</i>&nbsp;     * @param client the User Interface representing the client this message is sent to
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    @Override
+<i>47</i>&nbsp;    public void performAction(UI client) {
+<b class="nc"><i>48</i>&nbsp;        client.notifyLoss(reason, winner);</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>

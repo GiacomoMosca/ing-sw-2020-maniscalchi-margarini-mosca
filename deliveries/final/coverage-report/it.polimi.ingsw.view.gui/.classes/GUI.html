@@ -1,0 +1,710 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GUI (it.polimi.ingsw.view.gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 188)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.network.message.to_client.Ping;
+<i>4</i>&nbsp;import it.polimi.ingsw.network.message.to_client.ServerClosed;
+<i>5</i>&nbsp;import it.polimi.ingsw.network.message.to_client.ToClientMessage;
+<i>6</i>&nbsp;import it.polimi.ingsw.network.message.to_server.*;
+<i>7</i>&nbsp;import it.polimi.ingsw.view.*;
+<i>8</i>&nbsp;import javafx.application.Platform;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.io.IOException;
+<i>11</i>&nbsp;import java.io.ObjectInputStream;
+<i>12</i>&nbsp;import java.io.ObjectOutputStream;
+<i>13</i>&nbsp;import java.net.InetSocketAddress;
+<i>14</i>&nbsp;import java.net.Socket;
+<i>15</i>&nbsp;import java.util.ArrayList;
+<i>16</i>&nbsp;import java.util.HashMap;
+<i>17</i>&nbsp;import java.util.concurrent.LinkedBlockingQueue;
+<i>18</i>&nbsp;import java.util.concurrent.SynchronousQueue;
+<i>19</i>&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;/**
+<i>22</i>&nbsp; * Graphical User Interface for the Client.
+<i>23</i>&nbsp; */
+<i>24</i>&nbsp;public class GUI implements UI {
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * Set to &lt;code&gt;true&lt;/code&gt; on start and &lt;code&gt;false&lt;/code&gt; on stop.
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    private final AtomicBoolean running;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * The manager for this GUI instance.
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    private final GUIManager manager;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Lock that allows only one message at a time to be processed by the GUI.
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    private final Object busyLock;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * Socket for server communications.
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    private Socket server;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * InputStream for inputs from the server.
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    private ObjectInputStream input;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * OutputStream for outputs to the server.
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    private ObjectOutputStream output;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * Queue for all incoming messages from the server.
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    private LinkedBlockingQueue&lt;ToClientMessage&gt; serverQueue;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * Internal queue for inputs from the user.
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    private SynchronousQueue&lt;Object&gt; messageQueue;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * The nickname chosen by the user.
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    private String id;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * The GameView that represents the current state of the Game.
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    private GameView currentGame;
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * GUI constructor.
+<i>69</i>&nbsp;     * Creates a new GUIManager Object.
+<i>70</i>&nbsp;     */
+<b class="nc"><i>71</i>&nbsp;    public GUI() {</b>
+<b class="nc"><i>72</i>&nbsp;        this.running = new AtomicBoolean();</b>
+<b class="nc"><i>73</i>&nbsp;        this.manager = new GUIManager();</b>
+<b class="nc"><i>74</i>&nbsp;        this.busyLock = manager.getLock();</b>
+<b class="nc"><i>75</i>&nbsp;        this.id = null;</b>
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    /**
+<i>79</i>&nbsp;     * Allows GUI to run until the Game is over.
+<i>80</i>&nbsp;     * Handles the connection of the client to the server and opens a communication channel between them.
+<i>81</i>&nbsp;     * If an IOException or a ClassCastException occur while opening that channel, CLI stops.
+<i>82</i>&nbsp;     * Creates a messageQueue where, thanks to the GUIManager, the client&#39;s input will be offered.
+<i>83</i>&nbsp;     * Creates a serverQueue where the messages from the server will be put after deserialization.
+<i>84</i>&nbsp;     * Starts two threads which respectively allows the GUIManager to listen to the client input, and the GUI to listen to the server messages.
+<i>85</i>&nbsp;     * Every time a message from the server is put on the serverQueue, it is parsed to the corresponding action.
+<i>86</i>&nbsp;     */
+<i>87</i>&nbsp;    @Override
+<i>88</i>&nbsp;    public void run() {
+<i>89</i>&nbsp;        boolean connected;
+<b class="nc"><i>90</i>&nbsp;        running.set(true);</b>
+<b class="nc"><i>91</i>&nbsp;        messageQueue = new SynchronousQueue&lt;Object&gt;();</b>
+<b class="nc"><i>92</i>&nbsp;        currentGame = null;</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        manager.setGUI(this);</b>
+<b class="nc"><i>95</i>&nbsp;        manager.setQueue(messageQueue);</b>
+<b class="nc"><i>96</i>&nbsp;        new Thread(manager::run).start();</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;        String ip;
+<i>99</i>&nbsp;        do {
+<b class="nc"><i>100</i>&nbsp;            server = new Socket();</b>
+<b class="nc"><i>101</i>&nbsp;            ip = getServerIp();</b>
+<i>102</i>&nbsp;            try {
+<b class="nc"><i>103</i>&nbsp;                server.connect(new InetSocketAddress(ip, 8000), 5 * 1000);</b>
+<b class="nc"><i>104</i>&nbsp;                connected = true;</b>
+<b class="nc"><i>105</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i>106</i>&nbsp;                manager.initLogin();</b>
+<b class="nc"><i>107</i>&nbsp;                manager.serverErrorMessage(&quot;Server unreachable&quot;);</b>
+<b class="nc"><i>108</i>&nbsp;                connected = false;</b>
+<b class="nc"><i>109</i>&nbsp;            }</b>
+<b class="nc"><i>110</i>&nbsp;            if (connected) {</b>
+<i>111</i>&nbsp;                try {
+<b class="nc"><i>112</i>&nbsp;                    output = new ObjectOutputStream(server.getOutputStream());</b>
+<b class="nc"><i>113</i>&nbsp;                    input = new ObjectInputStream(server.getInputStream());</b>
+<b class="nc"><i>114</i>&nbsp;                    connected = true;</b>
+<b class="nc"><i>115</i>&nbsp;                } catch (IOException e) {</b>
+<b class="nc"><i>116</i>&nbsp;                    manager.initLogin();</b>
+<b class="nc"><i>117</i>&nbsp;                    manager.serverErrorMessage(&quot;Server is down&quot;);</b>
+<b class="nc"><i>118</i>&nbsp;                    connected = false;</b>
+<b class="nc"><i>119</i>&nbsp;                } catch (ClassCastException e) {</b>
+<b class="nc"><i>120</i>&nbsp;                    manager.initLogin();</b>
+<b class="nc"><i>121</i>&nbsp;                    manager.serverErrorMessage(&quot;Protocol violation&quot;);</b>
+<b class="nc"><i>122</i>&nbsp;                    connected = false;</b>
+<b class="nc"><i>123</i>&nbsp;                }</b>
+<i>124</i>&nbsp;            }
+<b class="nc"><i>125</i>&nbsp;        } while (!connected);</b>
+<i>126</i>&nbsp;
+<b class="nc"><i>127</i>&nbsp;        serverQueue = new LinkedBlockingQueue&lt;ToClientMessage&gt;();</b>
+<b class="nc"><i>128</i>&nbsp;        new Thread(this::serverListener).start();</b>
+<i>129</i>&nbsp;        ToClientMessage message;
+<b class="nc"><i>130</i>&nbsp;        while (running.get()) {</b>
+<i>131</i>&nbsp;            try {
+<b class="nc"><i>132</i>&nbsp;                message = serverQueue.take();</b>
+<b class="nc"><i>133</i>&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc"><i>134</i>&nbsp;                continue;</b>
+<b class="nc"><i>135</i>&nbsp;            }</b>
+<b class="nc"><i>136</i>&nbsp;            synchronized (busyLock) {</b>
+<b class="nc"><i>137</i>&nbsp;                while (!manager.setBusy(true)) {</b>
+<i>138</i>&nbsp;                    try {
+<b class="nc"><i>139</i>&nbsp;                        busyLock.wait();</b>
+<b class="nc"><i>140</i>&nbsp;                    } catch (InterruptedException e) {</b>
+<i>141</i>&nbsp;                        //
+<b class="nc"><i>142</i>&nbsp;                    }</b>
+<i>143</i>&nbsp;                }
+<b class="nc"><i>144</i>&nbsp;            }</b>
+<b class="nc"><i>145</i>&nbsp;            if (!running.get()) break;</b>
+<b class="nc"><i>146</i>&nbsp;            parseMessage(message);</b>
+<i>147</i>&nbsp;        }
+<b class="nc"><i>148</i>&nbsp;        stop();</b>
+<i>149</i>&nbsp;    }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    /**
+<i>152</i>&nbsp;     * Continuously listens to the server.
+<i>153</i>&nbsp;     * When deserializing a message, puts it on the serverQueue so that it can be processed.
+<i>154</i>&nbsp;     * If the deserialized message is a Ping from the server, replies with a Pong.
+<i>155</i>&nbsp;     */
+<i>156</i>&nbsp;    public void serverListener() {
+<i>157</i>&nbsp;        ToClientMessage serverMessage;
+<b class="nc"><i>158</i>&nbsp;        while (running.get()) {</b>
+<i>159</i>&nbsp;            try {
+<b class="nc"><i>160</i>&nbsp;                serverMessage = (ToClientMessage) input.readObject();</b>
+<b class="nc"><i>161</i>&nbsp;            } catch (IOException | ClassNotFoundException e) {</b>
+<b class="nc"><i>162</i>&nbsp;                serverMessage = new ServerClosed();</b>
+<b class="nc"><i>163</i>&nbsp;            }</b>
+<b class="nc"><i>164</i>&nbsp;            if (serverMessage instanceof Ping) pong();</b>
+<i>165</i>&nbsp;            else {
+<i>166</i>&nbsp;                try {
+<b class="nc"><i>167</i>&nbsp;                    serverQueue.put(serverMessage);</b>
+<b class="nc"><i>168</i>&nbsp;                } catch (InterruptedException e) {</b>
+<i>169</i>&nbsp;                    //
+<b class="nc"><i>170</i>&nbsp;                }</b>
+<i>171</i>&nbsp;            }
+<b class="nc"><i>172</i>&nbsp;            if (serverMessage instanceof ServerClosed) return;</b>
+<i>173</i>&nbsp;        }
+<i>174</i>&nbsp;    }
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    /**
+<i>177</i>&nbsp;     * Closes the communication channel with the server and closes the client.
+<i>178</i>&nbsp;     */
+<i>179</i>&nbsp;    public synchronized void stop() {
+<b class="nc"><i>180</i>&nbsp;        if (!running.compareAndSet(true, false)) return;</b>
+<i>181</i>&nbsp;        try {
+<b class="nc"><i>182</i>&nbsp;            if (server != null) server.close();</b>
+<b class="nc"><i>183</i>&nbsp;        } catch (IOException e) {</b>
+<i>184</i>&nbsp;            //
+<b class="nc"><i>185</i>&nbsp;        }</b>
+<i>186</i>&nbsp;        try {
+<b class="nc"><i>187</i>&nbsp;            if (input != null) input.close();</b>
+<b class="nc"><i>188</i>&nbsp;        } catch (IOException e) {</b>
+<i>189</i>&nbsp;            //
+<b class="nc"><i>190</i>&nbsp;        }</b>
+<i>191</i>&nbsp;        try {
+<b class="nc"><i>192</i>&nbsp;            if (output != null) output.close();</b>
+<b class="nc"><i>193</i>&nbsp;        } catch (IOException e) {</b>
+<i>194</i>&nbsp;            //
+<b class="nc"><i>195</i>&nbsp;        }</b>
+<b class="nc"><i>196</i>&nbsp;        Platform.exit();</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    /**
+<i>200</i>&nbsp;     * Allows receiving from the client the IP of the server he wants to connect to.
+<i>201</i>&nbsp;     * Calls the getServerIp method on the GUIManager so that it will ask the player to insert the Server IP Address.
+<i>202</i>&nbsp;     * The GUIManager will put the client&#39;s input on the messageQueue and
+<i>203</i>&nbsp;     *
+<i>204</i>&nbsp;     * @return the String written by the client
+<i>205</i>&nbsp;     */
+<i>206</i>&nbsp;    public String getServerIp() {
+<b class="nc"><i>207</i>&nbsp;        while (!manager.setBusy(true)) {</b>
+<i>208</i>&nbsp;            try {
+<b class="nc"><i>209</i>&nbsp;                Thread.sleep(1000);</b>
+<b class="nc"><i>210</i>&nbsp;            } catch (InterruptedException e) {</b>
+<i>211</i>&nbsp;                //
+<b class="nc"><i>212</i>&nbsp;            }</b>
+<i>213</i>&nbsp;        }
+<b class="nc"><i>214</i>&nbsp;        manager.getServerIp();</b>
+<b class="nc"><i>215</i>&nbsp;        return getString();</b>
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;    /**
+<i>219</i>&nbsp;     * Allows parsing a message received from the server to the corresponding action to do on the client.
+<i>220</i>&nbsp;     *
+<i>221</i>&nbsp;     * @param message the ToClientMessage to parse
+<i>222</i>&nbsp;     */
+<i>223</i>&nbsp;    public void parseMessage(ToClientMessage message) {
+<b class="nc"><i>224</i>&nbsp;        message.performAction(this);</b>
+<i>225</i>&nbsp;    }
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    // get from queue
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    /**
+<i>230</i>&nbsp;     * Takes a message previously put on the messageQueue by the GUIManager.
+<i>231</i>&nbsp;     * If no exception occurs in taking the message and casting it to a Boolean, that Boolean is returned.
+<i>232</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>233</i>&nbsp;     *
+<i>234</i>&nbsp;     * @return the Boolean taken from the messageQueue
+<i>235</i>&nbsp;     */
+<i>236</i>&nbsp;    public boolean getBoolean() {
+<b class="nc"><i>237</i>&nbsp;        boolean val = false;</b>
+<i>238</i>&nbsp;        try {
+<b class="nc"><i>239</i>&nbsp;            val = (Boolean) messageQueue.take();</b>
+<b class="nc"><i>240</i>&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc"><i>241</i>&nbsp;            System.out.println(&quot;Error getting input. \n&quot;);</b>
+<b class="nc"><i>242</i>&nbsp;        }</b>
+<b class="nc"><i>243</i>&nbsp;        return val;</b>
+<i>244</i>&nbsp;    }
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;    /**
+<i>247</i>&nbsp;     * Takes a message previously put on the messageQueue by the GUIManager.
+<i>248</i>&nbsp;     * If no exception occurs in taking the message and casting it to an Integer, that Integer is returned.
+<i>249</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>250</i>&nbsp;     *
+<i>251</i>&nbsp;     * @return the Integer taken from the messageQueue
+<i>252</i>&nbsp;     */
+<i>253</i>&nbsp;    public int getInteger() {
+<b class="nc"><i>254</i>&nbsp;        int val = -1;</b>
+<i>255</i>&nbsp;        try {
+<b class="nc"><i>256</i>&nbsp;            val = (Integer) messageQueue.take();</b>
+<b class="nc"><i>257</i>&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc"><i>258</i>&nbsp;            System.out.println(&quot;Error getting input. \n&quot;);</b>
+<b class="nc"><i>259</i>&nbsp;        }</b>
+<b class="nc"><i>260</i>&nbsp;        return val;</b>
+<i>261</i>&nbsp;    }
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;    /**
+<i>264</i>&nbsp;     * Takes a message previously put on the messageQueue by the GUIManager.
+<i>265</i>&nbsp;     * If no exception occurs in taking the message and casting it to an ArrayList of Integer, that ArrayList it is returned.
+<i>266</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>267</i>&nbsp;     *
+<i>268</i>&nbsp;     * @return the ArrayList of Integers taken from the messageQueue
+<i>269</i>&nbsp;     */
+<i>270</i>&nbsp;
+<i>271</i>&nbsp;    public ArrayList&lt;Integer&gt; getIntegers() {
+<b class="nc"><i>272</i>&nbsp;        ArrayList&lt;Integer&gt; val = null;</b>
+<i>273</i>&nbsp;        try {
+<b class="nc"><i>274</i>&nbsp;            val = (ArrayList&lt;Integer&gt;) messageQueue.take();</b>
+<b class="nc"><i>275</i>&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc"><i>276</i>&nbsp;            System.out.println(&quot;Error getting input. \n&quot;);</b>
+<b class="nc"><i>277</i>&nbsp;        }</b>
+<b class="nc"><i>278</i>&nbsp;        return val;</b>
+<i>279</i>&nbsp;    }
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;    /**
+<i>282</i>&nbsp;     * Takes a message previously put on the messageQueue by the GUIManager.
+<i>283</i>&nbsp;     * If no exception occurs in taking the message and casting it to a String, that String it is returned.
+<i>284</i>&nbsp;     * If an InterruptedException occurs during serialization, the client is notified there was an error getting his input.
+<i>285</i>&nbsp;     *
+<i>286</i>&nbsp;     * @return the String taken from the messageQueue
+<i>287</i>&nbsp;     */
+<i>288</i>&nbsp;    public String getString() {
+<b class="nc"><i>289</i>&nbsp;        String val = null;</b>
+<i>290</i>&nbsp;        try {
+<b class="nc"><i>291</i>&nbsp;            val = (String) messageQueue.take();</b>
+<b class="nc"><i>292</i>&nbsp;        } catch (InterruptedException e) {</b>
+<b class="nc"><i>293</i>&nbsp;            System.out.println(&quot;Error getting input. \n&quot;);</b>
+<b class="nc"><i>294</i>&nbsp;        }</b>
+<b class="nc"><i>295</i>&nbsp;        return val;</b>
+<i>296</i>&nbsp;    }
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;    // send to server
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;    /**
+<i>301</i>&nbsp;     * Creates a new message (Pong Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>302</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>303</i>&nbsp;     */
+<i>304</i>&nbsp;    public void pong() {
+<i>305</i>&nbsp;        try {
+<b class="nc"><i>306</i>&nbsp;            output.writeObject(new Pong(id));</b>
+<b class="nc"><i>307</i>&nbsp;        } catch (IOException e) {</b>
+<i>308</i>&nbsp;            try {
+<b class="nc"><i>309</i>&nbsp;                serverQueue.put(new ServerClosed());</b>
+<b class="nc"><i>310</i>&nbsp;            } catch (InterruptedException e2) {</b>
+<i>311</i>&nbsp;                //
+<b class="nc"><i>312</i>&nbsp;            }</b>
+<b class="nc"><i>313</i>&nbsp;        }</b>
+<i>314</i>&nbsp;    }
+<i>315</i>&nbsp;
+<i>316</i>&nbsp;    /**
+<i>317</i>&nbsp;     * Creates a new message (SendBoolean Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>318</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>319</i>&nbsp;     *
+<i>320</i>&nbsp;     * @param body the boolean to send to the server in the SendBoolean Message
+<i>321</i>&nbsp;     */
+<i>322</i>&nbsp;    public void sendBoolean(boolean body) {
+<i>323</i>&nbsp;        try {
+<b class="nc"><i>324</i>&nbsp;            output.writeObject(new SendBoolean(id, body));</b>
+<b class="nc"><i>325</i>&nbsp;        } catch (IOException e) {</b>
+<i>326</i>&nbsp;            try {
+<b class="nc"><i>327</i>&nbsp;                serverQueue.put(new ServerClosed());</b>
+<b class="nc"><i>328</i>&nbsp;            } catch (InterruptedException e2) {</b>
+<i>329</i>&nbsp;                //
+<b class="nc"><i>330</i>&nbsp;            }</b>
+<b class="nc"><i>331</i>&nbsp;        }</b>
+<i>332</i>&nbsp;    }
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    /**
+<i>335</i>&nbsp;     * Creates a new message (SendInteger Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>336</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>337</i>&nbsp;     *
+<i>338</i>&nbsp;     * @param body the int to send to the server in the SendInteger Message
+<i>339</i>&nbsp;     */
+<i>340</i>&nbsp;    public void sendInteger(int body) {
+<i>341</i>&nbsp;        try {
+<b class="nc"><i>342</i>&nbsp;            output.writeObject(new SendInteger(id, body));</b>
+<b class="nc"><i>343</i>&nbsp;        } catch (IOException e) {</b>
+<i>344</i>&nbsp;            try {
+<b class="nc"><i>345</i>&nbsp;                serverQueue.put(new ServerClosed());</b>
+<b class="nc"><i>346</i>&nbsp;            } catch (InterruptedException e2) {</b>
+<i>347</i>&nbsp;                //
+<b class="nc"><i>348</i>&nbsp;            }</b>
+<b class="nc"><i>349</i>&nbsp;        }</b>
+<i>350</i>&nbsp;    }
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;    /**
+<i>353</i>&nbsp;     * Creates a new message (SendIntegers Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>354</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>355</i>&nbsp;     *
+<i>356</i>&nbsp;     * @param body the ArrayList of Integers to send to the server in the SendIntegers Message
+<i>357</i>&nbsp;     */
+<i>358</i>&nbsp;    public void sendIntegers(ArrayList&lt;Integer&gt; body) {
+<i>359</i>&nbsp;        try {
+<b class="nc"><i>360</i>&nbsp;            output.writeObject(new SendIntegers(id, body));</b>
+<b class="nc"><i>361</i>&nbsp;        } catch (IOException e) {</b>
+<i>362</i>&nbsp;            try {
+<b class="nc"><i>363</i>&nbsp;                serverQueue.put(new ServerClosed());</b>
+<b class="nc"><i>364</i>&nbsp;            } catch (InterruptedException e2) {</b>
+<i>365</i>&nbsp;                //
+<b class="nc"><i>366</i>&nbsp;            }</b>
+<b class="nc"><i>367</i>&nbsp;        }</b>
+<i>368</i>&nbsp;    }
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;    /**
+<i>371</i>&nbsp;     * Creates a new message (SendString Message) and writes it on the ObjectOutputStream so that it can be serialized and sent to the server.
+<i>372</i>&nbsp;     * If an IOException occurs during serialization, the client is notified the server disconnected.
+<i>373</i>&nbsp;     *
+<i>374</i>&nbsp;     * @param body the String to send to the server in the SendString Message
+<i>375</i>&nbsp;     */
+<i>376</i>&nbsp;    public void sendString(String body) {
+<i>377</i>&nbsp;        try {
+<b class="nc"><i>378</i>&nbsp;            output.writeObject(new SendString(id, body));</b>
+<b class="nc"><i>379</i>&nbsp;        } catch (IOException e) {</b>
+<i>380</i>&nbsp;            try {
+<b class="nc"><i>381</i>&nbsp;                serverQueue.put(new ServerClosed());</b>
+<b class="nc"><i>382</i>&nbsp;            } catch (InterruptedException e2) {</b>
+<i>383</i>&nbsp;                //
+<b class="nc"><i>384</i>&nbsp;            }</b>
+<b class="nc"><i>385</i>&nbsp;        }</b>
+<i>386</i>&nbsp;    }
+<i>387</i>&nbsp;
+<i>388</i>&nbsp;    // message functions
+<i>389</i>&nbsp;
+<i>390</i>&nbsp;    /**
+<i>391</i>&nbsp;     * Allows the Player to choose some Cards between those available.
+<i>392</i>&nbsp;     * He could be asked to choose the 2 or 3 Cards to be used in a 2 or 3-players Game, or his own Card for the Game.
+<i>393</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>394</i>&nbsp;     *
+<i>395</i>&nbsp;     * @param possibleCards an ArrayList containing all the available Cards
+<i>396</i>&nbsp;     * @param num           the number of Cards to choose
+<i>397</i>&nbsp;     * @param pickedCards   an ArrayList containing all the already picked Cards
+<i>398</i>&nbsp;     */
+<i>399</i>&nbsp;    public void chooseCards(ArrayList&lt;CardView&gt; possibleCards, int num, ArrayList&lt;CardView&gt; pickedCards) {
+<b class="nc"><i>400</i>&nbsp;        manager.chooseCards(possibleCards, num, pickedCards);</b>
+<b class="nc"><i>401</i>&nbsp;        sendIntegers(getIntegers());</b>
+<i>402</i>&nbsp;    }
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;    /**
+<i>405</i>&nbsp;     * Allows the Player to choose a Game name (max 12 characters and not duplicated).
+<i>406</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>407</i>&nbsp;     *
+<i>408</i>&nbsp;     * @param taken if the previously chosen Game name is already taken, false otherwise
+<i>409</i>&nbsp;     */
+<i>410</i>&nbsp;    public void chooseGameName(boolean taken) {
+<b class="nc"><i>411</i>&nbsp;        manager.chooseGameName(taken);</b>
+<b class="nc"><i>412</i>&nbsp;        String gameRoom = getString();</b>
+<b class="nc"><i>413</i>&nbsp;        sendString(gameRoom);</b>
+<i>414</i>&nbsp;    }
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;    /**
+<i>417</i>&nbsp;     * Allows the Player to choose a Game room.
+<i>418</i>&nbsp;     * The available Game rooms are displayed on screen; the Player can go back to start a new Game, refresh the list or choose a Game room.
+<i>419</i>&nbsp;     * Thanks to the GUIManager, the input provided by the client is processed and sent to the Server.
+<i>420</i>&nbsp;     *
+<i>421</i>&nbsp;     * @param gameRooms an ArrayList of GameViews containing all the Game Rooms
+<i>422</i>&nbsp;     */
+<i>423</i>&nbsp;    public void chooseGameRoom(ArrayList&lt;GameView&gt; gameRooms) {
+<b class="nc"><i>424</i>&nbsp;        manager.chooseGameRoom(gameRooms);</b>
+<b class="nc"><i>425</i>&nbsp;        int choice = getInteger();</b>
+<i>426</i>&nbsp;        String room;
+<b class="nc"><i>427</i>&nbsp;        switch (choice) {</b>
+<i>428</i>&nbsp;            case 0:
+<b class="nc"><i>429</i>&nbsp;                room = &quot;/back&quot;;</b>
+<b class="nc"><i>430</i>&nbsp;                break;</b>
+<i>431</i>&nbsp;            case 1:
+<b class="nc"><i>432</i>&nbsp;                room = &quot;/refresh&quot;;</b>
+<b class="nc"><i>433</i>&nbsp;                break;</b>
+<i>434</i>&nbsp;            default:
+<b class="nc"><i>435</i>&nbsp;                room = gameRooms.get(choice - 2).getName();</b>
+<i>436</i>&nbsp;        }
+<b class="nc"><i>437</i>&nbsp;        sendString(room);</b>
+<i>438</i>&nbsp;    }
+<i>439</i>&nbsp;
+<i>440</i>&nbsp;    /**
+<i>441</i>&nbsp;     * Allows the Player to choose a nickname (max 12 characters and not duplicated).
+<i>442</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>443</i>&nbsp;     *
+<i>444</i>&nbsp;     * @param taken true if the previously chosen nickname is already taken, false otherwise
+<i>445</i>&nbsp;     */
+<i>446</i>&nbsp;    public void chooseNickname(boolean taken) {
+<b class="nc"><i>447</i>&nbsp;        manager.chooseNickname(taken);</b>
+<b class="nc"><i>448</i>&nbsp;        id = getString();</b>
+<b class="nc"><i>449</i>&nbsp;        manager.setId(id);</b>
+<b class="nc"><i>450</i>&nbsp;        sendString(null);</b>
+<i>451</i>&nbsp;    }
+<i>452</i>&nbsp;
+<i>453</i>&nbsp;    /**
+<i>454</i>&nbsp;     * Allows the Player to choose the number of Players (2 or 3) for the Game he is creating.
+<i>455</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>456</i>&nbsp;     */
+<i>457</i>&nbsp;    public void choosePlayersNumber() {
+<b class="nc"><i>458</i>&nbsp;        manager.choosePlayersNumber();</b>
+<b class="nc"><i>459</i>&nbsp;        int num = getInteger();</b>
+<b class="nc"><i>460</i>&nbsp;        sendInteger(num);</b>
+<i>461</i>&nbsp;    }
+<i>462</i>&nbsp;
+<i>463</i>&nbsp;    /**
+<i>464</i>&nbsp;     * Allows the Player to choose a position between those available.
+<i>465</i>&nbsp;     * Thanks to the GUIManager, the question and the reason of the choice are displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>466</i>&nbsp;     *
+<i>467</i>&nbsp;     * @param positions an ArrayList containing CellViews representing all the available positions
+<i>468</i>&nbsp;     * @param desc      the reason of the choice
+<i>469</i>&nbsp;     */
+<i>470</i>&nbsp;    public void choosePosition(ArrayList&lt;CellView&gt; positions, String desc) {
+<b class="nc"><i>471</i>&nbsp;        manager.choosePosition(positions, desc);</b>
+<b class="nc"><i>472</i>&nbsp;        sendInteger(getInteger());</b>
+<i>473</i>&nbsp;    }
+<i>474</i>&nbsp;
+<i>475</i>&nbsp;    /**
+<i>476</i>&nbsp;     * Allows the Player to choose the starting Player.
+<i>477</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>478</i>&nbsp;     *
+<i>479</i>&nbsp;     * @param players an ArrayList of PlayerViews representing all the Players involved in the Game
+<i>480</i>&nbsp;     */
+<i>481</i>&nbsp;    public void chooseStartingPlayer(ArrayList&lt;PlayerView&gt; players) {
+<b class="nc"><i>482</i>&nbsp;        manager.chooseStartingPlayer(players);</b>
+<b class="nc"><i>483</i>&nbsp;        sendInteger(getInteger());</b>
+<i>484</i>&nbsp;    }
+<i>485</i>&nbsp;
+<i>486</i>&nbsp;    /**
+<i>487</i>&nbsp;     * Allows the Player to choose between starting a new Game or joining an existing one.
+<i>488</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>489</i>&nbsp;     */
+<i>490</i>&nbsp;    public void chooseStartJoin() {
+<b class="nc"><i>491</i>&nbsp;        manager.chooseStartJoin();</b>
+<b class="nc"><i>492</i>&nbsp;        int num = getInteger();</b>
+<b class="nc"><i>493</i>&nbsp;        sendBoolean(num == 1);</b>
+<i>494</i>&nbsp;    }
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;    /**
+<i>497</i>&nbsp;     * Allows the Player to answer to a &quot;yes or no question&quot;.
+<i>498</i>&nbsp;     * Thanks to the GUIManager, the question is displayed on screen; the input provided by the client is processed and sent to the Server.
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param query the &quot;yes or no question&quot; asked to the Player
+<i>501</i>&nbsp;     */
+<i>502</i>&nbsp;    public void chooseYesNo(String query) {
+<b class="nc"><i>503</i>&nbsp;        manager.chooseYesNo(query);</b>
+<b class="nc"><i>504</i>&nbsp;        sendBoolean(getBoolean());</b>
+<i>505</i>&nbsp;
+<i>506</i>&nbsp;    }
+<i>507</i>&nbsp;
+<i>508</i>&nbsp;    /**
+<i>509</i>&nbsp;     * Thanks to the GUIManager, allows displaying the build occurred during a turn.
+<i>510</i>&nbsp;     * Updates the current GameView to save the new state of the Game.
+<i>511</i>&nbsp;     *
+<i>512</i>&nbsp;     * @param buildPosition the CellView representing the position of the building
+<i>513</i>&nbsp;     * @param godCard       the CardView representing the God Card which eventually allowed this build
+<i>514</i>&nbsp;     */
+<i>515</i>&nbsp;    public void displayBuild(CellView buildPosition, CardView godCard) {
+<b class="nc"><i>516</i>&nbsp;        manager.displayBuild(buildPosition, godCard);</b>
+<b class="nc"><i>517</i>&nbsp;        currentGame.setCell(buildPosition);</b>
+<i>518</i>&nbsp;    }
+<i>519</i>&nbsp;
+<i>520</i>&nbsp;    /**
+<i>521</i>&nbsp;     * Thanks to the GUIManager, allows displaying an information about the Game.
+<i>522</i>&nbsp;     * Updates the current GameView to save the new state of the Game.
+<i>523</i>&nbsp;     *
+<i>524</i>&nbsp;     * @param game the GameView representing the current state of the Game
+<i>525</i>&nbsp;     * @param desc the information
+<i>526</i>&nbsp;     */
+<i>527</i>&nbsp;    public void displayGameInfo(GameView game, String desc) {
+<b class="nc"><i>528</i>&nbsp;        manager.displayGameInfo(game, desc);</b>
+<b class="nc"><i>529</i>&nbsp;        currentGame = game;</b>
+<i>530</i>&nbsp;    }
+<i>531</i>&nbsp;
+<i>532</i>&nbsp;    /**
+<i>533</i>&nbsp;     * Thanks to the GUIManager, allows displaying a message from the server.
+<i>534</i>&nbsp;     *
+<i>535</i>&nbsp;     * @param message the message to display
+<i>536</i>&nbsp;     */
+<i>537</i>&nbsp;    public void displayMessage(String message) {
+<b class="nc"><i>538</i>&nbsp;        manager.displayMessage(message);</b>
+<i>539</i>&nbsp;    }
+<i>540</i>&nbsp;
+<i>541</i>&nbsp;    /**
+<i>542</i>&nbsp;     * Thanks to the GUIManager, allows displaying the move occurred during a turn.
+<i>543</i>&nbsp;     * Updates the current GameView to save the new state of the Game.
+<i>544</i>&nbsp;     *
+<i>545</i>&nbsp;     * @param moves   an HashMap containing pairs of (starting position, final position) for each worker who moved or was forced to move
+<i>546</i>&nbsp;     * @param godCard the CardView representing the God Card which eventually allowed this move
+<i>547</i>&nbsp;     */
+<i>548</i>&nbsp;    public void displayMove(HashMap&lt;CellView, CellView&gt; moves, CardView godCard) {
+<b class="nc"><i>549</i>&nbsp;        manager.displayMove(moves, godCard);</b>
+<b class="nc"><i>550</i>&nbsp;        moves.forEach((startPosition, endPosition) -&gt; {</b>
+<b class="nc"><i>551</i>&nbsp;            CellView newStart = new CellView(</b>
+<b class="nc"><i>552</i>&nbsp;                    startPosition.getPosX(), startPosition.getPosY(), startPosition.getBuildLevel(), startPosition.isDomed(), null</b>
+<i>553</i>&nbsp;            );
+<b class="nc"><i>554</i>&nbsp;            currentGame.setCell(newStart);</b>
+<b class="nc"><i>555</i>&nbsp;            CellView newEnd = new CellView(</b>
+<b class="nc"><i>556</i>&nbsp;                    endPosition.getPosX(), endPosition.getPosY(), endPosition.getBuildLevel(), endPosition.isDomed(), startPosition.getWorker()</b>
+<i>557</i>&nbsp;            );
+<b class="nc"><i>558</i>&nbsp;            currentGame.setCell(newEnd);</b>
+<i>559</i>&nbsp;        });
+<i>560</i>&nbsp;    }
+<i>561</i>&nbsp;
+<i>562</i>&nbsp;    /**
+<i>563</i>&nbsp;     * Thanks to the GUIManager, allows displaying the starting position of a Worker.
+<i>564</i>&nbsp;     * Updates the current GameView to save the new state of the Game.
+<i>565</i>&nbsp;     *
+<i>566</i>&nbsp;     * @param position the starting position of a Worker
+<i>567</i>&nbsp;     */
+<i>568</i>&nbsp;    public void displayPlaceWorker(CellView position) {
+<b class="nc"><i>569</i>&nbsp;        manager.displayPlaceWorker(position);</b>
+<b class="nc"><i>570</i>&nbsp;        currentGame.setCell(position);</b>
+<i>571</i>&nbsp;    }
+<i>572</i>&nbsp;
+<i>573</i>&nbsp;    /**
+<i>574</i>&nbsp;     * Thanks to the GUIManager, allows notifying the disconnection of a Player, by showing a message on screen.
+<i>575</i>&nbsp;     *
+<i>576</i>&nbsp;     * @param player the PlayerView representing the Player who disconnected
+<i>577</i>&nbsp;     */
+<i>578</i>&nbsp;    public void notifyDisconnection(PlayerView player) {
+<b class="nc"><i>579</i>&nbsp;        manager.notifyDisconnection(player);</b>
+<i>580</i>&nbsp;    }
+<i>581</i>&nbsp;
+<i>582</i>&nbsp;    /**
+<i>583</i>&nbsp;     * Thanks to the GUIManager, allows notifying the Game is starting, by showing a message on screen.
+<i>584</i>&nbsp;     */
+<i>585</i>&nbsp;    public void notifyGameStarting() {
+<b class="nc"><i>586</i>&nbsp;        manager.notifyGameStarting();</b>
+<b class="nc"><i>587</i>&nbsp;        getBoolean();</b>
+<b class="nc"><i>588</i>&nbsp;        sendBoolean(true);</b>
+<i>589</i>&nbsp;    }
+<i>590</i>&nbsp;
+<i>591</i>&nbsp;    /**
+<i>592</i>&nbsp;     * Thanks to the GUIManager, allows notifying the Game is over, by showing a message on screen.
+<i>593</i>&nbsp;     */
+<i>594</i>&nbsp;    public void notifyGameOver() {
+<b class="nc"><i>595</i>&nbsp;        manager.notifyGameOver();</b>
+<i>596</i>&nbsp;    }
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;    /**
+<i>599</i>&nbsp;     * Thanks to the GUIManager, allows notifying a Player that he lost, by showing a message on screen reporting his loss and the reason of it.
+<i>600</i>&nbsp;     *
+<i>601</i>&nbsp;     * @param reason the reason of the loss
+<i>602</i>&nbsp;     * @param winner the PlayerView representing the Player who eventually won, can be null
+<i>603</i>&nbsp;     */
+<i>604</i>&nbsp;    public void notifyLoss(String reason, PlayerView winner) {
+<b class="nc"><i>605</i>&nbsp;        manager.notifyLoss(reason, winner);</b>
+<i>606</i>&nbsp;    }
+<i>607</i>&nbsp;
+<i>608</i>&nbsp;    /**
+<i>609</i>&nbsp;     * Thanks to the GUIManager, allows notifying a Player that he won, by showing on screen a message reporting his victory and the reason of it.
+<i>610</i>&nbsp;     *
+<i>611</i>&nbsp;     * @param reason the reason of the victory
+<i>612</i>&nbsp;     */
+<i>613</i>&nbsp;    public void notifyWin(String reason) {
+<b class="nc"><i>614</i>&nbsp;        manager.notifyWin(reason);</b>
+<i>615</i>&nbsp;    }
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;    /**
+<i>618</i>&nbsp;     * Thanks to the GUIManager, allows notifying the the server is down and then closes the client.
+<i>619</i>&nbsp;     */
+<i>620</i>&nbsp;    public void serverClosed() {
+<b class="nc"><i>621</i>&nbsp;        if (!running.get()) return;</b>
+<b class="nc"><i>622</i>&nbsp;        manager.serverClosed();</b>
+<b class="nc"><i>623</i>&nbsp;        getBoolean();</b>
+<b class="nc"><i>624</i>&nbsp;        stop();</b>
+<i>625</i>&nbsp;    }
+<i>626</i>&nbsp;
+<i>627</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>

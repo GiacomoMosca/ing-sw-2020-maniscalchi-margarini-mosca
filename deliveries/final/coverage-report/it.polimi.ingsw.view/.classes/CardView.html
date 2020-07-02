@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CardView</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CardView (it.polimi.ingsw.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CardView</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    38.5%
+  </span>
+  <span class="absValue">
+    (5/ 13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.io.Serializable;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Represents a view of the Card class to the Client.
+<i>9</i>&nbsp; * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won&#39;t have access to the Model objects.
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class CardView implements Serializable {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * The God&#39;s name.
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    private final String god;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * The God&#39;s title.
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    private final String title;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * The God Power&#39;s description.
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    private final String description;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * CardView constructor.
+<i>28</i>&nbsp;     * CardView attributes are set to the values of the same attributes of the Card Object received as an argument.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @param card the Card represented by this CardView
+<i>31</i>&nbsp;     */
+<b class="fc"><i>32</i>&nbsp;    public CardView(Card card) {</b>
+<b class="fc"><i>33</i>&nbsp;        this.god = card.getGod();</b>
+<b class="fc"><i>34</i>&nbsp;        this.title = card.getTitle();</b>
+<b class="fc"><i>35</i>&nbsp;        this.description = card.getDescription();</b>
+<b class="fc"><i>36</i>&nbsp;    }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * CardView constructor.
+<i>40</i>&nbsp;     * CardView attributes are set to the values received as arguments.
+<i>41</i>&nbsp;     *
+<i>42</i>&nbsp;     * @param god         the God associated with the Card this CardView represents
+<i>43</i>&nbsp;     * @param title       the title of the Card this CardView represents
+<i>44</i>&nbsp;     * @param description the description of the Card this CardView represents
+<i>45</i>&nbsp;     */
+<b class="nc"><i>46</i>&nbsp;    public CardView(String god, String title, String description) {</b>
+<b class="nc"><i>47</i>&nbsp;        this.god = god;</b>
+<b class="nc"><i>48</i>&nbsp;        this.title = title;</b>
+<b class="nc"><i>49</i>&nbsp;        this.description = description;</b>
+<b class="nc"><i>50</i>&nbsp;    }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * @return the God associated with the Card this CardView represents
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    public String getGod() {
+<b class="nc"><i>56</i>&nbsp;        return god;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    /**
+<i>60</i>&nbsp;     * @return the title of the Card this CardView represents
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public String getTitle() {
+<b class="nc"><i>63</i>&nbsp;        return title;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * @return the description of the Card this CardView represents
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public String getDescription() {
+<b class="nc"><i>70</i>&nbsp;        return description;</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>

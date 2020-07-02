@@ -1,0 +1,402 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GodController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.turn_controllers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GodController (it.polimi.ingsw.controller.turn_controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GodController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (76/ 76)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.turn_controllers;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i>4</i>&nbsp;import it.polimi.ingsw.exceptions.IOExceptionFromController;
+<i>5</i>&nbsp;import it.polimi.ingsw.exceptions.IllegalBuildException;
+<i>6</i>&nbsp;import it.polimi.ingsw.exceptions.IllegalMoveException;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.Game;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>9</i>&nbsp;import it.polimi.ingsw.model.game_board.Board;
+<i>10</i>&nbsp;import it.polimi.ingsw.model.game_board.Cell;
+<i>11</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>12</i>&nbsp;import it.polimi.ingsw.model.players.Worker;
+<i>13</i>&nbsp;import it.polimi.ingsw.view.CellView;
+<i>14</i>&nbsp;import it.polimi.ingsw.view.VirtualView;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import java.io.IOException;
+<i>17</i>&nbsp;import java.util.ArrayList;
+<i>18</i>&nbsp;import java.util.HashMap;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * Template for all the God specific turn controllers. Handles how the different phases of each turn play out.
+<i>22</i>&nbsp; */
+<i>23</i>&nbsp;public abstract class GodController {
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * The associated game controller.
+<i>27</i>&nbsp;     */
+<i>28</i>&nbsp;    protected final GameController gameController;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * The current game.
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    protected final Game game;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * The board of the game.
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    protected final Board board;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * The list of players.
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public Player player;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * The player&#39;s selected worker.
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    public Worker activeWorker;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * The player&#39;s card.
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    protected Card card;
+<i>49</i>&nbsp;    /**
+<i>50</i>&nbsp;     * The server-side interface with the client.
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    protected VirtualView client;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * The starting position of the worker.
+<i>55</i>&nbsp;     */
+<i>56</i>&nbsp;    protected Cell startingPosition;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    /**
+<i>59</i>&nbsp;     * GodController constructor.
+<i>60</i>&nbsp;     *
+<i>61</i>&nbsp;     * @param gameController the GameController for this Game.
+<i>62</i>&nbsp;     */
+<b class="fc"><i>63</i>&nbsp;    public GodController(GameController gameController) {</b>
+<b class="fc"><i>64</i>&nbsp;        this.gameController = gameController;</b>
+<b class="fc"><i>65</i>&nbsp;        this.game = gameController.getGame();</b>
+<b class="fc"><i>66</i>&nbsp;        this.board = this.game.getBoard();</b>
+<b class="fc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * Sets all the attributes of the God Card to their actual values.
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @return the complete Card
+<i>74</i>&nbsp;     */
+<i>75</i>&nbsp;    public abstract Card generateCard(); /* {
+<i>76</i>&nbsp;        Card card = new Card(
+<i>77</i>&nbsp;                &quot;god&quot;,
+<i>78</i>&nbsp;                &quot;title&quot;,
+<i>79</i>&nbsp;                &quot;description&quot;,
+<i>80</i>&nbsp;                set (1: Simple, 2: Advanced),
+<i>81</i>&nbsp;                alwaysActiveModifier,
+<i>82</i>&nbsp;                this
+<i>83</i>&nbsp;        );
+<i>84</i>&nbsp;        this.card = card;
+<i>85</i>&nbsp;        return card;
+<i>86</i>&nbsp;    } */
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    /**
+<i>89</i>&nbsp;     * @return the Player associated with this GodController
+<i>90</i>&nbsp;     */
+<i>91</i>&nbsp;    public Player getPlayer() {
+<b class="fc"><i>92</i>&nbsp;        return player;</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * @return the VirtualView associated with the Player
+<i>97</i>&nbsp;     */
+<i>98</i>&nbsp;    public VirtualView getClient() {
+<b class="fc"><i>99</i>&nbsp;        return client;</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Sets the attributes player and client to the values passed as arguments.
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @param player the Player
+<i>106</i>&nbsp;     * @param client the Client associated with this player
+<i>107</i>&nbsp;     */
+<i>108</i>&nbsp;    public void setPlayer(Player player, VirtualView client) {
+<b class="fc"><i>109</i>&nbsp;        this.player = player;</b>
+<b class="fc"><i>110</i>&nbsp;        this.client = client;</b>
+<b class="fc"><i>111</i>&nbsp;    }</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    /**
+<i>114</i>&nbsp;     * Checks if the Worker can move.
+<i>115</i>&nbsp;     *
+<i>116</i>&nbsp;     * @param worker the active Worker
+<i>117</i>&nbsp;     * @return true if the Worker can move, false otherwise
+<i>118</i>&nbsp;     */
+<i>119</i>&nbsp;    public boolean canPlay(Worker worker) {
+<b class="fc"><i>120</i>&nbsp;        return findPossibleMoves(worker.getPosition()).size() &gt; 0;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    /**
+<i>124</i>&nbsp;     * Handles the basic phases of a turn: moving and building.
+<i>125</i>&nbsp;     *
+<i>126</i>&nbsp;     * @param worker the active Worker during this turn
+<i>127</i>&nbsp;     * @return &quot;godConditionAchieved&quot; if the Player won, &quot;next&quot; if the game goes on
+<i>128</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>129</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>130</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>131</i>&nbsp;     */
+<i>132</i>&nbsp;    public String runPhases(Worker worker) throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>133</i>&nbsp;        activeWorker = worker;</b>
+<b class="fc"><i>134</i>&nbsp;        startingPosition = worker.getPosition();</b>
+<b class="fc"><i>135</i>&nbsp;        movePhase();</b>
+<b class="fc"><i>136</i>&nbsp;        if (!checkWin().equals(&quot;nope&quot;)) return checkWin();</b>
+<b class="fc"><i>137</i>&nbsp;        if (findPossibleBuilds(activeWorker.getPosition()).size() == 0) return &quot;outOfBuilds&quot;;</b>
+<b class="fc"><i>138</i>&nbsp;        buildPhase();</b>
+<b class="fc"><i>139</i>&nbsp;        return &quot;next&quot;;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    /**
+<i>143</i>&nbsp;     * Handles the moving phase of the turn.
+<i>144</i>&nbsp;     *
+<i>145</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>146</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>147</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>148</i>&nbsp;     */
+<i>149</i>&nbsp;    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>150</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves = findPossibleMoves(activeWorker.getPosition());</b>
+<b class="fc"><i>151</i>&nbsp;        Cell movePosition = client.chooseMovePosition(possibleMoves);</b>
+<b class="fc"><i>152</i>&nbsp;        CellView startView = new CellView(activeWorker.getPosition());</b>
+<b class="fc"><i>153</i>&nbsp;        CellView endView = new CellView(movePosition);</b>
+<i>154</i>&nbsp;        try {
+<b class="fc"><i>155</i>&nbsp;            activeWorker.move(movePosition);</b>
+<b class="fc"><i>156</i>&nbsp;        } catch (IllegalMoveException e) {</b>
+<b class="fc"><i>157</i>&nbsp;            gameController.logError(e.getMessage());</b>
+<b class="fc"><i>158</i>&nbsp;        }</b>
+<b class="fc"><i>159</i>&nbsp;        displayMove(startView, endView, null);</b>
+<b class="fc"><i>160</i>&nbsp;    }</b>
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    /**
+<i>163</i>&nbsp;     * Handles the building phase of the turn.
+<i>164</i>&nbsp;     *
+<i>165</i>&nbsp;     * @throws IOException               when an exception related to ObjectOutputStream and ObjectInputStream occurs
+<i>166</i>&nbsp;     * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
+<i>167</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>168</i>&nbsp;     */
+<i>169</i>&nbsp;    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+<b class="fc"><i>170</i>&nbsp;        ArrayList&lt;Cell&gt; possibleBuilds = findPossibleBuilds(activeWorker.getPosition());</b>
+<b class="fc"><i>171</i>&nbsp;        Cell buildPosition = client.chooseBuildPosition(possibleBuilds);</b>
+<i>172</i>&nbsp;        try {
+<b class="fc"><i>173</i>&nbsp;            buildPosition.build();</b>
+<b class="fc"><i>174</i>&nbsp;        } catch (IllegalBuildException e) {</b>
+<b class="fc"><i>175</i>&nbsp;            gameController.logError(e.getMessage());</b>
+<b class="fc"><i>176</i>&nbsp;        }</b>
+<b class="fc"><i>177</i>&nbsp;        displayBuild(new CellView(buildPosition), null);</b>
+<b class="fc"><i>178</i>&nbsp;    }</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    /**
+<i>181</i>&nbsp;     * Checks if the active Player won.
+<i>182</i>&nbsp;     *
+<i>183</i>&nbsp;     * @return &quot;winConditionAchieved&quot; if the active Player won, &quot;nope&quot; otherwise
+<i>184</i>&nbsp;     */
+<i>185</i>&nbsp;    String checkWin() {
+<b class="fc"><i>186</i>&nbsp;        if ((activeWorker.getPosition().getBuildLevel() == 3) &amp;&amp; (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() &gt;= 1))</b>
+<b class="fc"><i>187</i>&nbsp;            return &quot;winConditionAchieved&quot;;</b>
+<b class="fc"><i>188</i>&nbsp;        return &quot;nope&quot;;</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    /**
+<i>192</i>&nbsp;     * Returns all the Cells where a Worker can move, with the only restrictions due to the general rules (other workers, domes, building levels).
+<i>193</i>&nbsp;     *
+<i>194</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>195</i>&nbsp;     * @return an ArrayList containing all the Cells where a worker can move
+<i>196</i>&nbsp;     */
+<i>197</i>&nbsp;    ArrayList&lt;Cell&gt; findPossibleMoves(Cell workerPosition) {
+<b class="fc"><i>198</i>&nbsp;        ArrayList&lt;Cell&gt; neighbors = board.getNeighbors(workerPosition);</b>
+<b class="fc"><i>199</i>&nbsp;        ArrayList&lt;Cell&gt; possibleMoves = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>200</i>&nbsp;        for (Cell cell : neighbors) {</b>
+<b class="fc"><i>201</i>&nbsp;            if (!cell.hasWorker() &amp;&amp; !cell.isDomed() &amp;&amp; (cell.getBuildLevel() &lt;= workerPosition.getBuildLevel() + 1))</b>
+<b class="fc"><i>202</i>&nbsp;                possibleMoves.add(cell);</b>
+<b class="fc"><i>203</i>&nbsp;        }</b>
+<b class="fc"><i>204</i>&nbsp;        return findLegalMoves(workerPosition, possibleMoves);</b>
+<i>205</i>&nbsp;    }
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;    /**
+<i>208</i>&nbsp;     * Returns all the legal moves, applying possible restrictions due to active God Power Cards.
+<i>209</i>&nbsp;     *
+<i>210</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>211</i>&nbsp;     * @param possibleMoves  all the Cells where the Worker can move, with the only restrictions due to the general rules
+<i>212</i>&nbsp;     * @return an ArrayList containing all the Cells where a Worker can effectively move
+<i>213</i>&nbsp;     */
+<i>214</i>&nbsp;    ArrayList&lt;Cell&gt; findLegalMoves(Cell workerPosition, ArrayList&lt;Cell&gt; possibleMoves) {
+<b class="fc"><i>215</i>&nbsp;        for (Card modifier : game.getActiveModifiers()) {</b>
+<b class="fc"><i>216</i>&nbsp;            if (modifier.getController().getPlayer() == player) continue;</b>
+<b class="fc"><i>217</i>&nbsp;            possibleMoves = modifier.getController().limitMoves(workerPosition, possibleMoves);</b>
+<b class="fc"><i>218</i>&nbsp;        }</b>
+<b class="fc"><i>219</i>&nbsp;        return possibleMoves;</b>
+<i>220</i>&nbsp;    }
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;    /**
+<i>223</i>&nbsp;     * Returns all the Cells where a Worker can build, with the only restrictions due to the general rules (other workers and domes).
+<i>224</i>&nbsp;     *
+<i>225</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>226</i>&nbsp;     * @return an ArrayList containing all the Cells where a Worker can build
+<i>227</i>&nbsp;     */
+<i>228</i>&nbsp;    ArrayList&lt;Cell&gt; findPossibleBuilds(Cell workerPosition) {
+<b class="fc"><i>229</i>&nbsp;        ArrayList&lt;Cell&gt; neighbors = board.getNeighbors(workerPosition);</b>
+<b class="fc"><i>230</i>&nbsp;        ArrayList&lt;Cell&gt; possibleBuilds = new ArrayList&lt;Cell&gt;();</b>
+<b class="fc"><i>231</i>&nbsp;        for (Cell cell : neighbors) {</b>
+<b class="fc"><i>232</i>&nbsp;            if (!cell.hasWorker() &amp;&amp; !cell.isDomed())</b>
+<b class="fc"><i>233</i>&nbsp;                possibleBuilds.add(cell);</b>
+<b class="fc"><i>234</i>&nbsp;        }</b>
+<b class="fc"><i>235</i>&nbsp;        return findLegalBuilds(workerPosition, possibleBuilds);</b>
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    /**
+<i>239</i>&nbsp;     * Returns all the legal builds, applying possible restrictions due to active God Power Cards.
+<i>240</i>&nbsp;     *
+<i>241</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>242</i>&nbsp;     * @param possibleBuilds all the cells where the Worker can build, with the only restrictions due to the general rules
+<i>243</i>&nbsp;     * @return an ArrayList containing all the Cells where a Worker can effectively build
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    ArrayList&lt;Cell&gt; findLegalBuilds(Cell workerPosition, ArrayList&lt;Cell&gt; possibleBuilds) {
+<b class="fc"><i>246</i>&nbsp;        for (Card modifier : game.getActiveModifiers()) {</b>
+<b class="fc"><i>247</i>&nbsp;            if (modifier.getController().getPlayer() == player) continue;</b>
+<b class="fc"><i>248</i>&nbsp;            possibleBuilds = modifier.getController().limitBuilds(workerPosition, possibleBuilds);</b>
+<b class="fc"><i>249</i>&nbsp;        }</b>
+<b class="fc"><i>250</i>&nbsp;        return possibleBuilds;</b>
+<i>251</i>&nbsp;    }
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    /**
+<i>254</i>&nbsp;     * Applies the God Power associated with this GodController. Gets an ArrayList containing all the cells where an opponent Worker can move and creates another ArrayList, removing from the first one all the Cells that are not allowed due to this God Power Card.
+<i>255</i>&nbsp;     *
+<i>256</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>257</i>&nbsp;     * @param possibleMoves  all the Cells where the Worker can move, considering only the game restrictions
+<i>258</i>&nbsp;     * @return an ArrayList containing all the Cells where the Worker is actually able to build
+<i>259</i>&nbsp;     */
+<i>260</i>&nbsp;    ArrayList&lt;Cell&gt; limitMoves(Cell workerPosition, ArrayList&lt;Cell&gt; possibleMoves) {
+<b class="fc"><i>261</i>&nbsp;        return possibleMoves;</b>
+<i>262</i>&nbsp;    }
+<i>263</i>&nbsp;
+<i>264</i>&nbsp;    /**
+<i>265</i>&nbsp;     * Applies the God Power associated with this GodController. Gets an ArrayList containing all the Cells where an opponent Worker can build and creates another ArrayList, removing from the first one all the Cells that are not allowed due to this God Power Card.
+<i>266</i>&nbsp;     *
+<i>267</i>&nbsp;     * @param workerPosition the position of the Worker
+<i>268</i>&nbsp;     * @param possibleBuilds all the Cells where the Worker is able to build, considering only the game restrictions
+<i>269</i>&nbsp;     * @return all the Cells where the Worker is actually able to build
+<i>270</i>&nbsp;     */
+<i>271</i>&nbsp;    ArrayList&lt;Cell&gt; limitBuilds(Cell workerPosition, ArrayList&lt;Cell&gt; possibleBuilds) {
+<b class="fc"><i>272</i>&nbsp;        return possibleBuilds;</b>
+<i>273</i>&nbsp;    }
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;    /**
+<i>276</i>&nbsp;     * Creates an HashMap containing the starting position and the final position of a move.
+<i>277</i>&nbsp;     * Calls the broadcastMove method so that the move can be properly displayed on screen.
+<i>278</i>&nbsp;     *
+<i>279</i>&nbsp;     * @param startPosition the starting position of a move
+<i>280</i>&nbsp;     * @param endPosition   the final position of a move
+<i>281</i>&nbsp;     * @param godPower      the God Power Card who allowed this move, eventually null in a basic move
+<i>282</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>283</i>&nbsp;     */
+<i>284</i>&nbsp;    void displayMove(CellView startPosition, CellView endPosition, Card godPower) throws IOExceptionFromController {
+<b class="fc"><i>285</i>&nbsp;        HashMap&lt;CellView, CellView&gt; moves = new HashMap&lt;CellView, CellView&gt;();</b>
+<b class="fc"><i>286</i>&nbsp;        moves.put(startPosition, endPosition);</b>
+<b class="fc"><i>287</i>&nbsp;        gameController.broadcastMove(moves, godPower);</b>
+<b class="fc"><i>288</i>&nbsp;    }</b>
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;    /**
+<i>291</i>&nbsp;     * Creates an HashMap containing two couples of positions: the starting position and the final position of a move for two players.
+<i>292</i>&nbsp;     * Calls the broadcastMove method so that this double move can be properly displayed on screen.
+<i>293</i>&nbsp;     *
+<i>294</i>&nbsp;     * @param startPosition1 the starting position of a move for the first player
+<i>295</i>&nbsp;     * @param endPosition1   the final position of a move for the first player
+<i>296</i>&nbsp;     * @param startPosition2 the starting position of a move for the second player
+<i>297</i>&nbsp;     * @param endPosition2   the final position of a move for the second player
+<i>298</i>&nbsp;     * @param godPower       the God Power Card who allowed this move
+<i>299</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>300</i>&nbsp;     */
+<i>301</i>&nbsp;    void displayMove(CellView startPosition1, CellView endPosition1, CellView startPosition2, CellView endPosition2, Card godPower) throws IOExceptionFromController {
+<b class="fc"><i>302</i>&nbsp;        HashMap&lt;CellView, CellView&gt; moves = new HashMap&lt;CellView, CellView&gt;();</b>
+<b class="fc"><i>303</i>&nbsp;        moves.put(startPosition1, endPosition1);</b>
+<b class="fc"><i>304</i>&nbsp;        moves.put(startPosition2, endPosition2);</b>
+<b class="fc"><i>305</i>&nbsp;        gameController.broadcastMove(moves, godPower);</b>
+<b class="fc"><i>306</i>&nbsp;    }</b>
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    /**
+<i>309</i>&nbsp;     * Calls the broadcastBuild method so that this build can properly be displayed on screen.
+<i>310</i>&nbsp;     *
+<i>311</i>&nbsp;     * @param buildPosition the position of the build
+<i>312</i>&nbsp;     * @param godPower      the God Card that eventually allowed this build
+<i>313</i>&nbsp;     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
+<i>314</i>&nbsp;     */
+<i>315</i>&nbsp;    void displayBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
+<b class="fc"><i>316</i>&nbsp;        gameController.broadcastBuild(buildPosition, godPower);</b>
+<b class="fc"><i>317</i>&nbsp;    }</b>
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>

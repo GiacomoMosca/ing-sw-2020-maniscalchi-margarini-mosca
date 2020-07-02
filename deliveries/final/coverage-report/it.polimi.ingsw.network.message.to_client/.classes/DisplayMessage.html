@@ -1,0 +1,121 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DisplayMessage</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.network.message.to_client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DisplayMessage (it.polimi.ingsw.network.message.to_client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DisplayMessage</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.network.message.to_client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.UI;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Message sent from the server to a client to display a message from the server.
+<i>7</i>&nbsp; */
+<i>8</i>&nbsp;public class DisplayMessage extends ToClientMessage {
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    /**
+<i>11</i>&nbsp;     * The message sent.
+<i>12</i>&nbsp;     */
+<i>13</i>&nbsp;    protected String message;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * DisplayMessage constructor.
+<i>17</i>&nbsp;     * Calls the super constructor so that the msgId is set to &quot;display message&quot;.
+<i>18</i>&nbsp;     * Sets the attributes to the values received as arguments.
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param message the String describing the message sent with this DisplayMessage message
+<i>21</i>&nbsp;     */
+<i>22</i>&nbsp;    public DisplayMessage(String message) {
+<b class="nc"><i>23</i>&nbsp;        super(&quot;display message&quot;);</b>
+<b class="nc"><i>24</i>&nbsp;        this.message = message;</b>
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * When called, this method invokes the right method on the client who received this message to perform the action requested by the message.
+<i>29</i>&nbsp;     * In this case, the client will display on screen the message.
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param client the User Interface representing the client this message is sent to
+<i>32</i>&nbsp;     */
+<i>33</i>&nbsp;    @Override
+<i>34</i>&nbsp;    public void performAction(UI client) {
+<b class="nc"><i>35</i>&nbsp;        client.displayMessage(message);</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-02 14:56</div>
+</div>
+</body>
+</html>
