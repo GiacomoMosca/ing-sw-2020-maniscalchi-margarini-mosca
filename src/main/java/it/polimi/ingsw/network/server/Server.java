@@ -349,11 +349,6 @@ public class Server {
      */
     private void removePlayer(VirtualView player) {
         if (player == null || !players.contains(player)) return;
-        /*if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {
-            GameController gameController = player.getPlayerController().getGame();
-            gameController.handleDisconnection(player.getPlayerController());
-            if (!gameController.isRunning()) removeGame(gameController);
-        }*/
         players.remove(player);
         logger.log(player.getId() + " disconnected");
         try {
