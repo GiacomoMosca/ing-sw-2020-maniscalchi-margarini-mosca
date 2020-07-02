@@ -7,6 +7,9 @@ import it.polimi.ingsw.controller.PlayerController;
  */
 public class IOExceptionFromController extends Exception {
 
+    /**
+     * The PlayerController this IOExceptionFromController was generated from.
+     */
     PlayerController controller;
 
     /**

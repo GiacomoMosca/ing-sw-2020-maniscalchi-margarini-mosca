@@ -9,10 +9,25 @@ import it.polimi.ingsw.model.players.Worker;
  */
 public class Cell {
 
+    /**
+     * The x-coordinate of the Cell.
+     */
     private final int posX;
+    /**
+     * The y-coordinate of the Cell.
+     */
     private final int posY;
+    /**
+     * The current build level of the Cell.
+     */
     private int buildLevel;
+    /**
+     * Set to <code>true</code> if the Cell has a dome.
+     */
     private boolean hasDome;
+    /**
+     * The Worker currently on the Cell (if present).
+     */
     private Worker worker;
 
     /**

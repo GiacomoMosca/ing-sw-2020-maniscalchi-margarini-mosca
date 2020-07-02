@@ -10,10 +10,25 @@ import java.util.ArrayList;
  */
 public class Player {
 
+    /**
+     * The Player's nickname.
+     */
     private final String id;
+    /**
+     * The Player's color.
+     */
     private final String color;
+    /**
+     * List of the Player's Workers.
+     */
     private final ArrayList<Worker> workers;
+    /**
+     * The God Card associated with this Player.
+     */
     private Card godCard;
+    /**
+     * Set to <code>true</code> if the Player has Lost.
+     */
     private boolean hasLost;
 
     /**

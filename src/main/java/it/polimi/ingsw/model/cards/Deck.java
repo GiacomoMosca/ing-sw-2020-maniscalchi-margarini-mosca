@@ -9,7 +9,13 @@ import java.util.Collections;
  */
 public class Deck {
 
+    /**
+     * List of all the Cards composing the Deck.
+     */
     private final ArrayList<Card> cards;
+    /**
+     * List of all the picked Cards for the Game.
+     */
     private final ArrayList<Card> pickedCards;
 
     /**
