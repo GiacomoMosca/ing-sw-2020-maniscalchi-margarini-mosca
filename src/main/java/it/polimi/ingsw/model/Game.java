@@ -14,13 +14,37 @@ import java.util.ArrayList;
  */
 public class Game {
 
+    /**
+     * The name of the Game.
+     */
     private final String name;
+    /**
+     * List of Players who joined the Game.
+     */
     private final ArrayList<Player> players;
+    /**
+     * The Game's player number (2 or 3).
+     */
     private final int playerNum;
+    /**
+     * The Game Board.
+     */
     private final Board board;
+    /**
+     * The Deck containing all God Cards.
+     */
     private final Deck deck;
+    /**
+     * List of Cards with a modifier that's currently active.
+     */
     private final ArrayList<Card> activeModifiers;
+    /**
+     * The number of the turn's active Player.
+     */
     private int activePlayer;
+    /**
+     * The Player who eventually won.
+     */
     private Player winner;
 
     /**

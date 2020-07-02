@@ -9,8 +9,17 @@ import it.polimi.ingsw.model.game_board.Cell;
  */
 public class Worker {
 
+    /**
+     * The Worker's owner.
+     */
     private final Player owner;
+    /**
+     * The Worker's number (1 or 2).
+     */
     private final int num;
+    /**
+     * The Worker's current position in the Game Board.
+     */
     private Cell position;
 
     /**

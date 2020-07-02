@@ -8,6 +8,9 @@ import java.util.ArrayList;
  */
 public class Board {
 
+    /**
+     * Array of all the Cells making up the Game Board.
+     */
     private final Cell[][] cells;
 
     /**

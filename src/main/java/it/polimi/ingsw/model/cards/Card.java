@@ -9,11 +9,29 @@ import it.polimi.ingsw.controller.turn_controllers.GodController;
  */
 public class Card {
 
+    /**
+     * The God's name.
+     */
     private final String god;
+    /**
+     * The God's title.
+     */
     private final String title;
+    /**
+     * The Card's description.
+     */
     private final String description;
+    /**
+     * The Card's set (1 for basic Gods, 2 for advanced Gods).
+     */
     private final int set;
+    /**
+     * Set to <code>true</code> if the Card has an always active Modifier.
+     */
     private final boolean alwaysActiveModifier;
+    /**
+     * The GodController associated with the Card.
+     */
     private final GodController controller;
 
     /**
