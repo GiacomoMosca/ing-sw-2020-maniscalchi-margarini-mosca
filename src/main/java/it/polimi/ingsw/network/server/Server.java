@@ -168,7 +168,7 @@ public class Server {
     private void checkAlive(VirtualView player) {
         while (true) {
             try {
-                Thread.sleep(5 * 1000);
+                Thread.sleep(2 * 1000);
                 player.checkAlive();
             } catch (InterruptedException e) {
                 //
@@ -221,6 +221,7 @@ public class Server {
         } while (taken);
         int playerNum = player.choosePlayersNumber();
         GameController gameController = new GameController(player, playerNum, gameName);
+        gameController.setServer(this);
         gameController.setLogger(logger);
         gameControllers.add(gameController);
         logger.log("new game " + gameName + " created");
@@ -228,7 +229,9 @@ public class Server {
             gameController.broadcastGameInfo("playerJoined");
             player.displayMessage("Waiting for players...");
         } catch (IOExceptionFromController e) {
-            gameController.handleDisconnection(e.getController());
+            synchronized (gameControllers) {
+                gameController.handleDisconnection(e.getController());
+            }
         }
     }
 
@@ -270,8 +273,15 @@ public class Server {
                     break;
                 }
             }
+            synchronized (gameControllers) {
+                if (gameController.checkPlayersNumber()) {
+                    player.displayMessage("The room is already full. ");
+                    new Thread(() -> playerLobby(player)).start();
+                    return;
+                }
+                gameController.addPlayer(player);
+            }
             logger.log(player.getId() + " joined " + gameController.getGame().getName());
-            gameController.addPlayer(player);
             if (gameController.checkPlayersNumber()) {
                 startGame(gameController);
             } else
@@ -280,19 +290,26 @@ public class Server {
             player.displayMessage("The room doesn't exist anymore. ");
             if (gameController != null) removeGame(gameController);
             new Thread(() -> playerLobby(player)).start();
+        } catch (IOExceptionFromController e) {
+            synchronized (gameControllers) {
+                gameController.handleDisconnection(e.getController());
+            }
         }
     }
 
     /**
-     * Notifies all the connected clients that the Game is starting.
-     * Starts a new Thread which will handle the setup and the execution of the Game.
+     * Starts the Game after notifying the Game's creator.
      *
      * @param gameController the GameController for this Game
-     * @throws IOException          when an exception related to ObjectOutputStream and ObjectInputStream occurs
-     * @throws InterruptedException when the thread handling the communication is waiting and it is interrupted before or during its activity
+     * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    private void startGame(GameController gameController) throws IOException, InterruptedException {
-        gameController.getControllers().get(0).getClient().notifyGameStarting();
+    private void startGame(GameController gameController) throws IOExceptionFromController {
+        if (!gameController.isRunning()) return;
+        try {
+            gameController.getControllers().get(0).getClient().notifyGameStarting();
+        } catch (IOException | InterruptedException e) {
+            throw new IOExceptionFromController(e, gameController.getControllers().get(0));
+        }
         logger.log("game " + gameController.getGame().getName() + " started");
         new Thread(() -> gameWorker(gameController)).start();
     }
@@ -305,7 +322,6 @@ public class Server {
      */
     private void gameWorker(GameController gameController) {
         gameController.gameSetUp();
-        removeGame(gameController);
     }
 
     /**
@@ -314,9 +330,11 @@ public class Server {
      *
      * @param gameController the gameController of the Game to be removed
      */
-    private void removeGame(GameController gameController) {
-        if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
-        gameControllers.remove(gameController);
+    public void removeGame(GameController gameController) {
+        synchronized (gameControllers) {
+            if (gameController.isRunning() || !gameControllers.contains(gameController)) return;
+            gameControllers.remove(gameController);
+        }
         logger.log("game " + gameController.getGame().getName() + " ended");
         for (PlayerController controller : gameController.getControllers()) {
             if (controller == null) continue;
@@ -331,11 +349,11 @@ public class Server {
      */
     private void removePlayer(VirtualView player) {
         if (player == null || !players.contains(player)) return;
-        if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {
+        /*if (player.isInGame() && player.getPlayerController().getGame().isSetup()) {
             GameController gameController = player.getPlayerController().getGame();
             gameController.handleDisconnection(player.getPlayerController());
             if (!gameController.isRunning()) removeGame(gameController);
-        }
+        }*/
         players.remove(player);
         logger.log(player.getId() + " disconnected");
         try {

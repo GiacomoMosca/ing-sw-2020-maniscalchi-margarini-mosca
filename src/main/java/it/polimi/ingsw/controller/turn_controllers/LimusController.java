@@ -48,7 +48,7 @@ public class LimusController extends GodController {
      * @return an ArrayList containing all the Cells where the Worker is actually able to build
      */
     @Override
-    public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+    ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         // + opponents can only build Complete Towers next to your workers
         ArrayList<Cell> limitedBuilds = new ArrayList<Cell>();
         LABEL:

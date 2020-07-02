@@ -76,7 +76,7 @@ public class NewGameController {
                 if (gameName.length() > 12)
                     errorMessage("Invalid input (max 12 characters).");
                 else {
-                    error.setVisible(false);
+                    Platform.runLater(() -> error.setVisible(false));
                     manager.putObject(gameName);
                     manager.setBusy(false);
                 }

@@ -53,7 +53,7 @@ public class DemeterController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {

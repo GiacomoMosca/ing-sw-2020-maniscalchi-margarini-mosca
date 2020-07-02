@@ -63,6 +63,21 @@ public class GameOverController {
     }
 
     /**
+     * Allows notifying the user that there was an error while trying to join a Game.
+     *
+     * @param message the reason why the user couldn't join the Game
+     */
+    public void notifyGameError(String message) {
+        Platform.runLater(() -> {
+            titleText.setText(message.substring(0, message.length() - 2));
+            confirmText.setText("Return to lobby");
+            confirmText_p.setText("Return to lobby");
+        });
+    }
+
+    /**
+     * Allows notifying the user that a Player has disconnected from the current Game.
+     *
      * @param player the PlayerView representing the Player who disconnected
      */
     public void notifyDisconnection(PlayerView player) {
@@ -74,7 +89,7 @@ public class GameOverController {
     }
 
     /**
-     * Allows notifying a Player the Game is  over, giving him  the possibility to return to Lobby for playing again.
+     * Allows notifying the user that the current Game is over.
      */
     public void notifyGameOver() {
         Platform.runLater(() -> {
@@ -85,12 +100,12 @@ public class GameOverController {
     }
 
     /**
-     * Notifies a Player that the server is down. Allows him to quit.
+     * Allows notifying the user that the server is down and makes him quit the game.
      */
     public void serverClosed() {
         Platform.runLater(() -> {
             shuttingDown = true;
-            titleText.setText("Disconnected from the server\n(server is down)");
+            titleText.setText("Disconnected from the server. ");
             confirmText.setText("Quit");
             confirmText_p.setText("Quit");
         });

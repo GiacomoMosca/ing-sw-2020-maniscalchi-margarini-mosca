@@ -146,7 +146,7 @@ public abstract class GodController {
      * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         CellView startView = new CellView(activeWorker.getPosition());
@@ -166,7 +166,7 @@ public abstract class GodController {
      * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -182,7 +182,7 @@ public abstract class GodController {
      *
      * @return "winConditionAchieved" if the active Player won, "nope" otherwise
      */
-    public String checkWin() {
+    String checkWin() {
         if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() >= 1))
             return "winConditionAchieved";
         return "nope";
@@ -194,7 +194,7 @@ public abstract class GodController {
      * @param workerPosition the position of the Worker
      * @return an ArrayList containing all the Cells where a worker can move
      */
-    public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+    ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -211,7 +211,7 @@ public abstract class GodController {
      * @param possibleMoves  all the Cells where the Worker can move, with the only restrictions due to the general rules
      * @return an ArrayList containing all the Cells where a Worker can effectively move
      */
-    public ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+    ArrayList<Cell> findLegalMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
             possibleMoves = modifier.getController().limitMoves(workerPosition, possibleMoves);
@@ -225,7 +225,7 @@ public abstract class GodController {
      * @param workerPosition the position of the Worker
      * @return an ArrayList containing all the Cells where a Worker can build
      */
-    public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
+    ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -242,7 +242,7 @@ public abstract class GodController {
      * @param possibleBuilds all the cells where the Worker can build, with the only restrictions due to the general rules
      * @return an ArrayList containing all the Cells where a Worker can effectively build
      */
-    public ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+    ArrayList<Cell> findLegalBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         for (Card modifier : game.getActiveModifiers()) {
             if (modifier.getController().getPlayer() == player) continue;
             possibleBuilds = modifier.getController().limitBuilds(workerPosition, possibleBuilds);
@@ -257,7 +257,7 @@ public abstract class GodController {
      * @param possibleMoves  all the Cells where the Worker can move, considering only the game restrictions
      * @return an ArrayList containing all the Cells where the Worker is actually able to build
      */
-    public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+    ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         return possibleMoves;
     }
 
@@ -268,7 +268,7 @@ public abstract class GodController {
      * @param possibleBuilds all the Cells where the Worker is able to build, considering only the game restrictions
      * @return all the Cells where the Worker is actually able to build
      */
-    public ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
+    ArrayList<Cell> limitBuilds(Cell workerPosition, ArrayList<Cell> possibleBuilds) {
         return possibleBuilds;
     }
 
@@ -281,7 +281,7 @@ public abstract class GodController {
      * @param godPower      the God Power Card who allowed this move, eventually null in a basic move
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    protected void displayMove(CellView startPosition, CellView endPosition, Card godPower) throws IOExceptionFromController {
+    void displayMove(CellView startPosition, CellView endPosition, Card godPower) throws IOExceptionFromController {
         HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
         moves.put(startPosition, endPosition);
         gameController.broadcastMove(moves, godPower);
@@ -298,7 +298,7 @@ public abstract class GodController {
      * @param godPower       the God Power Card who allowed this move
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    protected void displayMove(CellView startPosition1, CellView endPosition1, CellView startPosition2, CellView endPosition2, Card godPower) throws IOExceptionFromController {
+    void displayMove(CellView startPosition1, CellView endPosition1, CellView startPosition2, CellView endPosition2, Card godPower) throws IOExceptionFromController {
         HashMap<CellView, CellView> moves = new HashMap<CellView, CellView>();
         moves.put(startPosition1, endPosition1);
         moves.put(startPosition2, endPosition2);
@@ -312,7 +312,7 @@ public abstract class GodController {
      * @param godPower      the God Card that eventually allowed this build
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    protected void displayBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
+    void displayBuild(CellView buildPosition, Card godPower) throws IOExceptionFromController {
         gameController.broadcastBuild(buildPosition, godPower);
     }
 

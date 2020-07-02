@@ -53,7 +53,7 @@ public class AtlasController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

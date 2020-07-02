@@ -53,7 +53,7 @@ public class TritonController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
         CellView startView = new CellView(activeWorker.getPosition());

@@ -152,7 +152,7 @@ public class GameSetupController {
     }
 
     /**
-     * Allows preparing the scene for the choiche of the Cards.
+     * Allows preparing the scene for the choice of the Cards.
      */
     public void displayGameInfo() {
         Platform.runLater(() -> {

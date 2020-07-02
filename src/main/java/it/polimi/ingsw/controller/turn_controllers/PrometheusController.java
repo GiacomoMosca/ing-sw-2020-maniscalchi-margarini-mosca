@@ -86,7 +86,7 @@ public class PrometheusController extends GodController {
     /**
      * @return true if any move from a level to the same level or less is allowed, false otherwise
      */
-    protected boolean checkMoves() {
+    boolean checkMoves() {
         ArrayList<Cell> neighbors = board.getNeighbors(activeWorker.getPosition());
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -94,8 +94,7 @@ public class PrometheusController extends GodController {
                 possibleMoves.add(cell);
         }
         findLegalMoves(activeWorker.getPosition(), possibleMoves); //ok?
-        if (possibleMoves.size() == 0) return false;
-        else return true;
+        return possibleMoves.size() != 0;
     }
 
     /**
@@ -106,7 +105,7 @@ public class PrometheusController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleMoves;
         if (wantBuildBefore) possibleMoves = findPossibleMovesNoUp(activeWorker.getPosition());
         else possibleMoves = findPossibleMoves(activeWorker.getPosition());
@@ -127,7 +126,7 @@ public class PrometheusController extends GodController {
      * @param workerPosition the position of the Worker
      * @return an ArrayList containing all the Cells where a Worker can move
      */
-    protected ArrayList<Cell> findPossibleMovesNoUp(Cell workerPosition) {
+    ArrayList<Cell> findPossibleMovesNoUp(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {
@@ -146,7 +145,7 @@ public class PrometheusController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = (wantBuildBefore) ? card : null;
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);

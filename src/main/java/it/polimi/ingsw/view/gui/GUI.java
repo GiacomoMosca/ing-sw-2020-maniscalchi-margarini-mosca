@@ -131,8 +131,7 @@ public class GUI implements UI {
             try {
                 message = serverQueue.take();
             } catch (InterruptedException e) {
-                serverClosed();
-                break;
+                continue;
             }
             synchronized (busyLock) {
                 while (!manager.setBusy(true)) {
@@ -143,6 +142,7 @@ public class GUI implements UI {
                     }
                 }
             }
+            if (!running.get()) break;
             parseMessage(message);
         }
         stop();
@@ -177,9 +177,18 @@ public class GUI implements UI {
      * Closes the communication channel with the server and closes the client.
      */
     public synchronized void stop() {
+        if (!running.compareAndSet(true, false)) return;
         try {
             if (server != null) server.close();
+        } catch (IOException e) {
+            //
+        }
+        try {
             if (input != null) input.close();
+        } catch (IOException e) {
+            //
+        }
+        try {
             if (output != null) output.close();
         } catch (IOException e) {
             //
@@ -609,6 +618,7 @@ public class GUI implements UI {
      * Thanks to the GUIManager, allows notifying the the server is down and then closes the client.
      */
     public void serverClosed() {
+        if (!running.get()) return;
         manager.serverClosed();
         getBoolean();
         stop();

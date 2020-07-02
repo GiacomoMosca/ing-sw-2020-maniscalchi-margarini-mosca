@@ -15,7 +15,7 @@
     </StackPane>
     <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
-        <Text fx:id="titleText" text="Game over!"/>
+        <Text fx:id="titleText" textAlignment="CENTER" text="Game over!"/>
         <StackPane>
             <ImageView fx:id="confirmButton" fitHeight="65.0" onMousePressed="#confirmPressed"
                        onMouseReleased="#confirmReleased" pickOnBounds="true" preserveRatio="true">

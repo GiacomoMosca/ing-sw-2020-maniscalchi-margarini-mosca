@@ -96,7 +96,7 @@
             <Insets top="-20.0"/>
         </padding>
     </StackPane>
-    <StackPane fx:id="confirmBox" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0"
+    <StackPane fx:id="confirmBox" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0">
         <ImageView mouseTransparent="true" preserveRatio="true" fitHeight="75.0">
             <Image url="@../assets/buttons/btn_gray.png"/>

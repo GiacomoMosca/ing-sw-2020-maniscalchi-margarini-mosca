@@ -53,7 +53,7 @@ public class AthenaController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         Card godPower = null;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell oldPosition = activeWorker.getPosition();
@@ -82,7 +82,7 @@ public class AthenaController extends GodController {
      * @return an ArrayList containing all the Cells where the Worker is actually able to move
      */
     @Override
-    public ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
+    ArrayList<Cell> limitMoves(Cell workerPosition, ArrayList<Cell> possibleMoves) {
         // + opponents can't move up if modifier is active
         ArrayList<Cell> limitedMoves = new ArrayList<Cell>();
         for (Cell cell : possibleMoves) {

@@ -55,7 +55,7 @@ public class MinotaurController extends GodController {
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
     @Override
-    public void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
+    void movePhase() throws IOException, InterruptedException, IOExceptionFromController {
         boolean godPower = false;
         ArrayList<Cell> possibleMoves = findPossibleMoves(activeWorker.getPosition());
         Cell movePosition = client.chooseMovePosition(possibleMoves);
@@ -97,7 +97,7 @@ public class MinotaurController extends GodController {
      * @return an ArrayList containing all the Cells where a Worker can move
      */
     @Override
-    public ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
+    ArrayList<Cell> findPossibleMoves(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleMoves = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

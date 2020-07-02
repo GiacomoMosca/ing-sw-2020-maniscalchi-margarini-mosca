@@ -41,7 +41,7 @@ public class PanController extends GodController {
      * @return "winConditionAchieved" if the Player won because moved up from the second to the third level, "godConditionAchieved" if the Player won because he achieved his God's win condition,"nope" if the Player didn't win
      */
     @Override
-    public String checkWin() {
+    String checkWin() {
         if ((activeWorker.getPosition().getBuildLevel() == 3) && (activeWorker.getPosition().getBuildLevel() - startingPosition.getBuildLevel() >= 1))
             return "winConditionAchieved";
         if (startingPosition.getBuildLevel() - activeWorker.getPosition().getBuildLevel() >= 2)

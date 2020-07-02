@@ -387,9 +387,13 @@ public class GUIManager extends Application {
      * @param message the message sent
      */
     public void displayMessage(String message) {
-        if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
+        if (message.equals("The room is already full. ") || message.equals("The room doesn't exist anymore. ")) {
+            initGameOver();
+            setScene(gameOverScene);
+            gameOverController.notifyGameError(message);
+        } else if (currentScene.equals(gameBoardScene)) gameBoardController.displayMessage(message);
+        else setBusy(false);
         // deprecated for other instances
-        setBusy(false);
     }
 
     /**

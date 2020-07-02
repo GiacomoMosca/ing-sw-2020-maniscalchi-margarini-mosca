@@ -53,7 +53,8 @@ public class ZeusController extends GodController {
      * @throws InterruptedException      when the thread handling the communication is waiting and it is interrupted before or during its activity
      * @throws IOExceptionFromController when an IOException from a specific PlayerController occurs
      */
-    public void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
+    @Override
+    void buildPhase() throws IOException, InterruptedException, IOExceptionFromController {
         ArrayList<Cell> possibleBuilds = findPossibleBuilds(activeWorker.getPosition());
         Cell buildPosition = client.chooseBuildPosition(possibleBuilds);
         try {
@@ -72,7 +73,7 @@ public class ZeusController extends GodController {
      * @return an ArrayList containing the cells where a Worker can build
      */
     @Override
-    public ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
+    ArrayList<Cell> findPossibleBuilds(Cell workerPosition) {
         ArrayList<Cell> neighbors = board.getNeighbors(workerPosition);
         ArrayList<Cell> possibleBuilds = new ArrayList<Cell>();
         for (Cell cell : neighbors) {

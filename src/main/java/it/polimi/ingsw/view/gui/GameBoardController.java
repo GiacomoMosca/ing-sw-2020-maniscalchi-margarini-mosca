@@ -376,8 +376,8 @@ public class GameBoardController {
         pushToLog("\n ⚠\t" + finalEliminatedPlayer + " lost!\n" + reason);
 
         if (finalEliminatedPlayer.equals(manager.getId())) return;
-        eliminationMessage.setText(finalEliminatedPlayer + " lost!\n" + reason);
         Platform.runLater(() -> {
+            eliminationMessage.setText(finalEliminatedPlayer + " lost!\n" + reason);
             opaqueBackground.setVisible(true);
             infoScreen.setVisible(true);
             eliminationMessage.setVisible(true);
@@ -542,9 +542,7 @@ public class GameBoardController {
 
         Transition finalTransition = transition;
         finalTransition.setOnFinished(e -> manager.setBusy(false));
-        Platform.runLater(() -> {
-            finalTransition.play();
-        });
+        Platform.runLater(finalTransition::play);
     }
 
     /**
@@ -602,7 +600,7 @@ public class GameBoardController {
         finalTransition.setOnFinished(e -> manager.setBusy(false));
         ImageView finalFirstBuilding = firstBuilding;
         Platform.runLater(() -> {
-            if (godCard != null && godCard.getGod().equals("Hephaestus"))
+            if (finalFirstBuilding != null)
                 buildPane.add(finalFirstBuilding, buildPosition.getPosX(), buildPosition.getPosY());
             buildPane.add(newBuilding, buildPosition.getPosX(), buildPosition.getPosY());
             finalTransition.play();

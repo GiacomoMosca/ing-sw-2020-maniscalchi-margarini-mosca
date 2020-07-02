@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.game_board.Cell;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
 import it.polimi.ingsw.network.server.Logger;
+import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.VirtualView;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GameController {
 
     /**
-     * Specifies if the game is running.
+     * Specifies if the Game is running.
      */
     protected final AtomicBoolean running;
     /**
@@ -32,7 +33,11 @@ public class GameController {
      */
     protected final AtomicBoolean setup;
     /**
-     * The logger associated to the game.
+     * The server that is hosting the Game.
+     */
+    protected Server server;
+    /**
+     * The logger associated to the Game.
      */
     protected Logger logger;
     /**
@@ -89,6 +94,15 @@ public class GameController {
      */
     public boolean isSetup() {
         return setup.get();
+    }
+
+    /**
+     * Sets the Server that's hosting the Game.
+     *
+     * @param server the Server to set
+     */
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     /**
@@ -164,6 +178,7 @@ public class GameController {
      * picks the Cards for the Game, chooses the starting player and places the workers.
      */
     public void gameSetUp() {
+        if (!running.get()) return;
         if (!setup.compareAndSet(true, false)) return;
         ArrayList<GodController> controllers = new ArrayList<GodController>();
         controllers.add(new ApolloController(this));
@@ -346,7 +361,7 @@ public class GameController {
      * @return true if the Game has reached the maximum number of players, false otherwise
      */
     public boolean checkPlayersNumber() {
-        return game.getPlayers().size() >= game.getPlayerNum();
+        return (!setup.get()) || (game.getPlayers().size() >= game.getPlayerNum());
     }
 
     /**
@@ -565,7 +580,7 @@ public class GameController {
      * Handles the end of the Game.
      * Sets all the playerControllers to null and notifies all the Players that the Game is over.
      */
-    public void gameOver() {
+    void gameOver() {
         if (!running.compareAndSet(true, false)) return;
         for (PlayerController controller : playerControllers) {
             if (controller == null) continue;
@@ -576,6 +591,7 @@ public class GameController {
                 // no need to handle disconnection, game is over
             }
         }
+        if (server != null) new Thread(() -> server.removeGame(this)).start();
     }
 
 }

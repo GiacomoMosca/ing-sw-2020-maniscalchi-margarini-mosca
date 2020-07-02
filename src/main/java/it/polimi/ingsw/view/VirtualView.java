@@ -182,7 +182,7 @@ public class VirtualView {
         while (attempts < 2) {
             output.writeObject(new Ping());
             try {
-                pingQueue.poll(5, TimeUnit.SECONDS);
+                pingQueue.poll(3, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 attempts++;
                 continue;

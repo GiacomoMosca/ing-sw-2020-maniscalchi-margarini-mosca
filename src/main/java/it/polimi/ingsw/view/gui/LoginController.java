@@ -68,8 +68,10 @@ public class LoginController {
                 manager.putObject(choice);
                 manager.setBusy(false);
             });
-        } else
+        } else {
+            Platform.runLater(() -> textField.editableProperty().setValue(true));
             connectButton.setDisable(false);
+        }
     }
 
     /**
@@ -95,8 +97,10 @@ public class LoginController {
                     manager.setBusy(false);
                 });
             }
-        } else
+        } else {
+            Platform.runLater(() -> textField.editableProperty().setValue(true));
             connectButton.setDisable(false);
+        }
     }
 
     /**
@@ -128,10 +132,12 @@ public class LoginController {
      * @param message the String describing the error message
      */
     public void errorMessage(String message) {
-        textField.clear();
-        textField.editableProperty().setValue(true);
-        error.setText(message);
-        error.setVisible(true);
-        connectButton.setDisable(false);
+        Platform.runLater(() -> {
+            textField.clear();
+            textField.editableProperty().setValue(true);
+            error.setText(message);
+            error.setVisible(true);
+            connectButton.setDisable(false);
+        });
     }
 }
