@@ -278,9 +278,7 @@ public class GameBoardController {
 
         for (ImageView highlight : playerHighlights) {
             highlight.setId("highlight");
-            highlight.setOnMouseClicked(t -> {
-                sendStartingPlayer(playerHighlights.indexOf(highlight));
-            });
+            highlight.setOnMouseClicked(t -> sendStartingPlayer(playerHighlights.indexOf(highlight)));
         }
     }
 
@@ -498,15 +496,15 @@ public class GameBoardController {
     public void displayMove(HashMap<CellView, CellView> moves, CardView godCard) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" ⮞\t");
-        if (godCard != null) stringBuilder.append("[" + godCard.getGod() + "] ");
+        if (godCard != null) stringBuilder.append("[").append(godCard.getGod()).append("] ");
         stringBuilder.append("move ");
         boolean second = false;
         for (HashMap.Entry<CellView, CellView> entry : moves.entrySet()) {
             if (second) stringBuilder.append(" and ");
             second = true;
-            stringBuilder.append("[" + entry.getKey().getPosX() + "," + entry.getKey().getPosY() + "]");
+            stringBuilder.append("[").append(entry.getKey().getPosX()).append(",").append(entry.getKey().getPosY()).append("]");
             stringBuilder.append(" to ");
-            stringBuilder.append("[" + entry.getValue().getPosX() + "," + entry.getValue().getPosY() + "]");
+            stringBuilder.append("[").append(entry.getValue().getPosX()).append(",").append(entry.getValue().getPosY()).append("]");
         }
         pushToLog(stringBuilder.toString());
 
@@ -557,12 +555,12 @@ public class GameBoardController {
     public void displayBuild(CellView buildPosition, CardView godCard) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" ✖\t");
-        if (godCard != null) stringBuilder.append("[" + godCard.getGod() + "] ");
+        if (godCard != null) stringBuilder.append("[").append(godCard.getGod()).append("] ");
         stringBuilder.append("build ");
         if (buildPosition.isDomed()) stringBuilder.append("dome");
-        else stringBuilder.append("level " + buildPosition.getBuildLevel());
+        else stringBuilder.append("level ").append(buildPosition.getBuildLevel());
         stringBuilder.append(" on ");
-        stringBuilder.append("[" + buildPosition.getPosX() + "," + buildPosition.getPosY() + "]");
+        stringBuilder.append("[").append(buildPosition.getPosX()).append(",").append(buildPosition.getPosY()).append("]");
         pushToLog(stringBuilder.toString());
 
         Transition transition;

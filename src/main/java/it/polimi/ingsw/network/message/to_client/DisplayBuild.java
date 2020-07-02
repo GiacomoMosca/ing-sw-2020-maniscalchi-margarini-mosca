@@ -4,8 +4,6 @@ import it.polimi.ingsw.view.CardView;
 import it.polimi.ingsw.view.CellView;
 import it.polimi.ingsw.view.UI;
 
-import java.util.HashMap;
-
 /**
  * Message sent from the server to a client to display a new build.
  */

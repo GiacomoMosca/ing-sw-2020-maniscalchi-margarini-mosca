@@ -271,7 +271,7 @@ public class VirtualView {
      */
     public String chooseNickname(boolean taken) throws IOException, InterruptedException {
         output.writeObject(new ChooseNickname(taken));
-        id = ((SendString) takeInput()).getSender();
+        id = takeInput().getSender();
         return id;
     }
 

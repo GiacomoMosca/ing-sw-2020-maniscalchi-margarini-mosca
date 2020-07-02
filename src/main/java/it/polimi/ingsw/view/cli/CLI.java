@@ -336,15 +336,15 @@ public class CLI implements UI {
      */
     public void chooseCards(ArrayList<CardView> possibleCards, int num, ArrayList<CardView> pickedCards) {
         StringBuilder string = new StringBuilder();
-        if (num > 1) string.append("\nChoose the " + num + " God Powers that will be used for this game: \n");
+        if (num > 1) string.append("\nChoose the ").append(num).append(" God Powers that will be used for this game: \n");
         else string.append("\nPick your God Power: \n");
         for (int i = 0; i < possibleCards.size(); i++) {
-            string.append(i + ": ");
-            string.append(possibleCards.get(i).getGod() + "\n");
+            string.append(i).append(": ");
+            string.append(possibleCards.get(i).getGod()).append("\n");
         }
         if (pickedCards != null) for (CardView pickedCard : pickedCards) {
             string.append("X: ");
-            string.append(pickedCard.getGod() + "\n");
+            string.append(pickedCard.getGod()).append("\n");
         }
         System.out.println(string);
         ArrayList<Integer> choices = new ArrayList<Integer>();
@@ -398,9 +398,9 @@ public class CLI implements UI {
         for (GameView game : gameRooms) {
             i++;
             string.append("\n");
-            string.append(i + ": ");
+            string.append(i).append(": ");
             string.append(game.getName());
-            string.append(" (" + game.getPlayers().size() + "/" + game.getPlayerNum() + ") ");
+            string.append(" (").append(game.getPlayers().size()).append("/").append(game.getPlayerNum()).append(") ");
         }
         System.out.println(string);
         int choice = getInt();
@@ -487,8 +487,8 @@ public class CLI implements UI {
                 string.append(", ");
                 if (i % 5 == 0) string.append("\n");
             }
-            string.append(i + ": ");
-            string.append("[" + cell.getPosX() + ", " + cell.getPosY() + "]");
+            string.append(i).append(": ");
+            string.append("[").append(cell.getPosX()).append(", ").append(cell.getPosY()).append("]");
         }
         string.append("\n");
         System.out.println(string);
@@ -510,8 +510,8 @@ public class CLI implements UI {
         StringBuilder string = new StringBuilder();
         string.append("\nChoose the starting player: \n");
         for (int i = 0; i < players.size(); i++) {
-            string.append(i + ": ");
-            string.append(players.get(i).getId() + "\n");
+            string.append(i).append(": ");
+            string.append(players.get(i).getId()).append("\n");
         }
         System.out.println(string);
         int choice = getInt();
@@ -685,10 +685,10 @@ public class CLI implements UI {
                 string.append("No legal builds available");
                 break;
             case "godConditionAchieved":
-                string.append(winner.getId() + "'s worker achieved their god's win condition");
+                string.append(winner.getId()).append("'s worker achieved their god's win condition");
                 break;
             case "winConditionAchieved":
-                string.append(winner.getId() + "'s worker reached the top level");
+                string.append(winner.getId()).append("'s worker reached the top level");
                 break;
             default:
                 break;
@@ -746,13 +746,13 @@ public class CLI implements UI {
         clear();
         StringBuilder string = new StringBuilder();
         string.append("==========\n");
-        if (playing) string.append(currentGame.getPlayers().get(currentGame.getActivePlayer()).getId() + "'s turn");
+        if (playing) string.append(currentGame.getPlayers().get(currentGame.getActivePlayer()).getId()).append("'s turn");
         else string.append("Game setup");
         string.append("\n==========\n");
         for (int i = 0; i < currentGame.getPlayerNum(); i++) {
             PlayerView player = currentGame.getPlayers().get(i);
             string.append("\n");
-            string.append(player.getColor() + ": ");
+            string.append(player.getColor()).append(": ");
             if (player.hasLost()) string.append("[LOST] ");
             string.append(player.getId());
             string.append(" - ");
@@ -762,7 +762,7 @@ public class CLI implements UI {
         for (int i = 0; i < 5; i++) {
             string.append("  ----------------");
             string.append("\n");
-            string.append(i + " ");
+            string.append(i).append(" ");
             for (int j = 0; j < 5; j++) {
                 CellView cell = currentGame.getCell(i, j);
                 string.append("|");
@@ -789,7 +789,7 @@ public class CLI implements UI {
         if (eliminatedPlayer == null || eliminatedPlayer.equals(id)) return;
         clear();
         StringBuilder string = new StringBuilder();
-        string.append(eliminatedPlayer + " lost! ");
+        string.append(eliminatedPlayer).append(" lost! ");
         string.append("(");
         switch (reason) {
             case "outOfMoves":
