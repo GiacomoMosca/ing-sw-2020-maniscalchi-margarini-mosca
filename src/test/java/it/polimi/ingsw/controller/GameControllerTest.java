@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.players.Player;
 import it.polimi.ingsw.model.players.Worker;
+import it.polimi.ingsw.network.server.FakeLogger;
+import it.polimi.ingsw.network.server.Logger;
 import it.polimi.ingsw.view.FakeVirtualView;
 import it.polimi.ingsw.view.VirtualView;
 import org.junit.After;
@@ -30,6 +32,8 @@ public class GameControllerTest {
     private Player player1, player2;
     private Game game;
 
+    private FakeLogger fakeLogger;
+
     @Before
     public void setUp() {
         virtualView1 = new FakeVirtualView(socket1, objectInputStream1, objectOutputStream1);
@@ -42,6 +46,13 @@ public class GameControllerTest {
         virtualView1.setPlayerController(playerController1);
         virtualView2.setPlayerController(playerController2);
         game = new Game("test",player1,3);
+        try {
+            fakeLogger = new FakeLogger();
+        } catch (IOException e) {
+            //
+        }
+        gameController.setLogger(fakeLogger);
+        gameController.setServer(null);
         gameController.game = game;
         gameController.game.addPlayer(player2);
         gameController.playerControllers.remove(0);
@@ -106,6 +117,23 @@ public class GameControllerTest {
             //
         }
         gameController.gameSetUp();
+        virtualView4 = new FakeVirtualView(socket4, objectInputStream4, objectOutputStream4);
+        try {
+            gameController.addPlayer(virtualView4);
+        } catch (NullPointerException e) {
+            //
+        }
+    }
+
+    @Test
+    public void addPlayer_virtualViewGiven_shouldReturnWithoutAddingThePlayerAndWriteTheLog() throws GameEndedException {
+        virtualView3 = new FakeVirtualView(socket3, objectInputStream3, objectOutputStream3);
+        try {
+            gameController.addPlayer(virtualView3);
+        } catch (NullPointerException e) {
+            //
+        }
+
         virtualView4 = new FakeVirtualView(socket4, objectInputStream4, objectOutputStream4);
         try {
             gameController.addPlayer(virtualView4);
