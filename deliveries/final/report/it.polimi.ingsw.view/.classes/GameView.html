@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameView</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameView (it.polimi.ingsw.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameView</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.Game;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.cards.Card;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.players.Player;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.io.Serializable;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Represents a view of the Game class to the client.
+<i>12</i>&nbsp; * It implements serializable so that it can be serialized in the messages that client and server exchange: this way, the client won&#39;t have access to the Model objects.
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public class GameView implements Serializable {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * The Game&#39;s name.
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    private final String name;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * The Game&#39;s player number (2 or 3).
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    private final int playerNum;
+<i>24</i>&nbsp;    /**
+<i>25</i>&nbsp;     * List of Players who joined the Game.
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    private final ArrayList&lt;PlayerView&gt; players;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * The number of the turn&#39;s active Player.
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    private final int activePlayer;
+<i>32</i>&nbsp;    /**
+<i>33</i>&nbsp;     * The cells that make up the Game&#39;s board.
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    private final CellView[][] board;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * List of Cards with a modifier that&#39;s currently active.
+<i>38</i>&nbsp;     */
+<i>39</i>&nbsp;    private final ArrayList&lt;CardView&gt; activeModifiers;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * GameView constructor.
+<i>43</i>&nbsp;     * GameView attributes are set to the values of the same attributes of the Game Object received as an argument.
+<i>44</i>&nbsp;     *
+<i>45</i>&nbsp;     * @param game the Game represented by this GameView
+<i>46</i>&nbsp;     */
+<b class="nc"><i>47</i>&nbsp;    public GameView(Game game) {</b>
+<b class="nc"><i>48</i>&nbsp;        name = game.getName();</b>
+<b class="nc"><i>49</i>&nbsp;        playerNum = game.getPlayerNum();</b>
+<b class="nc"><i>50</i>&nbsp;        players = new ArrayList&lt;PlayerView&gt;();</b>
+<b class="nc"><i>51</i>&nbsp;        for (Player player : game.getPlayers()) {</b>
+<b class="nc"><i>52</i>&nbsp;            players.add(new PlayerView(player));</b>
+<b class="nc"><i>53</i>&nbsp;        }</b>
+<b class="nc"><i>54</i>&nbsp;        activePlayer = game.getActivePlayer();</b>
+<b class="nc"><i>55</i>&nbsp;        board = new CellView[5][5];</b>
+<b class="nc"><i>56</i>&nbsp;        for (int i = 0; i &lt; 5; i++)</b>
+<b class="nc"><i>57</i>&nbsp;            for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>58</i>&nbsp;                board[i][j] = new CellView(game.getBoard().getCell(i, j));</b>
+<i>59</i>&nbsp;            }
+<b class="nc"><i>60</i>&nbsp;        activeModifiers = new ArrayList&lt;CardView&gt;();</b>
+<b class="nc"><i>61</i>&nbsp;        for (Card card : game.getActiveModifiers()) {</b>
+<b class="nc"><i>62</i>&nbsp;            activeModifiers.add(new CardView(card));</b>
+<b class="nc"><i>63</i>&nbsp;        }</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * GameView constructor.
+<i>68</i>&nbsp;     * GameView attributes are set to the values received as arguments.
+<i>69</i>&nbsp;     *
+<i>70</i>&nbsp;     * @param name         the name of the Game represented by this GameView
+<i>71</i>&nbsp;     * @param playerNum    the number of the Players in the Game represented by this GameView
+<i>72</i>&nbsp;     * @param players      the PlayerViews of the Players involved in the Game represented by this GameView
+<i>73</i>&nbsp;     * @param activePlayer the number of the active Player
+<i>74</i>&nbsp;     * @param board        the Array of CellViews representing the Board in the Game represented by this GameView
+<i>75</i>&nbsp;     * @param modifiers    the ArrayList of CardViews representing the modifiers in the  Game represented by this GameView
+<i>76</i>&nbsp;     */
+<b class="nc"><i>77</i>&nbsp;    public GameView(String name, int playerNum, ArrayList&lt;PlayerView&gt; players, int activePlayer, CellView[][] board, ArrayList&lt;CardView&gt; modifiers) {</b>
+<b class="nc"><i>78</i>&nbsp;        this.name = name;</b>
+<b class="nc"><i>79</i>&nbsp;        this.playerNum = playerNum;</b>
+<b class="nc"><i>80</i>&nbsp;        this.players = players;</b>
+<b class="nc"><i>81</i>&nbsp;        this.activePlayer = activePlayer;</b>
+<b class="nc"><i>82</i>&nbsp;        this.board = board;</b>
+<b class="nc"><i>83</i>&nbsp;        this.activeModifiers = modifiers;</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    /**
+<i>87</i>&nbsp;     * @return the name of the Game represented by this GameView
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    public String getName() {
+<b class="nc"><i>90</i>&nbsp;        return name;</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * @return the number of the Players in the Game represented by this GameView
+<i>95</i>&nbsp;     */
+<i>96</i>&nbsp;    public int getPlayerNum() {
+<b class="nc"><i>97</i>&nbsp;        return playerNum;</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    /**
+<i>101</i>&nbsp;     * @return an ArrayList containing the PlayerViews of the Players involved in the Game represented by this GameView
+<i>102</i>&nbsp;     */
+<i>103</i>&nbsp;    public ArrayList&lt;PlayerView&gt; getPlayers() {
+<b class="nc"><i>104</i>&nbsp;        return new ArrayList&lt;PlayerView&gt;(players);</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    /**
+<i>108</i>&nbsp;     * @return the number of the active Player in the Game represented by this GameView
+<i>109</i>&nbsp;     */
+<i>110</i>&nbsp;    public int getActivePlayer() {
+<b class="nc"><i>111</i>&nbsp;        return activePlayer;</b>
+<i>112</i>&nbsp;    }
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;    /**
+<i>115</i>&nbsp;     * @param x the x-coordinate of the requested Cell
+<i>116</i>&nbsp;     * @param y the y-coordinate of the requested Cell
+<i>117</i>&nbsp;     * @return the CellView representing the requested Cell
+<i>118</i>&nbsp;     * @throws ArrayIndexOutOfBoundsException when index out of Array length
+<i>119</i>&nbsp;     */
+<i>120</i>&nbsp;    public CellView getCell(int x, int y) throws ArrayIndexOutOfBoundsException {
+<b class="nc"><i>121</i>&nbsp;        if (x &lt; 0 || x &gt;= 5 || y &lt; 0 || y &gt;= 5) throw new ArrayIndexOutOfBoundsException();</b>
+<b class="nc"><i>122</i>&nbsp;        return board[y][x];</b>
+<i>123</i>&nbsp;    }
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    /**
+<i>126</i>&nbsp;     * @param cell the CellView which the x and y-coordinates will be equals to
+<i>127</i>&nbsp;     * @throws ArrayIndexOutOfBoundsException when index out of Array length
+<i>128</i>&nbsp;     */
+<i>129</i>&nbsp;    public void setCell(CellView cell) throws ArrayIndexOutOfBoundsException {
+<b class="nc"><i>130</i>&nbsp;        int x = cell.getPosX();</b>
+<b class="nc"><i>131</i>&nbsp;        int y = cell.getPosY();</b>
+<b class="nc"><i>132</i>&nbsp;        if (x &lt; 0 || x &gt;= 5 || y &lt; 0 || y &gt;= 5) throw new ArrayIndexOutOfBoundsException();</b>
+<b class="nc"><i>133</i>&nbsp;        board[x][y] = cell;</b>
+<i>134</i>&nbsp;    }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;    /**
+<i>137</i>&nbsp;     * @return an ArrayList containing all the CellViews representing the Board in the Game
+<i>138</i>&nbsp;     */
+<i>139</i>&nbsp;    public ArrayList&lt;CellView&gt; getAllCells() {
+<b class="nc"><i>140</i>&nbsp;        ArrayList&lt;CellView&gt; allCells = new ArrayList&lt;CellView&gt;();</b>
+<b class="nc"><i>141</i>&nbsp;        for (int i = 0; i &lt; 5; i++)</b>
+<b class="nc"><i>142</i>&nbsp;            for (int j = 0; j &lt; 5; j++)</b>
+<b class="nc"><i>143</i>&nbsp;                allCells.add(board[j][i]);</b>
+<b class="nc"><i>144</i>&nbsp;        return allCells;</b>
+<i>145</i>&nbsp;    }
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    /**
+<i>148</i>&nbsp;     * @return an ArrayList containing the CardViews representing the active God Power Cards in the Game
+<i>149</i>&nbsp;     */
+<i>150</i>&nbsp;    public ArrayList&lt;CardView&gt; getActiveModifiers() {
+<b class="nc"><i>151</i>&nbsp;        return new ArrayList&lt;CardView&gt;(activeModifiers);</b>
+<i>152</i>&nbsp;    }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 17:48</div>
+</div>
+</body>
+</html>

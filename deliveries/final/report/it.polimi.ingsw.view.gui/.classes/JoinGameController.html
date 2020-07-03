@@ -1,0 +1,251 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JoinGameController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.view.gui</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JoinGameController (it.polimi.ingsw.view.gui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JoinGameController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.view.gui;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.GameView;
+<i>4</i>&nbsp;import javafx.application.Platform;
+<i>5</i>&nbsp;import javafx.collections.FXCollections;
+<i>6</i>&nbsp;import javafx.collections.ObservableList;
+<i>7</i>&nbsp;import javafx.fxml.FXML;
+<i>8</i>&nbsp;import javafx.scene.control.TableColumn;
+<i>9</i>&nbsp;import javafx.scene.control.TableView;
+<i>10</i>&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+<i>11</i>&nbsp;import javafx.scene.image.ImageView;
+<i>12</i>&nbsp;import javafx.scene.text.Text;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.ArrayList;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;/**
+<i>17</i>&nbsp; * Handles the interaction between client and server during the phase of joining an existing Game.
+<i>18</i>&nbsp; * Allows:
+<i>19</i>&nbsp; * &lt;ul&gt;
+<i>20</i>&nbsp; *     &lt;li&gt;choosing a Game room to join;
+<i>21</i>&nbsp; *     &lt;li&gt;refreshing the list of the existing Games;
+<i>22</i>&nbsp; *     &lt;li&gt;going back to the previous screen.
+<i>23</i>&nbsp; * &lt;/ul&gt;
+<i>24</i>&nbsp; */
+<b class="nc"><i>25</i>&nbsp;public class JoinGameController {</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * The manager for this GUI instance.
+<i>29</i>&nbsp;     */
+<i>30</i>&nbsp;    private GUIManager manager;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @FXML
+<i>33</i>&nbsp;    private TableColumn&lt;?, ?&gt; gameName, createdBy, playersNumber;
+<i>34</i>&nbsp;    @FXML
+<i>35</i>&nbsp;    private TableView&lt;TableItem&gt; gameRoomsList;
+<i>36</i>&nbsp;    @FXML
+<i>37</i>&nbsp;    private Text nicknameTab, titleText;
+<i>38</i>&nbsp;    @FXML
+<i>39</i>&nbsp;    private Text refreshText, refreshText_p;
+<i>40</i>&nbsp;    @FXML
+<i>41</i>&nbsp;    private Text backText, backText_p;
+<i>42</i>&nbsp;    @FXML
+<i>43</i>&nbsp;    private Text confirmText, confirmText_p;
+<i>44</i>&nbsp;    @FXML
+<i>45</i>&nbsp;    private ImageView refreshButton, refreshButton_p;
+<i>46</i>&nbsp;    @FXML
+<i>47</i>&nbsp;    private ImageView backButton, backButton_p;
+<i>48</i>&nbsp;    @FXML
+<i>49</i>&nbsp;    private ImageView confirmButton, confirmButton_p;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * @param manager the GUIManager to set the JoinGameController manager attribute to
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    public void initialize(GUIManager manager) {
+<b class="nc"><i>56</i>&nbsp;        this.manager = manager;</b>
+<b class="nc"><i>57</i>&nbsp;        nicknameTab.setText(manager.getId());</b>
+<i>58</i>&nbsp;    }
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    /**
+<i>61</i>&nbsp;     * Handles the pressing of the Back button.
+<i>62</i>&nbsp;     */
+<i>63</i>&nbsp;    public void backButtonPressed() {
+<b class="nc"><i>64</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>65</i>&nbsp;            backButton_p.setVisible(true);</b>
+<b class="nc"><i>66</i>&nbsp;            backText.setVisible(false);</b>
+<b class="nc"><i>67</i>&nbsp;            backText_p.setVisible(true);</b>
+<i>68</i>&nbsp;        });
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Handles the pressing of the Refresh button.
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    public void refreshButtonPressed() {
+<b class="nc"><i>75</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>76</i>&nbsp;            refreshButton_p.setVisible(true);</b>
+<b class="nc"><i>77</i>&nbsp;            refreshText.setVisible(false);</b>
+<b class="nc"><i>78</i>&nbsp;            refreshText_p.setVisible(true);</b>
+<i>79</i>&nbsp;        });
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /**
+<i>83</i>&nbsp;     * Handles the pressing of the Confirm button.
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    public void confirmButtonPressed() {
+<b class="nc"><i>86</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>87</i>&nbsp;            confirmButton_p.setVisible(true);</b>
+<b class="nc"><i>88</i>&nbsp;            confirmText.setVisible(false);</b>
+<b class="nc"><i>89</i>&nbsp;            confirmText_p.setVisible(true);</b>
+<i>90</i>&nbsp;        });
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    /**
+<i>94</i>&nbsp;     * Handles the releasing of the Back button.
+<i>95</i>&nbsp;     * Notices the GUIManager that the Back button was clicked, putting this input on the messageQueue.
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public void backButtonReleased() {
+<b class="nc"><i>98</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>99</i>&nbsp;            backButton.setDisable(true);</b>
+<b class="nc"><i>100</i>&nbsp;            backButton_p.setVisible(false);</b>
+<b class="nc"><i>101</i>&nbsp;            backText_p.setVisible(false);</b>
+<b class="nc"><i>102</i>&nbsp;            backText.setVisible(true);</b>
+<b class="nc"><i>103</i>&nbsp;            backButton.setDisable(false);</b>
+<b class="nc"><i>104</i>&nbsp;            manager.putObject(0);</b>
+<b class="nc"><i>105</i>&nbsp;            manager.setBusy(false);</b>
+<i>106</i>&nbsp;        });
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     * Handles the releasing of the Refresh button.
+<i>111</i>&nbsp;     * Notices the GUIManager that the Refresh button was clicked, putting this input on the messageQueue.
+<i>112</i>&nbsp;     */
+<i>113</i>&nbsp;    public void refreshButtonReleased() {
+<b class="nc"><i>114</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>115</i>&nbsp;            refreshButton_p.setVisible(false);</b>
+<b class="nc"><i>116</i>&nbsp;            refreshText_p.setVisible(false);</b>
+<b class="nc"><i>117</i>&nbsp;            refreshText.setVisible(true);</b>
+<b class="nc"><i>118</i>&nbsp;            manager.putObject(1);</b>
+<b class="nc"><i>119</i>&nbsp;            manager.setBusy(false);</b>
+<i>120</i>&nbsp;        });
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    /**
+<i>124</i>&nbsp;     * Handles the releasing of the Confirm button.
+<i>125</i>&nbsp;     * Notices the GUIManager that the Confirm button was clicked, putting the input representing the chosen Game Room on the messageQueue.
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    public void confirmButtonReleased() {
+<b class="nc"><i>128</i>&nbsp;        confirmButton.setDisable(true);</b>
+<b class="nc"><i>129</i>&nbsp;        int choice = gameRoomsList.getSelectionModel().getSelectedIndex();</b>
+<b class="nc"><i>130</i>&nbsp;        if (choice != -1) {</b>
+<b class="nc"><i>131</i>&nbsp;            manager.putObject(choice + 2);</b>
+<b class="nc"><i>132</i>&nbsp;            manager.setBusy(false);</b>
+<i>133</i>&nbsp;        } else
+<b class="nc"><i>134</i>&nbsp;            confirmButton.setDisable(false);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>137</i>&nbsp;            confirmButton_p.setVisible(false);</b>
+<b class="nc"><i>138</i>&nbsp;            confirmText_p.setVisible(false);</b>
+<b class="nc"><i>139</i>&nbsp;            confirmText.setVisible(true);</b>
+<i>140</i>&nbsp;        });
+<i>141</i>&nbsp;    }
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;    /**
+<i>144</i>&nbsp;     * Handles the creation of a table containing all the currently active Game rooms, showing:
+<i>145</i>&nbsp;     * &lt;ul&gt;
+<i>146</i>&nbsp;     *     &lt;li&gt;the Game name;
+<i>147</i>&nbsp;     *     &lt;li&gt;the creator of the Game room;
+<i>148</i>&nbsp;     *     &lt;li&gt;the number of Players who already joined the Game room and the total number of Players required.
+<i>149</i>&nbsp;     * &lt;/ul&gt;
+<i>150</i>&nbsp;     *
+<i>151</i>&nbsp;     * @param gameRooms an ArrayList containing all the Game Rooms currently active
+<i>152</i>&nbsp;     */
+<i>153</i>&nbsp;    public void chooseGameRoom(ArrayList&lt;GameView&gt; gameRooms) {
+<b class="nc"><i>154</i>&nbsp;        ArrayList&lt;TableItem&gt; rooms = new ArrayList&lt;TableItem&gt;();</b>
+<b class="nc"><i>155</i>&nbsp;        for (GameView gameView : gameRooms)</b>
+<b class="nc"><i>156</i>&nbsp;            rooms.add(new TableItem(gameView));</b>
+<i>157</i>&nbsp;
+<b class="nc"><i>158</i>&nbsp;        final ObservableList&lt;TableItem&gt; data = FXCollections.observableArrayList(rooms);</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        gameName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;GameName&quot;));</b>
+<b class="nc"><i>161</i>&nbsp;        createdBy.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;CreatedBy&quot;));</b>
+<b class="nc"><i>162</i>&nbsp;        playersNumber.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;Players&quot;));</b>
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc"><i>165</i>&nbsp;            gameRoomsList.setItems(data);</b>
+<i>166</i>&nbsp;        });
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 17:48</div>
+</div>
+</body>
+</html>

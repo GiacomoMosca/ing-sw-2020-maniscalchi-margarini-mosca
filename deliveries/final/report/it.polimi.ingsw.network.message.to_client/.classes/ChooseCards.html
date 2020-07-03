@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ChooseCards</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.network.message.to_client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ChooseCards (it.polimi.ingsw.network.message.to_client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChooseCards</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.network.message.to_client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.CardView;
+<i>4</i>&nbsp;import it.polimi.ingsw.view.UI;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Message sent from the server to a client to ask him to choose among some cards.
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class ChooseCards extends ToClientMessage {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * The list of all the Cards to choose among.
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    protected ArrayList&lt;CardView&gt; possibleCards;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * The number of Cards to pick.
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    protected int num;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * The list of the picked Cards.
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    protected ArrayList&lt;CardView&gt; pickedCards;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * ChooseCards constructor.
+<i>28</i>&nbsp;     * Calls the super constructor so that the msgId is set to &quot;choose cards&quot;.
+<i>29</i>&nbsp;     * Sets all the attributes as the values received as arguments.
+<i>30</i>&nbsp;     *
+<i>31</i>&nbsp;     * @param possibleCards an ArrayList containing all the Cards to choose among
+<i>32</i>&nbsp;     * @param num           the number of Cards to pick, can be:
+<i>33</i>&nbsp;     *                      &lt;ul&gt;
+<i>34</i>&nbsp;     *                          &lt;li&gt;1 if the player is asked to choose his own card for the Game among the pickedCards;
+<i>35</i>&nbsp;     *                          &lt;li&gt;2 if the player is asked to choose the 2 cards to use for a 2-players Game;
+<i>36</i>&nbsp;     *                          &lt;li&gt;3 if the player is asked to choose the 3 cards to use for a 3-players Game.
+<i>37</i>&nbsp;     *                      &lt;/ul&gt;
+<i>38</i>&nbsp;     * @param pickedCards   an ArrayList containing the picked Cards, needed when num has the value 1
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public ChooseCards(ArrayList&lt;CardView&gt; possibleCards, int num, ArrayList&lt;CardView&gt; pickedCards) {
+<b class="nc"><i>41</i>&nbsp;        super(&quot;choose cards&quot;);</b>
+<b class="nc"><i>42</i>&nbsp;        this.possibleCards = possibleCards;</b>
+<b class="nc"><i>43</i>&nbsp;        this.num = num;</b>
+<b class="nc"><i>44</i>&nbsp;        this.pickedCards = pickedCards;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * When called, this method invokes the right method on the client who received this message to perform the action requested by the message.
+<i>49</i>&nbsp;     * In this case, the client will be asked to choose the Cards to play with or to choose his own Card.
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * @param client the User Interface representing the client this message is sent to
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    @Override
+<i>54</i>&nbsp;    public void performAction(UI client) {
+<b class="nc"><i>55</i>&nbsp;        client.chooseCards(possibleCards, num, pickedCards);</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 17:48</div>
+</div>
+</body>
+</html>
